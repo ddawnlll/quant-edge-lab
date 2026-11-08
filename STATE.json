@@ -256,7 +256,9 @@
       "status": "RUNNING",
       "started_utc": "2026-11-08T22:21:50Z",
       "required_hours": 24,
-      "evidence": "runtime/soak/soak.jsonl"
+      "evidence": "runtime/soak/soak.jsonl",
+      "verification_schedule": "sched_42815c00",
+      "verification_wake_at": "2026-11-09T22:26:00Z"
     }
   ],
   "blockers": [

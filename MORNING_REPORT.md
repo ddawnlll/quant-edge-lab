@@ -63,7 +63,8 @@ SQLite: 3.54.1 source `2026-10-16 14:45:20 555e07ef…`.
 ## Running validations
 
 `SOAK-24H` is RUNNING (started 2026-11-08T22:21:50Z). It has not elapsed and
-must not be reported as complete. B6 completed four generators × 1,000 null
+must not be reported as complete. Verification is scheduled as
+`sched_42815c00` for 2026-11-09T22:26:00Z. B6 completed four generators × 1,000 null
 programs with zero promotions each (95% upper 0.00299); the injected-effect
 power/MDE grid was executed locally and found zero power at the tested effects; a full MDE/coverage certificate remains open.
 

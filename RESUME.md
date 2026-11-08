@@ -31,7 +31,8 @@ zero residual.
 
 1. **Do not start M6/M7.** TASK-28 remains `WAITING_FRESH_OOS`; TASK-29 is
    `INSUFFICIENT_OBSERVATION`; TASK-30 refuses `CAPITAL_UNAUTHORIZED`.
-2. Wait for the soak to reach 24h at **2026-11-09T22:21:50Z**; check
+2. Wait for the soak to reach 24h at **2026-11-09T22:21:50Z**; a scheduled
+   verification (sched_42815c00) wakes at **2026-11-09T22:26:00Z**. Check
    `runtime/soak/soak.jsonl` and mark TASK-27 DONE only then.
 3. Run the full B6 1000-program calibration when the machine is idle:
    `PYTHONPATH=python .venv/bin/python -m qel.cli calibrate --programs 1000 --out evidence/labd/CALIBRATION_1000.json`
