@@ -91,9 +91,11 @@ linger is on. Rebuild: `make contracts`, `go build ./...`,
 
 ## Repository
 
-Public repository: pending push at report writing. Final commit and URL are
-recorded after the push in `RESUME.md` and the commit history.
+Public repository: <https://github.com/ddawnlll/quant-edge-lab>
+Branch: `main`; remote push succeeded. Final commit is the tip of `main`
+after this report update.
 Ponytail revision: `96608e078b2d5ea607c5c3b8b5a54d1c1fba6846` (MIT).
+Upstream Nautilus revision: `27a8e54e7ac3c57d6cbf8891f0283dfbaee97317` (v1.231.0).
 
 ## Remaining issues
 
