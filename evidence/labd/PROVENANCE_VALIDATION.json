@@ -1,0 +1,29 @@
+{
+  "live_capture": {
+    "capture": "CAP-BTCUSDT-1794174239",
+    "raw_events": 12418,
+    "normalized_rows": 12418,
+    "rows_with_resolved_raw_offset": 12418,
+    "rows_with_matching_raw_hash": 12418,
+    "raw_segment_hash_ok": true,
+    "dataset_partition_hash_ok": true,
+    "quality_ref_hash_ok": true,
+    "quality_dataset_hash_ok": true,
+    "status": "PASS"
+  },
+  "archive_native": {
+    "status": "PASS",
+    "checks": {
+      "native_sha_ok": true,
+      "agg_sha_ok": true,
+      "mark_sha_ok": true,
+      "funding_sha_ok": true
+    },
+    "counts": {
+      "Funding": 4,
+      "Mark": 1440,
+      "Quote": 72084,
+      "Trade": 284672
+    }
+  }
+}

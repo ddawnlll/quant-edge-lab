@@ -62,6 +62,15 @@ PID 744722, health `OK`, ledger chain verified, worker and soak active, soak
 elapsed 3,309s, and local/remote git equal. `evidence/labd/SSE_SAMPLE.txt`
 contains a live `/v1/events` heartbeat.
 
+## Validation pass 2
+
+`evidence/labd/VALIDATION_PASS_2.txt` records a clean package re-check
+(`MANIFEST` all OK, spec validator PASS), regenerated fixture/cross-language
+reports (44/44 and PASS), all Go packages, 36 Python tests, 3 Rust policy
+tests, and provenance checks. `PROVENANCE_VALIDATION.json` shows 12,418/12,418
+normalized live rows resolving to the raw offset and raw hash, with dataset,
+quality, and archive/native hashes matching.
+
 ## Measured resources
 
 - Host: 6 vCPU, 11.7 GiB RAM, 132 GiB free (8% disk used).

@@ -1,0 +1,104 @@
+== manifest ==
+QUANT_EDGE_LAB_COVERAGE_AND_VERIFICATION_v1_1.md: OK
+QUANT_EDGE_LAB_IMPLEMENTATION_MONOGRAPH_v1_1.md: OK
+README.md: OK
+baseline/QUANT_EDGE_LAB_MONOGRAPH_v1_0_TR.html: OK
+examples/index.json: OK
+examples/runtime_lock.unresolved.json: OK
+examples/strategy_mr.json: OK
+fixtures/README.md: OK
+fixtures/conformance.json: OK
+schemas/architecture.schema.json: OK
+schemas/fixtures.schema.json: OK
+schemas/runtime.schema.json: OK
+spec/architecture.json: OK
+validation/render_catalog.py: OK
+validation/requirements.txt: OK
+validation/validate_spec.py: OK
+validation/validation_report.json: OK
+
+== spec validator ==
+{"status": "PASS_SPECIFICATION_ONLY", "counts": {"schema_documents": 3, "runtime_models": 102, "catalog_objects": 658, "components": 15, "requirements": 96, "contracts": 24, "tasks": 32, "fixtures_defined": 35, "baseline_domains": 30, "invariants": 18, "golden_arithmetic_checks": 7, "ascii_canonical_hash_vectors": 1, "runtime_type_vectors": 16, "runtime_conformance_executed": false, "benchmarks_executed": false}, "negative_mutants_rejected": 20}
+
+== contract cross-language + fixtures ==
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: function `format_decimal` is never used
+   --> src/canonical.rs:182:8
+    |
+182 | pub fn format_decimal(coeff: i128, scale: u32) -> String {
+    |        ^^^^^^^^^^^^^^
+
+warning: function `ledger_event_hash` is never used
+   --> src/canonical.rs:230:8
+    |
+230 | pub fn ledger_event_hash(event: &serde_json::Map<String, Value>, previous: &str) -> Result<String> {
+    |        ^^^^^^^^^^^^^^^^^
+
+warning: `qel-contract` (bin "qel-contract") generated 3 warnings
+    Finished `release` profile [optimized] target(s) in 0.35s
+cp /home/quant/quant/.build-cache/qel-contract-rs/release/qel-contract bin/qel-contract-rs
+.venv/bin/python -m qel.cli crosslang --out evidence/contract/CROSSLANG_REPORT.json
+.venv/bin/python -m qel.cli runkey --out evidence/contract/RUNKEY_VECTORS.json
+
+== go tests ==
+?   	github.com/ddawnlll/quant-edge-lab/cmd/qel-collect	[no test files]
+?   	github.com/ddawnlll/quant-edge-lab/cmd/qel-submit	[no test files]
+?   	github.com/ddawnlll/quant-edge-lab/cmd/qel-worker	[no test files]
+?   	github.com/ddawnlll/quant-edge-lab/cmd/qeld	[no test files]
+?   	github.com/ddawnlll/quant-edge-lab/contracts/go/cmd/qel-contract	[no test files]
+?   	github.com/ddawnlll/quant-edge-lab/contracts/go/qelcontract	[no test files]
+ok  	github.com/ddawnlll/quant-edge-lab/labd/artifacts	0.622s
+ok  	github.com/ddawnlll/quant-edge-lab/labd/cgroup	0.288s
+?   	github.com/ddawnlll/quant-edge-lab/labd/collect	[no test files]
+ok  	github.com/ddawnlll/quant-edge-lab/labd/control	0.805s
+ok  	github.com/ddawnlll/quant-edge-lab/labd/ledger	0.218s
+ok  	github.com/ddawnlll/quant-edge-lab/labd/memory	0.158s
+ok  	github.com/ddawnlll/quant-edge-lab/labd/queue	0.840s
+?   	github.com/ddawnlll/quant-edge-lab/labd/worker	[no test files]
+
+== python tests ==
+....................................                                     [100%]
+36 passed in 15.95s
+
+== rust policy ==
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+   Doc-tests qel_policy
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+== provenance ==
+{
+  "live_capture": {
+    "capture": "CAP-BTCUSDT-1794174239",
+    "raw_events": 12418,
+    "normalized_rows": 12418,
+    "rows_with_resolved_raw_offset": 12418,
+    "rows_with_matching_raw_hash": 12418,
+    "raw_segment_hash_ok": true,
+    "dataset_partition_hash_ok": true,
+    "quality_ref_hash_ok": true,
+    "quality_dataset_hash_ok": true,
+    "status": "PASS"
+  },
+  "archive_native": {
+    "status": "PASS",
+    "checks": {
+      "native_sha_ok": true,
+      "agg_sha_ok": true,
+      "mark_sha_ok": true,
+      "funding_sha_ok": true
+    },
+    "counts": {
+      "Funding": 4,
+      "Mark": 1440,
+      "Quote": 72084,
+      "Trade": 284672
+    }
+  }
+}

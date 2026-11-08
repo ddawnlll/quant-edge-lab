@@ -1,0 +1,201 @@
+{
+  "status": "PASS_SPECIFICATION_ONLY",
+  "generated_utc": "2026-11-08T23:30:20.469074+00:00",
+  "validator_version": "1.1.0",
+  "python_version": "3.13.5",
+  "jsonschema_version": "4.25.1",
+  "checks": [
+    "DRAFT2020_12_META_SCHEMAS",
+    "ARCHITECTURE_STRUCTURE",
+    "RUNTIME_EXAMPLES",
+    "FIXTURE_GRAMMAR",
+    "ID_RESOLUTION",
+    "SCHEMA_FRAGMENTS",
+    "DEPENDENCY_DAGS",
+    "STATE_MACHINES",
+    "RESOURCE_SUMS",
+    "OPERATOR_TYPES",
+    "BASELINE_SHA256",
+    "BIDIRECTIONAL_HUMAN_TRACE",
+    "GOLDEN_ARITHMETIC"
+  ],
+  "counts": {
+    "schema_documents": 3,
+    "runtime_models": 102,
+    "catalog_objects": 658,
+    "components": 15,
+    "requirements": 96,
+    "contracts": 24,
+    "tasks": 32,
+    "fixtures_defined": 35,
+    "baseline_domains": 30,
+    "invariants": 18,
+    "golden_arithmetic_checks": 7,
+    "ascii_canonical_hash_vectors": 1,
+    "runtime_type_vectors": 16,
+    "runtime_conformance_executed": false,
+    "benchmarks_executed": false
+  },
+  "negative_mutants": [
+    {
+      "case": "unknown_architecture_field",
+      "rejected": true,
+      "reason": "architecture: []: Additional properties are not allowed ('unexpected' was unexpected)"
+    },
+    {
+      "case": "bad_version",
+      "rejected": true,
+      "reason": "architecture: ['meta', 'version']: '1.1.0' was expected"
+    },
+    {
+      "case": "unresolved_component",
+      "rejected": true,
+      "reason": "REQ-001: unresolved C-MISSING"
+    },
+    {
+      "case": "component_dependency_cycle",
+      "rejected": true,
+      "reason": "components cycle at C-LABD"
+    },
+    {
+      "case": "task_dependency_cycle",
+      "rejected": true,
+      "reason": "tasks cycle at TASK-01"
+    },
+    {
+      "case": "missing_schema_fragment",
+      "rejected": true,
+      "reason": "API-VALIDATE missing schema fragment"
+    },
+    {
+      "case": "invalid_state_transition",
+      "rejected": true,
+      "reason": "SM-JOB: unresolved UNKNOWN"
+    },
+    {
+      "case": "missing_baseline_coverage",
+      "rejected": true,
+      "reason": "V10-01 no inherited requirement coverage"
+    },
+    {
+      "case": "missing_human_anchor",
+      "rejected": true,
+      "reason": "Missing human anchor H-00"
+    },
+    {
+      "case": "duplicate_catalog_id",
+      "rejected": true,
+      "reason": "Duplicate ID TASK-01"
+    },
+    {
+      "case": "bad_memory_budget",
+      "rejected": true,
+      "reason": "RP-4G parent budget sum"
+    },
+    {
+      "case": "operator_wrong_arity",
+      "rejected": true,
+      "reason": "Operator arity"
+    },
+    {
+      "case": "operator_unknown_parameter",
+      "rejected": true,
+      "reason": "operator params N-EMA: []: Additional properties are not allowed ('centered' was unexpected)"
+    },
+    {
+      "case": "wire_integer_wrong_type",
+      "rejected": true,
+      "reason": "examples/strategy_mr.json: ['max_holding_ns']: 21600000000000 is not of type 'string'"
+    },
+    {
+      "case": "fixture_unknown_operation",
+      "rejected": true,
+      "reason": "fixtures: ['fixtures', 0, 'scenarios', 0, 'steps', 0]: {'at_ns': '0', 'operation': 'MAGIC', 'arguments': {'bid': '99', 'bid_qty': '100', 'ask': '101', 'ask_qty'"
+    },
+    {
+      "case": "undefined_invariant_symbol",
+      "rejected": true,
+      "reason": "Undefined predicate symbol"
+    },
+    {
+      "case": "integer_string_overflow",
+      "rejected": true,
+      "reason": "examples/strategy_mr.json: ['exit_policy', 'max_holding_ns']: Exact integer outside declared domain or negative zero; ['max_holding_ns']: Exact integer outside "
+    },
+    {
+      "case": "negative_zero_decimal",
+      "rejected": true,
+      "reason": "operator params N-K: ['value']: Nonfinite decimal or negative zero"
+    },
+    {
+      "case": "non_nfc_text",
+      "rejected": true,
+      "reason": "Non-NFC text at /human_sections/0/title"
+    },
+    {
+      "case": "quantile_probability_outside_domain",
+      "rejected": true,
+      "reason": "operator params N-INVALID-QUANTILE: ['probability']: Decimal outside declared bounds"
+    }
+  ],
+  "validated_files": [
+    {
+      "path": "spec/architecture.json",
+      "sha256": "5ae0c3d063b92efa1005fca554a09a7b45eea1801e604022bc5ab4a98f3689ab",
+      "size_bytes": 443930
+    },
+    {
+      "path": "fixtures/conformance.json",
+      "sha256": "99e44c42f20971a93f4f7e9b1c7af5e86dc7ea4ad6a872dfd970b94ba0bc1e0e",
+      "size_bytes": 67177
+    },
+    {
+      "path": "QUANT_EDGE_LAB_IMPLEMENTATION_MONOGRAPH_v1_1.md",
+      "sha256": "a0ffb146f6c11da565614dd7a26dc2fe20a38a1bbe0044e22eff9178fc6e60c6",
+      "size_bytes": 199932
+    },
+    {
+      "path": "validation/validate_spec.py",
+      "sha256": "3c0f93f71c67ea0f33f57f46c191b0dc43cc34a395f14a9f09bc9c6a4f16e718",
+      "size_bytes": 22266
+    },
+    {
+      "path": "schemas/architecture.schema.json",
+      "sha256": "d77fb6dcfa845e3888c0d689bac5ad86935d153485fe9a8599fe050d66afd3ce",
+      "size_bytes": 293554
+    },
+    {
+      "path": "schemas/fixtures.schema.json",
+      "sha256": "d3b7d668205762d3be1b9c1ffc7ce9f43586aeec4e860bc7c6ca87f6485d20cc",
+      "size_bytes": 121075
+    },
+    {
+      "path": "schemas/runtime.schema.json",
+      "sha256": "07cc8369af3a3da73fab958c63d4d2cb3d161aa903bf7f028ca9ed228c4ef6fe",
+      "size_bytes": 219134
+    },
+    {
+      "path": "examples/index.json",
+      "sha256": "cfd6460d6f42ff2eb5b156f69ef607abdba920e678e135b9512a609248bb9d75",
+      "size_bytes": 320
+    },
+    {
+      "path": "examples/runtime_lock.unresolved.json",
+      "sha256": "b20a85944cb7cd3217d2f3948b0c3bad28d32d7c8c17c529e1ce37e6121f24d0",
+      "size_bytes": 425
+    },
+    {
+      "path": "examples/strategy_mr.json",
+      "sha256": "38b59e93a5c7a295fe09512b97d57a3a42a911dd9e2aad6504e842ce479ab3f3",
+      "size_bytes": 8691
+    }
+  ],
+  "claims_not_made": [
+    "NATIVE_API_COMPATIBILITY",
+    "RUNTIME_CONFORMANCE",
+    "STATISTICAL_FWER_CALIBRATION",
+    "PERFORMANCE",
+    "FORWARD_EDGE",
+    "PROFITABILITY"
+  ]
+}
