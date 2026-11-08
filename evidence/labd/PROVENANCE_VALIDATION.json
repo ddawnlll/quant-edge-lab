@@ -5,10 +5,18 @@
     "normalized_rows": 12418,
     "rows_with_resolved_raw_offset": 12418,
     "rows_with_matching_raw_hash": 12418,
-    "raw_segment_hash_ok": true,
-    "dataset_partition_hash_ok": true,
-    "quality_ref_hash_ok": true,
-    "quality_dataset_hash_ok": true,
+    "checks": {
+      "raw_segment_hash_ok": true,
+      "all_raw_offsets_used": true,
+      "normalized_offsets_unique": true,
+      "row_counts_agree": true,
+      "partition_size_ok": true,
+      "dataset_partition_hash_ok": true,
+      "quality_ref_hash_ok": true,
+      "quality_dataset_hash_ok": true,
+      "quality_clean": true,
+      "time_range_agrees": true
+    },
     "status": "PASS"
   },
   "archive_native": {

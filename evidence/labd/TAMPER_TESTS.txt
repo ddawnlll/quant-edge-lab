@@ -1,0 +1,2 @@
+ok  	github.com/ddawnlll/quant-edge-lab/labd/ledger	0.526s
+ok  	github.com/ddawnlll/quant-edge-lab/labd/artifacts	0.500s

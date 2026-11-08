@@ -43,6 +43,13 @@ def _hash_file(path: Path) -> str:
 def normalize_capture(events_path: str, manifest_path: str, out_root: str, dataset_id: str | None = None) -> dict:
     events = Path(events_path)
     manifest = json.loads(Path(manifest_path).read_text())
+    segment = (manifest.get("segments") or [None])[0]
+    if not segment:
+        raise ValueError("manifest has no raw segment")
+    if segment.get("sha256") != _hash_file(events):
+        raise ValueError("raw segment sha256 does not match manifest")
+    if segment.get("size_bytes") != str(events.stat().st_size):
+        raise ValueError("raw segment size does not match manifest")
     dataset_id = dataset_id or ("DS-" + Path(events_path).stem.upper().replace("-", "_")[:60])
     rows = []
     seen_trades: dict[str, str] = {}

@@ -267,9 +267,9 @@ class SealedRegistry:
         return {**body, "signature": signature, "public_key": self.public_key_hex()}
 
     def verify(self, decision: dict) -> bool:
-        body = {k: v for k, v in decision.items() if k not in ("signature", "public_key")}
-        pub = Ed25519PublicKey.from_public_bytes(bytes.fromhex(decision["public_key"]))
         try:
+            body = {k: v for k, v in decision.items() if k not in ("signature", "public_key")}
+            pub = Ed25519PublicKey.from_public_bytes(bytes.fromhex(decision["public_key"]))
             pub.verify(bytes.fromhex(decision["signature"]), canonical_bytes(body))
             return True
         except Exception:

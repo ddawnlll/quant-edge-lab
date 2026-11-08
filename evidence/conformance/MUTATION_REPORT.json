@@ -25,6 +25,31 @@
       "case": "F23:fee_total",
       "caught": true,
       "mutated_expected": "0.30"
+    },
+    {
+      "case": "F01:step3.aggressor",
+      "caught": true,
+      "mutated_input": "BUY"
+    },
+    {
+      "case": "F09:step1.rate_num",
+      "caught": true,
+      "mutated_input": "2"
+    },
+    {
+      "case": "F13:step0.notional",
+      "caught": true,
+      "mutated_input": "200"
+    },
+    {
+      "case": "F23:step2.fee",
+      "caught": true,
+      "mutated_input": "0.30"
+    },
+    {
+      "case": "F31:step1.qty",
+      "caught": true,
+      "mutated_input": "0"
     }
   ],
   "status": "PASS"

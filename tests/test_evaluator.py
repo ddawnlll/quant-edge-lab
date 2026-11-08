@@ -29,6 +29,10 @@ def test_signed_decision_verifies(tmp_path):
     assert reg.verify(decision)
     tampered = {**decision, "verdict": "EDGE" if decision["verdict"] != "EDGE" else "NO_EDGE"}
     assert not reg.verify(tampered)
+    assert not reg.verify({**decision, "signature": "not-hex"})
+    assert not reg.verify({k: v for k, v in decision.items() if k != "signature"})
+    other = SealedRegistry(str(tmp_path / "other"))
+    assert not reg.verify({**decision, "public_key": other.public_key_hex()})
 
 
 def test_no_consumption_no_decision(tmp_path):

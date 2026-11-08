@@ -42,30 +42,42 @@ def validate_capture(capture_json: str, dataset_dir: str) -> dict:
     table = pq.read_table(ROOT / dataset_dir / "events.parquet").to_pylist()
     resolved = 0
     hash_matches = 0
+    normalized_offsets = set()
     for row in table:
+        normalized_offsets.add(str(row["raw_offset"]))
         rec = records.get(str(row["raw_offset"]))
         if rec is None:
             continue
         resolved += 1
         if rec.get("raw_sha256") == row["raw_sha256"]:
             hash_matches += 1
+    raw_offsets = {str(offset) for offset in records}
     dataset = json.loads((ROOT / dataset_dir / "dataset.json").read_text())
     part = dataset["partitions"][0]
     actual_part_hash = sha(ROOT / dataset_dir / "events.parquet")
     quality = json.loads((ROOT / dataset_dir / "quality.json").read_text())
     quality_ref = dataset["quality_certificate"]
+    checks = {
+        "raw_segment_hash_ok": True,
+        "all_raw_offsets_used": normalized_offsets == raw_offsets,
+        "normalized_offsets_unique": len(normalized_offsets) == len(table),
+        "row_counts_agree": len(table) == len(records) == int(quality["row_count"]) == int(dataset.get("row_count", len(table))),
+        "partition_size_ok": part["size_bytes"] == str((ROOT / dataset_dir / "events.parquet").stat().st_size),
+        "dataset_partition_hash_ok": part["sha256"] == actual_part_hash,
+        "quality_ref_hash_ok": quality_ref["sha256"] == sha(ROOT / dataset_dir / "quality.json"),
+        "quality_dataset_hash_ok": quality["dataset_hash"] == actual_part_hash,
+        "quality_clean": quality["duplicates"] == 0 and quality["conflicts"] == 0 and quality["gap_ranges"] == [],
+        "time_range_agrees": dataset["time_range"] == quality["availability_range"],
+    }
     return {
         "capture": cap["capture_id"],
         "raw_events": len(records),
         "normalized_rows": len(table),
         "rows_with_resolved_raw_offset": resolved,
         "rows_with_matching_raw_hash": hash_matches,
-        "raw_segment_hash_ok": True,
-        "dataset_partition_hash_ok": part["sha256"] == actual_part_hash,
-        "quality_ref_hash_ok": quality_ref["sha256"] == sha(ROOT / dataset_dir / "quality.json"),
-        "quality_dataset_hash_ok": quality["dataset_hash"] == actual_part_hash,
+        "checks": checks,
         "status": "PASS"
-        if resolved == len(table) and hash_matches == len(table) and part["sha256"] == actual_part_hash
+        if resolved == len(table) and hash_matches == len(table) and all(checks.values())
         else "FAIL",
     }
 

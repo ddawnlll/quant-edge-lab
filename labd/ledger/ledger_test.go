@@ -61,3 +61,51 @@ func TestIdempotency(t *testing.T) {
 		t.Fatalf("expected conflict, got %v", err)
 	}
 }
+
+func TestTamperedLedgerIsDetected(t *testing.T) {
+	l := openTest(t)
+	ctx := context.Background()
+	for i := 0; i < 3; i++ {
+		if _, err := l.Append(ctx, Input{EventType: "JobStateChanged", Payload: map[string]any{"n": i}}); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if _, err := l.db.ExecContext(ctx, `UPDATE ledger_events SET payload_hash=? WHERE seq='2'`, string(make([]byte, 64))); err != nil {
+		t.Fatal(err)
+	}
+	if err := l.VerifyChain(ctx); err == nil {
+		t.Fatal("tampered payload hash was not detected")
+	}
+}
+
+func TestDeletedLedgerEventIsDetected(t *testing.T) {
+	l := openTest(t)
+	ctx := context.Background()
+	for i := 0; i < 3; i++ {
+		if _, err := l.Append(ctx, Input{EventType: "JobStateChanged", Payload: map[string]any{"n": i}}); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if _, err := l.db.ExecContext(ctx, `DELETE FROM ledger_events WHERE seq='2'`); err != nil {
+		t.Fatal(err)
+	}
+	if err := l.VerifyChain(ctx); err == nil {
+		t.Fatal("deleted middle event was not detected")
+	}
+}
+
+func TestDeletedFirstLedgerEventIsDetected(t *testing.T) {
+	l := openTest(t)
+	ctx := context.Background()
+	for i := 0; i < 3; i++ {
+		if _, err := l.Append(ctx, Input{EventType: "JobStateChanged", Payload: map[string]any{"n": i}}); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if _, err := l.db.ExecContext(ctx, `DELETE FROM ledger_events WHERE seq='1'`); err != nil {
+		t.Fatal(err)
+	}
+	if err := l.VerifyChain(ctx); err == nil {
+		t.Fatal("deleted first event was not detected")
+	}
+}

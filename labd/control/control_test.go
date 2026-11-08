@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"net"
+	"net/http"
+	"net/http/httptest"
 	"path/filepath"
 	"testing"
 	"time"
@@ -68,6 +70,31 @@ func TestFrameBounds(t *testing.T) {
 	defer conn.Close()
 	if _, err := ReadFrame(conn, 1048576); err != ErrFrameTooLarge {
 		t.Fatalf("oversize not rejected before allocation: %v", err)
+	}
+}
+
+func TestDashboardRoutingAndHeaders(t *testing.T) {
+	s, _ := testServer(t)
+	mux := s.httpMux()
+	rec := httptest.NewRecorder()
+	mux.ServeHTTP(rec, httptest.NewRequest(http.MethodGet, "/", nil))
+	if rec.Code != http.StatusOK || rec.Header().Get("Content-Security-Policy") == "" || rec.Header().Get("X-Content-Type-Options") != "nosniff" {
+		t.Fatalf("dashboard response: %d %v", rec.Code, rec.Header())
+	}
+	rec = httptest.NewRecorder()
+	mux.ServeHTTP(rec, httptest.NewRequest(http.MethodGet, "/v1/not-a-route", nil))
+	if rec.Code != http.StatusNotFound {
+		t.Fatalf("unknown route status = %d", rec.Code)
+	}
+	rec = httptest.NewRecorder()
+	mux.ServeHTTP(rec, httptest.NewRequest(http.MethodPost, "/", nil))
+	if rec.Code != http.StatusMethodNotAllowed {
+		t.Fatalf("POST / status = %d", rec.Code)
+	}
+	rec = httptest.NewRecorder()
+	mux.ServeHTTP(rec, httptest.NewRequest(http.MethodHead, "/", nil))
+	if rec.Code != http.StatusOK {
+		t.Fatalf("HEAD / status = %d", rec.Code)
 	}
 }
 

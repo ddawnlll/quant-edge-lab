@@ -8,13 +8,13 @@ is a scientific promotion.
 | Task | Title | Status | Evidence / note |
 | --- | --- | --- | --- |
 | TASK-01 | Contract SDK and canonical identity | DONE | Python/Go/Rust JCS, decimal domains, schemas, run keys; `evidence/contract/` |
-| TASK-02 | Hand oracle and conformance harness | DONE | 44/44 scenarios, 5/5 mutation catches; `evidence/conformance/` |
-| TASK-03 | Ledger and atomic artifact store | DONE | crash fault matrix, backup/restore, chain verification; `labd/ledger`, `labd/artifacts` tests |
+| TASK-02 | Hand oracle and conformance harness | DONE | 44/44 scenarios, 10/10 mutation catches including mutated inputs; `evidence/conformance/` |
+| TASK-03 | Ledger and atomic artifact store | DONE | crash fault matrix, backup/restore, chain verification, payload/sequence tamper and blob-corruption rejection; `labd/ledger`, `labd/artifacts` tests |
 | TASK-04 | Control protocol and durable queue | DONE | 4-byte framing, peer credentials, leases, idempotency; `labd/control`, `labd/queue` tests |
 | TASK-05 | Raw acquisition and source evidence | DONE | live 20s/240s captures and verified daily archive; `evidence/labd/LIVE_CAPTURE*.json` |
-| TASK-06 | Normalize and PIT datasets | PARTIAL | Arrow/Parquet normalization and manifests work; DuckDB 2.0.0 aborts with illegal instruction on this CPU (no AVX2), so the DuckDB path is blocked and PyArrow is used |
-| TASK-07 | Typed operators and policy evaluator | DONE | 26 operators, DAG validation, EMA/STD reference, leakage negative cases; `policy/rust` tests |
-| TASK-08 | Native feasibility | DONE_WITH_BLOCKED_CAPABILITY | taker/funding/streaming verified; LocalView/L2 queue/isolation BLOCKED_BACKEND; `locks/` |
+| TASK-06 | Normalize and PIT datasets | PARTIAL | Arrow/Parquet normalization verifies the raw segment hash/size before writing and rejects tampered raw input; DuckDB 2.0.0 aborts with illegal instruction on this CPU (no AVX2), so the DuckDB path is blocked and PyArrow is used |
+| TASK-07 | Typed operators and policy evaluator | DONE | 26 operators, DAG validation, EMA/STD reference, leakage negatives, direct arithmetic/window/stateful/boolean operator tests; `policy/rust` tests |
+| TASK-08 | Native feasibility | DONE_WITH_BLOCKED_CAPABILITY | taker/funding/streaming verified; local clone, remote tag, Cargo.lock, source, binary and spike report hashes re-verified; LocalView/L2 queue/isolation BLOCKED_BACKEND; `locks/`, `evidence/native/PIN_VERIFICATION.json` |
 | TASK-09 | Independent accounting implementation | DONE | exact tape reconstruction, residual 0 on native run; `tests/test_accounting.py` |
 | TASK-10 | Venue funding, margin and liquidation profile | PARTIAL | generic synthetic margin path and F11/F12 pass; no venue-certified historical tier/liquidation claim |
 | TASK-11 | Minimum native taker end-to-end slice | PARTIAL | 15 orders / 8 positions native run, sealed job, residual 0; F22 LocalView remains blocked |

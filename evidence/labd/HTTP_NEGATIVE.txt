@@ -1,0 +1,14 @@
+PASS health_no_auth=200
+PASS jobs_no_token=401
+PASS jobs_bad_token=401
+PASS jobs_malformed=400
+PASS unknown_path=404
+PASS post_root=405
+PASS head_root=200
+PASS dashboard_csp=present
+PASS dashboard_nosniff=nosniff
+PASS listen_localhost=OK
+PASS token_mode=600
+PASS socket_mode=660
+PASS db_mode=640
+PASS ledger_verify={"chain":"verified","status":"OK"}

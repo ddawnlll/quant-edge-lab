@@ -504,6 +504,7 @@ func (l *Ledger) VerifyChain(ctx context.Context) error {
 	}
 	defer rows.Close()
 	previous := "0"
+	wantSeq := 1
 	for rows.Next() {
 		var seq, prev, hash, payloadHash, recorded, effective, actor, role, tool, eventType, scope, refsRaw string
 		var program, family, hypothesis, runKey, attempt, supersedes, reason, source sql.NullString
@@ -514,6 +515,10 @@ func (l *Ledger) VerifyChain(ctx context.Context) error {
 		if prev != previous {
 			return fmt.Errorf("chain break at seq %s", seq)
 		}
+		if seq != strconv.Itoa(wantSeq) {
+			return fmt.Errorf("sequence gap at seq %s, want %d", seq, wantSeq)
+		}
+		wantSeq++
 		var refs []any
 		if err := json.Unmarshal([]byte(refsRaw), &refs); err != nil {
 			return err

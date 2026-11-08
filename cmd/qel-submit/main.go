@@ -19,6 +19,15 @@ import (
 	"github.com/ddawnlll/quant-edge-lab/contracts/go/qelcontract"
 )
 
+func isWaitComplete(state string) bool {
+	switch state {
+	case "OUTPUT_SEALED", "DECIDED", "FAILED", "RESOURCE_LIMIT", "ABORTED", "WAITING_DATA", "WAITING_FRESH_OOS", "WAITING_COMPUTE_BUDGET", "WAITING_AUTHORIZATION":
+		return true
+	default:
+		return false
+	}
+}
+
 func hash(b []byte) string {
 	s := sha256.Sum256(b)
 	return hex.EncodeToString(s[:])
@@ -151,7 +160,7 @@ func main() {
 			var status map[string]any
 			_ = json.Unmarshal(data, &status)
 			state, _ := status["state"].(string)
-			if state == "DECIDED" || state == "FAILED" || state == "ABORTED" || state == "RESOURCE_LIMIT" {
+			if isWaitComplete(state) {
 				fmt.Println(strings.TrimSpace(string(data)))
 				return
 			}

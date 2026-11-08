@@ -1,8 +1,8 @@
 # Resume
 
-Updated: 2026-11-08T22:35Z. Repository:
+Updated: 2026-11-08T23:47Z. Repository:
 <https://github.com/ddawnlll/quant-edge-lab> (`main`; see `git log -1` for the current tip
-time of writing `079e174`).
+time of writing).
 
 ## State in one paragraph
 
@@ -18,8 +18,15 @@ zero residual.
 ## Verified now
 
 - Spec ZIP SHA-256 `db18e7a6…fd30`; MANIFEST OK; baseline `71628e4b…d06`.
-- 44/44 fixture scenarios; 5/5 mutation controls; 34 Python tests; Go
-  ledger/artifacts/queue/control/memory/cgroup tests; 3 Rust policy tests.
+- 44/44 fixture scenarios; 10/10 mutation controls; 37 Python tests; Go
+  ledger/artifacts/queue/control/memory/cgroup/submit tests; 7 Rust policy
+  tests. `evidence/labd/VALIDATION_PASS_3.txt` is the latest consolidated pass.
+- 120 randomized canonical vectors match across Python/Go/Rust; native pin
+  hashes and the upstream tag commit were re-verified
+  (`evidence/native/PIN_VERIFICATION.json`).
+- Tamper checks reject ledger payload/payload deletion/first-event deletion,
+  corrupted artifact blobs, malformed evaluator signatures, and raw capture
+  mismatch before normalization.
 - cgroup v2 OOM kill and memory/pids/cpu caps measured; worker crash recovered
   as generation 2 after lease requeue.
 - B6: four generators × 1,000 programs, 0 promotions each, 95% upper
@@ -34,18 +41,16 @@ zero residual.
 2. Wait for the soak to reach 24h at **2026-11-09T22:21:50Z**; a scheduled
    verification (sched_42815c00) wakes at **2026-11-09T22:26:00Z**. Check
    `runtime/soak/soak.jsonl` and mark TASK-27 DONE only then.
-3. Run the full B6 1000-program calibration when the machine is idle:
-   `PYTHONPATH=python .venv/bin/python -m qel.cli calibrate --programs 1000 --out evidence/labd/CALIBRATION_1000.json`
-4. Replace the 12-variant development screen with a real matched-control
+3. Replace the 12-variant development screen with a real matched-control
    family (same calendar, trade count and holding time) and rerun
    `python -m qel.cli screen`.
-5. M4 remains blocked. Only select a different backend if it exposes a true
+4. M4 remains blocked. Only select a different backend if it exposes a true
    separate LocalView, delayed delivery and L2 queue hooks; rerun TASK-08 and
    invalidate dependent certificates.
-6. OS principal separation needs an administrator: create `qel-research`,
+5. OS principal separation needs an administrator: create `qel-research`,
    `qel-eval`, `qel-worker` and move the sealed DB/key/registry to the
    evaluator owner. Record the exact evidence; do not claim isolation before.
-7. Forward calibration needs more observed market time and explicit
+6. Forward calibration needs more observed market time and explicit
    authorization; collect data but do not place real-money orders.
 
 ## Commands
@@ -61,6 +66,7 @@ export PYTHONPATH=python QEL_ROOT=$PWD
 go test ./labd/... -count=1
 .venv/bin/python -m pytest -q tests
 (cd policy/rust && cargo test --release)
+./scripts/validate_extra.sh
 ```
 
 ## Environment notes

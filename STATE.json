@@ -3,7 +3,7 @@
   "spec_version": "1.1.0",
   "spec_package_sha256": "db18e7a6e94b8c9b233a48097040d1a3a6c655ea126d5e6805d67d4f6e91fd30",
   "baseline_sha256": "71628e4b4ceceac3447759cdabab131e16237aff9fd7569a09f1bc61e4d70d06",
-  "updated_utc": "2026-11-08T23:24:45Z",
+  "updated_utc": "2026-11-08T23:47:16Z",
   "host": {
     "os": "Debian GNU/Linux 13 (trixie)",
     "kernel": "6.12.115+deb13.1-amd64",
@@ -41,7 +41,8 @@
       "status": "DONE",
       "evidence": [
         "evidence/conformance/FIXTURE_REPORT.json",
-        "evidence/conformance/MUTATION_REPORT.json"
+        "evidence/conformance/MUTATION_REPORT.json",
+        "evidence/labd/VALIDATION_PASS_3.txt"
       ]
     },
     "TASK-03": {
@@ -49,7 +50,9 @@
       "evidence": [
         "labd/ledger tests",
         "labd/artifacts tests",
-        "evidence/labd/RECOVERY_REPORT.txt"
+        "evidence/labd/RECOVERY_REPORT.txt",
+        "evidence/labd/LEDGER_TESTS.txt",
+        "evidence/labd/TAMPER_TESTS.txt"
       ]
     },
     "TASK-04": {
@@ -70,14 +73,18 @@
     "TASK-06": {
       "status": "PARTIAL",
       "evidence": [
-        "evidence/labd/NORMALIZE.json"
+        "evidence/labd/NORMALIZE.json",
+        "tests/test_normalize.py",
+        "evidence/labd/PROVENANCE_VALIDATION.json"
       ],
       "blocked": "DuckDB illegal instruction"
     },
     "TASK-07": {
       "status": "DONE",
       "evidence": [
-        "policy/rust tests"
+        "policy/rust tests",
+        "policy/rust/tests/operators.rs",
+        "evidence/policy/OPERATOR_TESTS.txt"
       ]
     },
     "TASK-08": {
@@ -85,7 +92,8 @@
       "evidence": [
         "locks/RUNTIME_LOCK.json",
         "locks/CAPABILITY_VERDICT.md",
-        "evidence/native/SPIKE_REPORT.json"
+        "evidence/native/SPIKE_REPORT.json",
+        "evidence/native/PIN_VERIFICATION.json"
       ]
     },
     "TASK-09": {
@@ -215,7 +223,7 @@
       "evidence": [
         "runtime/soak/soak.jsonl"
       ],
-      "elapsed_s": 61
+      "elapsed_s": 4692
     },
     "TASK-28": {
       "status": "BLOCKED",
@@ -291,5 +299,5 @@
       "reason": "15 orders/15 fills/1 day observed, below 200/50/10"
     }
   ],
-  "next_action": "Run the 1000-program B6 calibration, real matched-control family, and wait for 24h soak; keep M4/M6/M7 blocked."
+  "next_action": "Wait for the 24h soak to elapse and verify it; keep M4/M6/M7 blocked and do not claim an edge."
 }

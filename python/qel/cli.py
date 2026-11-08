@@ -99,6 +99,30 @@ def mutations() -> dict:
     mutate("F13", "fee", "0.01")
     mutate("F01", "fills_at_10_qty", "1")
     mutate("F23", "fee_total", "0.30")
+
+    def mutate_input(fixture_id: str, step_index: int, key: str, value):
+        scenario = harness.by_id[fixture_id][0]
+        args = scenario["steps"][step_index]["arguments"]
+        original = args[key]
+        args[key] = value
+        try:
+            result = harness.run(scenario)
+            passed = result["status"] == "PASS"
+        finally:
+            args[key] = original
+        cases.append(
+            {
+                "case": f"{fixture_id}:step{step_index}.{key}",
+                "mutated_input": value,
+                "caught": not passed,
+            }
+        )
+
+    mutate_input("F01", 3, "aggressor", "BUY")
+    mutate_input("F09", 1, "rate_num", "2")
+    mutate_input("F13", 0, "notional", "200")
+    mutate_input("F23", 2, "fee", "0.30")
+    mutate_input("F31", 1, "qty", "0")
     return {"cases": cases, "all_caught": all(c["caught"] for c in cases)}
 
 

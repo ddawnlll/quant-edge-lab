@@ -1,0 +1,14 @@
+=== RUN   TestBackupRestoreChain
+--- PASS: TestBackupRestoreChain (0.13s)
+=== RUN   TestAppendPageAndChain
+--- PASS: TestAppendPageAndChain (0.05s)
+=== RUN   TestIdempotency
+--- PASS: TestIdempotency (0.05s)
+=== RUN   TestTamperedLedgerIsDetected
+--- PASS: TestTamperedLedgerIsDetected (0.06s)
+=== RUN   TestDeletedLedgerEventIsDetected
+--- PASS: TestDeletedLedgerEventIsDetected (0.07s)
+=== RUN   TestDeletedFirstLedgerEventIsDetected
+--- PASS: TestDeletedFirstLedgerEventIsDetected (0.08s)
+PASS
+ok  	github.com/ddawnlll/quant-edge-lab/labd/ledger	0.472s

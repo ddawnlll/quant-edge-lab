@@ -1,6 +1,6 @@
 # Morning Report
 
-Status time: 2026-11-08T22:33Z. This is a development and verification report.
+Status time: 2026-11-08T23:46Z. This is a development and verification report.
 It is not a profitability claim and does not certify a trading edge.
 
 ## Implemented and verified
@@ -9,13 +9,13 @@ It is not a profitability claim and does not certify a trading edge.
 | --- | --- | --- |
 | Bootstrap | DONE | ZIP SHA-256 `db18e7a6…fd30`, MANIFEST OK, baseline `71628e4b…d06`, spec validator PASS |
 | TASK-01 contract SDK | DONE | Python/Go/Rust JCS, decimals, schemas, run keys; cross-language match |
-| TASK-02 fixture oracle | DONE | 44/44 scenarios, 5/5 mutation controls caught |
+| TASK-02 fixture oracle | DONE | 44/44 scenarios, 10/10 mutation controls caught (expected and input) |
 | TASK-03 ledger/artifacts | DONE | crash matrix, orphan/acked checks, backup restore, hash chain |
 | TASK-04 control/queue | DONE | 4-byte framing, peer credentials, leases, idempotency, stale generation |
 | TASK-05 public capture | DONE | 20s and 240s live captures; verified daily archive |
 | TASK-06 normalize/PIT | PARTIAL | Arrow/Parquet + manifests; DuckDB unusable on this CPU |
-| TASK-07 typed policy | DONE | 26 operators, DAG/type/leak checks, EMA48/STD96 reference |
-| TASK-08 native feasibility | DONE_WITH_BLOCKED_CAPABILITY | Nautilus v1.231.0 spike; LocalView/L2 queue blocked |
+| TASK-07 typed policy | DONE | 26 operators, DAG/type/leak checks, EMA48/STD96 reference, direct operator coverage |
+| TASK-08 native feasibility | DONE_WITH_BLOCKED_CAPABILITY | Nautilus v1.231.0 spike and pin re-verified; LocalView/L2 queue blocked |
 | TASK-09 independent accounting | DONE | exact tape reconstruction; native residual 0 |
 | TASK-11 native taker slice | PARTIAL | 15 orders/8 positions live slice; full archive day 307 orders/154 positions, residual 0; F22 blocked |
 | TASK-14 dependent stats | PARTIAL | HAC/bootstrap/IUT/Holm/F27/F28, four-generator B6, and `JOB-STATS-1` sealed through qeld; full MDE/coverage certificate pending |
@@ -71,6 +71,39 @@ tests, and provenance checks. `PROVENANCE_VALIDATION.json` shows 12,418/12,418
 normalized live rows resolving to the raw offset and raw hash, with dataset,
 quality, and archive/native hashes matching.
 
+## Adversarial validation pass 3
+
+`evidence/labd/VALIDATION_PASS_3.txt` records a second independent pass:
+120 randomized canonical JSON vectors match byte-for-byte across Python, Go,
+and Rust; both non-NFC inputs are rejected. The native clone, upstream tag,
+Cargo.lock, spike source, binary, spike report, and fixture corpus all match
+`locks/` (`evidence/native/PIN_VERIFICATION.json`). The suite is 37 Python
+tests, all Go packages, and 7 Rust policy tests.
+
+Negative checks found and fixed real gaps rather than only re-running the
+existing harness:
+
+- ledger `VerifyChain` accepted a deleted first event; sequence continuity is
+  now checked and a tamper test covers first-event deletion.
+- artifact reads already rejected a corrupted blob; a direct test now seals
+  and then corrupts a blob to prove rejection.
+- the evaluator verifier could raise on a missing or malformed signature; it
+  now fails closed and tests cover missing, non-hex, and wrong-key cases.
+- the dashboard catch-all returned HTML with status 200 for unknown paths; it
+  now returns 404, rejects non-GET/HEAD, and sets CSP and nosniff headers.
+- `qel-submit -wait` never treated `OUTPUT_SEALED` as complete and hung; the
+  fixed binary sealed `JOB-VAL2-1794181441` and exited 0 in 12 s.
+- normalization now verifies the raw segment hash and size before writing and
+  a test confirms tampered input is rejected.
+
+The real HTTP negatives are recorded in `evidence/labd/HTTP_NEGATIVE.txt`:
+missing and wrong bearer tokens return 401, malformed JSON returns 400,
+unknown paths 404, non-GET root 405, HEAD 200, dashboard CSP/nosniff present,
+listener is `127.0.0.1:8787`, and token/socket/DB modes are 600/660/640.
+Fixture mutation controls now catch 10/10 cases. Provenance checks additionally
+prove every raw offset is used exactly once and row counts, partition size,
+quality reference, time range, and clean-quality verdict agree.
+
 ## Measured resources
 
 - Host: 6 vCPU, 11.7 GiB RAM, 132 GiB free (8% disk used).
@@ -85,8 +118,8 @@ quality, and archive/native hashes matching.
 - Archive day: 358,200 events (284,672 observed trades, 72,084 synthetic L1
   quotes, 1,440 marks, 4 funding settlements), 307 orders, 154 positions,
   8.5 s, 113 MiB RSS; independent accounting residual 0.
-- Python tests: 36 passed. Go packages: ledger, artifacts, queue, control,
-  memory, cgroup pass. Rust policy: 3 tests pass.
+- Python tests: 37 passed. Go packages: ledger, artifacts, queue, control,
+  memory, cgroup, submit pass. Rust policy: 7 tests pass.
 
 ## Running validations
 
