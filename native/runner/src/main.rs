@@ -341,7 +341,20 @@ fn read_events(path: &str, id: InstrumentId) -> Result<Vec<Data>> {
     Ok(out)
 }
 
+fn peak_rss_kb() -> u64 {
+    std::fs::read_to_string("/proc/self/status")
+        .ok()
+        .and_then(|text| {
+            text.lines()
+                .find(|line| line.starts_with("VmHWM:"))
+                .and_then(|line| line.split_whitespace().nth(1))
+                .and_then(|value| value.parse().ok())
+        })
+        .unwrap_or(0)
+}
+
 fn main() -> Result<()> {
+    let started = std::time::Instant::now();
     let args: Vec<String> = std::env::args().collect();
     let mut events = None;
     let mut strategy_path = None;
@@ -418,6 +431,8 @@ fn main() -> Result<()> {
         "pnl_total": result.summary.get("PnL (total)").cloned(),
         "tape_extra": tape,
         "events_path": events_path,
+        "elapsed_ms": started.elapsed().as_millis() as u64,
+        "peak_rss_kb": peak_rss_kb(),
     });
     if let Some(path) = out_path {
         fs::write(path, serde_json::to_string_pretty(&output)? + "\n")?;
