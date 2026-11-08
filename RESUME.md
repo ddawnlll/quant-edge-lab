@@ -22,7 +22,10 @@ zero residual.
   ledger/artifacts/queue/control/memory/cgroup tests; 3 Rust policy tests.
 - cgroup v2 OOM kill and memory/pids/cpu caps measured; worker crash recovered
   as generation 2 after lease requeue.
-- Bounded null calibration: 100 programs, 0 promotions, 95% upper 0.0295.
+- B6: four generators × 1,000 programs, 0 promotions each, 95% upper
+  0.00299; injected-effect power/MDE grid still open.
+- Archive day: 358,200 events, 307 orders, 154 positions, residual 0. The L1
+  quote is an explicit synthetic assumption around observed trades.
 
 ## Exact next actions
 

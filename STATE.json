@@ -3,7 +3,7 @@
   "spec_version": "1.1.0",
   "spec_package_sha256": "db18e7a6e94b8c9b233a48097040d1a3a6c655ea126d5e6805d67d4f6e91fd30",
   "baseline_sha256": "71628e4b4ceceac3447759cdabab131e16237aff9fd7569a09f1bc61e4d70d06",
-  "updated_utc": "2026-11-08T22:34:30Z",
+  "updated_utc": "2026-11-08T23:13:30Z",
   "host": {
     "os": "Debian GNU/Linux 13 (trixie)",
     "kernel": "6.12.115+deb13.1-amd64",
@@ -106,7 +106,8 @@
       "status": "PARTIAL",
       "evidence": [
         "evidence/labd/NATIVE_RUN_240S.json",
-        "evidence/labd/NATIVE_ACCOUNTING_240S.json",
+        "evidence/labd/NATIVE_ARCHIVE_DAY.json",
+        "evidence/labd/NATIVE_ARCHIVE_ACCOUNTING.json",
         "runtime job JOB-REPLAY-3"
       ]
     },
@@ -119,13 +120,17 @@
     "TASK-13": {
       "status": "PARTIAL",
       "evidence": [
-        "evidence/labd/SCREEN.json"
+        "evidence/labd/SCREEN.json",
+        "evidence/labd/SCREEN_DAY.json",
+        "evidence/labd/CONTROLS_DAY.json",
+        "evidence/labd/FAMILY_REPORT_DAY.json"
       ]
     },
     "TASK-14": {
       "status": "PARTIAL",
       "evidence": [
-        "tests/test_stats.py"
+        "tests/test_stats.py",
+        "evidence/labd/CALIBRATION_B6.json"
       ]
     },
     "TASK-15": {
@@ -198,7 +203,7 @@
     "TASK-26": {
       "status": "PARTIAL",
       "evidence": [
-        "evidence/labd/CALIBRATION.json"
+        "evidence/labd/CALIBRATION_B6.json"
       ]
     },
     "TASK-27": {

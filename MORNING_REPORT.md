@@ -57,7 +57,7 @@ SQLite: 3.54.1 source `2026-10-16 14:45:20 555e07ef…`.
 - Archive day: 358,200 events (284,672 observed trades, 72,084 synthetic L1
   quotes, 1,440 marks, 4 funding settlements), 307 orders, 154 positions,
   8.5 s, 113 MiB RSS; independent accounting residual 0.
-- Python tests: 34 passed. Go packages: ledger, artifacts, queue, control,
+- Python tests: 36 passed. Go packages: ledger, artifacts, queue, control,
   memory, cgroup pass. Rust policy: 3 tests pass.
 
 ## Running validations
