@@ -1,0 +1,22 @@
+{
+  "status": "UNRESOLVED",
+  "go_version": "go1.27.3",
+  "rust_toolchain": "rustc 1.99.1 (58cf8f9c3 2026-10-13)",
+  "python_version": "3.13.5",
+  "sqlite_source_id": null,
+  "nautilus_git_commit": "27a8e54e7ac3c57d6cbf8891f0283dfbaee97317",
+  "hftbacktest_git_commit": null,
+  "duckdb_version": null,
+  "arrow_version": null,
+  "parquet_version": null,
+  "os_image_digest": null,
+  "architecture": "X86_64",
+  "lock_artifact_hashes": [
+    "d018d97bf6621a56235e69c34f5dfd24534b157e1a7cf7687e831f306432f1d1",
+    "1ffd3c21eac12e80e8c33f10900b175391b74446eac6dc6f53228f8ebca2c413",
+    "5b85c36cddc00b5c8ee75f76847fe9066371bd36cd860665759662a3ba9262b0",
+    "e1d538c366b5a7a19f8637968c1b331a79e7bf5b394d36e49925d1c91f2fe383"
+  ],
+  "native_spike_report_hash": "5b85c36cddc00b5c8ee75f76847fe9066371bd36cd860665759662a3ba9262b0",
+  "verified_profile_ids": ["TAKER_L1_FUNDING_STREAMING"]
+}

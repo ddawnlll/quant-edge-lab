@@ -1,0 +1,33 @@
+{
+  "account_balance_total": 999.985996,
+  "blocked_capabilities": [
+    "CAP-LOCAL-VIEW",
+    "CAP-L2-QUEUE",
+    "CAP-ISOLATED"
+  ],
+  "elapsed_ms": 23,
+  "funding_adjustments": 1,
+  "hooks": {
+    "delayed_local_view": false,
+    "funding_update": true,
+    "native_cache_isolated_from_strategy": false,
+    "pure_rust_no_python": true,
+    "queue_model": false,
+    "separate_exchange_fill_callback": false,
+    "streaming_input_release": true
+  },
+  "iterations": 5,
+  "peak_rss_kb": 15644,
+  "position_after_chunk_1": 1,
+  "position_qty_end": 0.1,
+  "profile": "TAKER_L1_FUNDING_STREAMING",
+  "spike": "qel-native-nautilus",
+  "status": "PASS",
+  "total_orders": 1,
+  "total_positions": 1,
+  "verified_capabilities": [
+    "CAP-TAKER-REPLAY",
+    "CAP-FUNDING",
+    "CAP-STREAMING"
+  ]
+}

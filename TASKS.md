@@ -12,7 +12,7 @@ Status values: `DONE` (acceptance evidence recorded), `IN_PROGRESS`,
 | TASK-05 | Raw acquisition and source evidence | M1 | NOT_STARTED | Public data only |
 | TASK-06 | Normalize and PIT datasets | M1 | NOT_STARTED | DuckDB/Arrow streaming |
 | TASK-07 | Typed operators and policy evaluator | M1 | NOT_STARTED | Rust |
-| TASK-08 | Native feasibility before backend commitment | M0 | IN_PROGRESS | Nautilus v1.231.0 spike building; lock under `locks/` |
+| TASK-08 | Native feasibility before backend commitment | M0 | DONE | `locks/`: pinned Nautilus v1.231.0; taker/funding/streaming verified; LocalView/L2 queue BLOCKED_BACKEND |
 | TASK-09 | Independent accounting implementation | M1 | NOT_STARTED | Python exact integer/Fraction oracle |
 | TASK-10 | Venue funding, margin and liquidation profile | M4 | NOT_STARTED | Generic synthetic profile only until verified |
 | TASK-11 | Minimum native taker end-to-end slice | M1 | NOT_STARTED | Depends on TASK-08 verdict |

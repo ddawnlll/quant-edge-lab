@@ -1,0 +1,18 @@
+{
+  "source_repository": "https://github.com/nautechsystems/nautilus_trader",
+  "tag": "v1.231.0",
+  "commit": "27a8e54e7ac3c57d6cbf8891f0283dfbaee97317",
+  "crate_workspace_version": "0.61.0",
+  "license": "LGPL-3.0-or-later",
+  "rust_toolchain": "1.99.1",
+  "cargo": "1.99.1",
+  "target": "x86_64-unknown-linux-gnu",
+  "profile": "release",
+  "dependency_count": 177,
+  "dependency_lock_hash": "d018d97bf6621a56235e69c34f5dfd24534b157e1a7cf7687e831f306432f1d1",
+  "binary_sha256": "e1d538c366b5a7a19f8637968c1b331a79e7bf5b394d36e49925d1c91f2fe383",
+  "binary_bytes": 12079632,
+  "fixture_corpus_sha256": "99e44c42f20971a93f4f7e9b1c7af5e86dc7ea4ad6a872dfd970b94ba0bc1e0e",
+  "build_command": "CARGO_TARGET_DIR=/home/quant/quant/.build-cache/qel-native cargo build --release",
+  "source_tree_dirty": false
+}

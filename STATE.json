@@ -17,7 +17,7 @@
     "rustc": "1.99.1"
   },
   "milestones": {
-    "M0": "IN_PROGRESS",
+    "M0": "DONE_WITH_BLOCKED_CAPABILITIES",
     "M1": "NOT_STARTED",
     "M2": "NOT_STARTED",
     "M3": "NOT_STARTED",
@@ -30,10 +30,10 @@
   "tasks": {
     "TASK-01": {"status": "DONE", "evidence": ["evidence/contract/", "evidence/conformance/FIXTURE_REPORT.json"]},
     "TASK-02": {"status": "DONE", "evidence": ["evidence/conformance/FIXTURE_REPORT.json", "evidence/conformance/MUTATION_REPORT.json"]},
-    "TASK-08": {"status": "IN_PROGRESS", "evidence": [], "note": "Nautilus v1.231.0 pure-Rust spike building"}
+    "TASK-08": {"status": "DONE", "evidence": ["locks/RUNTIME_LOCK.json", "locks/CAPABILITY_VERDICT.md", "evidence/native/SPIKE_REPORT.json"], "note": "CAP-TAKER-REPLAY, CAP-FUNDING, CAP-STREAMING verified; CAP-LOCAL-VIEW, CAP-L2-QUEUE, CAP-ISOLATED blocked"}
   },
   "services": {},
   "running_validations": [],
   "blockers": [],
-  "next_action": "Complete TASK-08 spike, write RuntimeLock and capability verdict, then TASK-03/04 ledger and queue."
+  "next_action": "Implement TASK-03 ledger/artifact store and TASK-04 control protocol/queue in Go, then TASK-05/06 data and TASK-07/09/11 M1 slice."
 }

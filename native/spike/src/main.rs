@@ -18,7 +18,7 @@ use nautilus_model::{
     enums::{AccountType, BookType, OmsType, OrderSide},
     identifiers::{InstrumentId, StrategyId, Venue},
     instruments::{Instrument, InstrumentAny, stubs::crypto_perpetual_ethusdt},
-    types::{Money, Price, Quantity},
+    types::{Currency, Money, Price, Quantity},
 };
 use nautilus_trading::{Strategy, StrategyConfig, StrategyCore, nautilus_strategy};
 
@@ -170,14 +170,23 @@ fn main() -> anyhow::Result<()> {
         let positions = cache.positions_open(None, Some(&instrument_id), None, None, None);
         let qty = positions.first().map_or(0.0, |p| p.quantity.as_f64());
         let adjustments = positions.first().map_or(0, |p| p.adjustments.len());
-        let account = cache
-            .accounts()
+        let account = positions
             .first()
-            .map(|a| a.balance(None).map_or(0.0, |b| b.total.as_f64()))
+            .and_then(|p| cache.account(&p.account_id))
+            .and_then(|a| a.balance(Some(Currency::USDT())).map(|b| b.total.as_f64()))
             .unwrap_or(0.0);
         (qty, adjustments, account)
     };
 
+    let peak_rss_kb: u64 = std::fs::read_to_string("/proc/self/status")
+        .ok()
+        .and_then(|text| {
+            text.lines()
+                .find(|line| line.starts_with("VmHWM:"))
+                .and_then(|line| line.split_whitespace().nth(1))
+                .and_then(|value| value.parse().ok())
+        })
+        .unwrap_or(0);
     let result = engine.get_result();
     let output = serde_json::json!({
         "spike": "qel-native-nautilus",
@@ -191,6 +200,7 @@ fn main() -> anyhow::Result<()> {
         "funding_adjustments": adjustments,
         "account_balance_total": balance,
         "elapsed_ms": started.elapsed().as_millis() as u64,
+        "peak_rss_kb": peak_rss_kb,
         "hooks": {
             "pure_rust_no_python": true,
             "streaming_input_release": true,
@@ -203,6 +213,10 @@ fn main() -> anyhow::Result<()> {
         "blocked_capabilities": ["CAP-LOCAL-VIEW", "CAP-L2-QUEUE", "CAP-ISOLATED"],
         "verified_capabilities": ["CAP-TAKER-REPLAY", "CAP-FUNDING", "CAP-STREAMING"]
     });
-    println!("{}", serde_json::to_string_pretty(&output)?);
+    let text = serde_json::to_string_pretty(&output)?;
+    match std::env::args().nth(1) {
+        Some(path) => std::fs::write(path, text + "\n")?,
+        None => println!("{text}"),
+    }
     Ok(())
 }
