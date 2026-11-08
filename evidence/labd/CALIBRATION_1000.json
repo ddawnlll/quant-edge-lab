@@ -1,0 +1,9 @@
+{
+  "binomial_upper_95": 0.002991249545095295,
+  "false_promotion_rate": 0.0,
+  "note": "bounded local calibration; not the full B6 1000-program evidence",
+  "pass": true,
+  "programs": 1000,
+  "promotions": 0,
+  "threshold": 0.075
+}
