@@ -49,13 +49,17 @@ SQLite: 3.54.1 source `2026-10-16 14:45:20 555e07ef…`.
 - Native spike: 23 ms, 15.6 MiB peak RSS, 12.1 MB release binary.
 - Conformance job: cgroup peak 77.4 MiB, pids peak 12, CPU 9.7 s.
 - Capture job: cgroup peak 31.5 MiB, pids peak 7.
+- Native replay scale: 12,418 events 408 ms / 20 MiB RSS; 124,180 events
+  3.15 s / 53 MiB; 1,241,800 events 29.8 s / 367 MiB. The 100x corpus is a
+  time-shifted repetition for scale/state growth only.
 - Python tests: 34 passed. Go packages: ledger, artifacts, queue, control,
   memory, cgroup pass. Rust policy: 3 tests pass.
 
 ## Running validations
 
 `SOAK-24H` is RUNNING (started 2026-11-08T22:21:50Z). It has not elapsed and
-must not be reported as complete.
+must not be reported as complete. `B6-1000` is RUNNING as a bounded AR1 null
+calibration; it is not the full four-generator B6 evidence.
 
 ## Blockers
 
