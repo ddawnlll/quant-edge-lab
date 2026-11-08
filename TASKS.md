@@ -20,7 +20,7 @@ is a scientific promotion.
 | TASK-11 | Minimum native taker end-to-end slice | PARTIAL | 15 orders / 8 positions native run, sealed job, residual 0; F22 LocalView remains blocked |
 | TASK-12 | Preregistration and walk-forward datasets | PARTIAL | split/control declarations implemented; one full archive day plus 240s live capture, but no multi-day walk-forward evidence |
 | TASK-13 | Matched controls and batch screen | PARTIAL | 12 variants + 8 matched controls on the archive day; candidate mean -7.16 vs control -14.59, verdict INSUFFICIENT_EVIDENCE |
-| TASK-14 | Dependent stats and frozen protocols | PARTIAL | HAC, stationary bootstrap, IUT, Holm and F27/F28 tests; four-generator B6 complete; injected-effect power/MDE grid pending |
+| TASK-14 | Dependent stats and frozen protocols | PARTIAL | HAC, stationary bootstrap, IUT, Holm and F27/F28 tests; four-generator B6 complete; local power grid shows 0 power at tested effects (conservative MC/Holm) |
 | TASK-15 | Evaluator principal and private consumption registry | PARTIAL | separate private DB, key 0600, pre-access receipt and anchor; distinct OS owner unavailable without sudo |
 | TASK-16 | Signed scientific evaluator | PARTIAL | Ed25519 decision signing and verification; no fresh cohort may be evaluated |
 | TASK-17 | Passive queue and composite execution | BLOCKED | CAP-L2-QUEUE missing hook in pinned Nautilus; fixture F02 only |
@@ -32,7 +32,7 @@ is a scientific promotion.
 | TASK-23 | cgroup and economic admission | DONE | delegated cgroup v2; OOM kill, memory/pids/cpu limits and admission tested |
 | TASK-24 | Operator dashboard and controls | DONE | localhost dashboard + SSE + health; read-only principal cannot control |
 | TASK-25 | Benchmark corpus and performance evidence | PARTIAL | native spike and job timings recorded; B0-B4 full corpus not run |
-| TASK-26 | Statistical null and injection calibration | PARTIAL | four generators × 1,000 programs, 0 promotions each, 95% upper 0.00299; injected-effect power/MDE grid still pending |
+| TASK-26 | Statistical null and injection calibration | PARTIAL | four generators × 1,000 programs, 0 promotions each, 95% upper 0.00299; power grid executed (0/30 at 0.0–0.6 daily effect), full MDE/coverage certificate pending |
 | TASK-27 | Continuous research soak | RUNNING | systemd `qel-soak` samples every 60s; 24h not yet elapsed |
 | TASK-28 | First frozen confirmation cohort | BLOCKED | `WAITING_FRESH_OOS`; no untouched window and no authorization |
 | TASK-29 | Forward calibration protocol and evidence | BLOCKED | `INSUFFICIENT_OBSERVATION`; 15 orders/15 fills/1 day vs 200/50/10 |

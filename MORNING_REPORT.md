@@ -24,7 +24,7 @@ It is not a profitability claim and does not certify a trading edge.
 | TASK-21/22 memory/agent | DONE | FTS claims, CAS assignment, stale rejection, rebuild |
 | TASK-23 cgroup admission | DONE | real OOM kill, memory/pids/cpu caps, heavy-token and disk admission |
 | TASK-24 dashboard | DONE | localhost UI, SSE, health, read-only vs write-token split |
-| TASK-26 null calibration | PARTIAL | 4 generators × 1,000 null programs, 0 promotions each, 95% upper 0.00299; injected-effect power grid pending |
+| TASK-26 null calibration | PARTIAL | 4 generators × 1,000 null programs, 0 promotions each; local power grid 0/30 at tested effects |
 | TASK-27 soak | RUNNING | 24h sampler started 22:21:50Z; elapsed time not yet satisfied |
 
 ## Active services
@@ -65,7 +65,7 @@ SQLite: 3.54.1 source `2026-10-16 14:45:20 555e07ef…`.
 `SOAK-24H` is RUNNING (started 2026-11-08T22:21:50Z). It has not elapsed and
 must not be reported as complete. B6 completed four generators × 1,000 null
 programs with zero promotions each (95% upper 0.00299); the injected-effect
-power/MDE grid remains open.
+power/MDE grid was executed locally and found zero power at the tested effects; a full MDE/coverage certificate remains open.
 
 ## Blockers
 

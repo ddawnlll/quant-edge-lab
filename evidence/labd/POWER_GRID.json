@@ -1,0 +1,30 @@
+{
+  "note": "local injected-effect power grid; not a full MDE/coverage certificate",
+  "rows": [
+    {
+      "effect_daily": 0.0,
+      "power": 0.0,
+      "programs": 30,
+      "promotions": 0
+    },
+    {
+      "effect_daily": 0.2,
+      "power": 0.0,
+      "programs": 30,
+      "promotions": 0
+    },
+    {
+      "effect_daily": 0.4,
+      "power": 0.0,
+      "programs": 30,
+      "promotions": 0
+    },
+    {
+      "effect_daily": 0.6,
+      "power": 0.0,
+      "programs": 30,
+      "promotions": 0
+    }
+  ],
+  "status": "PASS"
+}

@@ -19,7 +19,7 @@ from .prepare.native_input import to_native_input
 from .prepare.normalize import normalize_capture
 from .research.control import matched_controls
 from .research.screen import run_variants
-from .stats.core import calibrate_nulls
+from .stats.core import calibrate_nulls, power_grid
 
 
 def _write(path: str | None, payload: dict) -> None:
@@ -137,6 +137,10 @@ def main(argv: list[str] | None = None) -> int:
     p = sub.add_parser("accounting", help="reconstruct an economic tape independently")
     p.add_argument("--tape", required=True)
 
+    p = sub.add_parser("power", help="injected-effect power grid")
+    p.add_argument("--programs", type=int, default=200)
+    p.add_argument("--out")
+
     p = sub.add_parser("calibrate", help="statistical null calibration")
     p.add_argument("--programs", type=int, default=100)
     p.add_argument("--generator", action="append", default=None)
@@ -198,6 +202,10 @@ def main(argv: list[str] | None = None) -> int:
         tape = json.loads(Path(args.tape).read_text())
         payload = reconstruct(tape)
         _write(None, payload)
+        return 0
+    if args.command == "power":
+        payload = power_grid(programs=args.programs)
+        _write(args.out, payload)
         return 0
     if args.command == "calibrate":
         payload = calibrate_nulls(programs=args.programs, generators=args.generator)

@@ -190,14 +190,14 @@ def stationarity_screen(series: np.ndarray, threshold: float = 3.0) -> bool:
     return diff / scale <= threshold
 
 
-def null_pipeline(series: np.ndarray, m: int = 4, controls: int = 2, alpha: float = 0.025, b: int = 200, seed: int = 0) -> bool:
+def null_pipeline(series: np.ndarray, m: int = 4, controls: int = 2, alpha: float = 0.025, b: int = 200, seed: int = 0, effect: float = 0.0) -> bool:
     """One full null program: screen m candidates + controls, IUT, Holm."""
     if not stationarity_screen(series):
         return False
     rng = np.random.default_rng(seed)
     pvals = []
     for i in range(m):
-        candidate = series + rng.normal(0, 0.05, size=len(series))
+        candidate = series + effect + rng.normal(0, 0.05, size=len(series))
         control = rng.normal(0, 1, size=len(series))
         try:
             p_c = studentized_bootstrap_p(candidate, b=b, seed=seed + i, batch=32).p_upper
@@ -234,6 +234,36 @@ def null_generator(name: str, n: int, seed: int) -> np.ndarray:
         second = rng.normal(0.9, 1.2, n - n // 2)
         return np.concatenate([first, second])
     raise ValueError(f"unknown null generator {name}")
+
+
+def _power_program(args: tuple[float, int, int, int, int, int]) -> bool:
+    effect, i, n, m, b, seed = args
+    series = null_generator("ar1", n, seed + i)
+    return null_pipeline(series, m=m, b=b, seed=seed + i, effect=effect)
+
+
+def power_grid(
+    effects: list[float] | None = None,
+    programs: int = 30,
+    n: int = 240,
+    m: int = 4,
+    b: int = 500,
+    seed: int = 0,
+    workers: int | None = None,
+) -> dict:
+    import os
+    from concurrent.futures import ProcessPoolExecutor
+
+    effects = effects or [0.0, 0.2, 0.4, 0.6]
+    if workers is None:
+        workers = min(6, os.cpu_count() or 1)
+    rows = []
+    with ProcessPoolExecutor(max_workers=workers) as pool:
+        for effect in effects:
+            tasks = [(effect, i, n, m, b, seed) for i in range(programs)]
+            promoted = sum(1 for result in pool.map(_power_program, tasks) if result)
+            rows.append({"effect_daily": effect, "programs": programs, "promotions": promoted, "power": promoted / programs})
+    return {"status": "PASS", "rows": rows, "note": "local injected-effect power grid; not a full MDE/coverage certificate"}
 
 
 def _null_program(args: tuple[str, int, int, int, int, int]) -> bool:
