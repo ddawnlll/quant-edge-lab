@@ -1,0 +1,33 @@
+{
+  "events": 12418,
+  "events_path": "data/native/DS-BTCUSDT-LIVE-240S/events.jsonl",
+  "iterations": 12418,
+  "pnl_total": null,
+  "profile": "TAKER_L1_FUNDING_STREAMING",
+  "status": "PASS",
+  "tape": [
+    {
+      "cash": "1000",
+      "type": "SET_WALLET"
+    },
+    {
+      "fee": "0.03013036",
+      "price": "75325.9",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794174469987000000",
+      "type": "FILL"
+    },
+    {
+      "price": "75264.65",
+      "type": "MARK"
+    },
+    {
+      "close_cost": "0",
+      "type": "END_FOLD"
+    }
+  ],
+  "tape_extra": [],
+  "total_orders": 1,
+  "total_positions": 1
+}

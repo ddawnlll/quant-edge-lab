@@ -1,0 +1,97 @@
+{
+  "events": 12418,
+  "events_path": "data/native/DS-BTCUSDT-LIVE-240S/events.jsonl",
+  "iterations": 12418,
+  "pnl_total": null,
+  "profile": "TAKER_L1_FUNDING_STREAMING",
+  "status": "PASS",
+  "tape": [
+    {
+      "cash": "1000",
+      "type": "SET_WALLET"
+    },
+    {
+      "fee": "0.03016952",
+      "price": "75423.8",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794174320501000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03017888",
+      "price": "75447.2",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794174330413000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03014712",
+      "price": "75367.8",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794174407859000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.0301534",
+      "price": "75383.5",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794174412601000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03016728",
+      "price": "75418.2",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794174425727000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.0301618",
+      "price": "75404.5",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794174432384000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.0301402",
+      "price": "75350.5",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794174464057000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03010584",
+      "price": "75264.6",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794174476060000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03010588",
+      "price": "75264.7",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794174478727000000",
+      "type": "FILL"
+    },
+    {
+      "price": "75264.65",
+      "type": "MARK"
+    },
+    {
+      "close_cost": "0",
+      "type": "END_FOLD"
+    }
+  ],
+  "tape_extra": [],
+  "total_orders": 9,
+  "total_positions": 5
+}

@@ -16,6 +16,7 @@ from .contract import canonical_bytes, hash_jcs, repo_root
 from .contract.runkey import RUN_KEY_OBJECT_KEYS, run_key
 from .prepare.native_input import to_native_input
 from .prepare.normalize import normalize_capture
+from .research.screen import run_variants
 
 
 def _write(path: str | None, payload: dict) -> None:
@@ -126,6 +127,12 @@ def main(argv: list[str] | None = None) -> int:
     p = sub.add_parser("accounting", help="reconstruct an economic tape independently")
     p.add_argument("--tape", required=True)
 
+    p = sub.add_parser("screen", help="run the frozen development variant family")
+    p.add_argument("--binary", required=True)
+    p.add_argument("--events", required=True)
+    p.add_argument("--strategy", required=True)
+    p.add_argument("--out", required=True)
+
     args = parser.parse_args(argv)
     if args.command == "fixtures":
         harness = Harness()
@@ -164,6 +171,11 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "accounting":
         tape = json.loads(Path(args.tape).read_text())
         payload = reconstruct(tape)
+        _write(None, payload)
+        return 0
+    if args.command == "screen":
+        base = json.loads(Path(args.strategy).read_text())
+        payload = run_variants(args.binary, args.events, base, args.out, 12)
         _write(None, payload)
         return 0
     return 2

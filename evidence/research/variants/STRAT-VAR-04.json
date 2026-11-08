@@ -1,0 +1,366 @@
+{
+  "schema_version": "1.1.0",
+  "strategy_id": "STRAT-VAR-04",
+  "hypothesis_id": "HYP-TAKER-1S",
+  "operator_set_version": "1.1.0",
+  "feature_dag": [
+    {
+      "node_id": "N-MID",
+      "operator_id": "OP-INPUT",
+      "inputs": [],
+      "params": {
+        "field": "MID_CLOSE"
+      },
+      "output_type": "F64",
+      "fit_scope": "NONE",
+      "null_policy": "PROPAGATE_ABSTAIN",
+      "clock": "BAR_CLOSE_DELIVERY"
+    },
+    {
+      "node_id": "N-LOG",
+      "operator_id": "OP-LOG",
+      "inputs": [
+        "N-MID"
+      ],
+      "params": {},
+      "output_type": "F64",
+      "fit_scope": "NONE",
+      "null_policy": "PROPAGATE_ABSTAIN",
+      "clock": "BAR_CLOSE_DELIVERY"
+    },
+    {
+      "node_id": "N-EMA",
+      "operator_id": "OP-EMA",
+      "inputs": [
+        "N-LOG"
+      ],
+      "params": {
+        "window": 8
+      },
+      "output_type": "F64",
+      "fit_scope": "NONE",
+      "null_policy": "PROPAGATE_ABSTAIN",
+      "clock": "BAR_CLOSE_DELIVERY"
+    },
+    {
+      "node_id": "N-X",
+      "operator_id": "OP-SUB",
+      "inputs": [
+        "N-LOG",
+        "N-EMA"
+      ],
+      "params": {},
+      "output_type": "F64",
+      "fit_scope": "NONE",
+      "null_policy": "PROPAGATE_ABSTAIN",
+      "clock": "BAR_CLOSE_DELIVERY"
+    },
+    {
+      "node_id": "N-STD",
+      "operator_id": "OP-STD",
+      "inputs": [
+        "N-X"
+      ],
+      "params": {
+        "window": 24,
+        "ddof": 1
+      },
+      "output_type": "F64",
+      "fit_scope": "NONE",
+      "null_policy": "PROPAGATE_ABSTAIN",
+      "clock": "BAR_CLOSE_DELIVERY"
+    },
+    {
+      "node_id": "N-SIGMA",
+      "operator_id": "OP-LAG",
+      "inputs": [
+        "N-STD"
+      ],
+      "params": {
+        "periods": 1
+      },
+      "output_type": "F64",
+      "fit_scope": "NONE",
+      "null_policy": "PROPAGATE_ABSTAIN",
+      "clock": "BAR_CLOSE_DELIVERY"
+    },
+    {
+      "node_id": "N-Z",
+      "operator_id": "OP-DIV",
+      "inputs": [
+        "N-X",
+        "N-SIGMA"
+      ],
+      "params": {},
+      "output_type": "F64",
+      "fit_scope": "NONE",
+      "null_policy": "PROPAGATE_ABSTAIN",
+      "clock": "BAR_CLOSE_DELIVERY"
+    },
+    {
+      "node_id": "N-ER",
+      "operator_id": "OP-ER",
+      "inputs": [
+        "N-LOG"
+      ],
+      "params": {
+        "window": 5
+      },
+      "output_type": "F64",
+      "fit_scope": "NONE",
+      "null_policy": "PROPAGATE_ABSTAIN",
+      "clock": "BAR_CLOSE_DELIVERY"
+    },
+    {
+      "node_id": "N-K",
+      "operator_id": "OP-CONST",
+      "inputs": [],
+      "params": {
+        "value": "1.5"
+      },
+      "output_type": "F64",
+      "fit_scope": "NONE",
+      "null_policy": "PROPAGATE_ABSTAIN",
+      "clock": "BAR_CLOSE_DELIVERY"
+    },
+    {
+      "node_id": "N-NEG",
+      "operator_id": "OP-CONST",
+      "inputs": [],
+      "params": {
+        "value": "-1"
+      },
+      "output_type": "F64",
+      "fit_scope": "NONE",
+      "null_policy": "PROPAGATE_ABSTAIN",
+      "clock": "BAR_CLOSE_DELIVERY"
+    },
+    {
+      "node_id": "N-MINUS-K",
+      "operator_id": "OP-MUL",
+      "inputs": [
+        "N-K",
+        "N-NEG"
+      ],
+      "params": {},
+      "output_type": "F64",
+      "fit_scope": "NONE",
+      "null_policy": "PROPAGATE_ABSTAIN",
+      "clock": "BAR_CLOSE_DELIVERY"
+    },
+    {
+      "node_id": "N-B",
+      "operator_id": "OP-CONST",
+      "inputs": [],
+      "params": {
+        "value": "0.5"
+      },
+      "output_type": "F64",
+      "fit_scope": "NONE",
+      "null_policy": "PROPAGATE_ABSTAIN",
+      "clock": "BAR_CLOSE_DELIVERY"
+    },
+    {
+      "node_id": "N-MINUS-B",
+      "operator_id": "OP-MUL",
+      "inputs": [
+        "N-B",
+        "N-NEG"
+      ],
+      "params": {},
+      "output_type": "F64",
+      "fit_scope": "NONE",
+      "null_policy": "PROPAGATE_ABSTAIN",
+      "clock": "BAR_CLOSE_DELIVERY"
+    },
+    {
+      "node_id": "N-ER-MAX",
+      "operator_id": "OP-CONST",
+      "inputs": [],
+      "params": {
+        "value": "0.9"
+      },
+      "output_type": "F64",
+      "fit_scope": "NONE",
+      "null_policy": "PROPAGATE_ABSTAIN",
+      "clock": "BAR_CLOSE_DELIVERY"
+    },
+    {
+      "node_id": "N-REGIME",
+      "operator_id": "OP-LE",
+      "inputs": [
+        "N-ER",
+        "N-ER-MAX"
+      ],
+      "params": {},
+      "output_type": "BOOL",
+      "fit_scope": "NONE",
+      "null_policy": "PROPAGATE_ABSTAIN",
+      "clock": "BAR_CLOSE_DELIVERY"
+    },
+    {
+      "node_id": "N-LONG-RAW",
+      "operator_id": "OP-LT",
+      "inputs": [
+        "N-Z",
+        "N-MINUS-K"
+      ],
+      "params": {},
+      "output_type": "BOOL",
+      "fit_scope": "NONE",
+      "null_policy": "PROPAGATE_ABSTAIN",
+      "clock": "BAR_CLOSE_DELIVERY"
+    },
+    {
+      "node_id": "N-SHORT-RAW",
+      "operator_id": "OP-GT",
+      "inputs": [
+        "N-Z",
+        "N-K"
+      ],
+      "params": {},
+      "output_type": "BOOL",
+      "fit_scope": "NONE",
+      "null_policy": "PROPAGATE_ABSTAIN",
+      "clock": "BAR_CLOSE_DELIVERY"
+    },
+    {
+      "node_id": "N-LONG",
+      "operator_id": "OP-AND",
+      "inputs": [
+        "N-REGIME",
+        "N-LONG-RAW"
+      ],
+      "params": {},
+      "output_type": "BOOL",
+      "fit_scope": "NONE",
+      "null_policy": "PROPAGATE_ABSTAIN",
+      "clock": "BAR_CLOSE_DELIVERY"
+    },
+    {
+      "node_id": "N-SHORT",
+      "operator_id": "OP-AND",
+      "inputs": [
+        "N-REGIME",
+        "N-SHORT-RAW"
+      ],
+      "params": {},
+      "output_type": "BOOL",
+      "fit_scope": "NONE",
+      "null_policy": "PROPAGATE_ABSTAIN",
+      "clock": "BAR_CLOSE_DELIVERY"
+    },
+    {
+      "node_id": "N-LONG-EXIT",
+      "operator_id": "OP-GE",
+      "inputs": [
+        "N-Z",
+        "N-MINUS-B"
+      ],
+      "params": {},
+      "output_type": "BOOL",
+      "fit_scope": "NONE",
+      "null_policy": "PROPAGATE_ABSTAIN",
+      "clock": "BAR_CLOSE_DELIVERY"
+    },
+    {
+      "node_id": "N-SHORT-EXIT",
+      "operator_id": "OP-LE",
+      "inputs": [
+        "N-Z",
+        "N-B"
+      ],
+      "params": {},
+      "output_type": "BOOL",
+      "fit_scope": "NONE",
+      "null_policy": "PROPAGATE_ABSTAIN",
+      "clock": "BAR_CLOSE_DELIVERY"
+    }
+  ],
+  "decision_clock": {
+    "kind": "BAR_CLOSE",
+    "interval_ns": "1000000000",
+    "bar_source": "QUOTE_MID",
+    "stale_after_ns": "2000000000",
+    "on_order_response": false
+  },
+  "entry_policy": {
+    "kind": "THRESHOLD_TAKER",
+    "long_condition_node": "N-LONG",
+    "short_condition_node": "N-SHORT",
+    "both_true": "ABSTAIN",
+    "max_positions_per_instrument": 1,
+    "limit_offset_ticks": 0,
+    "time_in_force": "IOC",
+    "post_only": false,
+    "cooldown_ns": "2000000000",
+    "limit_ttl_ns": "2000000000",
+    "refresh_on_new_decision": false
+  },
+  "exit_policy": {
+    "kind": "BRACKET_AND_SIGNAL",
+    "long_exit_node": "N-LONG-EXIT",
+    "short_exit_node": "N-SHORT-EXIT",
+    "stop_sigma_node": "N-SIGMA",
+    "stop_multiplier": "2",
+    "sigma_freeze": "ENTRY",
+    "stop_type": "STOP_MARKET",
+    "take_profit": "SIGNAL_ONLY",
+    "target_r": null,
+    "partial_fraction": "0",
+    "after_partial": "KEEP_STOP",
+    "contingency": "CLIENT_MANAGED",
+    "max_holding_ns": "10000000000",
+    "reduce_only": true,
+    "stop_widening": false,
+    "target_r_secondary": null,
+    "stop_limit_offset_ticks": 0
+  },
+  "sizing_policy": {
+    "kind": "FIXED_RISK",
+    "risk_fraction": "0.005",
+    "notional_i": null,
+    "lot_rounding": "FLOOR",
+    "max_leverage": "1",
+    "cost_buffer_rate": "0.001",
+    "on_minimum_violation": "REJECT",
+    "max_open_stop_risk_fraction": "0.02"
+  },
+  "risk_profile_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+  "venue_profile_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+  "latency_profile_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+  "seed_protocol": {
+    "algorithm": "HMAC_SHA256_COUNTER_V1",
+    "root_seed_hex": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+    "labels": [
+      "CONTROL",
+      "QUEUE",
+      "LATENCY",
+      "BOOTSTRAP",
+      "RESCUE"
+    ],
+    "replication_ids": [
+      0
+    ],
+    "draw_mapping": "U64_BE_REJECTION_MODULO",
+    "latency_tape_hash": null
+  },
+  "required_capabilities": [
+    "CAP-TYPED-POLICY",
+    "CAP-TAKER-REPLAY",
+    "CAP-FUNDING",
+    "CAP-INDEPENDENT-ACCOUNT",
+    "CAP-LOCAL-VIEW"
+  ],
+  "max_stateful_operators": 32,
+  "free_search_parameters": [
+    "PARAM-K",
+    "PARAM-EXIT-BAND",
+    "PARAM-STOP-SIGMA"
+  ],
+  "max_active_orders": 1,
+  "max_holding_ns": "10000000000",
+  "initial_state": "FLAT",
+  "terminal_valuation": "LAST_VALID_MARK_MINUS_CLOSE_COST",
+  "source": "backtest"
+}

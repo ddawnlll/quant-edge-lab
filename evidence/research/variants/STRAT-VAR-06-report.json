@@ -1,0 +1,161 @@
+{
+  "events": 12418,
+  "events_path": "data/native/DS-BTCUSDT-LIVE-240S/events.jsonl",
+  "iterations": 12418,
+  "pnl_total": null,
+  "profile": "TAKER_L1_FUNDING_STREAMING",
+  "status": "PASS",
+  "tape": [
+    {
+      "cash": "1000",
+      "type": "SET_WALLET"
+    },
+    {
+      "fee": "0.03016952",
+      "price": "75423.8",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794174320501000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03017516",
+      "price": "75437.9",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794174325208000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.0301568",
+      "price": "75392",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794174359292000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.030168",
+      "price": "75420",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794174364796000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03016476",
+      "price": "75411.9",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794174366600000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.0301648",
+      "price": "75412",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794174369891000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.030162",
+      "price": "75405",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794174389969000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.0301584",
+      "price": "75396",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794174400979000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03015204",
+      "price": "75380.1",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794174405518000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.0301534",
+      "price": "75383.5",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794174412601000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03016044",
+      "price": "75401.1",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794174422642000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.0301618",
+      "price": "75404.5",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794174432384000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03015696",
+      "price": "75392.4",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794174439895000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.030149",
+      "price": "75372.5",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794174451272000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03014112",
+      "price": "75352.8",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794174462532000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03011092",
+      "price": "75277.3",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794174472983000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03010588",
+      "price": "75264.7",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794174476060000000",
+      "type": "FILL"
+    },
+    {
+      "price": "75264.65",
+      "type": "MARK"
+    },
+    {
+      "close_cost": "0",
+      "type": "END_FOLD"
+    }
+  ],
+  "tape_extra": [],
+  "total_orders": 17,
+  "total_positions": 9
+}

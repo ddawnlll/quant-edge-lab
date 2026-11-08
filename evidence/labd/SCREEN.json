@@ -1,0 +1,153 @@
+{
+  "family_note": "development screen only; no scientific promotion",
+  "schema_version": "1.1.0",
+  "status": "PASS",
+  "variant_count": 12,
+  "variants": [
+    {
+      "fees": "0.99553044",
+      "fills": 33,
+      "funding": "0",
+      "net_pnl": "-1.09833044",
+      "orders": 33,
+      "positions": 17,
+      "realized": "-0.1028",
+      "residual": "0",
+      "status": "PASS",
+      "strategy_id": "STRAT-VAR-00"
+    },
+    {
+      "fees": "0.51276144",
+      "fills": 17,
+      "funding": "0",
+      "net_pnl": "-0.56206144",
+      "orders": 17,
+      "positions": 9,
+      "realized": "-0.0493",
+      "residual": "0",
+      "status": "PASS",
+      "strategy_id": "STRAT-VAR-01"
+    },
+    {
+      "fees": "0.51273176",
+      "fills": 17,
+      "funding": "0",
+      "net_pnl": "-0.60383176",
+      "orders": 17,
+      "positions": 9,
+      "realized": "-0.0911",
+      "residual": "0",
+      "status": "PASS",
+      "strategy_id": "STRAT-VAR-02"
+    },
+    {
+      "fees": "0.33162064",
+      "fills": 11,
+      "funding": "0",
+      "net_pnl": "-0.41432064",
+      "orders": 11,
+      "positions": 6,
+      "realized": "-0.0827",
+      "residual": "0",
+      "status": "PASS",
+      "strategy_id": "STRAT-VAR-03"
+    },
+    {
+      "fees": "0.27142504",
+      "fills": 9,
+      "funding": "0",
+      "net_pnl": "-0.23692504",
+      "orders": 9,
+      "positions": 5,
+      "realized": "0.0345",
+      "residual": "0",
+      "status": "PASS",
+      "strategy_id": "STRAT-VAR-04"
+    },
+    {
+      "fees": "0.27132992",
+      "fills": 9,
+      "funding": "0",
+      "net_pnl": "-0.30442992",
+      "orders": 9,
+      "positions": 5,
+      "realized": "-0.0331",
+      "residual": "0",
+      "status": "PASS",
+      "strategy_id": "STRAT-VAR-05"
+    },
+    {
+      "fees": "0.512611",
+      "fills": 17,
+      "funding": "0",
+      "net_pnl": "-0.575011",
+      "orders": 17,
+      "positions": 9,
+      "realized": "-0.0624",
+      "residual": "0",
+      "status": "PASS",
+      "strategy_id": "STRAT-VAR-06"
+    },
+    {
+      "fees": "0.5729246",
+      "fills": 19,
+      "funding": "0",
+      "net_pnl": "-0.5917246",
+      "orders": 19,
+      "positions": 10,
+      "realized": "-0.0188",
+      "residual": "0",
+      "status": "PASS",
+      "strategy_id": "STRAT-VAR-07"
+    },
+    {
+      "fees": "0.39195584",
+      "fills": 13,
+      "funding": "0",
+      "net_pnl": "-0.47965584",
+      "orders": 13,
+      "positions": 7,
+      "realized": "-0.0877",
+      "residual": "0",
+      "status": "PASS",
+      "strategy_id": "STRAT-VAR-08"
+    },
+    {
+      "fees": "0.45226388",
+      "fills": 15,
+      "funding": "0",
+      "net_pnl": "-0.51506388",
+      "orders": 15,
+      "positions": 8,
+      "realized": "-0.0628",
+      "residual": "0",
+      "status": "PASS",
+      "strategy_id": "STRAT-VAR-09"
+    },
+    {
+      "fees": "0.03013036",
+      "fills": 1,
+      "funding": "0",
+      "net_pnl": "-0.03013036",
+      "orders": 1,
+      "positions": 1,
+      "realized": "0",
+      "residual": "0",
+      "status": "PASS",
+      "strategy_id": "STRAT-VAR-10"
+    },
+    {
+      "fees": "0.6936906",
+      "fills": 23,
+      "funding": "0",
+      "net_pnl": "-0.7662906",
+      "orders": 23,
+      "positions": 12,
+      "realized": "-0.0726",
+      "residual": "0",
+      "status": "PASS",
+      "strategy_id": "STRAT-VAR-11"
+    }
+  ],
+  "verdict": "INSUFFICIENT_EVIDENCE"
+}

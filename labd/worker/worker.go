@@ -13,20 +13,22 @@ import (
 	"time"
 
 	"github.com/ddawnlll/quant-edge-lab/labd/artifacts"
+	"github.com/ddawnlll/quant-edge-lab/labd/cgroup"
 	"github.com/ddawnlll/quant-edge-lab/labd/ledger"
 	"github.com/ddawnlll/quant-edge-lab/labd/queue"
 )
 
 type Worker struct {
-	Q    *queue.Queue
-	A    *artifacts.Store
-	L    *ledger.Ledger
-	Root string
-	Bin  string
+	Q      *queue.Queue
+	A      *artifacts.Store
+	L      *ledger.Ledger
+	Root   string
+	Bin    string
+	Broker *cgroup.Broker
 }
 
 func New(root string, q *queue.Queue, a *artifacts.Store, l *ledger.Ledger) *Worker {
-	return &Worker{Q: q, A: a, L: l, Root: root, Bin: filepath.Join(root, "..", "bin")}
+	return &Worker{Q: q, A: a, L: l, Root: root, Bin: filepath.Join(root, "..", "bin"), Broker: cgroup.NewBroker("RP-8G")}
 }
 
 func (w *Worker) Run(ctx context.Context, owner string) error {
@@ -69,18 +71,46 @@ func (w *Worker) execute(ctx context.Context, job *queue.Job) {
 	kind, _ := env["kind"].(string)
 	outPath := filepath.Join(jobDir, "report.json")
 	limit := 1800 * time.Second
+	memMiB := 512
+	cpuMilli := 500
+	pids := 64
 	if rl, ok := env["resource_limits"].(map[string]any); ok {
 		if secs, ok := rl["wall_seconds"].(float64); ok && secs > 0 {
 			limit = time.Duration(secs) * time.Second
 		}
+		if v, ok := rl["memory_max_mib"].(float64); ok && v > 0 {
+			memMiB = int(v)
+		}
+		if v, ok := rl["cpu_millicores"].(float64); ok && v > 0 {
+			cpuMilli = int(v)
+		}
+		if v, ok := rl["pids_max"].(float64); ok && v > 0 {
+			pids = int(v)
+		}
+	}
+	heavy := kind == "capture" || kind == "prepare" || kind == "replay" || kind == "screen"
+	if adm := w.Broker.Admit(memMiB, cpuMilli, heavy, abs(w.Root)); !adm.OK {
+		w.fail(ctx, job, "RESOURCE_LIMIT", fmt.Errorf("%s", adm.Reason), started)
+		return
+	}
+	defer w.Broker.Release(memMiB, heavy)
+	group, err := cgroup.Create("job-"+job.JobID, cgroup.Limits{MemoryMaxMiB: memMiB, MemoryHighMiB: memMiB * 3 / 4, CPUMillicores: cpuMilli, PidsMax: pids})
+	if err != nil {
+		w.fail(ctx, job, "RESOURCE_LIMIT", fmt.Errorf("cgroup: %w", err), started)
+		return
 	}
 	runCtx, cancel := context.WithTimeout(ctx, limit)
 	defer cancel()
 	cmd, err := w.command(runCtx, kind, params, outPath, jobDir)
 	if err != nil {
+		group.Close()
+		group.Remove()
 		w.fail(ctx, job, "UNSUPPORTED_CAPABILITY", err, started)
 		return
 	}
+	group.Attach(cmd)
+	defer group.Close()
+	defer group.Remove()
 	stdout, _ := os.Create(filepath.Join(jobDir, "stdout.log"))
 	stderr, _ := os.Create(filepath.Join(jobDir, "stderr.log"))
 	defer stdout.Close()
@@ -90,24 +120,31 @@ func (w *Worker) execute(ctx context.Context, job *queue.Job) {
 	cmd.Env = append(os.Environ(), "PYTHONPATH=python", "QEL_ROOT="+abs(filepath.Join(w.Root, "..")))
 	err = cmd.Run()
 	if err != nil {
-		code := "PROCESS_FAILURE"
+		code := "PROTOCOL_VIOLATION"
 		if runCtx.Err() == context.DeadlineExceeded {
 			code = "RESOURCE_LIMIT"
 		}
-		w.fail(ctx, job, code, err, started)
+		w.fail(ctx, job, code, fmt.Errorf("worker command: %w", err), started)
 		return
 	}
 	report, err := os.ReadFile(outPath)
 	if err != nil {
-		w.fail(ctx, job, "ARTIFACT_INCOMPLETE", err, started)
+		// Some workers emit their JSON report on stdout; the file-backed
+		// report remains the preferred form.
+		report, err = os.ReadFile(filepath.Join(jobDir, "stdout.log"))
+	}
+	if err != nil || len(report) == 0 {
+		w.fail(ctx, job, "ARTIFACT_INCOMPLETE", fmt.Errorf("empty report"), started)
 		return
 	}
+	u := group.Usage()
+	fmt.Fprintf(os.Stderr, "job %s cgroup usage memory_peak=%d pids_peak=%d cpu_usec=%d\n", job.JobID, u.MemoryPeakBytes, u.PidsPeak, u.CPUUsageUsec)
 	usage := map[string]any{
 		"attempt_id":        job.AttemptID,
 		"wall_ns":           strconv.FormatInt(time.Since(started).Nanoseconds(), 10),
-		"cpu_ns":            "0",
-		"cgroup_peak_bytes": "0",
-		"rss_peak_bytes":    "0",
+		"cpu_ns":            strconv.FormatInt(u.CPUUsageUsec*1000, 10),
+		"cgroup_peak_bytes": strconv.FormatInt(u.MemoryPeakBytes, 10),
+		"rss_peak_bytes":    strconv.FormatInt(u.MemoryPeakBytes, 10),
 		"pss_peak_bytes":    nil,
 		"read_bytes":        "0",
 		"written_bytes":     strconv.Itoa(len(report)),
@@ -214,6 +251,7 @@ func (w *Worker) seal(ctx context.Context, job *queue.Job, report []byte, usage 
 }
 
 func (w *Worker) fail(ctx context.Context, job *queue.Job, code string, cause error, started time.Time) {
+	fmt.Fprintf(os.Stderr, "job %s failed: %s: %v\n", job.JobID, code, cause)
 	usage := map[string]any{
 		"attempt_id": job.AttemptID, "wall_ns": strconv.FormatInt(time.Since(started).Nanoseconds(), 10),
 		"cpu_ns": "0", "cgroup_peak_bytes": "0", "rss_peak_bytes": "0", "pss_peak_bytes": nil,

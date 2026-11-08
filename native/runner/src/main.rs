@@ -177,6 +177,7 @@ nautilus_strategy!(Taker, {
         let fee = event.commission.map(|m| m.as_f64()).unwrap_or(0.0);
         self.tape.lock().unwrap().push(json!({
             "type": "FILL",
+            "ts_ns": event.ts_event.as_u64().to_string(),
             "side": side,
             "qty": trim(event.last_qty.as_f64(), 8),
             "price": trim(event.last_px.as_f64(), 8),
