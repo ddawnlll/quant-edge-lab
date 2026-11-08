@@ -20,9 +20,9 @@ is a scientific promotion.
 | TASK-11 | Minimum native taker end-to-end slice | PARTIAL | 15 orders / 8 positions native run, sealed job, residual 0; F22 LocalView remains blocked |
 | TASK-12 | Preregistration and walk-forward datasets | PARTIAL | split/control declarations implemented; one full archive day plus 240s live capture, but no multi-day walk-forward evidence |
 | TASK-13 | Matched controls and batch screen | PARTIAL | 12 variants + 8 matched controls on the archive day; candidate mean -7.16 vs control -14.59, verdict INSUFFICIENT_EVIDENCE |
-| TASK-14 | Dependent stats and frozen protocols | PARTIAL | HAC, stationary bootstrap, IUT, Holm and F27/F28 tests; four-generator B6 complete; local power grid shows 0 power at tested effects (conservative MC/Holm) |
+| TASK-14 | Dependent stats and frozen protocols | PARTIAL | HAC, stationary bootstrap, IUT, Holm, F27/F28, four-generator B6 and `JOB-STATS-1` sealed through qeld; full MDE/coverage certificate pending |
 | TASK-15 | Evaluator principal and private consumption registry | PARTIAL | separate private DB, key 0600, pre-access receipt and anchor; distinct OS owner unavailable without sudo |
-| TASK-16 | Signed scientific evaluator | PARTIAL | Ed25519 decision signing and verification; no fresh cohort may be evaluated |
+| TASK-16 | Signed scientific evaluator | PARTIAL | Ed25519 E2E: frozen cohort, pre-access receipt, signed verdict verified, second decision refused; no fresh OOS cohort exists |
 | TASK-17 | Passive queue and composite execution | BLOCKED | CAP-L2-QUEUE missing hook in pinned Nautilus; fixture F02 only |
 | TASK-18 | Two-world adapter and queue cross-check | BLOCKED | CAP-LOCAL-VIEW / queue hooks absent |
 | TASK-19 | Bounded replay and cache purge | PARTIAL | 2,000-event chunks with `clear_data` match the unchunked 15-order/8-position result and 19.9 MiB RSS; TASK-17 dependency remains blocked |

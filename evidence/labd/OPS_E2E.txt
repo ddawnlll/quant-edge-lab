@@ -1,0 +1,11 @@
+timestamp=2026-11-08T23:24:02Z
+qeld_before=744317
+qeld_after=744722
+active=active
+health={"sqlite_source_id":"2026-10-16 14:45:20 555e07ef33f69a0957d24d8e555b702464a131d6f1607f4c3c1e4551e8e6ca76","sqlite_version":"3.54.1","status":"OK"}
+verify={"chain":"verified","status":"OK"}
+worker_active=active
+soak_active=active
+soak_last={"ts":"2026-11-08T23:23:50Z","elapsed_s":3309,"health":{"sqlite_source_id":"2026-10-16 14:45:20 555e07ef33f69a0957d24d8e555b702464a131d6f1607f4c3c1e4551e8e6ca76","sqlite_version":"3.54.1","status":"OK"},"dashboard":{"alpha_next":{"den":"40","num":"1"},"artifact_refs":[],"capital_break_even":null,"generated_ns":"1794180231116532750","generation":0,"lab_cost":"0","ledger_cursor":"104","oos_state":"WAITING_FRESH_OOS","queue_counts":{"blocked":0,"queued":0,"running":1},"resource_profile_id":"RP-8G","risk_state":"RUNNING","trading_net_i":"0"},"lab_memory_current":0,"disk_free_bytes":141258686464}
+git_local=143e2b996e6b314b5bb60a6e3d09b98a624d8f29
+git_remote=143e2b996e6b314b5bb60a6e3d09b98a624d8f29

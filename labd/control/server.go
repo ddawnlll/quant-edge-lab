@@ -500,6 +500,13 @@ func (s *Server) httpMux() *http.ServeMux {
 		}
 		writeJSON(w, 200, map[string]any{"artifact": manifest["artifact"], "manifest_hash": indexHash})
 	})
+	mux.HandleFunc("/v1/ledger/verify", func(w http.ResponseWriter, r *http.Request) {
+		if err := s.L.VerifyChain(r.Context()); err != nil {
+			writeJSON(w, 500, map[string]any{"status": "FAIL", "error": err.Error()})
+			return
+		}
+		writeJSON(w, 200, map[string]any{"status": "OK", "chain": "verified"})
+	})
 	mux.HandleFunc("/v1/dashboard", func(w http.ResponseWriter, r *http.Request) {
 		snap, err := s.Dashboard(r.Context())
 		if err != nil {

@@ -218,6 +218,8 @@ func (w *Worker) command(ctx context.Context, kind string, params map[string]any
 		return exec.CommandContext(ctx, py, "-m", "qel.cli", "fixtures", "--out", outPath), nil
 	case "audit":
 		return exec.CommandContext(ctx, py, "-m", "qel.cli", "accounting", "--tape", str(params["tape"], "")), nil
+	case "statistics":
+		return exec.CommandContext(ctx, py, "-m", "qel.cli", "stats-job", "--returns", str(params["returns"], ""), "--out", outPath), nil
 	default:
 		return nil, fmt.Errorf("unsupported job kind %s", kind)
 	}

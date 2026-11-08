@@ -1,0 +1,2 @@
+data: {"event_id":"1794180246","kind":"HEARTBEAT","projection":{"alpha_next":{"den":"40","num":"1"},"artifact_refs":[],"capital_break_even":null,"generated_ns":"1794180246797836983","generation":0,"lab_cost":"0","ledger_cursor":"106","oos_state":"WAITING_FRESH_OOS","queue_counts":{"blocked":0,"queued":0,"running":0},"resource_profile_id":"RP-8G","risk_state":"RUNNING","trading_net_i":"0"}}
+

@@ -18,8 +18,8 @@ It is not a profitability claim and does not certify a trading edge.
 | TASK-08 native feasibility | DONE_WITH_BLOCKED_CAPABILITY | Nautilus v1.231.0 spike; LocalView/L2 queue blocked |
 | TASK-09 independent accounting | DONE | exact tape reconstruction; native residual 0 |
 | TASK-11 native taker slice | PARTIAL | 15 orders/8 positions live slice; full archive day 307 orders/154 positions, residual 0; F22 blocked |
-| TASK-14 dependent stats | PARTIAL | HAC/bootstrap/IUT/Holm/F27/F28; four-generator B6 complete; power grid executed, 0/30 at tested effects |
-| TASK-15/16 evaluator | PARTIAL | private DB, pre-access receipt, Ed25519 decisions; OS owner split blocked |
+| TASK-14 dependent stats | PARTIAL | HAC/bootstrap/IUT/Holm/F27/F28, four-generator B6, and `JOB-STATS-1` sealed through qeld; full MDE/coverage certificate pending |
+| TASK-15/16 evaluator | PARTIAL | E2E frozen cohort + pre-access receipt + Ed25519 verdict verified; OS owner split blocked |
 | TASK-20 recovery | DONE | worker killed, lease requeued, generation 2 sealed |
 | TASK-21/22 memory/agent | DONE | FTS claims, CAS assignment, stale rejection, rebuild |
 | TASK-23 cgroup admission | DONE | real OOM kill, memory/pids/cpu caps, heavy-token and disk admission |
@@ -42,6 +42,25 @@ Dashboard is bound to `127.0.0.1:8787` only. HTTP writes require the
 Health: `curl -s http://127.0.0.1:8787/healthz`
 Dashboard snapshot: `curl -s http://127.0.0.1:8787/v1/dashboard`
 SQLite: 3.54.1 source `2026-10-16 14:45:20 555e07ef…`.
+
+## M3 evaluator acceptance path (observed)
+
+`evidence/labd/EVALUATOR_E2E.json` records a real call sequence through the
+sealed component: pre-consumption decision refused, unacknowledged receipt
+refused, cohort frozen, alpha `5/200` spent once, decision signed and verified,
+second decision refused. Key and DB modes are `0600`. The data is an explicitly
+labeled evaluator calibration vector, not a market result.
+
+`JOB-STATS-1` was submitted through the public HTTP job interface, executed by
+`qel-worker` under cgroup limits, and reached `OUTPUT_SEALED` with an artifact
+reference; `/v1/ledger/verify` returned `{"status":"OK","chain":"verified"}`.
+
+## Ops acceptance path (observed)
+
+`evidence/labd/OPS_E2E.txt` records `qeld` PID 744317 killed, systemd restart to
+PID 744722, health `OK`, ledger chain verified, worker and soak active, soak
+elapsed 3,309s, and local/remote git equal. `evidence/labd/SSE_SAMPLE.txt`
+contains a live `/v1/events` heartbeat.
 
 ## Measured resources
 

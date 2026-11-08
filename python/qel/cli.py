@@ -14,12 +14,14 @@ from .accounting.core import reconstruct
 from .conformance import Harness, summarize
 from .contract import canonical_bytes, hash_jcs, repo_root
 from .contract.runkey import RUN_KEY_OBJECT_KEYS, run_key
+from .evaluator.demo import run_demo
 from .prepare.archive import build as build_archive
 from .prepare.native_input import to_native_input
 from .prepare.normalize import normalize_capture
 from .research.control import matched_controls
 from .research.screen import run_variants
 from .stats.core import calibrate_nulls, power_grid
+from .stats.job import run_job
 
 
 def _write(path: str | None, payload: dict) -> None:
@@ -137,6 +139,14 @@ def main(argv: list[str] | None = None) -> int:
     p = sub.add_parser("accounting", help="reconstruct an economic tape independently")
     p.add_argument("--tape", required=True)
 
+    p = sub.add_parser("evaluator-demo", help="exercise the sealed evaluator end to end")
+    p.add_argument("--root", default=None)
+    p.add_argument("--out")
+
+    p = sub.add_parser("stats-job", help="run a statistics job from daily returns")
+    p.add_argument("--returns", required=True)
+    p.add_argument("--out")
+
     p = sub.add_parser("power", help="injected-effect power grid")
     p.add_argument("--programs", type=int, default=200)
     p.add_argument("--out")
@@ -203,6 +213,17 @@ def main(argv: list[str] | None = None) -> int:
         payload = reconstruct(tape)
         _write(None, payload)
         return 0
+    if args.command == "evaluator-demo":
+        import tempfile
+
+        root = args.root or tempfile.mkdtemp(prefix="qel-evaluator-e2e-")
+        payload = run_demo(root)
+        _write(args.out, payload)
+        return 0 if payload["status"] == "PASS" else 1
+    if args.command == "stats-job":
+        payload = run_job(args.returns)
+        _write(args.out, payload)
+        return 0 if payload["status"] == "PASS" else 1
     if args.command == "power":
         payload = power_grid(programs=args.programs)
         _write(args.out, payload)
