@@ -129,8 +129,9 @@ def main(argv: list[str] | None = None) -> int:
     p = sub.add_parser("accounting", help="reconstruct an economic tape independently")
     p.add_argument("--tape", required=True)
 
-    p = sub.add_parser("calibrate", help="bounded statistical null calibration")
+    p = sub.add_parser("calibrate", help="statistical null calibration")
     p.add_argument("--programs", type=int, default=100)
+    p.add_argument("--generator", action="append", default=None)
     p.add_argument("--out")
 
     p = sub.add_parser("controls", help="run matched random-entry controls")
@@ -187,7 +188,7 @@ def main(argv: list[str] | None = None) -> int:
         _write(None, payload)
         return 0
     if args.command == "calibrate":
-        payload = calibrate_nulls(programs=args.programs)
+        payload = calibrate_nulls(programs=args.programs, generators=args.generator)
         _write(args.out, payload)
         return 0 if payload["pass"] else 1
     if args.command == "controls":

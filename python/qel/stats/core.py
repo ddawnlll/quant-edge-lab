@@ -175,8 +175,25 @@ def ar1_series(n: int, phi: float, sigma: float, seed: int) -> np.ndarray:
     return out
 
 
+def stationarity_screen(series: np.ndarray, threshold: float = 3.0) -> bool:
+    """Reject a program whose first/second half means differ materially.
+
+    A regime break is reported as a blocked/failed program, not silently
+    promoted as an edge.
+    """
+    n = len(series)
+    if n < 20:
+        return False
+    first, second = series[: n // 2], series[n // 2 :]
+    diff = abs(first.mean() - second.mean())
+    scale = hac_se(series)
+    return diff / scale <= threshold
+
+
 def null_pipeline(series: np.ndarray, m: int = 4, controls: int = 2, alpha: float = 0.025, b: int = 200, seed: int = 0) -> bool:
     """One full null program: screen m candidates + controls, IUT, Holm."""
+    if not stationarity_screen(series):
+        return False
     rng = np.random.default_rng(seed)
     pvals = []
     for i in range(m):
@@ -192,14 +209,41 @@ def null_pipeline(series: np.ndarray, m: int = 4, controls: int = 2, alpha: floa
     return any(rejected)
 
 
-def _null_program(args: tuple[int, int, int, int, int]) -> bool:
-    i, n, m, b, seed = args
-    phi = 0.2 + 0.6 * ((i % 5) / 4.0)
-    series = ar1_series(n, phi, 1.0, seed + i)
+def null_generator(name: str, n: int, seed: int) -> np.ndarray:
+    rng = np.random.default_rng(seed)
+    if name == "ar1":
+        phi = 0.2 + 0.6 * (seed % 5) / 4.0
+        return ar1_series(n, phi, 1.0, seed)
+    if name == "t5":
+        from scipy.stats import t
+
+        phi = 0.4
+        eps = t.rvs(5, size=n, random_state=rng)
+        eps = eps / eps.std()
+        out = np.empty(n)
+        out[0] = eps[0]
+        for i in range(1, n):
+            out[i] = phi * out[i - 1] + eps[i]
+        return out
+    if name == "common_factor":
+        factor = ar1_series(n, 0.3, 1.0, seed)
+        idio = rng.normal(0, 1, n)
+        return 0.7 * factor + 0.3 * idio
+    if name == "regime_shift":
+        first = rng.normal(0.0, 1.0, n // 2)
+        second = rng.normal(0.9, 1.2, n - n // 2)
+        return np.concatenate([first, second])
+    raise ValueError(f"unknown null generator {name}")
+
+
+def _null_program(args: tuple[str, int, int, int, int, int]) -> bool:
+    generator, i, n, m, b, seed = args
+    series = null_generator(generator, n, seed + i)
     return null_pipeline(series, m=m, b=b, seed=seed + i)
 
 
-def calibrate_nulls(
+def calibrate_generator(
+    generator: str,
     programs: int = 200,
     n: int = 120,
     m: int = 4,
@@ -217,7 +261,7 @@ def calibrate_nulls(
 
     if workers is None:
         workers = min(6, os.cpu_count() or 1)
-    tasks = [(i, n, m, b, seed) for i in range(programs)]
+    tasks = [(generator, i, n, m, b, seed) for i in range(programs)]
     with ProcessPoolExecutor(max_workers=workers) as pool:
         promoted = sum(1 for result in pool.map(_null_program, tasks) if result)
     rate = promoted / programs
@@ -227,11 +271,30 @@ def calibrate_nulls(
     else:  # conservative fallback
         upper = min(1.0, (promoted + 1) / max(programs, 1) + 0.05)
     return {
+        "generator": generator,
         "programs": programs,
         "promotions": promoted,
         "false_promotion_rate": rate,
         "binomial_upper_95": upper,
         "threshold": 0.075,
         "pass": upper <= 0.075,
-        "note": "bounded local calibration; not the full B6 1000-program evidence",
+    }
+
+
+def calibrate_nulls(
+    programs: int = 200,
+    generators: list[str] | None = None,
+    n: int = 120,
+    m: int = 4,
+    b: int = 200,
+    seed: int = 0,
+    workers: int | None = None,
+) -> dict:
+    generators = generators or ["ar1", "t5", "common_factor", "regime_shift"]
+    reports = [calibrate_generator(g, programs, n, m, b, seed, workers) for g in generators]
+    return {
+        "status": "PASS" if all(r["pass"] for r in reports) else "FAIL",
+        "generators": reports,
+        "threshold": 0.075,
+        "note": "full four-generator local B6 calibration" if programs >= 1000 else "bounded local calibration",
     }

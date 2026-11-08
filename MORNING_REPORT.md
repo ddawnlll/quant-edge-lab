@@ -106,8 +106,8 @@ Upstream Nautilus revision: `27a8e54e7ac3c57d6cbf8891f0283dfbaee97317` (v1.231.0
 
 ## Remaining issues
 
-- M1/M2/M3 remain PARTIAL because the data window is minutes, not days, and
-  matched controls are declared but not executed as a full family.
+- M1/M2/M3 remain PARTIAL because the data window is minutes, not days. The
+  matched-control family is executed but is not a full 12-variant daily family.
 - B6 1000-program calibration, B0-B4 benchmark corpus, B5 restore drill and
   B7 7-day soak remain open.
 - M4 cannot be certified until a backend with LocalView and queue hooks is

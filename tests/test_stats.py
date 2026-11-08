@@ -48,3 +48,14 @@ def test_hac_and_bootstrap_smoke():
     result = studentized_bootstrap_p(x, b=64, seed=1, batch=16)
     assert 0 < result.p_raw <= 1
     assert result.p_upper >= result.p_raw
+
+
+def test_null_generators_and_regime_block():
+    from qel.stats.core import null_generator, stationarity_screen
+
+    for name in ("ar1", "t5", "common_factor", "regime_shift"):
+        series = null_generator(name, 80, 3)
+        assert len(series) == 80
+        assert np.isfinite(series).all()
+    regime = null_generator("regime_shift", 80, 3)
+    assert not stationarity_screen(regime)

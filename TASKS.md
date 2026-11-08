@@ -19,7 +19,7 @@ is a scientific promotion.
 | TASK-10 | Venue funding, margin and liquidation profile | PARTIAL | generic synthetic margin path and F11/F12 pass; no venue-certified historical tier/liquidation claim |
 | TASK-11 | Minimum native taker end-to-end slice | PARTIAL | 15 orders / 8 positions native run, sealed job, residual 0; F22 LocalView remains blocked |
 | TASK-12 | Preregistration and walk-forward datasets | PARTIAL | split/control declarations implemented; only 240s of real data, so no daily walk-forward evidence |
-| TASK-13 | Matched controls and batch screen | PARTIAL | 12 real native variants run; controls declared but not executed as a matched control family; verdict INSUFFICIENT_EVIDENCE |
+| TASK-13 | Matched controls and batch screen | PARTIAL | 12 native variants plus 8 matched random-entry controls executed on the same tape; verdict INSUFFICIENT_EVIDENCE |
 | TASK-14 | Dependent stats and frozen protocols | PARTIAL | HAC, stationary bootstrap, IUT, Holm, power and F27/F28 tests; B6 full 1000-program calibration not reached |
 | TASK-15 | Evaluator principal and private consumption registry | PARTIAL | separate private DB, key 0600, pre-access receipt and anchor; distinct OS owner unavailable without sudo |
 | TASK-16 | Signed scientific evaluator | PARTIAL | Ed25519 decision signing and verification; no fresh cohort may be evaluated |
@@ -32,7 +32,7 @@ is a scientific promotion.
 | TASK-23 | cgroup and economic admission | DONE | delegated cgroup v2; OOM kill, memory/pids/cpu limits and admission tested |
 | TASK-24 | Operator dashboard and controls | DONE | localhost dashboard + SSE + health; read-only principal cannot control |
 | TASK-25 | Benchmark corpus and performance evidence | PARTIAL | native spike and job timings recorded; B0-B4 full corpus not run |
-| TASK-26 | Statistical null and injection calibration | PARTIAL | 1,000-program AR1 null calibration: 0 promotions, 95% upper 0.00299; t5/common-factor/regime-shift generators still pending |
+| TASK-26 | Statistical null and injection calibration | PARTIAL | four-generator B6 run in progress; AR1 1,000-program result 0 promotions, 95% upper 0.00299 |
 | TASK-27 | Continuous research soak | RUNNING | systemd `qel-soak` samples every 60s; 24h not yet elapsed |
 | TASK-28 | First frozen confirmation cohort | BLOCKED | `WAITING_FRESH_OOS`; no untouched window and no authorization |
 | TASK-29 | Forward calibration protocol and evidence | BLOCKED | `INSUFFICIENT_OBSERVATION`; 15 orders/15 fills/1 day vs 200/50/10 |
