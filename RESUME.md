@@ -1,7 +1,7 @@
 # Resume
 
 Updated: 2026-11-08T22:35Z. Repository:
-<https://github.com/ddawnlll/quant-edge-lab> (`main`, final commit at the
+<https://github.com/ddawnlll/quant-edge-lab> (`main`; see `git log -1` for the current tip
 time of writing `079e174`).
 
 ## State in one paragraph
