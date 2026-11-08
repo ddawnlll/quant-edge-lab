@@ -32,7 +32,7 @@ is a scientific promotion.
 | TASK-23 | cgroup and economic admission | DONE | delegated cgroup v2; OOM kill, memory/pids/cpu limits and admission tested |
 | TASK-24 | Operator dashboard and controls | DONE | localhost dashboard + SSE + health; read-only principal cannot control |
 | TASK-25 | Benchmark corpus and performance evidence | PARTIAL | native spike and job timings recorded; B0-B4 full corpus not run |
-| TASK-26 | Statistical null and injection calibration | PARTIAL | four-generator B6 run in progress; AR1 1,000-program result 0 promotions, 95% upper 0.00299 |
+| TASK-26 | Statistical null and injection calibration | PARTIAL | four generators × 1,000 programs, 0 promotions each, 95% upper 0.00299; injected-effect power/MDE grid still pending |
 | TASK-27 | Continuous research soak | RUNNING | systemd `qel-soak` samples every 60s; 24h not yet elapsed |
 | TASK-28 | First frozen confirmation cohort | BLOCKED | `WAITING_FRESH_OOS`; no untouched window and no authorization |
 | TASK-29 | Forward calibration protocol and evidence | BLOCKED | `INSUFFICIENT_OBSERVATION`; 15 orders/15 fills/1 day vs 200/50/10 |

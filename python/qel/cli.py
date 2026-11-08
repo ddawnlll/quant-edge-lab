@@ -190,7 +190,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "calibrate":
         payload = calibrate_nulls(programs=args.programs, generators=args.generator)
         _write(args.out, payload)
-        return 0 if payload["pass"] else 1
+        return 0 if payload.get("pass", payload.get("status") == "PASS") else 1
     if args.command == "controls":
         payload = matched_controls(args.events, args.trades, args.notional, args.seed, args.replications)
         _write(None, payload)
