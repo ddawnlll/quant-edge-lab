@@ -1,0 +1,76 @@
+{
+  "control_hash": "5de637b951ff11ade7f01d87355765309849883c41e461d8d833741ddba1ba1d",
+  "control_mean": -14.58755825,
+  "control_std": 0.05794429,
+  "controls": [
+    {
+      "control_hash": "4ba1f19f84ae5ca48c4516d33bf005dca6e750af33e45f9d4b10e5f0eaaca858",
+      "fees": 14.56864688,
+      "mean_holding_ns": 6620833333,
+      "net_pnl": -14.59684688,
+      "seed": 11,
+      "trades": 240
+    },
+    {
+      "control_hash": "b42001c372ef4fc8f6d0df0a92cdc2d3281255bab3f20cc32c32ff9cfb01e4a9",
+      "fees": 14.564957,
+      "mean_holding_ns": 6612500000,
+      "net_pnl": -14.576457,
+      "seed": 12,
+      "trades": 240
+    },
+    {
+      "control_hash": "c3995bc2f2a1f5f824e8f1af10709320bde9cfc244ba3fb3c6e45e621bd7bcea",
+      "fees": 14.56773632,
+      "mean_holding_ns": 6479166666,
+      "net_pnl": -14.53033632,
+      "seed": 13,
+      "trades": 240
+    },
+    {
+      "control_hash": "61a462e0bdade04bf57404fd10c6931b651fd005c655b45ac43e9b21a9e515fa",
+      "fees": 14.5678618,
+      "mean_holding_ns": 6316666666,
+      "net_pnl": -14.6241618,
+      "seed": 14,
+      "trades": 240
+    },
+    {
+      "control_hash": "7d9f2bc3ca6c71b79d89ef40852502541d205cad6042fbba5986e99b75d71c04",
+      "fees": 14.56758708,
+      "mean_holding_ns": 6233333333,
+      "net_pnl": -14.66688708,
+      "seed": 15,
+      "trades": 240
+    },
+    {
+      "control_hash": "df0276c96920cd9c1c5f6812b2b9f29ff755ae6fb61d069d4f6baa604aabccba",
+      "fees": 14.57045108,
+      "mean_holding_ns": 6800000000,
+      "net_pnl": -14.61275108,
+      "seed": 16,
+      "trades": 240
+    },
+    {
+      "control_hash": "259be773b8fc14e1c5b21d2a2b10e6c50332b426bd5a3188d8aae7ba54f8d1dd",
+      "fees": 14.57115052,
+      "mean_holding_ns": 6254166666,
+      "net_pnl": -14.61125052,
+      "seed": 17,
+      "trades": 240
+    },
+    {
+      "control_hash": "ec1a28058cd0efc94161b970ea3c767d2975e6e63d476400070db21acea48777",
+      "fees": 14.56657528,
+      "mean_holding_ns": 6591666666,
+      "net_pnl": -14.48177528,
+      "seed": 18,
+      "trades": 240
+    }
+  ],
+  "notional": 100.0,
+  "replications": 8,
+  "seed": 11,
+  "status": "PASS",
+  "trade_count_matched": 240
+}

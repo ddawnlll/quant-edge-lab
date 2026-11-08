@@ -14,6 +14,7 @@ from .accounting.core import reconstruct
 from .conformance import Harness, summarize
 from .contract import canonical_bytes, hash_jcs, repo_root
 from .contract.runkey import RUN_KEY_OBJECT_KEYS, run_key
+from .prepare.archive import build as build_archive
 from .prepare.native_input import to_native_input
 from .prepare.normalize import normalize_capture
 from .research.control import matched_controls
@@ -122,6 +123,13 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--out", required=True)
     p.add_argument("--dataset-id", default=None)
 
+    p = sub.add_parser("archive-native", help="build a native input from a daily archive")
+    p.add_argument("--agg", required=True)
+    p.add_argument("--mark", required=True)
+    p.add_argument("--funding", required=True)
+    p.add_argument("--out", required=True)
+    p.add_argument("--symbol", default="BTCUSDT")
+
     p = sub.add_parser("native-input", help="convert normalized Parquet to native JSONL")
     p.add_argument("--parquet", required=True)
     p.add_argument("--out", required=True)
@@ -176,6 +184,10 @@ def main(argv: list[str] | None = None) -> int:
         return 0 if payload["status"] == "PASS" else 1
     if args.command == "prepare":
         payload = normalize_capture(args.events, args.manifest, args.out, args.dataset_id)
+        print(json.dumps(payload, indent=2, sort_keys=True))
+        return 0
+    if args.command == "archive-native":
+        payload = build_archive(args.agg, args.mark, args.funding, args.out, args.symbol)
         print(json.dumps(payload, indent=2, sort_keys=True))
         return 0
     if args.command == "native-input":

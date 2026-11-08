@@ -17,7 +17,7 @@ It is not a profitability claim and does not certify a trading edge.
 | TASK-07 typed policy | DONE | 26 operators, DAG/type/leak checks, EMA48/STD96 reference |
 | TASK-08 native feasibility | DONE_WITH_BLOCKED_CAPABILITY | Nautilus v1.231.0 spike; LocalView/L2 queue blocked |
 | TASK-09 independent accounting | DONE | exact tape reconstruction; native residual 0 |
-| TASK-11 native taker slice | PARTIAL | 15 orders, 8 positions, sealed; F22 blocked |
+| TASK-11 native taker slice | PARTIAL | 15 orders/8 positions live slice; full archive day 307 orders/154 positions, residual 0; F22 blocked |
 | TASK-14 dependent stats | PARTIAL | HAC/bootstrap/IUT/Holm/F27/F28; B6 full run pending |
 | TASK-15/16 evaluator | PARTIAL | private DB, pre-access receipt, Ed25519 decisions; OS owner split blocked |
 | TASK-20 recovery | DONE | worker killed, lease requeued, generation 2 sealed |
@@ -54,6 +54,9 @@ SQLite: 3.54.1 source `2026-10-16 14:45:20 555e07ef…`.
   time-shifted repetition for scale/state growth only. Bounded replay in
   2,000-event chunks with `clear_data` matched the unchunked 15-order /
   8-position result at 19.9 MiB RSS.
+- Archive day: 358,200 events (284,672 observed trades, 72,084 synthetic L1
+  quotes, 1,440 marks, 4 funding settlements), 307 orders, 154 positions,
+  8.5 s, 113 MiB RSS; independent accounting residual 0.
 - Python tests: 34 passed. Go packages: ledger, artifacts, queue, control,
   memory, cgroup pass. Rust policy: 3 tests pass.
 
@@ -106,8 +109,10 @@ Upstream Nautilus revision: `27a8e54e7ac3c57d6cbf8891f0283dfbaee97317` (v1.231.0
 
 ## Remaining issues
 
-- M1/M2/M3 remain PARTIAL because the data window is minutes, not days. The
-  matched-control family is executed but is not a full 12-variant daily family.
+- M1/M2/M3 remain PARTIAL because only one archive day and a 240s live
+  capture exist; there is no multi-day walk-forward family. The archive-day
+  L1 quote is an explicit synthetic assumption around observed trades, not
+  observed depth.
 - B6 1000-program calibration, B0-B4 benchmark corpus, B5 restore drill and
   B7 7-day soak remain open.
 - M4 cannot be certified until a backend with LocalView and queue hooks is

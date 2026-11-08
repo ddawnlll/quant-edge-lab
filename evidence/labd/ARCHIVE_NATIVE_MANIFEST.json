@@ -1,0 +1,33 @@
+{
+  "claim_boundary": "synthetic L1 quote assumption; no observed depth or queue claim",
+  "counts": {
+    "Funding": 4,
+    "Mark": 1440,
+    "Quote": 72084,
+    "Trade": 284672
+  },
+  "dataset_id": "DS-ARCHIVE-BTCUSDT-2026-11-07",
+  "fidelity": {
+    "BOOK_COVERAGE": "assumed_synthetic_l1_around_trade",
+    "FEED_LATENCY": "assumed_zero",
+    "FEES": "assumed_taker_0.0004",
+    "FUNDING": "observed_venue_funding",
+    "IMPACT": "not_certified",
+    "MARK": "observed_mark_price_kline_close",
+    "PRICE_PATH": "observed_trade"
+  },
+  "input_hashes": {
+    "agg_trades": "ca94bdf9b4cdf47fb1348bf14f98a535eb287885d94cd6ddc260ed950024fffb",
+    "funding": "2315bb35f16d3fe9c742e2970fd7ffab48485426234c2d486f78261674d4c819",
+    "mark_klines": "2ab642118319d2ade1828d6d4ac5ac0c55150296c7d25d2b493d8bf54ec9c572"
+  },
+  "native_input": "data/native/DS-ARCHIVE-BTCUSDT-2026-11-07/events.jsonl",
+  "native_sha256": "c7a4c79484a611820c2e314f48397de299294b009d24766ad5c2d03cc5ee22ed",
+  "schema_version": "1.1.0",
+  "source": "BINANCE_USDM_PUBLIC_ARCHIVE",
+  "symbol": "BTCUSDT",
+  "time_range": {
+    "end_ns": "1794096000000000000",
+    "start_ns": "1794009600000000000"
+  }
+}

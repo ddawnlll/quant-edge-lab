@@ -417,11 +417,16 @@ fn main() -> Result<()> {
     {
         let cache = engine.kernel().cache.borrow();
         let sid = StrategyId::from("TAKER-NATIVE-001");
-        let positions = cache.positions_open(None, Some(&id), Some(&sid), None, None);
+        let mut seen = std::collections::HashSet::new();
+        let mut positions = cache.positions_open(None, Some(&id), Some(&sid), None, None);
+        positions.extend(cache.positions_closed(None, Some(&id), Some(&sid), None, None));
         for p in positions {
             for adj in &p.adjustments {
                 if let Some(money) = adj.pnl_change {
-                    tape.push(json!({"type": "FUNDING", "amount": trim(money.as_f64(), 8), "epoch": "1"}));
+                    let key = format!("{}:{}:{}", p.id, adj.reason.as_ref().map(|r| r.to_string()).unwrap_or_default(), money.as_f64());
+                    if seen.insert(key) {
+                        tape.push(json!({"type": "FUNDING", "amount": trim(money.as_f64(), 8), "epoch": "1"}));
+                    }
                 }
             }
         }
