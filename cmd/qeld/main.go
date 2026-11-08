@@ -34,6 +34,7 @@ func main() {
 	if err := os.MkdirAll(*root, 0o750); err != nil {
 		log.Fatal(err)
 	}
+	_ = os.Chmod(*root, 0o750)
 	dbPath := filepath.Join(*root, "labd", "research.sqlite")
 	l, err := ledger.Open(dbPath)
 	if err != nil {
@@ -45,6 +46,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	_ = os.Chmod(dbPath, 0o640)
 	log.Printf("sqlite version=%s source_id=%s", version, source)
 	if err := l.VerifyChain(context.Background()); err != nil {
 		log.Fatalf("ledger chain: %v", err)

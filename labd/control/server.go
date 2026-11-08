@@ -630,7 +630,7 @@ func (s *Server) Dashboard(ctx context.Context) (map[string]any, error) {
 		"oos_state":           "WAITING_FRESH_OOS",
 		"alpha_next":          map[string]any{"num": "1", "den": "40"},
 		"risk_state":          "RUNNING",
-		"resource_profile_id": "RP-4G",
+		"resource_profile_id": "RP-8G",
 		"artifact_refs":       []any{},
 	}
 	if err := qelcontract.ValidateDef("DashboardSnapshot", snap); err != nil {
