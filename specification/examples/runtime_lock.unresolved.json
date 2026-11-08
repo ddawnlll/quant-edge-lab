@@ -1,0 +1,17 @@
+{
+  "status": "UNRESOLVED",
+  "go_version": null,
+  "rust_toolchain": null,
+  "python_version": null,
+  "sqlite_source_id": null,
+  "nautilus_git_commit": null,
+  "hftbacktest_git_commit": null,
+  "duckdb_version": null,
+  "arrow_version": null,
+  "parquet_version": null,
+  "os_image_digest": null,
+  "architecture": "X86_64",
+  "lock_artifact_hashes": [],
+  "native_spike_report_hash": null,
+  "verified_profile_ids": []
+}

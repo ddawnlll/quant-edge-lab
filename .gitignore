@@ -1,0 +1,23 @@
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+bin/
+build/
+dist/
+*.egg-info/
+
+# runtime state and large data are never committed
+runtime/
+data/
+artifacts/
+var/
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+*.parquet
+*.arrow
+*.zst
+
+# local vendor clones and build caches live outside the repo
+native/target/

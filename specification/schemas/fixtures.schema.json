@@ -1,0 +1,2994 @@
+{
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": "1.1.0"
+    },
+    "fixture_dsl": {
+      "const": "QEL_FIXTURE_DSL_1"
+    },
+    "defaults": {
+      "type": "object",
+      "properties": {
+        "product": {
+          "type": "string"
+        },
+        "multiplier": {
+          "type": "string"
+        },
+        "price_exponent": {
+          "type": "integer"
+        },
+        "qty_exponent": {
+          "type": "integer"
+        },
+        "currency_exponent": {
+          "type": "integer"
+        },
+        "fee": {
+          "type": "string"
+        },
+        "send_latency_ns": {
+          "type": "string"
+        },
+        "response_latency_ns": {
+          "type": "string"
+        },
+        "feed_latency_mode": {
+          "type": "string"
+        },
+        "initial_position": {
+          "type": "string"
+        },
+        "starting_capital": {
+          "type": "string"
+        },
+        "tif": {
+          "type": "string"
+        },
+        "queue_cancel_model": {
+          "type": "string"
+        },
+        "unknown_depth_remainder": {
+          "type": "string"
+        },
+        "funding_precedence": {
+          "type": "string"
+        },
+        "reduce_only_excess": {
+          "type": "string"
+        },
+        "output_quantities": {
+          "type": "string"
+        },
+        "margin_fixture_mode": {
+          "type": "string"
+        },
+        "position_seed_collateral": {
+          "type": "string"
+        },
+        "position_seed_mark": {
+          "type": "string"
+        },
+        "no_fee_or_margin_hidden_defaults": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "product",
+        "multiplier",
+        "price_exponent",
+        "qty_exponent",
+        "currency_exponent",
+        "fee",
+        "send_latency_ns",
+        "response_latency_ns",
+        "feed_latency_mode",
+        "initial_position",
+        "starting_capital",
+        "tif",
+        "queue_cancel_model",
+        "unknown_depth_remainder",
+        "funding_precedence",
+        "reduce_only_excess",
+        "output_quantities",
+        "margin_fixture_mode",
+        "position_seed_collateral",
+        "position_seed_mark",
+        "no_fee_or_margin_hidden_defaults"
+      ],
+      "additionalProperties": false
+    },
+    "fixtures": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^F[0-9]{2}$"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "REPLAY",
+              "ARITHMETIC",
+              "RECOVERY",
+              "SECURITY",
+              "HASH",
+              "METAMORPHIC"
+            ]
+          },
+          "status": {
+            "const": "DEFINED_NOT_EXECUTED"
+          },
+          "scenarios": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "setup": {
+                  "type": "object",
+                  "properties": {
+                    "replace_increase_resets": {
+                      "type": "boolean"
+                    },
+                    "replace_decrease_resets": {
+                      "type": "boolean"
+                    },
+                    "oco": {
+                      "type": "string"
+                    },
+                    "reduce_only": {
+                      "type": "boolean"
+                    },
+                    "capital": {
+                      "type": "string"
+                    },
+                    "funding_before_same_time_commands": {
+                      "type": "boolean"
+                    },
+                    "position_qty": {
+                      "type": "string"
+                    },
+                    "isolated_cash": {
+                      "type": "string"
+                    },
+                    "maintenance_rate": {
+                      "type": "string"
+                    },
+                    "trigger_source": {
+                      "type": "string"
+                    },
+                    "lot": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [],
+                  "additionalProperties": false
+                },
+                "steps": {
+                  "type": "array",
+                  "items": {
+                    "oneOf": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "at_ns": {
+                            "type": "string",
+                            "pattern": "^(0|[1-9][0-9]*)$",
+                            "x-semantic": "0 <= int(value) <= 18446744073709551615",
+                            "x-qel-integer": {
+                              "minimum": "0",
+                              "maximum": "18446744073709551615",
+                              "reject_negative_zero": true
+                            }
+                          },
+                          "operation": {
+                            "const": "ACCESS_SEALED_BYTE"
+                          },
+                          "arguments": {
+                            "type": "object",
+                            "properties": {},
+                            "required": [],
+                            "additionalProperties": false
+                          }
+                        },
+                        "required": [
+                          "at_ns",
+                          "operation",
+                          "arguments"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "at_ns": {
+                            "type": "string",
+                            "pattern": "^(0|[1-9][0-9]*)$",
+                            "x-semantic": "0 <= int(value) <= 18446744073709551615",
+                            "x-qel-integer": {
+                              "minimum": "0",
+                              "maximum": "18446744073709551615",
+                              "reject_negative_zero": true
+                            }
+                          },
+                          "operation": {
+                            "const": "ALLOCATE_ISOLATED"
+                          },
+                          "arguments": {
+                            "type": "object",
+                            "properties": {
+                              "amount": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "amount"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "required": [
+                          "at_ns",
+                          "operation",
+                          "arguments"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "at_ns": {
+                            "type": "string",
+                            "pattern": "^(0|[1-9][0-9]*)$",
+                            "x-semantic": "0 <= int(value) <= 18446744073709551615",
+                            "x-qel-integer": {
+                              "minimum": "0",
+                              "maximum": "18446744073709551615",
+                              "reject_negative_zero": true
+                            }
+                          },
+                          "operation": {
+                            "const": "ANCHOR_SPEND"
+                          },
+                          "arguments": {
+                            "type": "object",
+                            "properties": {
+                              "acknowledged": {
+                                "type": "boolean"
+                              }
+                            },
+                            "required": [
+                              "acknowledged"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "required": [
+                          "at_ns",
+                          "operation",
+                          "arguments"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "at_ns": {
+                            "type": "string",
+                            "pattern": "^(0|[1-9][0-9]*)$",
+                            "x-semantic": "0 <= int(value) <= 18446744073709551615",
+                            "x-qel-integer": {
+                              "minimum": "0",
+                              "maximum": "18446744073709551615",
+                              "reject_negative_zero": true
+                            }
+                          },
+                          "operation": {
+                            "const": "ATTACK_PERMISSIONS"
+                          },
+                          "arguments": {
+                            "type": "object",
+                            "properties": {
+                              "principal": {
+                                "type": "string"
+                              },
+                              "targets": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            "required": [
+                              "principal",
+                              "targets"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "required": [
+                          "at_ns",
+                          "operation",
+                          "arguments"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "at_ns": {
+                            "type": "string",
+                            "pattern": "^(0|[1-9][0-9]*)$",
+                            "x-semantic": "0 <= int(value) <= 18446744073709551615",
+                            "x-qel-integer": {
+                              "minimum": "0",
+                              "maximum": "18446744073709551615",
+                              "reject_negative_zero": true
+                            }
+                          },
+                          "operation": {
+                            "const": "ATTEMPT_NEW_CANDIDATE_SAME_WINDOW"
+                          },
+                          "arguments": {
+                            "type": "object",
+                            "properties": {},
+                            "required": [],
+                            "additionalProperties": false
+                          }
+                        },
+                        "required": [
+                          "at_ns",
+                          "operation",
+                          "arguments"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "at_ns": {
+                            "type": "string",
+                            "pattern": "^(0|[1-9][0-9]*)$",
+                            "x-semantic": "0 <= int(value) <= 18446744073709551615",
+                            "x-qel-integer": {
+                              "minimum": "0",
+                              "maximum": "18446744073709551615",
+                              "reject_negative_zero": true
+                            }
+                          },
+                          "operation": {
+                            "const": "BOOK"
+                          },
+                          "arguments": {
+                            "type": "object",
+                            "properties": {
+                              "bid": {
+                                "type": "string"
+                              },
+                              "bid_qty": {
+                                "type": "string"
+                              },
+                              "ask": {
+                                "type": "string"
+                              },
+                              "ask_qty": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "bid",
+                              "bid_qty",
+                              "ask",
+                              "ask_qty"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "required": [
+                          "at_ns",
+                          "operation",
+                          "arguments"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "at_ns": {
+                            "type": "string",
+                            "pattern": "^(0|[1-9][0-9]*)$",
+                            "x-semantic": "0 <= int(value) <= 18446744073709551615",
+                            "x-qel-integer": {
+                              "minimum": "0",
+                              "maximum": "18446744073709551615",
+                              "reject_negative_zero": true
+                            }
+                          },
+                          "operation": {
+                            "const": "BOOK_ANCHOR"
+                          },
+                          "arguments": {
+                            "type": "object",
+                            "properties": {
+                              "last_update_id": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "last_update_id"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "required": [
+                          "at_ns",
+                          "operation",
+                          "arguments"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "at_ns": {
+                            "type": "string",
+                            "pattern": "^(0|[1-9][0-9]*)$",
+                            "x-semantic": "0 <= int(value) <= 18446744073709551615",
+                            "x-qel-integer": {
+                              "minimum": "0",
+                              "maximum": "18446744073709551615",
+                              "reject_negative_zero": true
+                            }
+                          },
+                          "operation": {
+                            "const": "BOOK_SEQUENCE"
+                          },
+                          "arguments": {
+                            "type": "object",
+                            "properties": {
+                              "first": {
+                                "type": "string"
+                              },
+                              "last": {
+                                "type": "string"
+                              },
+                              "previous": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "first",
+                              "last",
+                              "previous"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "required": [
+                          "at_ns",
+                          "operation",
+                          "arguments"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "at_ns": {
+                            "type": "string",
+                            "pattern": "^(0|[1-9][0-9]*)$",
+                            "x-semantic": "0 <= int(value) <= 18446744073709551615",
+                            "x-qel-integer": {
+                              "minimum": "0",
+                              "maximum": "18446744073709551615",
+                              "reject_negative_zero": true
+                            }
+                          },
+                          "operation": {
+                            "const": "BUILD_BRACKET"
+                          },
+                          "arguments": {
+                            "type": "object",
+                            "properties": {
+                              "group": {
+                                "type": "string"
+                              },
+                              "entry_id": {
+                                "type": "string"
+                              },
+                              "target_fraction": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "group",
+                              "entry_id",
+                              "target_fraction"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "required": [
+                          "at_ns",
+                          "operation",
+                          "arguments"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "at_ns": {
+                            "type": "string",
+                            "pattern": "^(0|[1-9][0-9]*)$",
+                            "x-semantic": "0 <= int(value) <= 18446744073709551615",
+                            "x-qel-integer": {
+                              "minimum": "0",
+                              "maximum": "18446744073709551615",
+                              "reject_negative_zero": true
+                            }
+                          },
+                          "operation": {
+                            "const": "CANCEL_ARRIVES"
+                          },
+                          "arguments": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "id"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "required": [
+                          "at_ns",
+                          "operation",
+                          "arguments"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "at_ns": {
+                            "type": "string",
+                            "pattern": "^(0|[1-9][0-9]*)$",
+                            "x-semantic": "0 <= int(value) <= 18446744073709551615",
+                            "x-qel-integer": {
+                              "minimum": "0",
+                              "maximum": "18446744073709551615",
+                              "reject_negative_zero": true
+                            }
+                          },
+                          "operation": {
+                            "const": "CANCEL_SENT"
+                          },
+                          "arguments": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "arrival_ns": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "arrival_ns"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "required": [
+                          "at_ns",
+                          "operation",
+                          "arguments"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "at_ns": {
+                            "type": "string",
+                            "pattern": "^(0|[1-9][0-9]*)$",
+                            "x-semantic": "0 <= int(value) <= 18446744073709551615",
+                            "x-qel-integer": {
+                              "minimum": "0",
+                              "maximum": "18446744073709551615",
+                              "reject_negative_zero": true
+                            }
+                          },
+                          "operation": {
+                            "const": "CHECKED_MULTIPLY"
+                          },
+                          "arguments": {
+                            "type": "object",
+                            "properties": {
+                              "values": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
+                              },
+                              "bits": {
+                                "type": "integer"
+                              }
+                            },
+                            "required": [
+                              "values",
+                              "bits"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "required": [
+                          "at_ns",
+                          "operation",
+                          "arguments"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "at_ns": {
+                            "type": "string",
+                            "pattern": "^(0|[1-9][0-9]*)$",
+                            "x-semantic": "0 <= int(value) <= 18446744073709551615",
+                            "x-qel-integer": {
+                              "minimum": "0",
+                              "maximum": "18446744073709551615",
+                              "reject_negative_zero": true
+                            }
+                          },
+                          "operation": {
+                            "const": "CLASSIFY"
+                          },
+                          "arguments": {
+                            "type": "object",
+                            "properties": {
+                              "p": {
+                                "type": "string"
+                              },
+                              "power": {
+                                "type": "string"
+                              },
+                              "ci_low": {
+                                "type": "string"
+                              },
+                              "ci_high": {
+                                "type": "string"
+                              },
+                              "economic_minimum": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "p",
+                              "power",
+                              "ci_low",
+                              "ci_high",
+                              "economic_minimum"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "required": [
+                          "at_ns",
+                          "operation",
+                          "arguments"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "at_ns": {
+                            "type": "string",
+                            "pattern": "^(0|[1-9][0-9]*)$",
+                            "x-semantic": "0 <= int(value) <= 18446744073709551615",
+                            "x-qel-integer": {
+                              "minimum": "0",
+                              "maximum": "18446744073709551615",
+                              "reject_negative_zero": true
+                            }
+                          },
+                          "operation": {
+                            "const": "CLOSE_AND_REOPEN"
+                          },
+                          "arguments": {
+                            "type": "object",
+                            "properties": {
+                              "new_qty": {
+                                "type": "string"
+                              },
+                              "entry": {
+                                "type": "string"
+                              },
+                              "new_epoch": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "new_qty",
+                              "entry",
+                              "new_epoch"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "required": [
+                          "at_ns",
+                          "operation",
+                          "arguments"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "at_ns": {
+                            "type": "string",
+                            "pattern": "^(0|[1-9][0-9]*)$",
+                            "x-semantic": "0 <= int(value) <= 18446744073709551615",
+                            "x-qel-integer": {
+                              "minimum": "0",
+                              "maximum": "18446744073709551615",
+                              "reject_negative_zero": true
+                            }
+                          },
+                          "operation": {
+                            "const": "CLOSE_POSITION"
+                          },
+                          "arguments": {
+                            "type": "object",
+                            "properties": {
+                              "price": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "price"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "required": [
+                          "at_ns",
+                          "operation",
+                          "arguments"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "at_ns": {
+                            "type": "string",
+                            "pattern": "^(0|[1-9][0-9]*)$",
+                            "x-semantic": "0 <= int(value) <= 18446744073709551615",
+                            "x-qel-integer": {
+                              "minimum": "0",
+                              "maximum": "18446744073709551615",
+                              "reject_negative_zero": true
+                            }
+                          },
+                          "operation": {
+                            "const": "CRASH"
+                          },
+                          "arguments": {
+                            "type": "object",
+                            "properties": {},
+                            "required": [],
+                            "additionalProperties": false
+                          }
+                        },
+                        "required": [
+                          "at_ns",
+                          "operation",
+                          "arguments"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "at_ns": {
+                            "type": "string",
+                            "pattern": "^(0|[1-9][0-9]*)$",
+                            "x-semantic": "0 <= int(value) <= 18446744073709551615",
+                            "x-qel-integer": {
+                              "minimum": "0",
+                              "maximum": "18446744073709551615",
+                              "reject_negative_zero": true
+                            }
+                          },
+                          "operation": {
+                            "const": "DAILY_CONTROL_AGGREGATE"
+                          },
+                          "arguments": {
+                            "type": "object",
+                            "properties": {
+                              "candidate": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
+                              },
+                              "controls": {
+                                "type": "array",
+                                "items": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string"
+                                  }
+                                }
+                              }
+                            },
+                            "required": [
+                              "candidate",
+                              "controls"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "required": [
+                          "at_ns",
+                          "operation",
+                          "arguments"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "at_ns": {
+                            "type": "string",
+                            "pattern": "^(0|[1-9][0-9]*)$",
+                            "x-semantic": "0 <= int(value) <= 18446744073709551615",
+                            "x-qel-integer": {
+                              "minimum": "0",
+                              "maximum": "18446744073709551615",
+                              "reject_negative_zero": true
+                            }
+                          },
+                          "operation": {
+                            "const": "DECIDE_SUBMIT"
+                          },
+                          "arguments": {
+                            "anyOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "id": {
+                                    "type": "string"
+                                  },
+                                  "side": {
+                                    "type": "string"
+                                  },
+                                  "order_type": {
+                                    "type": "string"
+                                  },
+                                  "price": {
+                                    "type": "string"
+                                  },
+                                  "qty": {
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "id",
+                                  "side",
+                                  "order_type",
+                                  "price",
+                                  "qty"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "id": {
+                                    "type": "string"
+                                  },
+                                  "side": {
+                                    "type": "string"
+                                  },
+                                  "order_type": {
+                                    "type": "string"
+                                  },
+                                  "qty": {
+                                    "type": "string"
+                                  },
+                                  "arrival_ns": {
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "id",
+                                  "side",
+                                  "order_type",
+                                  "qty",
+                                  "arrival_ns"
+                                ],
+                                "additionalProperties": false
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "at_ns",
+                          "operation",
+                          "arguments"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "at_ns": {
+                            "type": "string",
+                            "pattern": "^(0|[1-9][0-9]*)$",
+                            "x-semantic": "0 <= int(value) <= 18446744073709551615",
+                            "x-qel-integer": {
+                              "minimum": "0",
+                              "maximum": "18446744073709551615",
+                              "reject_negative_zero": true
+                            }
+                          },
+                          "operation": {
+                            "const": "DELIVER_FILL"
+                          },
+                          "arguments": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "id"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "required": [
+                          "at_ns",
+                          "operation",
+                          "arguments"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "at_ns": {
+                            "type": "string",
+                            "pattern": "^(0|[1-9][0-9]*)$",
+                            "x-semantic": "0 <= int(value) <= 18446744073709551615",
+                            "x-qel-integer": {
+                              "minimum": "0",
+                              "maximum": "18446744073709551615",
+                              "reject_negative_zero": true
+                            }
+                          },
+                          "operation": {
+                            "const": "END_FOLD"
+                          },
+                          "arguments": {
+                            "type": "object",
+                            "properties": {
+                              "close_cost": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "close_cost"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "required": [
+                          "at_ns",
+                          "operation",
+                          "arguments"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "at_ns": {
+                            "type": "string",
+                            "pattern": "^(0|[1-9][0-9]*)$",
+                            "x-semantic": "0 <= int(value) <= 18446744073709551615",
+                            "x-qel-integer": {
+                              "minimum": "0",
+                              "maximum": "18446744073709551615",
+                              "reject_negative_zero": true
+                            }
+                          },
+                          "operation": {
+                            "const": "EXACT_FEE"
+                          },
+                          "arguments": {
+                            "type": "object",
+                            "properties": {
+                              "notional": {
+                                "type": "string"
+                              },
+                              "rate_num": {
+                                "type": "string"
+                              },
+                              "rate_den": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "notional",
+                              "rate_num",
+                              "rate_den"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "required": [
+                          "at_ns",
+                          "operation",
+                          "arguments"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "at_ns": {
+                            "type": "string",
+                            "pattern": "^(0|[1-9][0-9]*)$",
+                            "x-semantic": "0 <= int(value) <= 18446744073709551615",
+                            "x-qel-integer": {
+                              "minimum": "0",
+                              "maximum": "18446744073709551615",
+                              "reject_negative_zero": true
+                            }
+                          },
+                          "operation": {
+                            "const": "EXCHANGE_FILL"
+                          },
+                          "arguments": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "price": {
+                                "type": "string"
+                              },
+                              "qty": {
+                                "type": "string"
+                              },
+                              "delivery_ns": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "price",
+                              "qty",
+                              "delivery_ns"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "required": [
+                          "at_ns",
+                          "operation",
+                          "arguments"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "at_ns": {
+                            "type": "string",
+                            "pattern": "^(0|[1-9][0-9]*)$",
+                            "x-semantic": "0 <= int(value) <= 18446744073709551615",
+                            "x-qel-integer": {
+                              "minimum": "0",
+                              "maximum": "18446744073709551615",
+                              "reject_negative_zero": true
+                            }
+                          },
+                          "operation": {
+                            "const": "EXCHANGE_QUOTE"
+                          },
+                          "arguments": {
+                            "type": "object",
+                            "properties": {
+                              "price": {
+                                "type": "string"
+                              },
+                              "receive_ns": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "price",
+                              "receive_ns"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "required": [
+                          "at_ns",
+                          "operation",
+                          "arguments"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "at_ns": {
+                            "type": "string",
+                            "pattern": "^(0|[1-9][0-9]*)$",
+                            "x-semantic": "0 <= int(value) <= 18446744073709551615",
+                            "x-qel-integer": {
+                              "minimum": "0",
+                              "maximum": "18446744073709551615",
+                              "reject_negative_zero": true
+                            }
+                          },
+                          "operation": {
+                            "const": "FILL"
+                          },
+                          "arguments": {
+                            "type": "object",
+                            "properties": {
+                              "side": {
+                                "type": "string"
+                              },
+                              "qty": {
+                                "type": "string"
+                              },
+                              "price": {
+                                "type": "string"
+                              },
+                              "fee": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "side",
+                              "qty",
+                              "price",
+                              "fee"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "required": [
+                          "at_ns",
+                          "operation",
+                          "arguments"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "at_ns": {
+                            "type": "string",
+                            "pattern": "^(0|[1-9][0-9]*)$",
+                            "x-semantic": "0 <= int(value) <= 18446744073709551615",
+                            "x-qel-integer": {
+                              "minimum": "0",
+                              "maximum": "18446744073709551615",
+                              "reject_negative_zero": true
+                            }
+                          },
+                          "operation": {
+                            "const": "FRAME_ATTACK"
+                          },
+                          "arguments": {
+                            "type": "object",
+                            "properties": {
+                              "payload_bytes": {
+                                "type": "integer"
+                              }
+                            },
+                            "required": [
+                              "payload_bytes"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "required": [
+                          "at_ns",
+                          "operation",
+                          "arguments"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "at_ns": {
+                            "type": "string",
+                            "pattern": "^(0|[1-9][0-9]*)$",
+                            "x-semantic": "0 <= int(value) <= 18446744073709551615",
+                            "x-qel-integer": {
+                              "minimum": "0",
+                              "maximum": "18446744073709551615",
+                              "reject_negative_zero": true
+                            }
+                          },
+                          "operation": {
+                            "const": "FREEZE_COHORT"
+                          },
+                          "arguments": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "m": {
+                                "type": "integer"
+                              },
+                              "j": {
+                                "type": "integer"
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "m",
+                              "j"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "required": [
+                          "at_ns",
+                          "operation",
+                          "arguments"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "at_ns": {
+                            "type": "string",
+                            "pattern": "^(0|[1-9][0-9]*)$",
+                            "x-semantic": "0 <= int(value) <= 18446744073709551615",
+                            "x-qel-integer": {
+                              "minimum": "0",
+                              "maximum": "18446744073709551615",
+                              "reject_negative_zero": true
+                            }
+                          },
+                          "operation": {
+                            "const": "FUNDING"
+                          },
+                          "arguments": {
+                            "anyOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "settlement_id": {
+                                    "type": "string"
+                                  },
+                                  "rate_num": {
+                                    "type": "string"
+                                  },
+                                  "rate_den": {
+                                    "type": "string"
+                                  },
+                                  "mark": {
+                                    "type": "string"
+                                  },
+                                  "available_ns": {
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "settlement_id",
+                                  "rate_num",
+                                  "rate_den",
+                                  "mark",
+                                  "available_ns"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "settlement_id": {
+                                    "type": "string"
+                                  },
+                                  "rate_num": {
+                                    "type": "string"
+                                  },
+                                  "rate_den": {
+                                    "type": "string"
+                                  },
+                                  "mark": {
+                                    "type": "null"
+                                  },
+                                  "available_ns": {
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "settlement_id",
+                                  "rate_num",
+                                  "rate_den",
+                                  "mark",
+                                  "available_ns"
+                                ],
+                                "additionalProperties": false
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "at_ns",
+                          "operation",
+                          "arguments"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "at_ns": {
+                            "type": "string",
+                            "pattern": "^(0|[1-9][0-9]*)$",
+                            "x-semantic": "0 <= int(value) <= 18446744073709551615",
+                            "x-qel-integer": {
+                              "minimum": "0",
+                              "maximum": "18446744073709551615",
+                              "reject_negative_zero": true
+                            }
+                          },
+                          "operation": {
+                            "const": "FUNDING_RECEIPT"
+                          },
+                          "arguments": {
+                            "type": "object",
+                            "properties": {
+                              "settlement_id": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "settlement_id"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "required": [
+                          "at_ns",
+                          "operation",
+                          "arguments"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "at_ns": {
+                            "type": "string",
+                            "pattern": "^(0|[1-9][0-9]*)$",
+                            "x-semantic": "0 <= int(value) <= 18446744073709551615",
+                            "x-qel-integer": {
+                              "minimum": "0",
+                              "maximum": "18446744073709551615",
+                              "reject_negative_zero": true
+                            }
+                          },
+                          "operation": {
+                            "const": "HASH_JCS"
+                          },
+                          "arguments": {
+                            "type": "object",
+                            "properties": {
+                              "value": {
+                                "type": "object",
+                                "properties": {
+                                  "a": {
+                                    "type": "string"
+                                  },
+                                  "b": {
+                                    "type": "string"
+                                  },
+                                  "c": {
+                                    "type": "null"
+                                  }
+                                },
+                                "required": [
+                                  "a",
+                                  "b",
+                                  "c"
+                                ],
+                                "additionalProperties": false
+                              }
+                            },
+                            "required": [
+                              "value"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "required": [
+                          "at_ns",
+                          "operation",
+                          "arguments"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "at_ns": {
+                            "type": "string",
+                            "pattern": "^(0|[1-9][0-9]*)$",
+                            "x-semantic": "0 <= int(value) <= 18446744073709551615",
+                            "x-qel-integer": {
+                              "minimum": "0",
+                              "maximum": "18446744073709551615",
+                              "reject_negative_zero": true
+                            }
+                          },
+                          "operation": {
+                            "const": "HOLM"
+                          },
+                          "arguments": {
+                            "type": "object",
+                            "properties": {
+                              "p_upper": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
+                              },
+                              "alpha": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "p_upper",
+                              "alpha"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "required": [
+                          "at_ns",
+                          "operation",
+                          "arguments"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "at_ns": {
+                            "type": "string",
+                            "pattern": "^(0|[1-9][0-9]*)$",
+                            "x-semantic": "0 <= int(value) <= 18446744073709551615",
+                            "x-qel-integer": {
+                              "minimum": "0",
+                              "maximum": "18446744073709551615",
+                              "reject_negative_zero": true
+                            }
+                          },
+                          "operation": {
+                            "const": "INJECT_CRASH_MATRIX"
+                          },
+                          "arguments": {
+                            "type": "object",
+                            "properties": {
+                              "points": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
+                              },
+                              "disk_full_at": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            "required": [
+                              "points",
+                              "disk_full_at"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "required": [
+                          "at_ns",
+                          "operation",
+                          "arguments"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "at_ns": {
+                            "type": "string",
+                            "pattern": "^(0|[1-9][0-9]*)$",
+                            "x-semantic": "0 <= int(value) <= 18446744073709551615",
+                            "x-qel-integer": {
+                              "minimum": "0",
+                              "maximum": "18446744073709551615",
+                              "reject_negative_zero": true
+                            }
+                          },
+                          "operation": {
+                            "const": "IUT"
+                          },
+                          "arguments": {
+                            "type": "object",
+                            "properties": {
+                              "p_profit": {
+                                "type": "string"
+                              },
+                              "p_control": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "p_profit",
+                              "p_control"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "required": [
+                          "at_ns",
+                          "operation",
+                          "arguments"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "at_ns": {
+                            "type": "string",
+                            "pattern": "^(0|[1-9][0-9]*)$",
+                            "x-semantic": "0 <= int(value) <= 18446744073709551615",
+                            "x-qel-integer": {
+                              "minimum": "0",
+                              "maximum": "18446744073709551615",
+                              "reject_negative_zero": true
+                            }
+                          },
+                          "operation": {
+                            "const": "LEASE"
+                          },
+                          "arguments": {
+                            "type": "object",
+                            "properties": {
+                              "generation": {
+                                "type": "integer"
+                              }
+                            },
+                            "required": [
+                              "generation"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "required": [
+                          "at_ns",
+                          "operation",
+                          "arguments"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "at_ns": {
+                            "type": "string",
+                            "pattern": "^(0|[1-9][0-9]*)$",
+                            "x-semantic": "0 <= int(value) <= 18446744073709551615",
+                            "x-qel-integer": {
+                              "minimum": "0",
+                              "maximum": "18446744073709551615",
+                              "reject_negative_zero": true
+                            }
+                          },
+                          "operation": {
+                            "const": "LOCAL_ORDER_EVENT"
+                          },
+                          "arguments": {
+                            "anyOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "venue_seq": {
+                                    "type": "string"
+                                  },
+                                  "event": {
+                                    "type": "string"
+                                  },
+                                  "fill_id": {
+                                    "type": "string"
+                                  },
+                                  "qty": {
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "venue_seq",
+                                  "event",
+                                  "fill_id",
+                                  "qty"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "venue_seq": {
+                                    "type": "string"
+                                  },
+                                  "event": {
+                                    "type": "string"
+                                  },
+                                  "fill_id": {
+                                    "type": "null"
+                                  },
+                                  "qty": {
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "venue_seq",
+                                  "event",
+                                  "fill_id",
+                                  "qty"
+                                ],
+                                "additionalProperties": false
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "at_ns",
+                          "operation",
+                          "arguments"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "at_ns": {
+                            "type": "string",
+                            "pattern": "^(0|[1-9][0-9]*)$",
+                            "x-semantic": "0 <= int(value) <= 18446744073709551615",
+                            "x-qel-integer": {
+                              "minimum": "0",
+                              "maximum": "18446744073709551615",
+                              "reject_negative_zero": true
+                            }
+                          },
+                          "operation": {
+                            "const": "LOOKUP_RULE"
+                          },
+                          "arguments": {
+                            "type": "object",
+                            "properties": {},
+                            "required": [],
+                            "additionalProperties": false
+                          }
+                        },
+                        "required": [
+                          "at_ns",
+                          "operation",
+                          "arguments"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "at_ns": {
+                            "type": "string",
+                            "pattern": "^(0|[1-9][0-9]*)$",
+                            "x-semantic": "0 <= int(value) <= 18446744073709551615",
+                            "x-qel-integer": {
+                              "minimum": "0",
+                              "maximum": "18446744073709551615",
+                              "reject_negative_zero": true
+                            }
+                          },
+                          "operation": {
+                            "const": "MARK"
+                          },
+                          "arguments": {
+                            "type": "object",
+                            "properties": {
+                              "price": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "price"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "required": [
+                          "at_ns",
+                          "operation",
+                          "arguments"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "at_ns": {
+                            "type": "string",
+                            "pattern": "^(0|[1-9][0-9]*)$",
+                            "x-semantic": "0 <= int(value) <= 18446744073709551615",
+                            "x-qel-integer": {
+                              "minimum": "0",
+                              "maximum": "18446744073709551615",
+                              "reject_negative_zero": true
+                            }
+                          },
+                          "operation": {
+                            "const": "MC_BUDGET"
+                          },
+                          "arguments": {
+                            "type": "object",
+                            "properties": {
+                              "m": {
+                                "type": "integer"
+                              },
+                              "j": {
+                                "type": "integer"
+                              },
+                              "max_resamples": {
+                                "type": "integer"
+                              }
+                            },
+                            "required": [
+                              "m",
+                              "j",
+                              "max_resamples"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "required": [
+                          "at_ns",
+                          "operation",
+                          "arguments"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "at_ns": {
+                            "type": "string",
+                            "pattern": "^(0|[1-9][0-9]*)$",
+                            "x-semantic": "0 <= int(value) <= 18446744073709551615",
+                            "x-qel-integer": {
+                              "minimum": "0",
+                              "maximum": "18446744073709551615",
+                              "reject_negative_zero": true
+                            }
+                          },
+                          "operation": {
+                            "const": "METAMORPHIC_VARIANTS"
+                          },
+                          "arguments": {
+                            "type": "object",
+                            "properties": {
+                              "base_fixture": {
+                                "type": "string"
+                              },
+                              "transforms": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            "required": [
+                              "base_fixture",
+                              "transforms"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "required": [
+                          "at_ns",
+                          "operation",
+                          "arguments"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "at_ns": {
+                            "type": "string",
+                            "pattern": "^(0|[1-9][0-9]*)$",
+                            "x-semantic": "0 <= int(value) <= 18446744073709551615",
+                            "x-qel-integer": {
+                              "minimum": "0",
+                              "maximum": "18446744073709551615",
+                              "reject_negative_zero": true
+                            }
+                          },
+                          "operation": {
+                            "const": "OBSERVE_LOCAL"
+                          },
+                          "arguments": {
+                            "type": "object",
+                            "properties": {},
+                            "required": [],
+                            "additionalProperties": false
+                          }
+                        },
+                        "required": [
+                          "at_ns",
+                          "operation",
+                          "arguments"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "at_ns": {
+                            "type": "string",
+                            "pattern": "^(0|[1-9][0-9]*)$",
+                            "x-semantic": "0 <= int(value) <= 18446744073709551615",
+                            "x-qel-integer": {
+                              "minimum": "0",
+                              "maximum": "18446744073709551615",
+                              "reject_negative_zero": true
+                            }
+                          },
+                          "operation": {
+                            "const": "OCO_BOTH_ELIGIBLE"
+                          },
+                          "arguments": {
+                            "type": "object",
+                            "properties": {
+                              "group": {
+                                "type": "string"
+                              },
+                              "qty": {
+                                "type": "string"
+                              },
+                              "side": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "group",
+                              "qty",
+                              "side"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "required": [
+                          "at_ns",
+                          "operation",
+                          "arguments"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "at_ns": {
+                            "type": "string",
+                            "pattern": "^(0|[1-9][0-9]*)$",
+                            "x-semantic": "0 <= int(value) <= 18446744073709551615",
+                            "x-qel-integer": {
+                              "minimum": "0",
+                              "maximum": "18446744073709551615",
+                              "reject_negative_zero": true
+                            }
+                          },
+                          "operation": {
+                            "const": "POSITION"
+                          },
+                          "arguments": {
+                            "type": "object",
+                            "properties": {
+                              "qty": {
+                                "type": "string"
+                              },
+                              "entry": {
+                                "type": "string"
+                              },
+                              "epoch": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "qty",
+                              "entry",
+                              "epoch"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "required": [
+                          "at_ns",
+                          "operation",
+                          "arguments"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "at_ns": {
+                            "type": "string",
+                            "pattern": "^(0|[1-9][0-9]*)$",
+                            "x-semantic": "0 <= int(value) <= 18446744073709551615",
+                            "x-qel-integer": {
+                              "minimum": "0",
+                              "maximum": "18446744073709551615",
+                              "reject_negative_zero": true
+                            }
+                          },
+                          "operation": {
+                            "const": "POST_FUNDING"
+                          },
+                          "arguments": {
+                            "type": "object",
+                            "properties": {
+                              "amount": {
+                                "type": "string"
+                              },
+                              "epoch": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "amount",
+                              "epoch"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "required": [
+                          "at_ns",
+                          "operation",
+                          "arguments"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "at_ns": {
+                            "type": "string",
+                            "pattern": "^(0|[1-9][0-9]*)$",
+                            "x-semantic": "0 <= int(value) <= 18446744073709551615",
+                            "x-qel-integer": {
+                              "minimum": "0",
+                              "maximum": "18446744073709551615",
+                              "reject_negative_zero": true
+                            }
+                          },
+                          "operation": {
+                            "const": "READONLY_CONTROL_ATTACK"
+                          },
+                          "arguments": {
+                            "type": "object",
+                            "properties": {},
+                            "required": [],
+                            "additionalProperties": false
+                          }
+                        },
+                        "required": [
+                          "at_ns",
+                          "operation",
+                          "arguments"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "at_ns": {
+                            "type": "string",
+                            "pattern": "^(0|[1-9][0-9]*)$",
+                            "x-semantic": "0 <= int(value) <= 18446744073709551615",
+                            "x-qel-integer": {
+                              "minimum": "0",
+                              "maximum": "18446744073709551615",
+                              "reject_negative_zero": true
+                            }
+                          },
+                          "operation": {
+                            "const": "RECONCILE_AND_RETRY"
+                          },
+                          "arguments": {
+                            "type": "object",
+                            "properties": {
+                              "new_generation": {
+                                "type": "integer"
+                              }
+                            },
+                            "required": [
+                              "new_generation"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "required": [
+                          "at_ns",
+                          "operation",
+                          "arguments"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "at_ns": {
+                            "type": "string",
+                            "pattern": "^(0|[1-9][0-9]*)$",
+                            "x-semantic": "0 <= int(value) <= 18446744073709551615",
+                            "x-qel-integer": {
+                              "minimum": "0",
+                              "maximum": "18446744073709551615",
+                              "reject_negative_zero": true
+                            }
+                          },
+                          "operation": {
+                            "const": "REJECT_NONCANONICAL"
+                          },
+                          "arguments": {
+                            "type": "object",
+                            "properties": {
+                              "values": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            "required": [
+                              "values"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "required": [
+                          "at_ns",
+                          "operation",
+                          "arguments"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "at_ns": {
+                            "type": "string",
+                            "pattern": "^(0|[1-9][0-9]*)$",
+                            "x-semantic": "0 <= int(value) <= 18446744073709551615",
+                            "x-qel-integer": {
+                              "minimum": "0",
+                              "maximum": "18446744073709551615",
+                              "reject_negative_zero": true
+                            }
+                          },
+                          "operation": {
+                            "const": "REPLACE"
+                          },
+                          "arguments": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "new_total_qty": {
+                                "type": "string"
+                              },
+                              "price": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "new_total_qty",
+                              "price"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "required": [
+                          "at_ns",
+                          "operation",
+                          "arguments"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "at_ns": {
+                            "type": "string",
+                            "pattern": "^(0|[1-9][0-9]*)$",
+                            "x-semantic": "0 <= int(value) <= 18446744073709551615",
+                            "x-qel-integer": {
+                              "minimum": "0",
+                              "maximum": "18446744073709551615",
+                              "reject_negative_zero": true
+                            }
+                          },
+                          "operation": {
+                            "const": "REQUEST"
+                          },
+                          "arguments": {
+                            "type": "object",
+                            "properties": {
+                              "key": {
+                                "type": "string"
+                              },
+                              "body_hash": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "key",
+                              "body_hash"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "required": [
+                          "at_ns",
+                          "operation",
+                          "arguments"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "at_ns": {
+                            "type": "string",
+                            "pattern": "^(0|[1-9][0-9]*)$",
+                            "x-semantic": "0 <= int(value) <= 18446744073709551615",
+                            "x-qel-integer": {
+                              "minimum": "0",
+                              "maximum": "18446744073709551615",
+                              "reject_negative_zero": true
+                            }
+                          },
+                          "operation": {
+                            "const": "RESERVE_MARGIN"
+                          },
+                          "arguments": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "instrument": {
+                                "type": "string"
+                              },
+                              "margin": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "instrument",
+                              "margin"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "required": [
+                          "at_ns",
+                          "operation",
+                          "arguments"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "at_ns": {
+                            "type": "string",
+                            "pattern": "^(0|[1-9][0-9]*)$",
+                            "x-semantic": "0 <= int(value) <= 18446744073709551615",
+                            "x-qel-integer": {
+                              "minimum": "0",
+                              "maximum": "18446744073709551615",
+                              "reject_negative_zero": true
+                            }
+                          },
+                          "operation": {
+                            "const": "RESTING_ORDER"
+                          },
+                          "arguments": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "side": {
+                                "type": "string"
+                              },
+                              "price": {
+                                "type": "string"
+                              },
+                              "qty": {
+                                "type": "string"
+                              },
+                              "ahead": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "side",
+                              "price",
+                              "qty",
+                              "ahead"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "required": [
+                          "at_ns",
+                          "operation",
+                          "arguments"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "at_ns": {
+                            "type": "string",
+                            "pattern": "^(0|[1-9][0-9]*)$",
+                            "x-semantic": "0 <= int(value) <= 18446744073709551615",
+                            "x-qel-integer": {
+                              "minimum": "0",
+                              "maximum": "18446744073709551615",
+                              "reject_negative_zero": true
+                            }
+                          },
+                          "operation": {
+                            "const": "RESTORE_OLD_SEALED_DB"
+                          },
+                          "arguments": {
+                            "type": "object",
+                            "properties": {
+                              "local_j": {
+                                "type": "integer"
+                              },
+                              "anchor_j": {
+                                "type": "integer"
+                              }
+                            },
+                            "required": [
+                              "local_j",
+                              "anchor_j"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "required": [
+                          "at_ns",
+                          "operation",
+                          "arguments"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "at_ns": {
+                            "type": "string",
+                            "pattern": "^(0|[1-9][0-9]*)$",
+                            "x-semantic": "0 <= int(value) <= 18446744073709551615",
+                            "x-qel-integer": {
+                              "minimum": "0",
+                              "maximum": "18446744073709551615",
+                              "reject_negative_zero": true
+                            }
+                          },
+                          "operation": {
+                            "const": "RESULT"
+                          },
+                          "arguments": {
+                            "type": "object",
+                            "properties": {
+                              "generation": {
+                                "type": "integer"
+                              }
+                            },
+                            "required": [
+                              "generation"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "required": [
+                          "at_ns",
+                          "operation",
+                          "arguments"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "at_ns": {
+                            "type": "string",
+                            "pattern": "^(0|[1-9][0-9]*)$",
+                            "x-semantic": "0 <= int(value) <= 18446744073709551615",
+                            "x-qel-integer": {
+                              "minimum": "0",
+                              "maximum": "18446744073709551615",
+                              "reject_negative_zero": true
+                            }
+                          },
+                          "operation": {
+                            "const": "RETRY_SAME_FROZEN"
+                          },
+                          "arguments": {
+                            "type": "object",
+                            "properties": {},
+                            "required": [],
+                            "additionalProperties": false
+                          }
+                        },
+                        "required": [
+                          "at_ns",
+                          "operation",
+                          "arguments"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "at_ns": {
+                            "type": "string",
+                            "pattern": "^(0|[1-9][0-9]*)$",
+                            "x-semantic": "0 <= int(value) <= 18446744073709551615",
+                            "x-qel-integer": {
+                              "minimum": "0",
+                              "maximum": "18446744073709551615",
+                              "reject_negative_zero": true
+                            }
+                          },
+                          "operation": {
+                            "const": "ROUND_QTY"
+                          },
+                          "arguments": {
+                            "type": "object",
+                            "properties": {
+                              "requested": {
+                                "type": "string"
+                              },
+                              "lot": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "requested",
+                              "lot"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "required": [
+                          "at_ns",
+                          "operation",
+                          "arguments"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "at_ns": {
+                            "type": "string",
+                            "pattern": "^(0|[1-9][0-9]*)$",
+                            "x-semantic": "0 <= int(value) <= 18446744073709551615",
+                            "x-qel-integer": {
+                              "minimum": "0",
+                              "maximum": "18446744073709551615",
+                              "reject_negative_zero": true
+                            }
+                          },
+                          "operation": {
+                            "const": "RULE"
+                          },
+                          "arguments": {
+                            "type": "object",
+                            "properties": {
+                              "valid_from": {
+                                "type": "string"
+                              },
+                              "valid_to": {
+                                "type": "string"
+                              },
+                              "known_from": {
+                                "type": "string"
+                              },
+                              "known_to": {
+                                "type": "string"
+                              },
+                              "value": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "valid_from",
+                              "valid_to",
+                              "known_from",
+                              "known_to",
+                              "value"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "required": [
+                          "at_ns",
+                          "operation",
+                          "arguments"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "at_ns": {
+                            "type": "string",
+                            "pattern": "^(0|[1-9][0-9]*)$",
+                            "x-semantic": "0 <= int(value) <= 18446744073709551615",
+                            "x-qel-integer": {
+                              "minimum": "0",
+                              "maximum": "18446744073709551615",
+                              "reject_negative_zero": true
+                            }
+                          },
+                          "operation": {
+                            "const": "RUN_FIXTURE_SUITE"
+                          },
+                          "arguments": {
+                            "type": "object",
+                            "properties": {
+                              "fixture_ids": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
+                              },
+                              "chunk_atomic_counts": {
+                                "type": "array",
+                                "items": {
+                                  "type": "integer"
+                                }
+                              },
+                              "split_same_timestamp": {
+                                "type": "boolean"
+                              }
+                            },
+                            "required": [
+                              "fixture_ids",
+                              "chunk_atomic_counts",
+                              "split_same_timestamp"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "required": [
+                          "at_ns",
+                          "operation",
+                          "arguments"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "at_ns": {
+                            "type": "string",
+                            "pattern": "^(0|[1-9][0-9]*)$",
+                            "x-semantic": "0 <= int(value) <= 18446744073709551615",
+                            "x-qel-integer": {
+                              "minimum": "0",
+                              "maximum": "18446744073709551615",
+                              "reject_negative_zero": true
+                            }
+                          },
+                          "operation": {
+                            "const": "SET_WALLET"
+                          },
+                          "arguments": {
+                            "type": "object",
+                            "properties": {
+                              "cash": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "cash"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "required": [
+                          "at_ns",
+                          "operation",
+                          "arguments"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "at_ns": {
+                            "type": "string",
+                            "pattern": "^(0|[1-9][0-9]*)$",
+                            "x-semantic": "0 <= int(value) <= 18446744073709551615",
+                            "x-qel-integer": {
+                              "minimum": "0",
+                              "maximum": "18446744073709551615",
+                              "reject_negative_zero": true
+                            }
+                          },
+                          "operation": {
+                            "const": "SIZE"
+                          },
+                          "arguments": {
+                            "type": "object",
+                            "properties": {
+                              "capital": {
+                                "type": "string"
+                              },
+                              "risk_fraction": {
+                                "type": "string"
+                              },
+                              "entry": {
+                                "type": "string"
+                              },
+                              "stop": {
+                                "type": "string"
+                              },
+                              "lot": {
+                                "type": "string"
+                              },
+                              "minimum_qty": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "capital",
+                              "risk_fraction",
+                              "entry",
+                              "stop",
+                              "lot",
+                              "minimum_qty"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "required": [
+                          "at_ns",
+                          "operation",
+                          "arguments"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "at_ns": {
+                            "type": "string",
+                            "pattern": "^(0|[1-9][0-9]*)$",
+                            "x-semantic": "0 <= int(value) <= 18446744073709551615",
+                            "x-qel-integer": {
+                              "minimum": "0",
+                              "maximum": "18446744073709551615",
+                              "reject_negative_zero": true
+                            }
+                          },
+                          "operation": {
+                            "const": "STALE_STOP"
+                          },
+                          "arguments": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "epoch": {
+                                "type": "string"
+                              },
+                              "group": {
+                                "type": "string"
+                              },
+                              "qty": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "epoch",
+                              "group",
+                              "qty"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "required": [
+                          "at_ns",
+                          "operation",
+                          "arguments"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "at_ns": {
+                            "type": "string",
+                            "pattern": "^(0|[1-9][0-9]*)$",
+                            "x-semantic": "0 <= int(value) <= 18446744073709551615",
+                            "x-qel-integer": {
+                              "minimum": "0",
+                              "maximum": "18446744073709551615",
+                              "reject_negative_zero": true
+                            }
+                          },
+                          "operation": {
+                            "const": "STOP_LIMIT"
+                          },
+                          "arguments": {
+                            "type": "object",
+                            "properties": {
+                              "side": {
+                                "type": "string"
+                              },
+                              "trigger": {
+                                "type": "string"
+                              },
+                              "limit": {
+                                "type": "string"
+                              },
+                              "qty": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "side",
+                              "trigger",
+                              "limit",
+                              "qty"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "required": [
+                          "at_ns",
+                          "operation",
+                          "arguments"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "at_ns": {
+                            "type": "string",
+                            "pattern": "^(0|[1-9][0-9]*)$",
+                            "x-semantic": "0 <= int(value) <= 18446744073709551615",
+                            "x-qel-integer": {
+                              "minimum": "0",
+                              "maximum": "18446744073709551615",
+                              "reject_negative_zero": true
+                            }
+                          },
+                          "operation": {
+                            "const": "SUBMIT"
+                          },
+                          "arguments": {
+                            "anyOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "id": {
+                                    "type": "string"
+                                  },
+                                  "side": {
+                                    "type": "string"
+                                  },
+                                  "order_type": {
+                                    "type": "string"
+                                  },
+                                  "qty": {
+                                    "type": "string"
+                                  },
+                                  "tif": {
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "id",
+                                  "side",
+                                  "order_type",
+                                  "qty",
+                                  "tif"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "id": {
+                                    "type": "string"
+                                  },
+                                  "side": {
+                                    "type": "string"
+                                  },
+                                  "order_type": {
+                                    "type": "string"
+                                  },
+                                  "price": {
+                                    "type": "string"
+                                  },
+                                  "qty": {
+                                    "type": "string"
+                                  },
+                                  "tif": {
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "id",
+                                  "side",
+                                  "order_type",
+                                  "price",
+                                  "qty",
+                                  "tif"
+                                ],
+                                "additionalProperties": false
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "at_ns",
+                          "operation",
+                          "arguments"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "at_ns": {
+                            "type": "string",
+                            "pattern": "^(0|[1-9][0-9]*)$",
+                            "x-semantic": "0 <= int(value) <= 18446744073709551615",
+                            "x-qel-integer": {
+                              "minimum": "0",
+                              "maximum": "18446744073709551615",
+                              "reject_negative_zero": true
+                            }
+                          },
+                          "operation": {
+                            "const": "TRADE"
+                          },
+                          "arguments": {
+                            "type": "object",
+                            "properties": {
+                              "price": {
+                                "type": "string"
+                              },
+                              "qty": {
+                                "type": "string"
+                              },
+                              "aggressor": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "price",
+                              "qty",
+                              "aggressor"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "required": [
+                          "at_ns",
+                          "operation",
+                          "arguments"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "at_ns": {
+                            "type": "string",
+                            "pattern": "^(0|[1-9][0-9]*)$",
+                            "x-semantic": "0 <= int(value) <= 18446744073709551615",
+                            "x-qel-integer": {
+                              "minimum": "0",
+                              "maximum": "18446744073709551615",
+                              "reject_negative_zero": true
+                            }
+                          },
+                          "operation": {
+                            "const": "TYPECHECK_ATTACKS"
+                          },
+                          "arguments": {
+                            "type": "object",
+                            "properties": {
+                              "attacks": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            "required": [
+                              "attacks"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "required": [
+                          "at_ns",
+                          "operation",
+                          "arguments"
+                        ],
+                        "additionalProperties": false
+                      }
+                    ]
+                  },
+                  "minItems": 1
+                },
+                "expected": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "path": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "operator": {
+                        "type": "string",
+                        "enum": [
+                          "EQ",
+                          "NE",
+                          "LE",
+                          "LT",
+                          "GE",
+                          "GT"
+                        ]
+                      },
+                      "expected": {
+                        "type": [
+                          "string",
+                          "number",
+                          "boolean",
+                          "null",
+                          "array"
+                        ],
+                        "items": {
+                          "type": [
+                            "boolean",
+                            "string",
+                            "number",
+                            "null"
+                          ]
+                        }
+                      }
+                    },
+                    "required": [
+                      "path",
+                      "operator",
+                      "expected"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "minItems": 1
+                }
+              },
+              "required": [
+                "name",
+                "setup",
+                "steps",
+                "expected"
+              ],
+              "additionalProperties": false
+            },
+            "minItems": 1
+          },
+          "baseline_refs": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[A-Z][A-Z0-9_-]+$"
+            },
+            "minItems": 1
+          },
+          "human_ref": {
+            "type": "string",
+            "pattern": "^[A-Z][A-Z0-9_-]+$"
+          },
+          "oracle_source": {
+            "const": "HAND_DERIVED_SPECIFICATION"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "kind",
+          "status",
+          "scenarios",
+          "baseline_refs",
+          "human_ref",
+          "oracle_source"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 35
+    }
+  },
+  "required": [
+    "schema_version",
+    "fixture_dsl",
+    "defaults",
+    "fixtures"
+  ],
+  "additionalProperties": false,
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:qel:fixtures:1.1.0"
+}

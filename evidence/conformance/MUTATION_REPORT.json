@@ -1,0 +1,31 @@
+{
+  "all_caught": true,
+  "cases": [
+    {
+      "case": "F31:canceled_qty",
+      "caught": true,
+      "mutated_expected": "0"
+    },
+    {
+      "case": "F09:funding_attributed_epoch",
+      "caught": true,
+      "mutated_expected": "2"
+    },
+    {
+      "case": "F13:fee",
+      "caught": true,
+      "mutated_expected": "0.01"
+    },
+    {
+      "case": "F01:fills_at_10_qty",
+      "caught": true,
+      "mutated_expected": "1"
+    },
+    {
+      "case": "F23:fee_total",
+      "caught": true,
+      "mutated_expected": "0.30"
+    }
+  ],
+  "status": "PASS"
+}

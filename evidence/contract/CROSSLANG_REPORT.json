@@ -1,0 +1,20 @@
+{
+  "all_match": true,
+  "go": {
+    "canonical_match": true,
+    "run_key": "bbd9063a07f8846e19415e196fcf9eb335cb43c4a10f54e4cacbec6e30605231",
+    "run_key_match": true,
+    "stderr": ""
+  },
+  "python": {
+    "canonical": "{\"a\":\"\\u0001\",\"b\":\"\ud834\udd1e\",\"z\":\"\u00e9\"}",
+    "run_key": "bbd9063a07f8846e19415e196fcf9eb335cb43c4a10f54e4cacbec6e30605231"
+  },
+  "rust": {
+    "canonical_match": true,
+    "run_key": "bbd9063a07f8846e19415e196fcf9eb335cb43c4a10f54e4cacbec6e30605231",
+    "run_key_match": true,
+    "stderr": ""
+  },
+  "status": "PASS"
+}

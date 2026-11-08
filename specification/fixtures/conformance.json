@@ -1,0 +1,2683 @@
+{
+  "schema_version": "1.1.0",
+  "fixture_dsl": "QEL_FIXTURE_DSL_1",
+  "defaults": {
+    "product": "SYNTHETIC_LINEAR_PERPETUAL",
+    "multiplier": "1",
+    "price_exponent": 3,
+    "qty_exponent": 3,
+    "currency_exponent": 2,
+    "fee": "0",
+    "send_latency_ns": "0",
+    "response_latency_ns": "0",
+    "feed_latency_mode": "ALREADY_AVAILABLE_UNLESS_EXPLICIT",
+    "initial_position": "0",
+    "starting_capital": "1000",
+    "tif": "GTC",
+    "queue_cancel_model": "RISK_AVERSE",
+    "unknown_depth_remainder": "CANCEL",
+    "funding_precedence": "BEFORE_SAME_TIME_COMMANDS",
+    "reduce_only_excess": "REJECT",
+    "output_quantities": "UNSCALED_EXACT_DECIMAL_IN_FIXTURE_DSL_ONLY",
+    "margin_fixture_mode": "DISABLED_UNLESS_SETUP_DECLARES_MAINTENANCE_PROFILE",
+    "position_seed_collateral": "EXPLICIT_SETUP_ISOLATED_CASH_ELSE_ENTIRE_STARTING_CAPITAL",
+    "position_seed_mark": "ENTRY_PRICE_UNLESS_EXPLICIT_MARK",
+    "no_fee_or_margin_hidden_defaults": true
+  },
+  "fixtures": [
+    {
+      "id": "F01",
+      "title": "Order causality",
+      "kind": "REPLAY",
+      "status": "DEFINED_NOT_EXECUTED",
+      "scenarios": [
+        {
+          "name": "BASE",
+          "setup": {},
+          "steps": [
+            {
+              "at_ns": "0",
+              "operation": "BOOK",
+              "arguments": {
+                "bid": "99",
+                "bid_qty": "100",
+                "ask": "101",
+                "ask_qty": "100"
+              }
+            },
+            {
+              "at_ns": "10",
+              "operation": "TRADE",
+              "arguments": {
+                "price": "100",
+                "qty": "10",
+                "aggressor": "SELL"
+              }
+            },
+            {
+              "at_ns": "10",
+              "operation": "DECIDE_SUBMIT",
+              "arguments": {
+                "id": "O-1",
+                "side": "BUY",
+                "order_type": "LIMIT",
+                "price": "100",
+                "qty": "1"
+              }
+            },
+            {
+              "at_ns": "11",
+              "operation": "TRADE",
+              "arguments": {
+                "price": "100",
+                "qty": "1",
+                "aggressor": "SELL"
+              }
+            }
+          ],
+          "expected": [
+            {
+              "path": "fills_at_10_qty",
+              "operator": "EQ",
+              "expected": "0"
+            },
+            {
+              "path": "fills_at_11_qty",
+              "operator": "EQ",
+              "expected": "1"
+            }
+          ]
+        }
+      ],
+      "baseline_refs": [
+        "V10-18"
+      ],
+      "human_ref": "H-06",
+      "oracle_source": "HAND_DERIVED_SPECIFICATION"
+    },
+    {
+      "id": "F02",
+      "title": "Queue partial",
+      "kind": "REPLAY",
+      "status": "DEFINED_NOT_EXECUTED",
+      "scenarios": [
+        {
+          "name": "BASE",
+          "setup": {},
+          "steps": [
+            {
+              "at_ns": "0",
+              "operation": "RESTING_ORDER",
+              "arguments": {
+                "id": "O-1",
+                "side": "BUY",
+                "price": "100",
+                "qty": "20",
+                "ahead": "100"
+              }
+            },
+            {
+              "at_ns": "1",
+              "operation": "TRADE",
+              "arguments": {
+                "price": "100",
+                "qty": "80",
+                "aggressor": "SELL"
+              }
+            },
+            {
+              "at_ns": "2",
+              "operation": "TRADE",
+              "arguments": {
+                "price": "100",
+                "qty": "30",
+                "aggressor": "SELL"
+              }
+            }
+          ],
+          "expected": [
+            {
+              "path": "fills_after_step_1_qty",
+              "operator": "EQ",
+              "expected": "0"
+            },
+            {
+              "path": "fill_step_2_qty",
+              "operator": "EQ",
+              "expected": "10"
+            },
+            {
+              "path": "leaves_qty",
+              "operator": "EQ",
+              "expected": "10"
+            },
+            {
+              "path": "ahead_qty",
+              "operator": "EQ",
+              "expected": "0"
+            }
+          ]
+        }
+      ],
+      "baseline_refs": [
+        "V10-18"
+      ],
+      "human_ref": "H-07",
+      "oracle_source": "HAND_DERIVED_SPECIFICATION"
+    },
+    {
+      "id": "F03",
+      "title": "Shared liquidity",
+      "kind": "REPLAY",
+      "status": "DEFINED_NOT_EXECUTED",
+      "scenarios": [
+        {
+          "name": "BASE",
+          "setup": {},
+          "steps": [
+            {
+              "at_ns": "0",
+              "operation": "BOOK",
+              "arguments": {
+                "bid": "99",
+                "bid_qty": "10",
+                "ask": "100",
+                "ask_qty": "10"
+              }
+            },
+            {
+              "at_ns": "1",
+              "operation": "SUBMIT",
+              "arguments": {
+                "id": "O-1",
+                "side": "BUY",
+                "order_type": "MARKET",
+                "qty": "6",
+                "tif": "IOC"
+              }
+            },
+            {
+              "at_ns": "1",
+              "operation": "SUBMIT",
+              "arguments": {
+                "id": "O-2",
+                "side": "BUY",
+                "order_type": "MARKET",
+                "qty": "6",
+                "tif": "IOC"
+              }
+            }
+          ],
+          "expected": [
+            {
+              "path": "total_filled_qty",
+              "operator": "EQ",
+              "expected": "10"
+            },
+            {
+              "path": "O-2.filled_qty",
+              "operator": "EQ",
+              "expected": "4"
+            },
+            {
+              "path": "O-2.canceled_qty",
+              "operator": "EQ",
+              "expected": "2"
+            }
+          ]
+        }
+      ],
+      "baseline_refs": [
+        "V10-18"
+      ],
+      "human_ref": "H-07",
+      "oracle_source": "HAND_DERIVED_SPECIFICATION"
+    },
+    {
+      "id": "F04",
+      "title": "Cancel race",
+      "kind": "REPLAY",
+      "status": "DEFINED_NOT_EXECUTED",
+      "scenarios": [
+        {
+          "name": "BASE",
+          "setup": {},
+          "steps": [
+            {
+              "at_ns": "0",
+              "operation": "RESTING_ORDER",
+              "arguments": {
+                "id": "O-1",
+                "side": "BUY",
+                "price": "100",
+                "qty": "1",
+                "ahead": "0"
+              }
+            },
+            {
+              "at_ns": "10",
+              "operation": "CANCEL_SENT",
+              "arguments": {
+                "id": "O-1",
+                "arrival_ns": "30"
+              }
+            },
+            {
+              "at_ns": "20",
+              "operation": "TRADE",
+              "arguments": {
+                "price": "100",
+                "qty": "1",
+                "aggressor": "SELL"
+              }
+            },
+            {
+              "at_ns": "30",
+              "operation": "CANCEL_ARRIVES",
+              "arguments": {
+                "id": "O-1"
+              }
+            }
+          ],
+          "expected": [
+            {
+              "path": "filled_qty",
+              "operator": "EQ",
+              "expected": "1"
+            },
+            {
+              "path": "state",
+              "operator": "EQ",
+              "expected": "FILLED"
+            },
+            {
+              "path": "last_cancel_response",
+              "operator": "EQ",
+              "expected": "ALREADY_FILLED"
+            }
+          ]
+        }
+      ],
+      "baseline_refs": [
+        "V10-18"
+      ],
+      "human_ref": "H-07",
+      "oracle_source": "HAND_DERIVED_SPECIFICATION"
+    },
+    {
+      "id": "F05",
+      "title": "Replace priority",
+      "kind": "REPLAY",
+      "status": "DEFINED_NOT_EXECUTED",
+      "scenarios": [
+        {
+          "name": "BASE",
+          "setup": {
+            "replace_increase_resets": true,
+            "replace_decrease_resets": false
+          },
+          "steps": [
+            {
+              "at_ns": "0",
+              "operation": "RESTING_ORDER",
+              "arguments": {
+                "id": "O-1",
+                "side": "BUY",
+                "price": "100",
+                "qty": "10",
+                "ahead": "100"
+              }
+            },
+            {
+              "at_ns": "1",
+              "operation": "TRADE",
+              "arguments": {
+                "price": "100",
+                "qty": "102",
+                "aggressor": "SELL"
+              }
+            },
+            {
+              "at_ns": "2",
+              "operation": "BOOK",
+              "arguments": {
+                "bid": "100",
+                "bid_qty": "100",
+                "ask": "101",
+                "ask_qty": "100"
+              }
+            },
+            {
+              "at_ns": "3",
+              "operation": "REPLACE",
+              "arguments": {
+                "id": "O-1",
+                "new_total_qty": "20",
+                "price": "100"
+              }
+            },
+            {
+              "at_ns": "4",
+              "operation": "REPLACE",
+              "arguments": {
+                "id": "O-1",
+                "new_total_qty": "15",
+                "price": "100"
+              }
+            }
+          ],
+          "expected": [
+            {
+              "path": "filled_qty",
+              "operator": "EQ",
+              "expected": "2"
+            },
+            {
+              "path": "leaves_qty",
+              "operator": "EQ",
+              "expected": "13"
+            },
+            {
+              "path": "accepted_qty",
+              "operator": "EQ",
+              "expected": "15"
+            },
+            {
+              "path": "priority_reset_count",
+              "operator": "EQ",
+              "expected": 1
+            },
+            {
+              "path": "ahead_qty",
+              "operator": "EQ",
+              "expected": "100"
+            }
+          ]
+        }
+      ],
+      "baseline_refs": [
+        "V10-18"
+      ],
+      "human_ref": "H-07",
+      "oracle_source": "HAND_DERIVED_SPECIFICATION"
+    },
+    {
+      "id": "F06",
+      "title": "Native ve client OCO race",
+      "kind": "REPLAY",
+      "status": "DEFINED_NOT_EXECUTED",
+      "scenarios": [
+        {
+          "name": "NATIVE_ATOMIC",
+          "setup": {
+            "oco": "NATIVE",
+            "reduce_only": true
+          },
+          "steps": [
+            {
+              "at_ns": "0",
+              "operation": "POSITION",
+              "arguments": {
+                "qty": "1",
+                "entry": "100",
+                "epoch": "1"
+              }
+            },
+            {
+              "at_ns": "1",
+              "operation": "OCO_BOTH_ELIGIBLE",
+              "arguments": {
+                "group": "GR-1",
+                "qty": "1",
+                "side": "SELL"
+              }
+            }
+          ],
+          "expected": [
+            {
+              "path": "position_qty",
+              "operator": "EQ",
+              "expected": "0"
+            },
+            {
+              "path": "fill_count",
+              "operator": "EQ",
+              "expected": 1
+            }
+          ]
+        },
+        {
+          "name": "CLIENT_UNSAFE_OBSERVABLE",
+          "setup": {
+            "oco": "CLIENT_MANAGED",
+            "reduce_only": false
+          },
+          "steps": [
+            {
+              "at_ns": "0",
+              "operation": "POSITION",
+              "arguments": {
+                "qty": "1",
+                "entry": "100",
+                "epoch": "1"
+              }
+            },
+            {
+              "at_ns": "1",
+              "operation": "OCO_BOTH_ELIGIBLE",
+              "arguments": {
+                "group": "GR-1",
+                "qty": "1",
+                "side": "SELL"
+              }
+            }
+          ],
+          "expected": [
+            {
+              "path": "position_qty",
+              "operator": "EQ",
+              "expected": "-1"
+            },
+            {
+              "path": "fill_count",
+              "operator": "EQ",
+              "expected": 2
+            },
+            {
+              "path": "audit_error",
+              "operator": "EQ",
+              "expected": "OCO_OVERFILL"
+            }
+          ]
+        },
+        {
+          "name": "CLIENT_REDUCE_ONLY",
+          "setup": {
+            "oco": "CLIENT_MANAGED",
+            "reduce_only": true
+          },
+          "steps": [
+            {
+              "at_ns": "0",
+              "operation": "POSITION",
+              "arguments": {
+                "qty": "1",
+                "entry": "100",
+                "epoch": "1"
+              }
+            },
+            {
+              "at_ns": "1",
+              "operation": "OCO_BOTH_ELIGIBLE",
+              "arguments": {
+                "group": "GR-1",
+                "qty": "1",
+                "side": "SELL"
+              }
+            }
+          ],
+          "expected": [
+            {
+              "path": "position_qty",
+              "operator": "EQ",
+              "expected": "0"
+            },
+            {
+              "path": "fill_count",
+              "operator": "EQ",
+              "expected": 1
+            },
+            {
+              "path": "second_child_response",
+              "operator": "EQ",
+              "expected": "REDUCE_ONLY_REJECT"
+            }
+          ]
+        }
+      ],
+      "baseline_refs": [
+        "V10-18"
+      ],
+      "human_ref": "H-07",
+      "oracle_source": "HAND_DERIVED_SPECIFICATION"
+    },
+    {
+      "id": "F07",
+      "title": "Epoch safety",
+      "kind": "REPLAY",
+      "status": "DEFINED_NOT_EXECUTED",
+      "scenarios": [
+        {
+          "name": "BASE",
+          "setup": {},
+          "steps": [
+            {
+              "at_ns": "0",
+              "operation": "POSITION",
+              "arguments": {
+                "qty": "1",
+                "entry": "100",
+                "epoch": "1"
+              }
+            },
+            {
+              "at_ns": "1",
+              "operation": "CLOSE_AND_REOPEN",
+              "arguments": {
+                "new_qty": "1",
+                "entry": "100",
+                "new_epoch": "2"
+              }
+            },
+            {
+              "at_ns": "2",
+              "operation": "STALE_STOP",
+              "arguments": {
+                "id": "OLD-STOP",
+                "epoch": "1",
+                "group": "OLD-GROUP",
+                "qty": "1"
+              }
+            }
+          ],
+          "expected": [
+            {
+              "path": "new_epoch_qty",
+              "operator": "EQ",
+              "expected": "1"
+            },
+            {
+              "path": "stale_stop_response",
+              "operator": "EQ",
+              "expected": "STALE_POSITION_EPOCH"
+            },
+            {
+              "path": "stale_fill_count",
+              "operator": "EQ",
+              "expected": 0
+            }
+          ]
+        }
+      ],
+      "baseline_refs": [
+        "V10-18"
+      ],
+      "human_ref": "H-07",
+      "oracle_source": "HAND_DERIVED_SPECIFICATION"
+    },
+    {
+      "id": "F08",
+      "title": "Funding boundary",
+      "kind": "REPLAY",
+      "status": "DEFINED_NOT_EXECUTED",
+      "scenarios": [
+        {
+          "name": "BASE",
+          "setup": {
+            "capital": "1000",
+            "funding_before_same_time_commands": true
+          },
+          "steps": [
+            {
+              "at_ns": "99",
+              "operation": "POSITION",
+              "arguments": {
+                "qty": "2",
+                "entry": "100",
+                "epoch": "1"
+              }
+            },
+            {
+              "at_ns": "100",
+              "operation": "FUNDING",
+              "arguments": {
+                "settlement_id": "SET-1",
+                "rate_num": "1",
+                "rate_den": "100",
+                "mark": "100",
+                "available_ns": "100"
+              }
+            },
+            {
+              "at_ns": "100",
+              "operation": "CLOSE_POSITION",
+              "arguments": {
+                "price": "100"
+              }
+            }
+          ],
+          "expected": [
+            {
+              "path": "funding_cash",
+              "operator": "EQ",
+              "expected": "-2"
+            },
+            {
+              "path": "funding_epoch",
+              "operator": "EQ",
+              "expected": "1"
+            },
+            {
+              "path": "equity_end",
+              "operator": "EQ",
+              "expected": "998"
+            }
+          ]
+        }
+      ],
+      "baseline_refs": [
+        "V10-18"
+      ],
+      "human_ref": "H-08",
+      "oracle_source": "HAND_DERIVED_SPECIFICATION"
+    },
+    {
+      "id": "F09",
+      "title": "Late funding epoch",
+      "kind": "REPLAY",
+      "status": "DEFINED_NOT_EXECUTED",
+      "scenarios": [
+        {
+          "name": "BASE",
+          "setup": {
+            "capital": "1000"
+          },
+          "steps": [
+            {
+              "at_ns": "90",
+              "operation": "POSITION",
+              "arguments": {
+                "qty": "2",
+                "entry": "100",
+                "epoch": "1"
+              }
+            },
+            {
+              "at_ns": "100",
+              "operation": "FUNDING",
+              "arguments": {
+                "settlement_id": "SET-1",
+                "rate_num": "1",
+                "rate_den": "100",
+                "mark": "100",
+                "available_ns": "200"
+              }
+            },
+            {
+              "at_ns": "110",
+              "operation": "CLOSE_AND_REOPEN",
+              "arguments": {
+                "new_qty": "-1",
+                "entry": "100",
+                "new_epoch": "2"
+              }
+            },
+            {
+              "at_ns": "200",
+              "operation": "FUNDING_RECEIPT",
+              "arguments": {
+                "settlement_id": "SET-1"
+              }
+            }
+          ],
+          "expected": [
+            {
+              "path": "funding_cash",
+              "operator": "EQ",
+              "expected": "-2"
+            },
+            {
+              "path": "funding_attributed_epoch",
+              "operator": "EQ",
+              "expected": "1"
+            },
+            {
+              "path": "epoch_2_funding_cash",
+              "operator": "EQ",
+              "expected": "0"
+            },
+            {
+              "path": "payment_application_count",
+              "operator": "EQ",
+              "expected": 1
+            }
+          ]
+        }
+      ],
+      "baseline_refs": [
+        "V10-18"
+      ],
+      "human_ref": "H-08",
+      "oracle_source": "HAND_DERIVED_SPECIFICATION"
+    },
+    {
+      "id": "F10",
+      "title": "No future mark",
+      "kind": "REPLAY",
+      "status": "DEFINED_NOT_EXECUTED",
+      "scenarios": [
+        {
+          "name": "BASE",
+          "setup": {
+            "position_qty": "1"
+          },
+          "steps": [
+            {
+              "at_ns": "100",
+              "operation": "FUNDING",
+              "arguments": {
+                "settlement_id": "SET-1",
+                "rate_num": "1",
+                "rate_den": "100",
+                "mark": null,
+                "available_ns": "100"
+              }
+            },
+            {
+              "at_ns": "110",
+              "operation": "MARK",
+              "arguments": {
+                "price": "100"
+              }
+            }
+          ],
+          "expected": [
+            {
+              "path": "error",
+              "operator": "EQ",
+              "expected": "MISSING_SETTLEMENT_MARK"
+            },
+            {
+              "path": "future_mark_join_count",
+              "operator": "EQ",
+              "expected": 0
+            },
+            {
+              "path": "certified",
+              "operator": "EQ",
+              "expected": false
+            }
+          ]
+        }
+      ],
+      "baseline_refs": [
+        "V10-18"
+      ],
+      "human_ref": "H-08",
+      "oracle_source": "HAND_DERIVED_SPECIFICATION"
+    },
+    {
+      "id": "F11",
+      "title": "Liquidation data-path capability",
+      "kind": "REPLAY",
+      "status": "DEFINED_NOT_EXECUTED",
+      "scenarios": [
+        {
+          "name": "MARK",
+          "setup": {
+            "isolated_cash": "10",
+            "maintenance_rate": "0.05",
+            "trigger_source": "MARK"
+          },
+          "steps": [
+            {
+              "at_ns": "0",
+              "operation": "POSITION",
+              "arguments": {
+                "qty": "1",
+                "entry": "100",
+                "epoch": "1"
+              }
+            },
+            {
+              "at_ns": "1",
+              "operation": "MARK",
+              "arguments": {
+                "price": "94"
+              }
+            }
+          ],
+          "expected": [
+            {
+              "path": "isolated_equity",
+              "operator": "EQ",
+              "expected": "4"
+            },
+            {
+              "path": "maintenance",
+              "operator": "EQ",
+              "expected": "4.7"
+            },
+            {
+              "path": "liquidation_triggered",
+              "operator": "EQ",
+              "expected": true
+            }
+          ]
+        },
+        {
+          "name": "QUOTE_IS_NOT_MARK",
+          "setup": {
+            "isolated_cash": "10",
+            "maintenance_rate": "0.05",
+            "trigger_source": "MARK"
+          },
+          "steps": [
+            {
+              "at_ns": "0",
+              "operation": "POSITION",
+              "arguments": {
+                "qty": "1",
+                "entry": "100",
+                "epoch": "1"
+              }
+            },
+            {
+              "at_ns": "1",
+              "operation": "BOOK",
+              "arguments": {
+                "bid": "94",
+                "bid_qty": "10",
+                "ask": "95",
+                "ask_qty": "10"
+              }
+            }
+          ],
+          "expected": [
+            {
+              "path": "mark_trigger_inferred_from_quote",
+              "operator": "EQ",
+              "expected": false
+            },
+            {
+              "path": "mark_path_certificate",
+              "operator": "EQ",
+              "expected": "missing"
+            }
+          ]
+        }
+      ],
+      "baseline_refs": [
+        "V10-18"
+      ],
+      "human_ref": "H-08",
+      "oracle_source": "HAND_DERIVED_SPECIFICATION"
+    },
+    {
+      "id": "F12",
+      "title": "Funding-to-liquidation",
+      "kind": "REPLAY",
+      "status": "DEFINED_NOT_EXECUTED",
+      "scenarios": [
+        {
+          "name": "BASE",
+          "setup": {
+            "isolated_cash": "5.1",
+            "maintenance_rate": "0.05"
+          },
+          "steps": [
+            {
+              "at_ns": "0",
+              "operation": "POSITION",
+              "arguments": {
+                "qty": "1",
+                "entry": "100",
+                "epoch": "1"
+              }
+            },
+            {
+              "at_ns": "100",
+              "operation": "FUNDING",
+              "arguments": {
+                "settlement_id": "SET-1",
+                "rate_num": "2",
+                "rate_den": "1000",
+                "mark": "100",
+                "available_ns": "100"
+              }
+            }
+          ],
+          "expected": [
+            {
+              "path": "funding_cash",
+              "operator": "EQ",
+              "expected": "-0.2"
+            },
+            {
+              "path": "isolated_equity",
+              "operator": "EQ",
+              "expected": "4.9"
+            },
+            {
+              "path": "maintenance",
+              "operator": "EQ",
+              "expected": "5"
+            },
+            {
+              "path": "liquidation_triggered",
+              "operator": "EQ",
+              "expected": true
+            }
+          ]
+        }
+      ],
+      "baseline_refs": [
+        "V10-18"
+      ],
+      "human_ref": "H-08",
+      "oracle_source": "HAND_DERIVED_SPECIFICATION"
+    },
+    {
+      "id": "F13",
+      "title": "Precision, signed fee and overflow",
+      "kind": "ARITHMETIC",
+      "status": "DEFINED_NOT_EXECUTED",
+      "scenarios": [
+        {
+          "name": "REBATE",
+          "setup": {},
+          "steps": [
+            {
+              "at_ns": "0",
+              "operation": "EXACT_FEE",
+              "arguments": {
+                "notional": "100",
+                "rate_num": "-1",
+                "rate_den": "10000"
+              }
+            }
+          ],
+          "expected": [
+            {
+              "path": "fee",
+              "operator": "EQ",
+              "expected": "-0.01"
+            },
+            {
+              "path": "cash_delta",
+              "operator": "EQ",
+              "expected": "0.01"
+            }
+          ]
+        },
+        {
+          "name": "I128_OVERFLOW",
+          "setup": {},
+          "steps": [
+            {
+              "at_ns": "0",
+              "operation": "CHECKED_MULTIPLY",
+              "arguments": {
+                "values": [
+                  "9223372036854775807",
+                  "9223372036854775807",
+                  "9223372036854775807"
+                ],
+                "bits": 128
+              }
+            }
+          ],
+          "expected": [
+            {
+              "path": "error",
+              "operator": "EQ",
+              "expected": "NUMERIC_OVERFLOW"
+            }
+          ]
+        },
+        {
+          "name": "RULE_ROUND",
+          "setup": {},
+          "steps": [
+            {
+              "at_ns": "0",
+              "operation": "ROUND_QTY",
+              "arguments": {
+                "requested": "1.239",
+                "lot": "0.01"
+              }
+            }
+          ],
+          "expected": [
+            {
+              "path": "qty",
+              "operator": "EQ",
+              "expected": "1.23"
+            }
+          ]
+        }
+      ],
+      "baseline_refs": [
+        "V10-18"
+      ],
+      "human_ref": "H-03",
+      "oracle_source": "HAND_DERIVED_SPECIFICATION"
+    },
+    {
+      "id": "F14",
+      "title": "Gap with exposure",
+      "kind": "REPLAY",
+      "status": "DEFINED_NOT_EXECUTED",
+      "scenarios": [
+        {
+          "name": "BASE",
+          "setup": {},
+          "steps": [
+            {
+              "at_ns": "0",
+              "operation": "BOOK_ANCHOR",
+              "arguments": {
+                "last_update_id": "100"
+              }
+            },
+            {
+              "at_ns": "1",
+              "operation": "RESTING_ORDER",
+              "arguments": {
+                "id": "O-1",
+                "side": "BUY",
+                "price": "100",
+                "qty": "1",
+                "ahead": "1"
+              }
+            },
+            {
+              "at_ns": "2",
+              "operation": "BOOK_SEQUENCE",
+              "arguments": {
+                "first": "101",
+                "last": "101",
+                "previous": "99"
+              }
+            }
+          ],
+          "expected": [
+            {
+              "path": "error",
+              "operator": "EQ",
+              "expected": "BOOK_GAP_WITH_EXPOSURE"
+            },
+            {
+              "path": "path_verdict",
+              "operator": "EQ",
+              "expected": "MODEL_UNIDENTIFIABLE"
+            },
+            {
+              "path": "invented_fills",
+              "operator": "EQ",
+              "expected": 0
+            }
+          ]
+        }
+      ],
+      "baseline_refs": [
+        "V10-18"
+      ],
+      "human_ref": "H-04",
+      "oracle_source": "HAND_DERIVED_SPECIFICATION"
+    },
+    {
+      "id": "F15",
+      "title": "Chunk and timestamp boundary",
+      "kind": "METAMORPHIC",
+      "status": "DEFINED_NOT_EXECUTED",
+      "scenarios": [
+        {
+          "name": "BASE",
+          "setup": {},
+          "steps": [
+            {
+              "at_ns": "0",
+              "operation": "RUN_FIXTURE_SUITE",
+              "arguments": {
+                "fixture_ids": [
+                  "F01",
+                  "F08",
+                  "F09"
+                ],
+                "chunk_atomic_counts": [
+                  1,
+                  2,
+                  1000
+                ],
+                "split_same_timestamp": false
+              }
+            }
+          ],
+          "expected": [
+            {
+              "path": "economic_event_sequences_equal",
+              "operator": "EQ",
+              "expected": true
+            },
+            {
+              "path": "timer_state_preserved",
+              "operator": "EQ",
+              "expected": true
+            },
+            {
+              "path": "semantic_hashes_equal",
+              "operator": "EQ",
+              "expected": true
+            }
+          ]
+        }
+      ],
+      "baseline_refs": [
+        "V10-18"
+      ],
+      "human_ref": "H-06",
+      "oracle_source": "HAND_DERIVED_SPECIFICATION"
+    },
+    {
+      "id": "F16",
+      "title": "Shared wallet reservations",
+      "kind": "REPLAY",
+      "status": "DEFINED_NOT_EXECUTED",
+      "scenarios": [
+        {
+          "name": "BASE",
+          "setup": {},
+          "steps": [
+            {
+              "at_ns": "0",
+              "operation": "SET_WALLET",
+              "arguments": {
+                "cash": "20"
+              }
+            },
+            {
+              "at_ns": "1",
+              "operation": "RESERVE_MARGIN",
+              "arguments": {
+                "id": "O-A",
+                "instrument": "INST-A",
+                "margin": "12"
+              }
+            },
+            {
+              "at_ns": "2",
+              "operation": "RESERVE_MARGIN",
+              "arguments": {
+                "id": "O-B",
+                "instrument": "INST-B",
+                "margin": "12"
+              }
+            }
+          ],
+          "expected": [
+            {
+              "path": "O-A.accepted",
+              "operator": "EQ",
+              "expected": true
+            },
+            {
+              "path": "O-B.accepted",
+              "operator": "EQ",
+              "expected": false
+            },
+            {
+              "path": "free_after_reservations",
+              "operator": "EQ",
+              "expected": "8"
+            },
+            {
+              "path": "negative_free_cash",
+              "operator": "EQ",
+              "expected": false
+            }
+          ]
+        }
+      ],
+      "baseline_refs": [
+        "V10-18"
+      ],
+      "human_ref": "H-08",
+      "oracle_source": "HAND_DERIVED_SPECIFICATION"
+    },
+    {
+      "id": "F17",
+      "title": "Crash publication matrix",
+      "kind": "RECOVERY",
+      "status": "DEFINED_NOT_EXECUTED",
+      "scenarios": [
+        {
+          "name": "BASE",
+          "setup": {},
+          "steps": [
+            {
+              "at_ns": "0",
+              "operation": "INJECT_CRASH_MATRIX",
+              "arguments": {
+                "points": [
+                  "WRITE_TEMP",
+                  "VALIDATE",
+                  "FILE_FSYNC",
+                  "RENAME",
+                  "DIR_FSYNC",
+                  "BEFORE_SQL_COMMIT",
+                  "AFTER_SQL_COMMIT"
+                ],
+                "disk_full_at": [
+                  "WRITE_TEMP",
+                  "RENAME",
+                  "SQL_COMMIT"
+                ]
+              }
+            }
+          ],
+          "expected": [
+            {
+              "path": "partial_package_pass_count",
+              "operator": "EQ",
+              "expected": 0
+            },
+            {
+              "path": "acked_commit_lost_count",
+              "operator": "EQ",
+              "expected": 0
+            },
+            {
+              "path": "orphan_final_detected",
+              "operator": "EQ",
+              "expected": true
+            },
+            {
+              "path": "failure_usage_retained",
+              "operator": "EQ",
+              "expected": true
+            }
+          ]
+        }
+      ],
+      "baseline_refs": [
+        "V10-18"
+      ],
+      "human_ref": "H-12",
+      "oracle_source": "HAND_DERIVED_SPECIFICATION"
+    },
+    {
+      "id": "F18",
+      "title": "Leakage bias traps",
+      "kind": "SECURITY",
+      "status": "DEFINED_NOT_EXECUTED",
+      "scenarios": [
+        {
+          "name": "BASE",
+          "setup": {},
+          "steps": [
+            {
+              "at_ns": "0",
+              "operation": "TYPECHECK_ATTACKS",
+              "arguments": {
+                "attacks": [
+                  "FUTURE_COLUMN",
+                  "CENTERED_ROLLING",
+                  "GLOBAL_SCALER",
+                  "PIVOT_BACKWRITE",
+                  "TRAIN_LABEL_OVERLAP"
+                ]
+              }
+            }
+          ],
+          "expected": [
+            {
+              "path": "attack_accept_count",
+              "operator": "EQ",
+              "expected": 0
+            },
+            {
+              "path": "unnoticed_future_access_count",
+              "operator": "EQ",
+              "expected": 0
+            },
+            {
+              "path": "scientific_verdict",
+              "operator": "EQ",
+              "expected": "INVALID"
+            }
+          ]
+        }
+      ],
+      "baseline_refs": [
+        "V10-18"
+      ],
+      "human_ref": "H-05",
+      "oracle_source": "HAND_DERIVED_SPECIFICATION"
+    },
+    {
+      "id": "F19",
+      "title": "Bitemporal availability",
+      "kind": "REPLAY",
+      "status": "DEFINED_NOT_EXECUTED",
+      "scenarios": [
+        {
+          "name": "BASE",
+          "setup": {},
+          "steps": [
+            {
+              "at_ns": "0",
+              "operation": "RULE",
+              "arguments": {
+                "valid_from": "0",
+                "valid_to": "1000",
+                "known_from": "100",
+                "known_to": "1000",
+                "value": "2"
+              }
+            },
+            {
+              "at_ns": "50",
+              "operation": "LOOKUP_RULE",
+              "arguments": {}
+            },
+            {
+              "at_ns": "100",
+              "operation": "LOOKUP_RULE",
+              "arguments": {}
+            }
+          ],
+          "expected": [
+            {
+              "path": "value_at_50",
+              "operator": "EQ",
+              "expected": null
+            },
+            {
+              "path": "value_at_100",
+              "operator": "EQ",
+              "expected": "2"
+            },
+            {
+              "path": "premature_policy_access",
+              "operator": "EQ",
+              "expected": false
+            }
+          ]
+        }
+      ],
+      "baseline_refs": [
+        "V10-18"
+      ],
+      "human_ref": "H-04",
+      "oracle_source": "HAND_DERIVED_SPECIFICATION"
+    },
+    {
+      "id": "F20",
+      "title": "Holdout principal attack",
+      "kind": "SECURITY",
+      "status": "DEFINED_NOT_EXECUTED",
+      "scenarios": [
+        {
+          "name": "BASE",
+          "setup": {},
+          "steps": [
+            {
+              "at_ns": "0",
+              "operation": "ATTACK_PERMISSIONS",
+              "arguments": {
+                "principal": "P-RESEARCH",
+                "targets": [
+                  "SEALED_FILE",
+                  "SEALED_DB",
+                  "EVALUATOR_SOCKET",
+                  "VERIFIER_BINARY",
+                  "SIGNING_KEY"
+                ]
+              }
+            }
+          ],
+          "expected": [
+            {
+              "path": "successful_unauthorized_access_count",
+              "operator": "EQ",
+              "expected": 0
+            },
+            {
+              "path": "denial_ledger_count",
+              "operator": "EQ",
+              "expected": 5
+            },
+            {
+              "path": "scientific_pass_from_override",
+              "operator": "EQ",
+              "expected": false
+            }
+          ]
+        }
+      ],
+      "baseline_refs": [
+        "V10-18"
+      ],
+      "human_ref": "H-10",
+      "oracle_source": "HAND_DERIVED_SPECIFICATION"
+    },
+    {
+      "id": "F21",
+      "title": "Canonical hash vector",
+      "kind": "HASH",
+      "status": "DEFINED_NOT_EXECUTED",
+      "scenarios": [
+        {
+          "name": "BASE",
+          "setup": {},
+          "steps": [
+            {
+              "at_ns": "0",
+              "operation": "HASH_JCS",
+              "arguments": {
+                "value": {
+                  "a": "9007199254740993",
+                  "b": "1.25",
+                  "c": null
+                }
+              }
+            },
+            {
+              "at_ns": "1",
+              "operation": "REJECT_NONCANONICAL",
+              "arguments": {
+                "values": [
+                  "-0",
+                  "01",
+                  "1e3",
+                  "NAN",
+                  "NON_NFC_TEXT"
+                ]
+              }
+            }
+          ],
+          "expected": [
+            {
+              "path": "canonical_utf8",
+              "operator": "EQ",
+              "expected": "{\"a\":\"9007199254740993\",\"b\":\"1.25\",\"c\":null}"
+            },
+            {
+              "path": "sha256",
+              "operator": "EQ",
+              "expected": "129712fa856798af9106eb65d951f98ef56459ae40d587552cd7a4b162b7ae6e"
+            },
+            {
+              "path": "invalid_value_rejections",
+              "operator": "EQ",
+              "expected": 5
+            }
+          ]
+        }
+      ],
+      "baseline_refs": [
+        "V10-10"
+      ],
+      "human_ref": "H-03",
+      "oracle_source": "HAND_DERIVED_SPECIFICATION"
+    },
+    {
+      "id": "F22",
+      "title": "Two-world delayed delivery",
+      "kind": "REPLAY",
+      "status": "DEFINED_NOT_EXECUTED",
+      "scenarios": [
+        {
+          "name": "BASE",
+          "setup": {},
+          "steps": [
+            {
+              "at_ns": "0",
+              "operation": "EXCHANGE_QUOTE",
+              "arguments": {
+                "price": "100",
+                "receive_ns": "10"
+              }
+            },
+            {
+              "at_ns": "10",
+              "operation": "DECIDE_SUBMIT",
+              "arguments": {
+                "id": "O-1",
+                "side": "BUY",
+                "order_type": "MARKET",
+                "qty": "1",
+                "arrival_ns": "15"
+              }
+            },
+            {
+              "at_ns": "15",
+              "operation": "EXCHANGE_FILL",
+              "arguments": {
+                "id": "O-1",
+                "price": "100",
+                "qty": "1",
+                "delivery_ns": "25"
+              }
+            },
+            {
+              "at_ns": "24",
+              "operation": "OBSERVE_LOCAL",
+              "arguments": {}
+            },
+            {
+              "at_ns": "25",
+              "operation": "DELIVER_FILL",
+              "arguments": {
+                "id": "O-1"
+              }
+            }
+          ],
+          "expected": [
+            {
+              "path": "local_position_at_24",
+              "operator": "EQ",
+              "expected": "0"
+            },
+            {
+              "path": "local_position_at_25",
+              "operator": "EQ",
+              "expected": "1"
+            },
+            {
+              "path": "feed_latency_applied_count",
+              "operator": "EQ",
+              "expected": 1
+            },
+            {
+              "path": "exchange_fill_callback_before_25",
+              "operator": "EQ",
+              "expected": false
+            }
+          ]
+        }
+      ],
+      "baseline_refs": [
+        "V10-11"
+      ],
+      "human_ref": "H-06",
+      "oracle_source": "HAND_DERIVED_SPECIFICATION"
+    },
+    {
+      "id": "F23",
+      "title": "Exact accounting identity",
+      "kind": "REPLAY",
+      "status": "DEFINED_NOT_EXECUTED",
+      "scenarios": [
+        {
+          "name": "BASE",
+          "setup": {},
+          "steps": [
+            {
+              "at_ns": "0",
+              "operation": "SET_WALLET",
+              "arguments": {
+                "cash": "1000"
+              }
+            },
+            {
+              "at_ns": "0",
+              "operation": "ALLOCATE_ISOLATED",
+              "arguments": {
+                "amount": "300"
+              }
+            },
+            {
+              "at_ns": "1",
+              "operation": "FILL",
+              "arguments": {
+                "side": "BUY",
+                "qty": "2",
+                "price": "100",
+                "fee": "0.2"
+              }
+            },
+            {
+              "at_ns": "2",
+              "operation": "FILL",
+              "arguments": {
+                "side": "SELL",
+                "qty": "1",
+                "price": "110",
+                "fee": "0.11"
+              }
+            },
+            {
+              "at_ns": "3",
+              "operation": "POST_FUNDING",
+              "arguments": {
+                "amount": "-0.5",
+                "epoch": "1"
+              }
+            },
+            {
+              "at_ns": "4",
+              "operation": "MARK",
+              "arguments": {
+                "price": "105"
+              }
+            }
+          ],
+          "expected": [
+            {
+              "path": "free_cash",
+              "operator": "EQ",
+              "expected": "700"
+            },
+            {
+              "path": "isolated_cash",
+              "operator": "EQ",
+              "expected": "309.19"
+            },
+            {
+              "path": "price_realized",
+              "operator": "EQ",
+              "expected": "10"
+            },
+            {
+              "path": "fee_total",
+              "operator": "EQ",
+              "expected": "0.31"
+            },
+            {
+              "path": "unrealized",
+              "operator": "EQ",
+              "expected": "5"
+            },
+            {
+              "path": "total_cash",
+              "operator": "EQ",
+              "expected": "1009.19"
+            },
+            {
+              "path": "equity",
+              "operator": "EQ",
+              "expected": "1014.19"
+            },
+            {
+              "path": "unexplained_residual",
+              "operator": "EQ",
+              "expected": "0"
+            }
+          ]
+        }
+      ],
+      "baseline_refs": [
+        "V10-13"
+      ],
+      "human_ref": "H-08",
+      "oracle_source": "HAND_DERIVED_SPECIFICATION"
+    },
+    {
+      "id": "F24",
+      "title": "Terminal inventory valuation",
+      "kind": "REPLAY",
+      "status": "DEFINED_NOT_EXECUTED",
+      "scenarios": [
+        {
+          "name": "BASE",
+          "setup": {
+            "capital": "1000"
+          },
+          "steps": [
+            {
+              "at_ns": "0",
+              "operation": "POSITION",
+              "arguments": {
+                "qty": "1",
+                "entry": "100",
+                "epoch": "1"
+              }
+            },
+            {
+              "at_ns": "99",
+              "operation": "MARK",
+              "arguments": {
+                "price": "105"
+              }
+            },
+            {
+              "at_ns": "100",
+              "operation": "END_FOLD",
+              "arguments": {
+                "close_cost": "0.2"
+              }
+            },
+            {
+              "at_ns": "110",
+              "operation": "MARK",
+              "arguments": {
+                "price": "110"
+              }
+            }
+          ],
+          "expected": [
+            {
+              "path": "endpoint_equity",
+              "operator": "EQ",
+              "expected": "1004.8"
+            },
+            {
+              "path": "open_qty_at_cutoff",
+              "operator": "EQ",
+              "expected": "1"
+            },
+            {
+              "path": "future_mark_reads",
+              "operator": "EQ",
+              "expected": 0
+            },
+            {
+              "path": "synthetic_exit_fill_count",
+              "operator": "EQ",
+              "expected": 0
+            }
+          ]
+        }
+      ],
+      "baseline_refs": [
+        "V10-14"
+      ],
+      "human_ref": "H-08",
+      "oracle_source": "HAND_DERIVED_SPECIFICATION"
+    },
+    {
+      "id": "F25",
+      "title": "OOS burn before access",
+      "kind": "SECURITY",
+      "status": "DEFINED_NOT_EXECUTED",
+      "scenarios": [
+        {
+          "name": "BASE",
+          "setup": {},
+          "steps": [
+            {
+              "at_ns": "0",
+              "operation": "FREEZE_COHORT",
+              "arguments": {
+                "id": "COHORT-0",
+                "m": 2,
+                "j": 0
+              }
+            },
+            {
+              "at_ns": "1",
+              "operation": "ANCHOR_SPEND",
+              "arguments": {
+                "acknowledged": true
+              }
+            },
+            {
+              "at_ns": "2",
+              "operation": "ACCESS_SEALED_BYTE",
+              "arguments": {}
+            },
+            {
+              "at_ns": "3",
+              "operation": "CRASH",
+              "arguments": {}
+            },
+            {
+              "at_ns": "4",
+              "operation": "RETRY_SAME_FROZEN",
+              "arguments": {}
+            },
+            {
+              "at_ns": "5",
+              "operation": "ATTEMPT_NEW_CANDIDATE_SAME_WINDOW",
+              "arguments": {}
+            }
+          ],
+          "expected": [
+            {
+              "path": "consumption_count",
+              "operator": "EQ",
+              "expected": 1
+            },
+            {
+              "path": "alpha_spent",
+              "operator": "EQ",
+              "expected": "0.025"
+            },
+            {
+              "path": "retry_alpha_spend",
+              "operator": "EQ",
+              "expected": "0"
+            },
+            {
+              "path": "new_candidate_denied",
+              "operator": "EQ",
+              "expected": true
+            },
+            {
+              "path": "receipt_anchored_before_read",
+              "operator": "EQ",
+              "expected": true
+            }
+          ]
+        }
+      ],
+      "baseline_refs": [
+        "V10-14",
+        "V10-17"
+      ],
+      "human_ref": "H-10",
+      "oracle_source": "HAND_DERIVED_SPECIFICATION"
+    },
+    {
+      "id": "F26",
+      "title": "Lease and restore fencing",
+      "kind": "RECOVERY",
+      "status": "DEFINED_NOT_EXECUTED",
+      "scenarios": [
+        {
+          "name": "BASE",
+          "setup": {},
+          "steps": [
+            {
+              "at_ns": "0",
+              "operation": "LEASE",
+              "arguments": {
+                "generation": 1
+              }
+            },
+            {
+              "at_ns": "31",
+              "operation": "RECONCILE_AND_RETRY",
+              "arguments": {
+                "new_generation": 2
+              }
+            },
+            {
+              "at_ns": "32",
+              "operation": "RESULT",
+              "arguments": {
+                "generation": 1
+              }
+            },
+            {
+              "at_ns": "33",
+              "operation": "RESTORE_OLD_SEALED_DB",
+              "arguments": {
+                "local_j": 0,
+                "anchor_j": 2
+              }
+            }
+          ],
+          "expected": [
+            {
+              "path": "stale_result_committed",
+              "operator": "EQ",
+              "expected": false
+            },
+            {
+              "path": "duplicate_trial_reserved",
+              "operator": "EQ",
+              "expected": false
+            },
+            {
+              "path": "sealed_state",
+              "operator": "EQ",
+              "expected": "WAITING_FRESH_OOS"
+            },
+            {
+              "path": "alpha_counter_decreased",
+              "operator": "EQ",
+              "expected": false
+            }
+          ]
+        }
+      ],
+      "baseline_refs": [
+        "V10-19"
+      ],
+      "human_ref": "H-12",
+      "oracle_source": "HAND_DERIVED_SPECIFICATION"
+    },
+    {
+      "id": "F27",
+      "title": "Calendar controls and IUT",
+      "kind": "ARITHMETIC",
+      "status": "DEFINED_NOT_EXECUTED",
+      "scenarios": [
+        {
+          "name": "BASE",
+          "setup": {},
+          "steps": [
+            {
+              "at_ns": "0",
+              "operation": "DAILY_CONTROL_AGGREGATE",
+              "arguments": {
+                "candidate": [
+                  "0.01",
+                  "-0.01",
+                  "0.02",
+                  "0"
+                ],
+                "controls": [
+                  [
+                    "0",
+                    "0.01",
+                    "0",
+                    "0.01"
+                  ],
+                  [
+                    "0",
+                    "-0.01",
+                    "0",
+                    "-0.01"
+                  ]
+                ]
+              }
+            },
+            {
+              "at_ns": "1",
+              "operation": "IUT",
+              "arguments": {
+                "p_profit": "0.01",
+                "p_control": "0.04"
+              }
+            }
+          ],
+          "expected": [
+            {
+              "path": "candidate_mean",
+              "operator": "EQ",
+              "expected": "0.005"
+            },
+            {
+              "path": "control_mean",
+              "operator": "EQ",
+              "expected": "0"
+            },
+            {
+              "path": "difference_mean",
+              "operator": "EQ",
+              "expected": "0.005"
+            },
+            {
+              "path": "combined_p",
+              "operator": "EQ",
+              "expected": "0.04"
+            },
+            {
+              "path": "market_histories",
+              "operator": "EQ",
+              "expected": 1
+            },
+            {
+              "path": "included_days",
+              "operator": "EQ",
+              "expected": 4
+            }
+          ]
+        }
+      ],
+      "baseline_refs": [
+        "V10-14"
+      ],
+      "human_ref": "H-09",
+      "oracle_source": "HAND_DERIVED_SPECIFICATION"
+    },
+    {
+      "id": "F28",
+      "title": "Holm, MC budget and no-edge classification",
+      "kind": "ARITHMETIC",
+      "status": "DEFINED_NOT_EXECUTED",
+      "scenarios": [
+        {
+          "name": "HOLM",
+          "setup": {},
+          "steps": [
+            {
+              "at_ns": "0",
+              "operation": "HOLM",
+              "arguments": {
+                "p_upper": [
+                  "0.001",
+                  "0.01",
+                  "0.02"
+                ],
+                "alpha": "0.025"
+              }
+            }
+          ],
+          "expected": [
+            {
+              "path": "rejected",
+              "operator": "EQ",
+              "expected": [
+                true,
+                true,
+                true
+              ]
+            }
+          ]
+        },
+        {
+          "name": "STEP_DOWN_STOP",
+          "setup": {},
+          "steps": [
+            {
+              "at_ns": "0",
+              "operation": "HOLM",
+              "arguments": {
+                "p_upper": [
+                  "0.009",
+                  "0.01",
+                  "0.02"
+                ],
+                "alpha": "0.025"
+              }
+            }
+          ],
+          "expected": [
+            {
+              "path": "rejected",
+              "operator": "EQ",
+              "expected": [
+                false,
+                false,
+                false
+              ]
+            }
+          ]
+        },
+        {
+          "name": "MC_CAP",
+          "setup": {},
+          "steps": [
+            {
+              "at_ns": "0",
+              "operation": "MC_BUDGET",
+              "arguments": {
+                "m": 8,
+                "j": 8,
+                "max_resamples": 1000000
+              }
+            }
+          ],
+          "expected": [
+            {
+              "path": "minimum_B",
+              "operator": "EQ",
+              "expected": 1638399
+            },
+            {
+              "path": "error",
+              "operator": "EQ",
+              "expected": "WAITING_COMPUTE_BUDGET"
+            }
+          ]
+        },
+        {
+          "name": "NONSIGNIFICANT_LOW_POWER",
+          "setup": {},
+          "steps": [
+            {
+              "at_ns": "0",
+              "operation": "CLASSIFY",
+              "arguments": {
+                "p": "0.3",
+                "power": "0.2",
+                "ci_low": "-0.1",
+                "ci_high": "0.2",
+                "economic_minimum": "0.01"
+              }
+            }
+          ],
+          "expected": [
+            {
+              "path": "verdict",
+              "operator": "EQ",
+              "expected": "INSUFFICIENT_EVIDENCE"
+            }
+          ]
+        }
+      ],
+      "baseline_refs": [
+        "V10-14",
+        "V10-15"
+      ],
+      "human_ref": "H-09",
+      "oracle_source": "HAND_DERIVED_SPECIFICATION"
+    },
+    {
+      "id": "F29",
+      "title": "Snapshot anchor and renewal",
+      "kind": "REPLAY",
+      "status": "DEFINED_NOT_EXECUTED",
+      "scenarios": [
+        {
+          "name": "BASE",
+          "setup": {},
+          "steps": [
+            {
+              "at_ns": "0",
+              "operation": "BOOK_ANCHOR",
+              "arguments": {
+                "last_update_id": "100"
+              }
+            },
+            {
+              "at_ns": "1",
+              "operation": "BOOK_SEQUENCE",
+              "arguments": {
+                "first": "99",
+                "last": "101",
+                "previous": "98"
+              }
+            },
+            {
+              "at_ns": "2",
+              "operation": "BOOK_SEQUENCE",
+              "arguments": {
+                "first": "102",
+                "last": "102",
+                "previous": "101"
+              }
+            },
+            {
+              "at_ns": "3",
+              "operation": "BOOK_SEQUENCE",
+              "arguments": {
+                "first": "103",
+                "last": "103",
+                "previous": "999"
+              }
+            }
+          ],
+          "expected": [
+            {
+              "path": "initial_match",
+              "operator": "EQ",
+              "expected": true
+            },
+            {
+              "path": "last_good_seq",
+              "operator": "EQ",
+              "expected": "102"
+            },
+            {
+              "path": "book_state",
+              "operator": "EQ",
+              "expected": "INVALID"
+            },
+            {
+              "path": "absolute_updates_not_additive",
+              "operator": "EQ",
+              "expected": true
+            }
+          ]
+        }
+      ],
+      "baseline_refs": [
+        "V10-08"
+      ],
+      "human_ref": "H-04",
+      "oracle_source": "HAND_DERIVED_SPECIFICATION"
+    },
+    {
+      "id": "F30",
+      "title": "Framing and idempotency",
+      "kind": "SECURITY",
+      "status": "DEFINED_NOT_EXECUTED",
+      "scenarios": [
+        {
+          "name": "BASE",
+          "setup": {},
+          "steps": [
+            {
+              "at_ns": "0",
+              "operation": "FRAME_ATTACK",
+              "arguments": {
+                "payload_bytes": 1048577
+              }
+            },
+            {
+              "at_ns": "1",
+              "operation": "REQUEST",
+              "arguments": {
+                "key": "KEY-1",
+                "body_hash": "BODY-A"
+              }
+            },
+            {
+              "at_ns": "2",
+              "operation": "REQUEST",
+              "arguments": {
+                "key": "KEY-1",
+                "body_hash": "BODY-A"
+              }
+            },
+            {
+              "at_ns": "3",
+              "operation": "REQUEST",
+              "arguments": {
+                "key": "KEY-1",
+                "body_hash": "BODY-B"
+              }
+            },
+            {
+              "at_ns": "4",
+              "operation": "READONLY_CONTROL_ATTACK",
+              "arguments": {}
+            }
+          ],
+          "expected": [
+            {
+              "path": "oversize_accepted",
+              "operator": "EQ",
+              "expected": false
+            },
+            {
+              "path": "duplicate_receipts_same",
+              "operator": "EQ",
+              "expected": true
+            },
+            {
+              "path": "conflict_code",
+              "operator": "EQ",
+              "expected": "IDEMPOTENCY_CONFLICT"
+            },
+            {
+              "path": "readonly_control_denied",
+              "operator": "EQ",
+              "expected": true
+            }
+          ]
+        }
+      ],
+      "baseline_refs": [
+        "V10-07",
+        "V10-20"
+      ],
+      "human_ref": "H-12",
+      "oracle_source": "HAND_DERIVED_SPECIFICATION"
+    },
+    {
+      "id": "F31",
+      "title": "Delayed ACK, duplicate fill and canceled qty",
+      "kind": "REPLAY",
+      "status": "DEFINED_NOT_EXECUTED",
+      "scenarios": [
+        {
+          "name": "BASE",
+          "setup": {},
+          "steps": [
+            {
+              "at_ns": "0",
+              "operation": "SUBMIT",
+              "arguments": {
+                "id": "O-1",
+                "side": "BUY",
+                "order_type": "LIMIT",
+                "price": "100",
+                "qty": "2",
+                "tif": "GTC"
+              }
+            },
+            {
+              "at_ns": "5",
+              "operation": "LOCAL_ORDER_EVENT",
+              "arguments": {
+                "venue_seq": "2",
+                "event": "PARTIALLY_FILLED",
+                "fill_id": "FILL-1",
+                "qty": "1"
+              }
+            },
+            {
+              "at_ns": "10",
+              "operation": "LOCAL_ORDER_EVENT",
+              "arguments": {
+                "venue_seq": "1",
+                "event": "ACCEPTED",
+                "fill_id": null,
+                "qty": "0"
+              }
+            },
+            {
+              "at_ns": "11",
+              "operation": "LOCAL_ORDER_EVENT",
+              "arguments": {
+                "venue_seq": "2",
+                "event": "PARTIALLY_FILLED",
+                "fill_id": "FILL-1",
+                "qty": "1"
+              }
+            },
+            {
+              "at_ns": "12",
+              "operation": "CANCEL_ARRIVES",
+              "arguments": {
+                "id": "O-1"
+              }
+            }
+          ],
+          "expected": [
+            {
+              "path": "accepted_qty",
+              "operator": "EQ",
+              "expected": "2"
+            },
+            {
+              "path": "filled_qty",
+              "operator": "EQ",
+              "expected": "1"
+            },
+            {
+              "path": "leaves_qty",
+              "operator": "EQ",
+              "expected": "0"
+            },
+            {
+              "path": "canceled_qty",
+              "operator": "EQ",
+              "expected": "1"
+            },
+            {
+              "path": "duplicate_funding_or_fee_debits",
+              "operator": "EQ",
+              "expected": 0
+            },
+            {
+              "path": "state",
+              "operator": "EQ",
+              "expected": "CANCELED"
+            }
+          ]
+        }
+      ],
+      "baseline_refs": [
+        "V10-12"
+      ],
+      "human_ref": "H-07",
+      "oracle_source": "HAND_DERIVED_SPECIFICATION"
+    },
+    {
+      "id": "F32",
+      "title": "Small capital minimum risk",
+      "kind": "ARITHMETIC",
+      "status": "DEFINED_NOT_EXECUTED",
+      "scenarios": [
+        {
+          "name": "BASE",
+          "setup": {},
+          "steps": [
+            {
+              "at_ns": "0",
+              "operation": "SIZE",
+              "arguments": {
+                "capital": "20",
+                "risk_fraction": "0.005",
+                "entry": "100",
+                "stop": "99",
+                "lot": "1",
+                "minimum_qty": "1"
+              }
+            }
+          ],
+          "expected": [
+            {
+              "path": "risk_budget",
+              "operator": "EQ",
+              "expected": "0.1"
+            },
+            {
+              "path": "minimum_lot_risk",
+              "operator": "EQ",
+              "expected": "1"
+            },
+            {
+              "path": "accepted",
+              "operator": "EQ",
+              "expected": false
+            },
+            {
+              "path": "reason",
+              "operator": "EQ",
+              "expected": "INFEASIBLE_CAPITAL"
+            }
+          ]
+        }
+      ],
+      "baseline_refs": [
+        "V10-13"
+      ],
+      "human_ref": "H-08",
+      "oracle_source": "HAND_DERIVED_SPECIFICATION"
+    },
+    {
+      "id": "F33",
+      "title": "FOK and stop-limit gap",
+      "kind": "REPLAY",
+      "status": "DEFINED_NOT_EXECUTED",
+      "scenarios": [
+        {
+          "name": "FOK",
+          "setup": {},
+          "steps": [
+            {
+              "at_ns": "0",
+              "operation": "BOOK",
+              "arguments": {
+                "bid": "99",
+                "bid_qty": "10",
+                "ask": "100",
+                "ask_qty": "5"
+              }
+            },
+            {
+              "at_ns": "1",
+              "operation": "SUBMIT",
+              "arguments": {
+                "id": "O-1",
+                "side": "BUY",
+                "order_type": "LIMIT",
+                "price": "100",
+                "qty": "6",
+                "tif": "FOK"
+              }
+            }
+          ],
+          "expected": [
+            {
+              "path": "filled_qty",
+              "operator": "EQ",
+              "expected": "0"
+            },
+            {
+              "path": "canceled_qty",
+              "operator": "EQ",
+              "expected": "6"
+            }
+          ]
+        },
+        {
+          "name": "STOP_LIMIT_GAP",
+          "setup": {},
+          "steps": [
+            {
+              "at_ns": "0",
+              "operation": "POSITION",
+              "arguments": {
+                "qty": "1",
+                "entry": "100",
+                "epoch": "1"
+              }
+            },
+            {
+              "at_ns": "0",
+              "operation": "STOP_LIMIT",
+              "arguments": {
+                "side": "SELL",
+                "trigger": "99",
+                "limit": "99",
+                "qty": "1"
+              }
+            },
+            {
+              "at_ns": "1",
+              "operation": "BOOK",
+              "arguments": {
+                "bid": "98",
+                "bid_qty": "10",
+                "ask": "98.5",
+                "ask_qty": "10"
+              }
+            },
+            {
+              "at_ns": "1",
+              "operation": "MARK",
+              "arguments": {
+                "price": "98"
+              }
+            }
+          ],
+          "expected": [
+            {
+              "path": "triggered",
+              "operator": "EQ",
+              "expected": true
+            },
+            {
+              "path": "filled_qty",
+              "operator": "EQ",
+              "expected": "0"
+            },
+            {
+              "path": "position_qty",
+              "operator": "EQ",
+              "expected": "1"
+            }
+          ]
+        }
+      ],
+      "baseline_refs": [
+        "V10-12"
+      ],
+      "human_ref": "H-07",
+      "oracle_source": "HAND_DERIVED_SPECIFICATION"
+    },
+    {
+      "id": "F34",
+      "title": "Partial entry protection",
+      "kind": "REPLAY",
+      "status": "DEFINED_NOT_EXECUTED",
+      "scenarios": [
+        {
+          "name": "BASE",
+          "setup": {
+            "lot": "1"
+          },
+          "steps": [
+            {
+              "at_ns": "0",
+              "operation": "SUBMIT",
+              "arguments": {
+                "id": "ENTRY-1",
+                "side": "BUY",
+                "order_type": "LIMIT",
+                "price": "100",
+                "qty": "10",
+                "tif": "GTC"
+              }
+            },
+            {
+              "at_ns": "1",
+              "operation": "FILL",
+              "arguments": {
+                "side": "BUY",
+                "qty": "3",
+                "price": "100",
+                "fee": "0"
+              }
+            },
+            {
+              "at_ns": "2",
+              "operation": "BUILD_BRACKET",
+              "arguments": {
+                "group": "GR-1",
+                "entry_id": "ENTRY-1",
+                "target_fraction": "0.5"
+              }
+            }
+          ],
+          "expected": [
+            {
+              "path": "stop_qty",
+              "operator": "EQ",
+              "expected": "3"
+            },
+            {
+              "path": "tp1_qty",
+              "operator": "EQ",
+              "expected": "1"
+            },
+            {
+              "path": "tp2_qty",
+              "operator": "EQ",
+              "expected": "2"
+            },
+            {
+              "path": "exit_total_qty",
+              "operator": "EQ",
+              "expected": "3"
+            },
+            {
+              "path": "unfilled_entry_protected_as_position",
+              "operator": "EQ",
+              "expected": false
+            }
+          ]
+        }
+      ],
+      "baseline_refs": [
+        "V10-12"
+      ],
+      "human_ref": "H-07",
+      "oracle_source": "HAND_DERIVED_SPECIFICATION"
+    },
+    {
+      "id": "F35",
+      "title": "Metamorphic economic identity",
+      "kind": "METAMORPHIC",
+      "status": "DEFINED_NOT_EXECUTED",
+      "scenarios": [
+        {
+          "name": "BASE",
+          "setup": {},
+          "steps": [
+            {
+              "at_ns": "0",
+              "operation": "METAMORPHIC_VARIANTS",
+              "arguments": {
+                "base_fixture": "F23",
+                "transforms": [
+                  "SPLIT_FILES",
+                  "ADD_UNRELATED_INSTRUMENT_SEPARATE_ACCOUNT",
+                  "REORDER_INDEPENDENT_WORKERS",
+                  "RAISE_FEE_FROZEN_ACTION_TAPE"
+                ]
+              }
+            }
+          ],
+          "expected": [
+            {
+              "path": "unchanged_economics_except_declared_fee",
+              "operator": "EQ",
+              "expected": true
+            },
+            {
+              "path": "raised_fee_cash_delta_exact",
+              "operator": "EQ",
+              "expected": true
+            }
+          ]
+        }
+      ],
+      "baseline_refs": [
+        "V10-18"
+      ],
+      "human_ref": "H-14",
+      "oracle_source": "HAND_DERIVED_SPECIFICATION"
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "examples": [
+    {
+      "path": "examples/strategy_mr.json",
+      "schema_ref": "runtime.schema.json#/$defs/StrategySpec",
+      "runnable": false
+    },
+    {
+      "path": "examples/runtime_lock.unresolved.json",
+      "schema_ref": "runtime.schema.json#/$defs/RuntimeLock",
+      "runnable": false
+    }
+  ]
+}

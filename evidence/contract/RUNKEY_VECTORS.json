@@ -1,0 +1,8 @@
+{
+  "attempt_excluded_by_contract": true,
+  "fields": 13,
+  "key_order_invariant": true,
+  "meaningful_change_changes_key": true,
+  "run_key": "7160cc1a48fdd3b9bee3741477d61b1b2eb3d3431484da9c4eb9e323e4a0057a",
+  "status": "PASS"
+}
