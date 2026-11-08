@@ -1,0 +1,76 @@
+{
+  "control_hash": "a16364f271310e88878bdd70020363ead74b3cca0dbcf6475c1c6adec616f6dd",
+  "control_mean": -0.90910254,
+  "control_std": 0.07140515,
+  "controls": [
+    {
+      "control_hash": "8de2ab700a0de6add0c8594becd572a5404363e2f4be8ac3d8b00def897c4be4",
+      "fees": 0.90527992,
+      "mean_holding_ns": 9869600000,
+      "net_pnl": -0.85147992,
+      "seed": 7,
+      "trades": 15
+    },
+    {
+      "control_hash": "3b344c01a9e846a965f09db20694baf249e8c09df6450a8a9ca6204ff27ff9ac",
+      "fees": 0.90518012,
+      "mean_holding_ns": 7908400000,
+      "net_pnl": -0.89828012,
+      "seed": 8,
+      "trades": 15
+    },
+    {
+      "control_hash": "08d55f9e73bdbbfc33a86461736f1bc286d3405aebc014a289ab8d7e67437098",
+      "fees": 0.90491376,
+      "mean_holding_ns": 11247600000,
+      "net_pnl": -1.06371376,
+      "seed": 9,
+      "trades": 15
+    },
+    {
+      "control_hash": "080cf3ad967b8f0fd51bd4b4d206b16f796c214234cc260f3770099cc3f45899",
+      "fees": 0.90532048,
+      "mean_holding_ns": 10389133333,
+      "net_pnl": -0.86292048,
+      "seed": 10,
+      "trades": 15
+    },
+    {
+      "control_hash": "0ff3bdbeda2df53bd5fad0c6595f6cd63846680e7ccbd69e4cba2837de6a5389",
+      "fees": 0.90540748,
+      "mean_holding_ns": 8309800000,
+      "net_pnl": -0.95570748,
+      "seed": 11,
+      "trades": 15
+    },
+    {
+      "control_hash": "ed0f32ba36ca97deea162971b6a7064521ac47b28d011f02374c57d88eab0747",
+      "fees": 0.90542652,
+      "mean_holding_ns": 11234866666,
+      "net_pnl": -0.91132652,
+      "seed": 12,
+      "trades": 15
+    },
+    {
+      "control_hash": "1d112bc403aa48369e034a842d2bc082eca539db1003af8e29c6887c01848c7c",
+      "fees": 0.90529244,
+      "mean_holding_ns": 7118666666,
+      "net_pnl": -0.87159244,
+      "seed": 13,
+      "trades": 15
+    },
+    {
+      "control_hash": "5e669569f761ea683e4839cc89f24222a9466c7b6c63f1713fb1057ab711d884",
+      "fees": 0.9053996,
+      "mean_holding_ns": 7072866666,
+      "net_pnl": -0.8577996,
+      "seed": 14,
+      "trades": 15
+    }
+  ],
+  "notional": 100.0,
+  "replications": 8,
+  "seed": 7,
+  "status": "PASS",
+  "trade_count_matched": 15
+}

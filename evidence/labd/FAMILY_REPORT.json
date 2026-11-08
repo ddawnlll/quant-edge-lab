@@ -1,0 +1,85 @@
+{
+  "family_id": "FAM-TAKER-1S",
+  "candidate_count": 12,
+  "candidate_mean": "-0.5148146266666667",
+  "control_mean": -0.90910254,
+  "difference_mean": "0.39428791333333335",
+  "verdict": "INSUFFICIENT_EVIDENCE",
+  "reason": "240s development window cannot establish a daily endpoint; no promotion",
+  "controls_hash": "a16364f271310e88878bdd70020363ead74b3cca0dbcf6475c1c6adec616f6dd",
+  "screen_verdict": "INSUFFICIENT_EVIDENCE",
+  "candidates": [
+    {
+      "strategy_id": "STRAT-VAR-00",
+      "net_pnl": "-1.09833044",
+      "fees": "0.99553044",
+      "fills": 33
+    },
+    {
+      "strategy_id": "STRAT-VAR-01",
+      "net_pnl": "-0.56206144",
+      "fees": "0.51276144",
+      "fills": 17
+    },
+    {
+      "strategy_id": "STRAT-VAR-02",
+      "net_pnl": "-0.60383176",
+      "fees": "0.51273176",
+      "fills": 17
+    },
+    {
+      "strategy_id": "STRAT-VAR-03",
+      "net_pnl": "-0.41432064",
+      "fees": "0.33162064",
+      "fills": 11
+    },
+    {
+      "strategy_id": "STRAT-VAR-04",
+      "net_pnl": "-0.23692504",
+      "fees": "0.27142504",
+      "fills": 9
+    },
+    {
+      "strategy_id": "STRAT-VAR-05",
+      "net_pnl": "-0.30442992",
+      "fees": "0.27132992",
+      "fills": 9
+    },
+    {
+      "strategy_id": "STRAT-VAR-06",
+      "net_pnl": "-0.575011",
+      "fees": "0.512611",
+      "fills": 17
+    },
+    {
+      "strategy_id": "STRAT-VAR-07",
+      "net_pnl": "-0.5917246",
+      "fees": "0.5729246",
+      "fills": 19
+    },
+    {
+      "strategy_id": "STRAT-VAR-08",
+      "net_pnl": "-0.47965584",
+      "fees": "0.39195584",
+      "fills": 13
+    },
+    {
+      "strategy_id": "STRAT-VAR-09",
+      "net_pnl": "-0.51506388",
+      "fees": "0.45226388",
+      "fills": 15
+    },
+    {
+      "strategy_id": "STRAT-VAR-10",
+      "net_pnl": "-0.03013036",
+      "fees": "0.03013036",
+      "fills": 1
+    },
+    {
+      "strategy_id": "STRAT-VAR-11",
+      "net_pnl": "-0.7662906",
+      "fees": "0.6936906",
+      "fills": 23
+    }
+  ]
+}
