@@ -18,7 +18,7 @@ It is not a profitability claim and does not certify a trading edge.
 | TASK-08 native feasibility | DONE_WITH_BLOCKED_CAPABILITY | Nautilus v1.231.0 spike; LocalView/L2 queue blocked |
 | TASK-09 independent accounting | DONE | exact tape reconstruction; native residual 0 |
 | TASK-11 native taker slice | PARTIAL | 15 orders/8 positions live slice; full archive day 307 orders/154 positions, residual 0; F22 blocked |
-| TASK-14 dependent stats | PARTIAL | HAC/bootstrap/IUT/Holm/F27/F28; B6 full run pending |
+| TASK-14 dependent stats | PARTIAL | HAC/bootstrap/IUT/Holm/F27/F28; four-generator B6 complete; power grid pending |
 | TASK-15/16 evaluator | PARTIAL | private DB, pre-access receipt, Ed25519 decisions; OS owner split blocked |
 | TASK-20 recovery | DONE | worker killed, lease requeued, generation 2 sealed |
 | TASK-21/22 memory/agent | DONE | FTS claims, CAS assignment, stale rejection, rebuild |
