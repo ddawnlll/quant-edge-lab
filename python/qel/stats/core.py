@@ -210,17 +210,11 @@ def calibrate_nulls(
         if null_pipeline(series, m=m, b=b, seed=seed + i):
             promoted += 1
     rate = promoted / programs
-    # 95% exact binomial upper bound (Clopper-Pearson) without scipy dependency.
-    from math import comb
-
-    target = 0.05
-    upper = 1.0
-    for k in range(promoted, programs + 1):
-        # P(X <= promoted | p) small enough marks the upper bound.
-        cdf = sum(comb(programs, j) * target**j * (1 - target) ** (programs - j) for j in range(k + 1))
-        if cdf >= 0.05:
-            upper = k / programs
-            break
+    # 95% exact Clopper-Pearson upper bound.
+    if _beta is not None:
+        upper = float(_beta.ppf(0.95, promoted + 1, max(programs - promoted, 1))) if promoted < programs else 1.0
+    else:  # conservative fallback
+        upper = min(1.0, (promoted + 1) / max(programs, 1) + 0.05)
     return {
         "programs": programs,
         "promotions": promoted,

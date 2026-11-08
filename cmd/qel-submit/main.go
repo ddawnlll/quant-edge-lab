@@ -11,6 +11,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
@@ -24,7 +25,7 @@ func hash(b []byte) string {
 }
 
 func main() {
-	_ = flag.String("root", "runtime", "runtime root")
+	root := flag.String("root", "runtime", "runtime root")
 	httpAddr := flag.String("http", "http://127.0.0.1:8787", "qeld HTTP base")
 	kind := flag.String("kind", "conformance", "job kind")
 	paramsPath := flag.String("params", "", "job params JSON")
@@ -44,7 +45,25 @@ func main() {
 		panic(err)
 	}
 	_ = params
-	sealResp, err := http.Post(*httpAddr+"/v1/dev/params", "application/json", bytes.NewReader(raw))
+	tokenPath := *root + "/http.token"
+	if absRoot, err := filepath.Abs(*root); err == nil {
+		tokenPath = absRoot + "/http.token"
+	}
+	token, err := os.ReadFile(tokenPath)
+	if err != nil {
+		panic("read http token: " + err.Error())
+	}
+	auth := "Bearer " + strings.TrimSpace(string(token))
+	post := func(url string, body []byte) (*http.Response, error) {
+		req, err := http.NewRequest(http.MethodPost, url, bytes.NewReader(body))
+		if err != nil {
+			return nil, err
+		}
+		req.Header.Set("Content-Type", "application/json")
+		req.Header.Set("Authorization", auth)
+		return http.DefaultClient.Do(req)
+	}
+	sealResp, err := post(*httpAddr+"/v1/dev/params", raw)
 	if err != nil {
 		panic(err)
 	}
@@ -110,7 +129,7 @@ func main() {
 		panic(err)
 	}
 	body, _ := json.Marshal(env)
-	resp, err := http.Post(*httpAddr+"/v1/jobs", "application/json", bytes.NewReader(body))
+	resp, err := post(*httpAddr+"/v1/jobs", body)
 	if err != nil {
 		panic(err)
 	}

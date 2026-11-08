@@ -1,22 +1,21 @@
 == go test ==
-ok  	github.com/ddawnlll/quant-edge-lab/labd/artifacts	0.475s
-ok  	github.com/ddawnlll/quant-edge-lab/labd/cgroup	0.328s
+ok  	github.com/ddawnlll/quant-edge-lab/labd/artifacts	0.680s
+ok  	github.com/ddawnlll/quant-edge-lab/labd/cgroup	0.326s
 ?   	github.com/ddawnlll/quant-edge-lab/labd/collect	[no test files]
-ok  	github.com/ddawnlll/quant-edge-lab/labd/control	0.631s
-ok  	github.com/ddawnlll/quant-edge-lab/labd/ledger	0.364s
-ok  	github.com/ddawnlll/quant-edge-lab/labd/queue	0.682s
+ok  	github.com/ddawnlll/quant-edge-lab/labd/control	0.740s
+ok  	github.com/ddawnlll/quant-edge-lab/labd/ledger	0.457s
+ok  	github.com/ddawnlll/quant-edge-lab/labd/memory	0.304s
+ok  	github.com/ddawnlll/quant-edge-lab/labd/queue	0.790s
 ?   	github.com/ddawnlll/quant-edge-lab/labd/worker	[no test files]
 
 == python tests ==
-..................................                                       [100%]
-34 passed in 17.11s
+...................................                                      [100%]
+35 passed in 12.42s
 
 == rust policy ==
-test validates_example_and_warmup ... ok
-test leakage_and_type_attacks_rejected ... ok
 test reference_features_and_no_early_decision ... ok
 
-test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
 
    Doc-tests qel_policy
 
@@ -24,3 +23,15 @@ running 0 tests
 
 test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
 
+
+== cgroup enforcement ==
+=== RUN   TestDelegatedCgroupLimits
+    cgroup_test.go:39: delegated=/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service usage={MemoryCurrentBytes:73728 MemoryPeakBytes:262144 PidsCurrent:0 PidsPeak:1 CPUUsageUsec:4516 CPUUserUsec:0 CPUSystemUsec:4516}
+--- PASS: TestDelegatedCgroupLimits (0.12s)
+=== RUN   TestMemoryLimitKillsOversize
+    cgroup_test.go:59: expected kill: signal: killed
+--- PASS: TestMemoryLimitKillsOversize (0.22s)
+=== RUN   TestAdmission
+--- PASS: TestAdmission (0.00s)
+PASS
+ok  	github.com/ddawnlll/quant-edge-lab/labd/cgroup	0.352s

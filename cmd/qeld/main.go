@@ -3,6 +3,8 @@ package main
 
 import (
 	"context"
+	crand "crypto/rand"
+	"encoding/hex"
 	"flag"
 	"fmt"
 	"log"
@@ -10,6 +12,7 @@ import (
 	"os/signal"
 	"path/filepath"
 	"strconv"
+	"strings"
 	"syscall"
 	"time"
 
@@ -25,6 +28,7 @@ func main() {
 	httpAddr := flag.String("http", "127.0.0.1:8787", "localhost dashboard address")
 	socket := flag.String("socket", "", "control Unix socket (default <root>/qel.sock)")
 	runWorker := flag.Bool("worker", false, "run an in-process job worker (separate qel-worker is preferred)")
+	tokenPath := flag.String("http-token-file", "", "HTTP write token file (default <root>/http.token)")
 	flag.Parse()
 
 	if err := os.MkdirAll(*root, 0o750); err != nil {
@@ -55,7 +59,24 @@ func main() {
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer stop()
 	q := queue.New(l)
+	if *tokenPath == "" {
+		*tokenPath = filepath.Join(*root, "http.token")
+	}
+	token, err := os.ReadFile(*tokenPath)
+	if err != nil || len(strings.TrimSpace(string(token))) < 32 {
+		buf := make([]byte, 24)
+		if _, err := crand.Read(buf); err != nil {
+			log.Fatal(err)
+		}
+		text := hex.EncodeToString(buf)
+		if err := os.WriteFile(*tokenPath, []byte(text+"\n"), 0o600); err != nil {
+			log.Fatal(err)
+		}
+		token = []byte(text)
+	}
+	tokenText := strings.TrimSpace(string(token))
 	s := control.New(l, q, a, *socket, *httpAddr)
+	s.HTTPToken = tokenText
 	if *runWorker {
 		w := worker.New(*root, q, a, l)
 		go func() {

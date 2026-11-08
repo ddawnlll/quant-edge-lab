@@ -190,6 +190,23 @@ func (l *Ledger) migrate() error {
 			created_ns TEXT NOT NULL
 		)`,
 		`CREATE VIRTUAL TABLE IF NOT EXISTS memory_fts USING fts5(claim_id UNINDEXED, text)`,
+		`CREATE TABLE IF NOT EXISTS agent_tasks (
+			task_id TEXT PRIMARY KEY,
+			state TEXT NOT NULL,
+			owner TEXT,
+			generation INTEGER NOT NULL DEFAULT 0,
+			lease_expires_ns TEXT,
+			payload_json TEXT NOT NULL,
+			created_ns TEXT NOT NULL,
+			updated_ns TEXT NOT NULL
+		)`,
+		`CREATE TABLE IF NOT EXISTS family_budget (
+			family_id TEXT PRIMARY KEY,
+			cpu_millicores INTEGER NOT NULL DEFAULT 0,
+			paid_calls INTEGER NOT NULL DEFAULT 0,
+			repairs INTEGER NOT NULL DEFAULT 0,
+			checked_ns TEXT NOT NULL
+		)`,
 	}
 	for _, stmt := range stmts {
 		if _, err := l.db.ExecContext(ctx, stmt); err != nil {

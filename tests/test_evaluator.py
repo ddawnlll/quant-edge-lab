@@ -37,3 +37,15 @@ def test_no_consumption_no_decision(tmp_path):
     with pytest.raises(SealedError):
         reg.decide("COHORT-0", [0.1, 0.1, 0.1], [0, 0, 0], capital=1000, economic_minimum=0.001)
     assert not reg.key_path.stat().st_mode & 0o077
+
+
+def test_gates_fail_closed(tmp_path):
+    from qel.evaluator.gates import build_export, forward_calibration_ready, request_confirmation
+
+    reg = SealedRegistry(str(tmp_path / "sealed"))
+    assert request_confirmation(reg, fresh_oos_available=False, authorized=True)["status"] == "WAITING_FRESH_OOS"
+    assert request_confirmation(reg, fresh_oos_available=True, authorized=False)["status"] == "WAITING_AUTHORIZED_COHORT"
+    fwd = forward_calibration_ready(15, 15, 1, False)
+    assert fwd["status"] == "INSUFFICIENT_OBSERVATION"
+    assert build_export({"verdict": "NO_EDGE"}, capital_authorization=True, signature_valid=True)["reason"] == "decision_not_edge"
+    assert build_export({"verdict": "EDGE"}, capital_authorization=False, signature_valid=True)["reason"] == "CAPITAL_UNAUTHORIZED"

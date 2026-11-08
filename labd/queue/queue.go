@@ -188,6 +188,15 @@ func (q *Queue) Claim(ctx context.Context, owner string, ttl time.Duration) (*Jo
 
 func now() string { return strconv.FormatInt(time.Now().UnixNano(), 10) }
 
+func attemptID(tx *sql.Tx, ctx context.Context, jobID string) string {
+	var attempt string
+	_ = tx.QueryRowContext(ctx, `SELECT attempt_id FROM jobs WHERE job_id=?`, jobID).Scan(&attempt)
+	if attempt == "" {
+		attempt = "ATT-1"
+	}
+	return attempt
+}
+
 func transitionEvent(ctx context.Context, q *Queue, tx *sql.Tx, jobID, event, from, to string, generation int64) error {
 	payload := map[string]any{"job_id": jobID, "event": event, "from": from, "to": to, "generation": strconv.FormatInt(generation, 10)}
 	raw, _ := json.Marshal(payload)
@@ -310,7 +319,8 @@ func (q *Queue) RequeueExpired(ctx context.Context) (int, error) {
 	}
 	rows.Close()
 	for i, id := range ids {
-		if _, err := tx.ExecContext(ctx, `UPDATE jobs SET state='QUEUED',lease_owner=NULL,lease_expires_ns=NULL,updated_ns=? WHERE job_id=?`, now(), id); err != nil {
+		newAttempt := fmt.Sprintf("%s-R%d", attemptID(tx, ctx, id), gens[i]+1)
+		if _, err := tx.ExecContext(ctx, `UPDATE jobs SET state='QUEUED',attempt_id=?,lease_owner=NULL,lease_expires_ns=NULL,updated_ns=? WHERE job_id=?`, newAttempt, now(), id); err != nil {
 			return 0, err
 		}
 		if err := transitionEvent(ctx, q, tx, id, "LEASE_LOST", states[i], "QUEUED", gens[i]); err != nil {

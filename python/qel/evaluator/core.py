@@ -121,6 +121,8 @@ class SealedRegistry:
         h = hash_jcs(body)
         with self.anchor_path.open("a") as f:
             f.write(json.dumps({**body, "anchor_hash": h}, sort_keys=True) + "\n")
+            f.flush()
+            os.fsync(f.fileno())
         return h
 
     def freeze_cohort(
@@ -225,6 +227,8 @@ class SealedRegistry:
         seed: int = 0,
         power: float = 0.8,
     ) -> dict:
+        if self.db.execute("SELECT 1 FROM decisions WHERE cohort_id=?", (cohort_id,)).fetchone():
+            raise SealedError("PROTOCOL_VIOLATION", "decision already issued")
         consumed = self.db.execute("SELECT receipt_hash FROM consumption WHERE cohort_id=?", (cohort_id,)).fetchone()
         if consumed is None:
             raise SealedError("WAITING_AUTHORIZED_COHORT", "no pre-access consumption receipt")

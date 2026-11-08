@@ -1,0 +1,17 @@
+== memory/agent ==
+=== RUN   TestClaimsAndCAS
+--- PASS: TestClaimsAndCAS (0.24s)
+PASS
+ok  	github.com/ddawnlll/quant-edge-lab/labd/memory	0.280s
+
+== cgroup ==
+=== RUN   TestDelegatedCgroupLimits
+    cgroup_test.go:39: delegated=/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service usage={MemoryCurrentBytes:73728 MemoryPeakBytes:262144 PidsCurrent:0 PidsPeak:1 CPUUsageUsec:2528 CPUUserUsec:2528 CPUSystemUsec:0}
+--- PASS: TestDelegatedCgroupLimits (0.11s)
+=== RUN   TestMemoryLimitKillsOversize
+    cgroup_test.go:59: expected kill: signal: killed
+--- PASS: TestMemoryLimitKillsOversize (0.21s)
+=== RUN   TestAdmission
+--- PASS: TestAdmission (0.00s)
+PASS
+ok  	github.com/ddawnlll/quant-edge-lab/labd/cgroup	0.333s

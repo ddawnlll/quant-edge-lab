@@ -21,6 +21,7 @@ import (
 	"github.com/ddawnlll/quant-edge-lab/contracts/go/qelcontract"
 	"github.com/ddawnlll/quant-edge-lab/labd/artifacts"
 	"github.com/ddawnlll/quant-edge-lab/labd/ledger"
+	"github.com/ddawnlll/quant-edge-lab/labd/memory"
 	"github.com/ddawnlll/quant-edge-lab/labd/queue"
 )
 
@@ -36,17 +37,19 @@ func (e *ProtocolError) Error() string { return e.Code + ": " + e.Message }
 func perr(code, msg string) *ProtocolError { return &ProtocolError{Code: code, Message: msg} }
 
 type Server struct {
-	L       *ledger.Ledger
-	Q       *queue.Queue
-	A       *artifacts.Store
-	Socket  string
-	HTTP    string
-	UIDRole map[uint32]string
-	mu      sync.Mutex
+	L         *ledger.Ledger
+	Q         *queue.Queue
+	A         *artifacts.Store
+	M         *memory.Store
+	Socket    string
+	HTTP      string
+	HTTPToken string
+	UIDRole   map[uint32]string
+	mu        sync.Mutex
 }
 
 func New(l *ledger.Ledger, q *queue.Queue, a *artifacts.Store, socket, httpAddr string) *Server {
-	return &Server{L: l, Q: q, A: a, Socket: socket, HTTP: httpAddr, UIDRole: map[uint32]string{uint32(os.Getuid()): "P-LABD"}}
+	return &Server{L: l, Q: q, A: a, M: memory.New(l), Socket: socket, HTTP: httpAddr, UIDRole: map[uint32]string{uint32(os.Getuid()): "P-LABD"}}
 }
 
 func (s *Server) role(uid uint32) string {
@@ -54,6 +57,13 @@ func (s *Server) role(uid uint32) string {
 		return r
 	}
 	return "P-RESEARCH"
+}
+
+func (s *Server) authorized(r *http.Request) bool {
+	if s.HTTPToken == "" {
+		return false
+	}
+	return r.Header.Get("Authorization") == "Bearer "+s.HTTPToken
 }
 
 func allowedRole(role, op string) bool {
@@ -404,6 +414,10 @@ func (s *Server) httpMux() *http.ServeMux {
 		writeJSON(w, 200, map[string]any{"status": "OK", "sqlite_version": version, "sqlite_source_id": source})
 	})
 	mux.HandleFunc("/v1/jobs", func(w http.ResponseWriter, r *http.Request) {
+		if !s.authorized(r) {
+			writeJSON(w, 401, map[string]any{"code": "ACCESS_DENIED", "error": "write token required"})
+			return
+		}
 		if r.Method != http.MethodPost {
 			http.Error(w, "method", http.StatusMethodNotAllowed)
 			return
@@ -448,6 +462,10 @@ func (s *Server) httpMux() *http.ServeMux {
 		writeJSON(w, 200, page)
 	})
 	mux.HandleFunc("/v1/dev/params", func(w http.ResponseWriter, r *http.Request) {
+		if !s.authorized(r) {
+			writeJSON(w, 401, map[string]any{"code": "ACCESS_DENIED", "error": "write token required"})
+			return
+		}
 		raw, err := io.ReadAll(io.LimitReader(r.Body, 1<<20))
 		if err != nil || len(raw) == 0 {
 			writeJSON(w, 400, map[string]any{"code": "SCHEMA_INVALID", "error": "empty params"})
@@ -489,6 +507,52 @@ func (s *Server) httpMux() *http.ServeMux {
 			return
 		}
 		writeJSON(w, 200, snap)
+	})
+	mux.HandleFunc("/v1/memory", func(w http.ResponseWriter, r *http.Request) {
+		claims, err := s.M.Search(r.Context(), r.URL.Query().Get("q"), 50)
+		if err != nil {
+			writeJSON(w, 400, map[string]any{"code": "SCHEMA_INVALID", "error": err.Error()})
+			return
+		}
+		writeJSON(w, 200, map[string]any{"claims": claims})
+	})
+	mux.HandleFunc("/v1/agent/tasks", func(w http.ResponseWriter, r *http.Request) {
+		if !s.authorized(r) {
+			writeJSON(w, 401, map[string]any{"code": "ACCESS_DENIED", "error": "write token required"})
+			return
+		}
+		var body map[string]any
+		if err := decodeStrict(r.Body, &body); err != nil {
+			writeJSON(w, 400, map[string]any{"code": "SCHEMA_INVALID", "error": err.Error()})
+			return
+		}
+		taskID, _ := body["task_id"].(string)
+		action, _ := body["action"].(string)
+		switch action {
+		case "add":
+			payload, _ := body["payload"].(map[string]any)
+			if err := s.M.AddTask(r.Context(), taskID, payload); err != nil {
+				writeJSON(w, 400, map[string]any{"code": "SCHEMA_INVALID", "error": err.Error()})
+				return
+			}
+			writeJSON(w, 200, map[string]any{"task_id": taskID, "state": "QUEUED"})
+		case "assign":
+			gen, err := s.M.Assign(r.Context(), taskID, str(body["owner"], "agent"), 60*time.Second)
+			if err != nil {
+				writeJSON(w, 409, map[string]any{"code": "STALE_ASSIGNMENT", "error": err.Error()})
+				return
+			}
+			writeJSON(w, 200, map[string]any{"task_id": taskID, "generation": gen, "state": "LEASED"})
+		case "complete":
+			gen, _ := body["generation"].(float64)
+			if err := s.M.Complete(r.Context(), taskID, str(body["owner"], "agent"), int64(gen), str(body["status"], "DONE")); err != nil {
+				writeJSON(w, 409, map[string]any{"code": "STALE_ASSIGNMENT", "error": err.Error()})
+				return
+			}
+			writeJSON(w, 200, map[string]any{"task_id": taskID, "state": "DONE"})
+		default:
+			writeJSON(w, 400, map[string]any{"code": "SCHEMA_INVALID", "error": "unknown action"})
+		}
 	})
 	mux.HandleFunc("/v1/events", s.sse)
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
@@ -573,4 +637,11 @@ func (s *Server) Dashboard(ctx context.Context) (map[string]any, error) {
 		return nil, err
 	}
 	return snap, nil
+}
+
+func str(v any, fallback string) string {
+	if s, ok := v.(string); ok && s != "" {
+		return s
+	}
+	return fallback
 }

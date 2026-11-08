@@ -17,6 +17,7 @@ from .contract.runkey import RUN_KEY_OBJECT_KEYS, run_key
 from .prepare.native_input import to_native_input
 from .prepare.normalize import normalize_capture
 from .research.screen import run_variants
+from .stats.core import calibrate_nulls
 
 
 def _write(path: str | None, payload: dict) -> None:
@@ -127,6 +128,10 @@ def main(argv: list[str] | None = None) -> int:
     p = sub.add_parser("accounting", help="reconstruct an economic tape independently")
     p.add_argument("--tape", required=True)
 
+    p = sub.add_parser("calibrate", help="bounded statistical null calibration")
+    p.add_argument("--programs", type=int, default=100)
+    p.add_argument("--out")
+
     p = sub.add_parser("screen", help="run the frozen development variant family")
     p.add_argument("--binary", required=True)
     p.add_argument("--events", required=True)
@@ -173,6 +178,10 @@ def main(argv: list[str] | None = None) -> int:
         payload = reconstruct(tape)
         _write(None, payload)
         return 0
+    if args.command == "calibrate":
+        payload = calibrate_nulls(programs=args.programs)
+        _write(args.out, payload)
+        return 0 if payload["pass"] else 1
     if args.command == "screen":
         base = json.loads(Path(args.strategy).read_text())
         payload = run_variants(args.binary, args.events, base, args.out, 12)
