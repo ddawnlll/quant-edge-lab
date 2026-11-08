@@ -23,12 +23,11 @@ type Worker struct {
 	A      *artifacts.Store
 	L      *ledger.Ledger
 	Root   string
-	Bin    string
 	Broker *cgroup.Broker
 }
 
 func New(root string, q *queue.Queue, a *artifacts.Store, l *ledger.Ledger) *Worker {
-	return &Worker{Q: q, A: a, L: l, Root: root, Bin: filepath.Join(root, "..", "bin"), Broker: cgroup.NewBroker("RP-8G")}
+	return &Worker{Q: q, A: a, L: l, Root: root, Broker: cgroup.NewBroker("RP-8G")}
 }
 
 func (w *Worker) Run(ctx context.Context, owner string) error {
@@ -101,7 +100,7 @@ func (w *Worker) execute(ctx context.Context, job *queue.Job) {
 	}
 	runCtx, cancel := context.WithTimeout(ctx, limit)
 	defer cancel()
-	cmd, err := w.command(runCtx, kind, params, outPath, jobDir)
+	cmd, err := w.command(runCtx, kind, params, outPath)
 	if err != nil {
 		group.Close()
 		group.Remove()
@@ -186,7 +185,7 @@ func (w *Worker) params(ctx context.Context, env map[string]any) (map[string]any
 	return params, nil
 }
 
-func (w *Worker) command(ctx context.Context, kind string, params map[string]any, outPath, jobDir string) (*exec.Cmd, error) {
+func (w *Worker) command(ctx context.Context, kind string, params map[string]any, outPath string) (*exec.Cmd, error) {
 	py := abs(filepath.Join(w.Root, "..", ".venv", "bin", "python"))
 	bin := abs(filepath.Join(w.Root, "..", "bin"))
 	switch kind {
