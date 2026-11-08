@@ -360,6 +360,7 @@ fn main() -> Result<()> {
     let mut strategy_path = None;
     let mut out_path = None;
     let mut notional = 100.0f64;
+    let mut chunk = 0usize;
     let mut i = 1;
     while i < args.len() {
         match args[i].as_str() {
@@ -367,6 +368,7 @@ fn main() -> Result<()> {
             "--strategy" => { strategy_path = args.get(i + 1).cloned(); i += 2; }
             "--out" => { out_path = args.get(i + 1).cloned(); i += 2; }
             "--notional" => { notional = args.get(i + 1).ok_or_else(|| anyhow!("notional"))?.parse()?; i += 2; }
+            "--chunk" => { chunk = args.get(i + 1).ok_or_else(|| anyhow!("chunk"))?.parse()?; i += 2; }
             other => bail!("unknown argument {other}"),
         }
     }
@@ -399,8 +401,17 @@ fn main() -> Result<()> {
     let tape_handle = taker.tape.clone();
     engine.add_strategy(taker)?;
     let count = data.len();
-    engine.add_data(data, None, true, true)?;
-    engine.run(None, None, None, false)?;
+    if chunk > 0 {
+        for batch in data.chunks(chunk) {
+            engine.add_data(batch.to_vec(), None, true, true)?;
+            engine.run(None, None, None, true)?;
+            engine.clear_data();
+        }
+        engine.end();
+    } else {
+        engine.add_data(data, None, true, true)?;
+        engine.run(None, None, None, false)?;
+    }
     let result = engine.get_result();
     let mut tape = Vec::new();
     {
@@ -425,6 +436,7 @@ fn main() -> Result<()> {
         "tape": tape_values,
         "profile": "TAKER_L1_FUNDING_STREAMING",
         "events": count,
+        "chunk_events": chunk,
         "iterations": result.iterations,
         "total_orders": result.total_orders,
         "total_positions": result.total_positions,

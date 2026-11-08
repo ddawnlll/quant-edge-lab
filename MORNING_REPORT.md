@@ -51,7 +51,9 @@ SQLite: 3.54.1 source `2026-10-16 14:45:20 555e07ef…`.
 - Capture job: cgroup peak 31.5 MiB, pids peak 7.
 - Native replay scale: 12,418 events 408 ms / 20 MiB RSS; 124,180 events
   3.15 s / 53 MiB; 1,241,800 events 29.8 s / 367 MiB. The 100x corpus is a
-  time-shifted repetition for scale/state growth only.
+  time-shifted repetition for scale/state growth only. Bounded replay in
+  2,000-event chunks with `clear_data` matched the unchunked 15-order /
+  8-position result at 19.9 MiB RSS.
 - Python tests: 34 passed. Go packages: ledger, artifacts, queue, control,
   memory, cgroup pass. Rust policy: 3 tests pass.
 

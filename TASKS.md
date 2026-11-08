@@ -25,7 +25,7 @@ is a scientific promotion.
 | TASK-16 | Signed scientific evaluator | PARTIAL | Ed25519 decision signing and verification; no fresh cohort may be evaluated |
 | TASK-17 | Passive queue and composite execution | BLOCKED | CAP-L2-QUEUE missing hook in pinned Nautilus; fixture F02 only |
 | TASK-18 | Two-world adapter and queue cross-check | BLOCKED | CAP-LOCAL-VIEW / queue hooks absent |
-| TASK-19 | Bounded replay and cache purge | PARTIAL | streaming chunk/state retention proven in spike; full cache purge and B4 scale run pending |
+| TASK-19 | Bounded replay and cache purge | PARTIAL | 2,000-event chunks with `clear_data` match the unchunked 15-order/8-position result and 19.9 MiB RSS; TASK-17 dependency remains blocked |
 | TASK-20 | Crash and recovery completion | DONE | worker killed mid-job, lease requeued, generation 2 completed; `evidence/labd/RECOVERY_REPORT.txt` |
 | TASK-21 | Agent gateway and CAS task ownership | DONE | FTS memory, CAS assignment, stale rejection tests; `labd/memory` |
 | TASK-22 | Durable memory projections | DONE | rebuild from cited claims; FTS query test |
