@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
 
 	jsonschema "github.com/santhosh-tekuri/jsonschema/v6"
 	"golang.org/x/text/unicode/norm"
@@ -48,18 +49,40 @@ func loadRuntimeSchema() (any, error) {
 	return doc, nil
 }
 
-// ValidateDef validates one runtime $defs model and applies QEL semantic domains.
-func ValidateDef(defName string, instance any) error {
-	doc, err := loadRuntimeSchema()
-	if err != nil {
-		return err
+var (
+	schemaOnce  sync.Once
+	schemaDoc   any
+	schemaErr   error
+	schemaMu    sync.Mutex
+	schemaCache = map[string]*jsonschema.Schema{}
+)
+
+func compiled(defName string) (*jsonschema.Schema, any, error) {
+	schemaOnce.Do(func() { schemaDoc, schemaErr = loadRuntimeSchema() })
+	if schemaErr != nil {
+		return nil, nil, schemaErr
+	}
+	schemaMu.Lock()
+	defer schemaMu.Unlock()
+	if s, ok := schemaCache[defName]; ok {
+		return s, schemaDoc, nil
 	}
 	compiler := jsonschema.NewCompiler()
 	const resource = "urn:qel:runtime:1.1.0"
-	if err := compiler.AddResource(resource, doc); err != nil {
-		return err
+	if err := compiler.AddResource(resource, schemaDoc); err != nil {
+		return nil, nil, err
 	}
-	schema, err := compiler.Compile(resource + "#/$defs/" + defName)
+	s, err := compiler.Compile(resource + "#/$defs/" + defName)
+	if err != nil {
+		return nil, nil, err
+	}
+	schemaCache[defName] = s
+	return s, schemaDoc, nil
+}
+
+// ValidateDef validates one runtime $defs model and applies QEL semantic domains.
+func ValidateDef(defName string, instance any) error {
+	schema, doc, err := compiled(defName)
 	if err != nil {
 		return err
 	}

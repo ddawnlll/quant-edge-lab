@@ -1,0 +1,17 @@
+{
+  "events": 1189,
+  "events_path": "data/native/DS-BTCUSDT-LIVE-001/events.jsonl",
+  "iterations": 1189,
+  "pnl_total": null,
+  "profile": "TAKER_L1_FUNDING_STREAMING",
+  "status": "PASS",
+  "tape": [
+    {
+      "cash": "1000",
+      "type": "SET_WALLET"
+    }
+  ],
+  "tape_extra": [],
+  "total_orders": 0,
+  "total_positions": 0
+}

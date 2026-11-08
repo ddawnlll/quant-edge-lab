@@ -1,0 +1,16 @@
+[package]
+name = "qel-native-runner"
+version = "0.1.0"
+edition = "2024"
+publish = false
+
+[dependencies]
+anyhow = "1.0"
+serde_json = "1.0"
+rust_decimal = "1"
+qel-policy = { path = "../../policy/rust" }
+nautilus-backtest = { git = "https://github.com/nautechsystems/nautilus_trader", rev = "27a8e54e7ac3c57d6cbf8891f0283dfbaee97317" }
+nautilus-common = { git = "https://github.com/nautechsystems/nautilus_trader", rev = "27a8e54e7ac3c57d6cbf8891f0283dfbaee97317" }
+nautilus-core = { git = "https://github.com/nautechsystems/nautilus_trader", rev = "27a8e54e7ac3c57d6cbf8891f0283dfbaee97317" }
+nautilus-model = { git = "https://github.com/nautechsystems/nautilus_trader", rev = "27a8e54e7ac3c57d6cbf8891f0283dfbaee97317" }
+nautilus-trading = { git = "https://github.com/nautechsystems/nautilus_trader", rev = "27a8e54e7ac3c57d6cbf8891f0283dfbaee97317" }

@@ -131,6 +131,15 @@ func encode(v any, out *strings.Builder) error {
 			return fmt.Errorf("%w: integer outside JCS safe range", ErrCanonical)
 		}
 		out.WriteString(strconv.FormatInt(x, 10))
+	case float64:
+		if math.IsNaN(x) || math.IsInf(x, 0) {
+			return fmt.Errorf("%w: nonfinite number", ErrCanonical)
+		}
+		if x == math.Trunc(x) && math.Abs(x) <= maxSafe {
+			out.WriteString(strconv.FormatInt(int64(x), 10))
+		} else {
+			out.WriteString(strconv.FormatFloat(x, 'g', -1, 64))
+		}
 	case []any:
 		out.WriteByte('[')
 		for i, item := range x {

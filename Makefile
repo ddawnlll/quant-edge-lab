@@ -13,7 +13,7 @@ setup:
 
 contracts:
 	mkdir -p bin
-	cd contracts/go && go build -o ../../bin/qel-contract ./cmd/qel-contract
+	go build -o bin/qel-contract ./contracts/go/cmd/qel-contract
 	cd contracts/rust && CARGO_TARGET_DIR=/home/quant/quant/.build-cache/qel-contract-rs cargo build --release
 	cp /home/quant/quant/.build-cache/qel-contract-rs/release/qel-contract bin/qel-contract-rs
 

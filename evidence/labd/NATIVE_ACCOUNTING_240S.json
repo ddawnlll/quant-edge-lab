@@ -1,0 +1,515 @@
+{
+  "endpoint_equity": "999.45233652",
+  "equity": "999.45233652",
+  "fee_total": "0.45241348",
+  "fifo_realized": "-0.0952",
+  "free_after_reservations": "1000",
+  "free_cash": "1000",
+  "funding_cash": "0",
+  "isolated_cash": "-0.54761348",
+  "negative_free_cash": false,
+  "postings": [
+    {
+      "account_code": "CASH_FREE",
+      "credit_i": "0",
+      "currency_id": "USDT",
+      "debit_i": "100000",
+      "position_epoch": null,
+      "strategy_id": "STRAT-1"
+    },
+    {
+      "account_code": "EXTERNAL_CAPITAL",
+      "credit_i": "100000",
+      "currency_id": "USDT",
+      "debit_i": "0",
+      "position_epoch": null,
+      "strategy_id": "STRAT-1"
+    },
+    {
+      "account_code": "CASH_ISOLATED",
+      "credit_i": "0",
+      "currency_id": "USDT",
+      "debit_i": "0",
+      "position_epoch": "1",
+      "strategy_id": "STRAT-1"
+    },
+    {
+      "account_code": "REALIZED_PRICE_PNL",
+      "credit_i": "0",
+      "currency_id": "USDT",
+      "debit_i": "0",
+      "position_epoch": "1",
+      "strategy_id": "STRAT-1"
+    },
+    {
+      "account_code": "FEES",
+      "credit_i": "0",
+      "currency_id": "USDT",
+      "debit_i": "3",
+      "position_epoch": "1",
+      "strategy_id": "STRAT-1"
+    },
+    {
+      "account_code": "CASH_ISOLATED",
+      "credit_i": "3",
+      "currency_id": "USDT",
+      "debit_i": "0",
+      "position_epoch": "1",
+      "strategy_id": "STRAT-1"
+    },
+    {
+      "account_code": "REALIZED_PRICE_PNL",
+      "credit_i": "0",
+      "currency_id": "USDT",
+      "debit_i": "0",
+      "position_epoch": "2",
+      "strategy_id": "STRAT-1"
+    },
+    {
+      "account_code": "CASH_ISOLATED",
+      "credit_i": "0",
+      "currency_id": "USDT",
+      "debit_i": "0",
+      "position_epoch": "2",
+      "strategy_id": "STRAT-1"
+    },
+    {
+      "account_code": "FEES",
+      "credit_i": "0",
+      "currency_id": "USDT",
+      "debit_i": "3",
+      "position_epoch": "2",
+      "strategy_id": "STRAT-1"
+    },
+    {
+      "account_code": "CASH_ISOLATED",
+      "credit_i": "3",
+      "currency_id": "USDT",
+      "debit_i": "0",
+      "position_epoch": "2",
+      "strategy_id": "STRAT-1"
+    },
+    {
+      "account_code": "CASH_ISOLATED",
+      "credit_i": "0",
+      "currency_id": "USDT",
+      "debit_i": "0",
+      "position_epoch": "2",
+      "strategy_id": "STRAT-1"
+    },
+    {
+      "account_code": "REALIZED_PRICE_PNL",
+      "credit_i": "0",
+      "currency_id": "USDT",
+      "debit_i": "0",
+      "position_epoch": "2",
+      "strategy_id": "STRAT-1"
+    },
+    {
+      "account_code": "FEES",
+      "credit_i": "0",
+      "currency_id": "USDT",
+      "debit_i": "3",
+      "position_epoch": "2",
+      "strategy_id": "STRAT-1"
+    },
+    {
+      "account_code": "CASH_ISOLATED",
+      "credit_i": "3",
+      "currency_id": "USDT",
+      "debit_i": "0",
+      "position_epoch": "2",
+      "strategy_id": "STRAT-1"
+    },
+    {
+      "account_code": "CASH_ISOLATED",
+      "credit_i": "0",
+      "currency_id": "USDT",
+      "debit_i": "3",
+      "position_epoch": "3",
+      "strategy_id": "STRAT-1"
+    },
+    {
+      "account_code": "REALIZED_PRICE_PNL",
+      "credit_i": "3",
+      "currency_id": "USDT",
+      "debit_i": "0",
+      "position_epoch": "3",
+      "strategy_id": "STRAT-1"
+    },
+    {
+      "account_code": "FEES",
+      "credit_i": "0",
+      "currency_id": "USDT",
+      "debit_i": "3",
+      "position_epoch": "3",
+      "strategy_id": "STRAT-1"
+    },
+    {
+      "account_code": "CASH_ISOLATED",
+      "credit_i": "3",
+      "currency_id": "USDT",
+      "debit_i": "0",
+      "position_epoch": "3",
+      "strategy_id": "STRAT-1"
+    },
+    {
+      "account_code": "CASH_ISOLATED",
+      "credit_i": "0",
+      "currency_id": "USDT",
+      "debit_i": "0",
+      "position_epoch": "3",
+      "strategy_id": "STRAT-1"
+    },
+    {
+      "account_code": "REALIZED_PRICE_PNL",
+      "credit_i": "0",
+      "currency_id": "USDT",
+      "debit_i": "0",
+      "position_epoch": "3",
+      "strategy_id": "STRAT-1"
+    },
+    {
+      "account_code": "FEES",
+      "credit_i": "0",
+      "currency_id": "USDT",
+      "debit_i": "3",
+      "position_epoch": "3",
+      "strategy_id": "STRAT-1"
+    },
+    {
+      "account_code": "CASH_ISOLATED",
+      "credit_i": "3",
+      "currency_id": "USDT",
+      "debit_i": "0",
+      "position_epoch": "3",
+      "strategy_id": "STRAT-1"
+    },
+    {
+      "account_code": "REALIZED_PRICE_PNL",
+      "credit_i": "0",
+      "currency_id": "USDT",
+      "debit_i": "2",
+      "position_epoch": "4",
+      "strategy_id": "STRAT-1"
+    },
+    {
+      "account_code": "CASH_ISOLATED",
+      "credit_i": "2",
+      "currency_id": "USDT",
+      "debit_i": "0",
+      "position_epoch": "4",
+      "strategy_id": "STRAT-1"
+    },
+    {
+      "account_code": "FEES",
+      "credit_i": "0",
+      "currency_id": "USDT",
+      "debit_i": "3",
+      "position_epoch": "4",
+      "strategy_id": "STRAT-1"
+    },
+    {
+      "account_code": "CASH_ISOLATED",
+      "credit_i": "3",
+      "currency_id": "USDT",
+      "debit_i": "0",
+      "position_epoch": "4",
+      "strategy_id": "STRAT-1"
+    },
+    {
+      "account_code": "CASH_ISOLATED",
+      "credit_i": "0",
+      "currency_id": "USDT",
+      "debit_i": "0",
+      "position_epoch": "4",
+      "strategy_id": "STRAT-1"
+    },
+    {
+      "account_code": "REALIZED_PRICE_PNL",
+      "credit_i": "0",
+      "currency_id": "USDT",
+      "debit_i": "0",
+      "position_epoch": "4",
+      "strategy_id": "STRAT-1"
+    },
+    {
+      "account_code": "FEES",
+      "credit_i": "0",
+      "currency_id": "USDT",
+      "debit_i": "3",
+      "position_epoch": "4",
+      "strategy_id": "STRAT-1"
+    },
+    {
+      "account_code": "CASH_ISOLATED",
+      "credit_i": "3",
+      "currency_id": "USDT",
+      "debit_i": "0",
+      "position_epoch": "4",
+      "strategy_id": "STRAT-1"
+    },
+    {
+      "account_code": "REALIZED_PRICE_PNL",
+      "credit_i": "0",
+      "currency_id": "USDT",
+      "debit_i": "1",
+      "position_epoch": "5",
+      "strategy_id": "STRAT-1"
+    },
+    {
+      "account_code": "CASH_ISOLATED",
+      "credit_i": "1",
+      "currency_id": "USDT",
+      "debit_i": "0",
+      "position_epoch": "5",
+      "strategy_id": "STRAT-1"
+    },
+    {
+      "account_code": "FEES",
+      "credit_i": "0",
+      "currency_id": "USDT",
+      "debit_i": "3",
+      "position_epoch": "5",
+      "strategy_id": "STRAT-1"
+    },
+    {
+      "account_code": "CASH_ISOLATED",
+      "credit_i": "3",
+      "currency_id": "USDT",
+      "debit_i": "0",
+      "position_epoch": "5",
+      "strategy_id": "STRAT-1"
+    },
+    {
+      "account_code": "CASH_ISOLATED",
+      "credit_i": "0",
+      "currency_id": "USDT",
+      "debit_i": "0",
+      "position_epoch": "5",
+      "strategy_id": "STRAT-1"
+    },
+    {
+      "account_code": "REALIZED_PRICE_PNL",
+      "credit_i": "0",
+      "currency_id": "USDT",
+      "debit_i": "0",
+      "position_epoch": "5",
+      "strategy_id": "STRAT-1"
+    },
+    {
+      "account_code": "FEES",
+      "credit_i": "0",
+      "currency_id": "USDT",
+      "debit_i": "3",
+      "position_epoch": "5",
+      "strategy_id": "STRAT-1"
+    },
+    {
+      "account_code": "CASH_ISOLATED",
+      "credit_i": "3",
+      "currency_id": "USDT",
+      "debit_i": "0",
+      "position_epoch": "5",
+      "strategy_id": "STRAT-1"
+    },
+    {
+      "account_code": "CASH_ISOLATED",
+      "credit_i": "0",
+      "currency_id": "USDT",
+      "debit_i": "1",
+      "position_epoch": "6",
+      "strategy_id": "STRAT-1"
+    },
+    {
+      "account_code": "REALIZED_PRICE_PNL",
+      "credit_i": "1",
+      "currency_id": "USDT",
+      "debit_i": "0",
+      "position_epoch": "6",
+      "strategy_id": "STRAT-1"
+    },
+    {
+      "account_code": "FEES",
+      "credit_i": "0",
+      "currency_id": "USDT",
+      "debit_i": "3",
+      "position_epoch": "6",
+      "strategy_id": "STRAT-1"
+    },
+    {
+      "account_code": "CASH_ISOLATED",
+      "credit_i": "3",
+      "currency_id": "USDT",
+      "debit_i": "0",
+      "position_epoch": "6",
+      "strategy_id": "STRAT-1"
+    },
+    {
+      "account_code": "CASH_ISOLATED",
+      "credit_i": "0",
+      "currency_id": "USDT",
+      "debit_i": "0",
+      "position_epoch": "6",
+      "strategy_id": "STRAT-1"
+    },
+    {
+      "account_code": "REALIZED_PRICE_PNL",
+      "credit_i": "0",
+      "currency_id": "USDT",
+      "debit_i": "0",
+      "position_epoch": "6",
+      "strategy_id": "STRAT-1"
+    },
+    {
+      "account_code": "FEES",
+      "credit_i": "0",
+      "currency_id": "USDT",
+      "debit_i": "3",
+      "position_epoch": "6",
+      "strategy_id": "STRAT-1"
+    },
+    {
+      "account_code": "CASH_ISOLATED",
+      "credit_i": "3",
+      "currency_id": "USDT",
+      "debit_i": "0",
+      "position_epoch": "6",
+      "strategy_id": "STRAT-1"
+    },
+    {
+      "account_code": "REALIZED_PRICE_PNL",
+      "credit_i": "0",
+      "currency_id": "USDT",
+      "debit_i": "2",
+      "position_epoch": "7",
+      "strategy_id": "STRAT-1"
+    },
+    {
+      "account_code": "CASH_ISOLATED",
+      "credit_i": "2",
+      "currency_id": "USDT",
+      "debit_i": "0",
+      "position_epoch": "7",
+      "strategy_id": "STRAT-1"
+    },
+    {
+      "account_code": "FEES",
+      "credit_i": "0",
+      "currency_id": "USDT",
+      "debit_i": "3",
+      "position_epoch": "7",
+      "strategy_id": "STRAT-1"
+    },
+    {
+      "account_code": "CASH_ISOLATED",
+      "credit_i": "3",
+      "currency_id": "USDT",
+      "debit_i": "0",
+      "position_epoch": "7",
+      "strategy_id": "STRAT-1"
+    },
+    {
+      "account_code": "CASH_ISOLATED",
+      "credit_i": "0",
+      "currency_id": "USDT",
+      "debit_i": "0",
+      "position_epoch": "7",
+      "strategy_id": "STRAT-1"
+    },
+    {
+      "account_code": "REALIZED_PRICE_PNL",
+      "credit_i": "0",
+      "currency_id": "USDT",
+      "debit_i": "0",
+      "position_epoch": "7",
+      "strategy_id": "STRAT-1"
+    },
+    {
+      "account_code": "FEES",
+      "credit_i": "0",
+      "currency_id": "USDT",
+      "debit_i": "3",
+      "position_epoch": "7",
+      "strategy_id": "STRAT-1"
+    },
+    {
+      "account_code": "CASH_ISOLATED",
+      "credit_i": "3",
+      "currency_id": "USDT",
+      "debit_i": "0",
+      "position_epoch": "7",
+      "strategy_id": "STRAT-1"
+    },
+    {
+      "account_code": "REALIZED_PRICE_PNL",
+      "credit_i": "0",
+      "currency_id": "USDT",
+      "debit_i": "8",
+      "position_epoch": "8",
+      "strategy_id": "STRAT-1"
+    },
+    {
+      "account_code": "CASH_ISOLATED",
+      "credit_i": "8",
+      "currency_id": "USDT",
+      "debit_i": "0",
+      "position_epoch": "8",
+      "strategy_id": "STRAT-1"
+    },
+    {
+      "account_code": "FEES",
+      "credit_i": "0",
+      "currency_id": "USDT",
+      "debit_i": "3",
+      "position_epoch": "8",
+      "strategy_id": "STRAT-1"
+    },
+    {
+      "account_code": "CASH_ISOLATED",
+      "credit_i": "3",
+      "currency_id": "USDT",
+      "debit_i": "0",
+      "position_epoch": "8",
+      "strategy_id": "STRAT-1"
+    },
+    {
+      "account_code": "CASH_ISOLATED",
+      "credit_i": "0",
+      "currency_id": "USDT",
+      "debit_i": "0",
+      "position_epoch": "8",
+      "strategy_id": "STRAT-1"
+    },
+    {
+      "account_code": "REALIZED_PRICE_PNL",
+      "credit_i": "0",
+      "currency_id": "USDT",
+      "debit_i": "0",
+      "position_epoch": "8",
+      "strategy_id": "STRAT-1"
+    },
+    {
+      "account_code": "FEES",
+      "credit_i": "0",
+      "currency_id": "USDT",
+      "debit_i": "3",
+      "position_epoch": "8",
+      "strategy_id": "STRAT-1"
+    },
+    {
+      "account_code": "CASH_ISOLATED",
+      "credit_i": "3",
+      "currency_id": "USDT",
+      "debit_i": "0",
+      "position_epoch": "8",
+      "strategy_id": "STRAT-1"
+    }
+  ],
+  "postings_balanced": true,
+  "price_realized": "-0.0952",
+  "reserved": "0",
+  "total_cash": "999.45238652",
+  "unexplained_residual": "0",
+  "unrealized": "-0.00005"
+}

@@ -10,9 +10,12 @@ import sys
 from fractions import Fraction
 from pathlib import Path
 
+from .accounting.core import reconstruct
 from .conformance import Harness, summarize
 from .contract import canonical_bytes, hash_jcs, repo_root
 from .contract.runkey import RUN_KEY_OBJECT_KEYS, run_key
+from .prepare.native_input import to_native_input
+from .prepare.normalize import normalize_capture
 
 
 def _write(path: str | None, payload: dict) -> None:
@@ -110,6 +113,19 @@ def main(argv: list[str] | None = None) -> int:
     p = sub.add_parser("runkey", help="print a run-key vector report")
     p.add_argument("--out")
 
+    p = sub.add_parser("prepare", help="normalize a raw capture into Parquet")
+    p.add_argument("--events", required=True)
+    p.add_argument("--manifest", required=True)
+    p.add_argument("--out", required=True)
+    p.add_argument("--dataset-id", default=None)
+
+    p = sub.add_parser("native-input", help="convert normalized Parquet to native JSONL")
+    p.add_argument("--parquet", required=True)
+    p.add_argument("--out", required=True)
+
+    p = sub.add_parser("accounting", help="reconstruct an economic tape independently")
+    p.add_argument("--tape", required=True)
+
     args = parser.parse_args(argv)
     if args.command == "fixtures":
         harness = Harness()
@@ -137,6 +153,19 @@ def main(argv: list[str] | None = None) -> int:
         payload["status"] = "PASS" if payload["key_order_invariant"] and payload["meaningful_change_changes_key"] else "FAIL"
         _write(args.out, payload)
         return 0 if payload["status"] == "PASS" else 1
+    if args.command == "prepare":
+        payload = normalize_capture(args.events, args.manifest, args.out, args.dataset_id)
+        print(json.dumps(payload, indent=2, sort_keys=True))
+        return 0
+    if args.command == "native-input":
+        payload = to_native_input(args.parquet, args.out)
+        print(json.dumps(payload, indent=2, sort_keys=True))
+        return 0
+    if args.command == "accounting":
+        tape = json.loads(Path(args.tape).read_text())
+        payload = reconstruct(tape)
+        _write(None, payload)
+        return 0
     return 2
 
 

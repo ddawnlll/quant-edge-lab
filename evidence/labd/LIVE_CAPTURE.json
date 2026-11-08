@@ -1,0 +1,14 @@
+{
+  "bytes": 491804,
+  "capture_id": "CAP-BTCUSDT-1794173770",
+  "duplicates": 10834,
+  "end_ns": "1794173791566977019",
+  "event_sha256": "e26f7a812280bd4f1bae147f5826928ddb6becfafe0a9a8280c0bf9347334940",
+  "events_path": "data/raw/BINANCE_USDM_PUBLIC/BTCUSDT/2026-11-08/CAP-BTCUSDT-1794173770-events.jsonl",
+  "gaps": 1,
+  "manifest_path": "data/raw/BINANCE_USDM_PUBLIC/BTCUSDT/2026-11-08/CAP-BTCUSDT-1794173770-manifest.json",
+  "manifest_valid": true,
+  "quote_records": 12,
+  "start_ns": "1794173770616089742",
+  "trade_records": 1166
+}
