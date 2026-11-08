@@ -1,0 +1,46 @@
+{
+  "schema_version": "1.1.0",
+  "status": "PASS",
+  "profile": "TAKER_L1_FUNDING_STREAMING",
+  "runs": [
+    {
+      "workload": "B3_1X",
+      "events": 12418,
+      "iterations": 12418,
+      "orders": 15,
+      "positions": 8,
+      "elapsed_ms": 408,
+      "peak_rss_kb": 20232,
+      "events_per_s": 30436.3
+    },
+    {
+      "workload": "B4_10X",
+      "events": 124180,
+      "iterations": 124180,
+      "orders": 177,
+      "positions": 89,
+      "elapsed_ms": 3150,
+      "peak_rss_kb": 53704,
+      "events_per_s": 39422.2
+    },
+    {
+      "workload": "B4_100X",
+      "events": 1241800,
+      "iterations": 1241800,
+      "orders": 1797,
+      "positions": 899,
+      "elapsed_ms": 29818,
+      "peak_rss_kb": 375688,
+      "events_per_s": 41646.0
+    }
+  ],
+  "targets": {
+    "B2_warm_p90_s": 30,
+    "B3_warm_p90_s": 120,
+    "B4_100x_B2_events": true
+  },
+  "notes": [
+    "100x corpus is a synthetic time-shifted repetition of the same public capture; it tests scale and state growth, not new market regimes",
+    "peak RSS from /proc/self/status VmHWM"
+  ]
+}
