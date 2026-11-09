@@ -59,6 +59,9 @@ and no live trading authority exists. The 24-hour soak is still running; the
   signature verification. Market OOS/G4 remains external.
   `evidence/labd/INTEGRATION_ISSUE09_VERIFY.json`.
 
+- **#3 / TASK-10**: point-in-time venue fee/funding/margin-tier/mark/status rules, funding epoch attribution, duplicate and late settlement handling, shared-wallet reservations, mark-triggered isolated forced close and exact venue-vs-account reconciliation. F08/F09/F10/F11/F12/F13/F16 pass 10/10 scenarios. Full acceptance remains EVIDENCE_PENDING on venue-certified historical rules and a native liquidation path. `evidence/labd/INTEGRATION_ISSUE03_VERIFY.json`.
+- **#14 / TASK-26**: exact B6 workload implemented with the four frozen generators, HMAC labels, 16 variants, 3 cohorts, 1500/500 days, paired decision, coverage and power reports. The bounded pilot is `PILOT_NOT_ACCEPTANCE`; estimated full B6 is 1,085.64 core-hours, so the 1000-program FWER certificate is blocked on compute. `evidence/labd/INTEGRATION_ISSUE14_VERIFY.json`.
+
 ## Open gates (do not claim)
 
 1. **#8 / TASK-15**: create `qel-research` and `qel-eval` principals, chown the
@@ -75,8 +78,7 @@ and no live trading authority exists. The 24-hour soak is still running; the
    not implemented; event-count chunk parity is verified but the runner still
    materializes the whole vector.
 5. **#13 / TASK-25**: B0-B5 release benchmarks under 4 GiB and 8 GiB are not run.
-6. **#14 / TASK-26**: full coverage/MDE calibration remains; the paired
-   decision procedure and synthetic cohort path now exist.
+6. **#14 / TASK-26**: full 1000-program B6 FWER/coverage/MDE certificate remains; the protocol is implemented but the estimated compute is 1,085.64 core-hours on this host. #7 and #9 stay B6-pending until that report exists.
 7. **#15 / TASK-27**: 24h soak matures at 2026-11-09T22:21:50Z; a scheduled
    verification wakes at 22:26Z (`sched_1a3a7492`). The 7-day stage and B8 are
    open; a second wake is set for 2026-11-16T22:26Z (`sched_d9b2017c`).
