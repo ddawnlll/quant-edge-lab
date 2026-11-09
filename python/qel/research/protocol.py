@@ -830,6 +830,30 @@ def _fold_scope_checks(calendar: dict, split: dict, symbol: str | None) -> dict:
                 ),
             }
         )
+        checks.append(
+            {
+                "name": "cross_symbol_validation_rejected",
+                **base,
+                **_expect(
+                    "CROSS_SYMBOL_LEAKAGE",
+                    lambda f=fold, o=other, d=validation_day: scoped_fit(
+                        f, chosen, [{"symbol": o, "date": d}], calendar=calendar
+                    ),
+                ),
+            }
+        )
+        checks.append(
+            {
+                "name": "cross_symbol_reserve_rejected",
+                **base,
+                **_expect(
+                    "CROSS_SYMBOL_LEAKAGE",
+                    lambda f=fold, o=other, d=reserved_day: scoped_fit(
+                        f, chosen, [{"symbol": o, "date": d}], calendar=calendar
+                    ),
+                ),
+            }
+        )
         whole_fold = dict(fold)
         whole_fold["train_start"] = calendar["first_date"]
         whole_fold["train_end"] = calendar["last_date"]

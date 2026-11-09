@@ -4902,11 +4902,11 @@
     "folds": 2,
     "missing_days": 0,
     "reserved_days": 238,
-    "scope_checks": 14
+    "scope_checks": 18
   },
   "schema_version": "1.1.0",
   "scope_checks": {
-    "check_count": 14,
+    "check_count": 18,
     "checks": [
       {
         "expected": "PASS",
@@ -4933,6 +4933,20 @@
         "expected": "CROSS_SYMBOL_LEAKAGE",
         "fold_id": "WF-C8E168DCDE711A50",
         "name": "cross_symbol_rejected",
+        "observed": "CROSS_SYMBOL_LEAKAGE",
+        "passed": true
+      },
+      {
+        "expected": "CROSS_SYMBOL_LEAKAGE",
+        "fold_id": "WF-C8E168DCDE711A50",
+        "name": "cross_symbol_validation_rejected",
+        "observed": "CROSS_SYMBOL_LEAKAGE",
+        "passed": true
+      },
+      {
+        "expected": "CROSS_SYMBOL_LEAKAGE",
+        "fold_id": "WF-C8E168DCDE711A50",
+        "name": "cross_symbol_reserve_rejected",
         "observed": "CROSS_SYMBOL_LEAKAGE",
         "passed": true
       },
@@ -4982,6 +4996,20 @@
         "expected": "CROSS_SYMBOL_LEAKAGE",
         "fold_id": "WF-17BC472EA7669B4B",
         "name": "cross_symbol_rejected",
+        "observed": "CROSS_SYMBOL_LEAKAGE",
+        "passed": true
+      },
+      {
+        "expected": "CROSS_SYMBOL_LEAKAGE",
+        "fold_id": "WF-17BC472EA7669B4B",
+        "name": "cross_symbol_validation_rejected",
+        "observed": "CROSS_SYMBOL_LEAKAGE",
+        "passed": true
+      },
+      {
+        "expected": "CROSS_SYMBOL_LEAKAGE",
+        "fold_id": "WF-17BC472EA7669B4B",
+        "name": "cross_symbol_reserve_rejected",
         "observed": "CROSS_SYMBOL_LEAKAGE",
         "passed": true
       },

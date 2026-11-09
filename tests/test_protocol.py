@@ -158,6 +158,10 @@ def test_cross_symbol_and_validation_leakage_rejected():
     with pytest.raises(ProtocolError) as exc:
         scoped_fit(fold, "BTC", [{"symbol": "ETH", "date": train_day}], calendar=calendar)
     assert exc.value.code == "CROSS_SYMBOL_LEAKAGE"
+    for foreign_day in (fold["validation_start"], calendar["reserved"]["dates"][0]):
+        with pytest.raises(ProtocolError) as exc:
+            scoped_fit(fold, "BTC", [{"symbol": "ETH", "date": foreign_day}], calendar=calendar)
+        assert exc.value.code == "CROSS_SYMBOL_LEAKAGE"
     with pytest.raises(ProtocolError) as exc:
         scoped_fit(fold, "BTC", [{"symbol": "BTC", "date": fold["validation_start"]}], calendar=calendar)
     assert exc.value.code == "FIT_SCOPE_VIOLATION"
