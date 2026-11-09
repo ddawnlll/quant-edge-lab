@@ -1,0 +1,22 @@
+{
+  "status": "PASS",
+  "checks": {
+    "head_matches_pin": true,
+    "worktree_clean": true,
+    "tag_points_at_head": true,
+    "remote_tag_dereferences_to_pin": true,
+    "cargo_lock_hash_matches": true,
+    "spike_source_hash_matches": true,
+    "spike_report_hash_matches": true,
+    "binary_hash_matches": true,
+    "binary_size_matches": true,
+    "fixture_corpus_hash_matches": true,
+    "runtime_lock_unresolved": true,
+    "verified_profile_present": true
+  },
+  "head": "27a8e54e7ac3c57d6cbf8891f0283dfbaee97317",
+  "tag": "v1.231.0",
+  "remote_tag_commit": "27a8e54e7ac3c57d6cbf8891f0283dfbaee97317",
+  "source_pin_sha256": "91df291a5b9a7ff7b87f71e0e314e7544bfc2a95acda65bfec42e2403a0f3d29",
+  "runtime_lock_sha256": "a20c2b4d16b7be5fcc1e3fef0b48ed78dc23398bdd78ac8fe074b9a4a64156ae"
+}

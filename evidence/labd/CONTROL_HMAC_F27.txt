@@ -1,0 +1,136 @@
+{
+  "results": [
+    {
+      "checks": [
+        {
+          "actual": "0.005",
+          "expected": "0.005",
+          "operator": "EQ",
+          "passed": true,
+          "path": "candidate_mean"
+        },
+        {
+          "actual": "0",
+          "expected": "0",
+          "operator": "EQ",
+          "passed": true,
+          "path": "control_mean"
+        },
+        {
+          "actual": "0.005",
+          "expected": "0.005",
+          "operator": "EQ",
+          "passed": true,
+          "path": "difference_mean"
+        },
+        {
+          "actual": "0.04",
+          "expected": "0.04",
+          "operator": "EQ",
+          "passed": true,
+          "path": "combined_p"
+        },
+        {
+          "actual": 1,
+          "expected": 1,
+          "operator": "EQ",
+          "passed": true,
+          "path": "market_histories"
+        },
+        {
+          "actual": 4,
+          "expected": 4,
+          "operator": "EQ",
+          "passed": true,
+          "path": "included_days"
+        }
+      ],
+      "events": [],
+      "fixture_id": "F27",
+      "kind": "ARITHMETIC",
+      "metrics": {
+        "absolute_updates_not_additive": true,
+        "audit_error": null,
+        "book_state": "VALID",
+        "candidate_mean": "0.005",
+        "certified": true,
+        "combined_p": "0.04",
+        "control_mean": "0",
+        "difference_mean": "0.005",
+        "duplicate_funding_or_fee_debits": 0,
+        "endpoint_equity": null,
+        "epoch_2_funding_cash": "0",
+        "equity": "1000",
+        "equity_end": "1000",
+        "error": null,
+        "exchange_fill_callback_before_25": false,
+        "exit_total_qty": "0",
+        "fee_total": "0",
+        "feed_latency_applied_count": 0,
+        "fill_count": 0,
+        "fill_step_2_qty": "0",
+        "fills_after_step_1_qty": "0",
+        "fills_at_10_qty": "0",
+        "fills_at_11_qty": "0",
+        "free_after_reservations": "0",
+        "free_cash": "0",
+        "funding_attributed_epoch": null,
+        "funding_cash": "0",
+        "funding_epoch": 1,
+        "future_mark_join_count": 0,
+        "future_mark_reads": 0,
+        "included_days": 4,
+        "initial_match": false,
+        "invented_fills": 0,
+        "isolated_cash": "1000",
+        "isolated_equity": "1000",
+        "last_cancel_response": null,
+        "last_good_seq": null,
+        "liquidation_triggered": false,
+        "maintenance": "0",
+        "mark_path_certificate": "missing",
+        "mark_trigger_inferred_from_quote": false,
+        "market_histories": 1,
+        "negative_free_cash": false,
+        "new_epoch_qty": "0",
+        "open_qty_at_cutoff": null,
+        "path_verdict": "IDENTIFIED",
+        "payment_application_count": 0,
+        "position_qty": "0",
+        "premature_policy_access": false,
+        "price_realized": "0",
+        "priority_reset_count": 0,
+        "scientific_pass_from_override": false,
+        "second_child_response": null,
+        "stale_fill_count": 0,
+        "stale_stop_response": null,
+        "stop_qty": "0",
+        "successful_unauthorized_access_count": 0,
+        "synthetic_exit_fill_count": 0,
+        "total_cash": "1000",
+        "total_filled_qty": "0",
+        "tp1_qty": "0",
+        "tp2_qty": "0",
+        "triggered": false,
+        "unexplained_residual": "0",
+        "unfilled_entry_protected_as_position": false,
+        "unrealized": "0",
+        "value_at_100": null,
+        "value_at_50": null
+      },
+      "scenario": "BASE",
+      "semantic_hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "status": "PASS"
+    }
+  ],
+  "status": "PASS",
+  "summary": {
+    "failed": 0,
+    "fixtures": {
+      "F27": "PASS"
+    },
+    "passed": 1,
+    "total_scenarios": 1
+  }
+}
+exit_code=0

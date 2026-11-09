@@ -1,0 +1,55 @@
+{
+  "acceptance": "T-ISOLATION",
+  "blocked_checks": [
+    "actual distinct Linux UIDs for research and evaluator",
+    "socket peer credentials and authorized-socket ownership",
+    "worker with no network access",
+    "mount/namespace separation for sibling research outputs"
+  ],
+  "blocked_reason": "The test runner has one unprivileged UID. Creating qel-research and qel-eval principals, changing socket/group ownership, and applying a worker network namespace or firewall requires root or administrator-created principals. The evaluator does not claim UID, socket or network isolation.",
+  "environment": {
+    "euid": 1000,
+    "gid": 1000,
+    "single_uid": true,
+    "uid": 1000
+  },
+  "evidence": {
+    "isolation_report": "evidence/labd/EVALUATOR_ISOLATION_REPORT.json",
+    "tests": "evidence/labd/ISOLATION_TESTS.txt"
+  },
+  "missing_capability": "administrator-created Unix principals qel-research and qel-eval (useradd/root), privileged socket ownership changes, and a network namespace or firewall for the worker",
+  "not_claimed": [
+    "uid_separation",
+    "socket_isolation",
+    "worker_network_isolation"
+  ],
+  "remediation": [
+    "create separate qel-research and qel-eval principals with administrator privileges",
+    "chown the sealed root, key and sqlite file to qel-eval and remove group/other access",
+    "own the authorized socket by qel-eval and restrict its group to the evaluator",
+    "run the evaluator with qel-eval and the worker with qel-research",
+    "apply a network namespace or firewall rule that removes worker network access"
+  ],
+  "software_checks_passed": {
+    "anchor_log_mode_0600": true,
+    "anchor_outside_research_artifacts": true,
+    "anchor_outside_sealed_root": true,
+    "anchor_root_mode_0700": true,
+    "db_mode_0600": true,
+    "key_mode_0600": true,
+    "no_path_reading_api": true,
+    "sealed_database_outside_research_artifacts": true,
+    "sealed_root_mode_0700": true,
+    "sibling_outputs_not_exposed": true
+  },
+  "status": "BLOCKED",
+  "task": "TASK-15",
+  "verified_in_software": [
+    "sealed root mode 0700",
+    "database and key mode 0600",
+    "anchor root mode 0700 and anchor log mode 0600",
+    "anchor root outside the sealed registry root",
+    "sealed registry and anchor outside research artifact directories",
+    "no path-reading method exposed by the evaluator API"
+  ]
+}

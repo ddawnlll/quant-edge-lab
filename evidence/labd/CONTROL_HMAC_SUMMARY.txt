@@ -1,0 +1,59 @@
+TASK-13 / issue #6 - matched controls and batch screen
+branch: qel/issue-06-controls
+base_sha: a7c0e470b8a30ecd4c4c542e748d6838a0f7594b
+
+protocol
+  draw_mapping: HMAC_SHA256_COUNTER_V1
+  seed_protocol_hash: 30a0ef917ba2484c7966bf13f51cf2973e83235862b5eae408576a0b5d5e8571
+  backend_hash: d8f017c7f6627ca2517094eeab8491df16713074085614d7777bf56c0d5858a5
+  family_hash: 13ecb70576398a6b4bbf51d35cd7ed365e18df5b9307200fd3a4c39fb5c545fe
+  input_hash: 717460fad059b70ca10f8ddaad69dd97fef44f1ba17c988178d8449c018c5b8a
+  plan_hash: 894c7c6e838020d4731ddd49e37c297046eb6ccf1fddf4ff01aa8f161ab35b74
+  selection_plan_hash: 2e4823fe463fbdd01109f3708a94f3106a4cd045cb3765ab1b34c0d6425657e4
+  frozen_seed_labels_hash: afed502909291321c4669edaf548aa625edb75be1df195d441070a29111268aa
+  report_hash: 94d96944dc3ff7fd91cdffe27c48b3c13b220c5a3afb27a8cb605319ae6001ab
+
+evidence run
+  events: data/native/DS-BTCUSDT-LIVE-240S/events.jsonl (main repo absolute path used)
+  replications: 1000 / required_replications: 1000 / seeds_completed: 1000
+  trade_count_target_per_day: {"2026-11-08": 22}; executed_trades = 22000
+  control_mean: -1.20814975; control_std: 0.06852664
+  daily_series_hash: 3f5e5dec6f3a84f4d26e70814a1fb4e04078104e56070f7bbecebd9205928a69
+  seed_series_hash: c9d88b90cf28e9bca757cdf2fab75fcc42404ca22a2d3888d564e07663200eb8
+  rejected_orders: 0; missing_mark_seeds: 0; truncated_seeds: 0; zero_trade_seeds: 0
+
+batch vs sequential
+  equal: true
+  batch/sequential daily series hash: 3f5e5dec6f3a84f4d26e70814a1fb4e04078104e56070f7bbecebd9205928a69
+  batch/sequential seed series hash: c9d88b90cf28e9bca757cdf2fab75fcc42404ca22a2d3888d564e07663200eb8
+  batch_elapsed_seconds: 10.369509; sequential_elapsed_seconds: 26.092773
+
+resources
+  CLI wall: 13.877604 s; CLI peak RSS: 159170560 B (151.797 MiB)
+  full evidence wall (batch+sequential): 36.793683 s; process peak RSS: 106397696 B (101.469 MiB)
+  limits: <= 600 s and <= 1 GiB; within limits
+
+checks
+  tests/test_controls.py: 26 passed, exit 0
+  tests/test_controls.py + tests/test_research.py: 27 passed, exit 0
+  full tests: 131 passed, exit 0
+  F27 fixture: PASS (1/1 scenario), exit 0
+  (counts refreshed after the last test addition; see CONTROL_HMAC_TESTS_*.txt for captured output)
+
+acceptance
+  F27: PARTIAL (single archive day; daily aggregate + IUT arithmetic passes)
+  B1: OPEN (multi-day only; only one archive day is present, not claimed)
+  T-PROTOCOL: PARTIAL (train-only fit, frozen seeds, no forced candidate count)
+
+notes
+  - Each control seed owns a fresh ControlAccount; no shared mutable account.
+  - Future prices and candidate realized fills do not change selection.
+  - Zero-trade days remain in the series as 0; missing marks remain null and
+    are excluded from means, never filled.
+  - Streaming aggregation retains zero per-seed daily series.
+  - L1 rescue: DEVELOPMENT_VALID_L1_REJECTS, group size 10, HMAC reservoir,
+    invalid rejects excluded from denominators.
+  - 1000 financial trial entries preserved (dropped=0) and cost reservations
+    recorded with a reservation hash.
+  - Blockers: none on this branch. Multi-day B1 remains open by data
+    availability; do not claim it.

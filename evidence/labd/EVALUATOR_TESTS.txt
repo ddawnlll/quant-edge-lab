@@ -1,2 +1,20 @@
-.....                                                                    [100%]
-5 passed in 4.36s
+TASK-15 evaluator tests
+Command:
+  PYTHONPATH=python QEL_ROOT=$PWD /home/quant/quant/quant-edge-lab/.venv/bin/python -m pytest -q tests/test_evaluator.py tests/test_isolation_anchor.py
+Exit code: 0
+Result: 19 passed in 8.16s
+
+Evaluator files:
+  tests/test_evaluator.py (5 tests, F25/F26/signed decision/no consumption/gates)
+  tests/test_isolation_anchor.py (14 tests, anchor chain, ack loss, race,
+  restore/copy, renamed cohort, signed batch, software isolation negatives)
+
+Full suite:
+  PYTHONPATH=python QEL_ROOT=$PWD /home/quant/quant/quant-edge-lab/.venv/bin/python -m pytest -q tests
+  Exit code: 0, 67 passed in 19.49s
+
+Demo:
+  PYTHONPATH=python QEL_ROOT=$PWD /home/quant/quant/quant-edge-lab/.venv/bin/python -m qel.cli evaluator-demo --root "$JCODE_SCRATCH_DIR/qel-eval-demo" --out "$JCODE_SCRATCH_DIR/evaluator-demo.json"
+  Exit code: 0, status PASS, signature verified, db/key mode 0o600
+
+See evidence/labd/ISOLATION_TESTS.txt for the full TASK-15 report.

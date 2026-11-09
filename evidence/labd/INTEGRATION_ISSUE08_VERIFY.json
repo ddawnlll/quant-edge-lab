@@ -1,0 +1,82 @@
+{
+  "issue": 8,
+  "task": "TASK-15",
+  "kind": "COORDINATOR_INDEPENDENT_VERIFICATION",
+  "integration_branch": "qel/int-20261109",
+  "base_sha": "f6dbde793e9db6c6124f4826b5bdff7e793502c1",
+  "patch_commit": "5e6525c (amended to fa812b4320a600da45b8178be93b6c7255da92df; evidence-only addition)",
+  "integrated_commit": "7195597",
+  "verification": {
+    "pytest": {
+      "command": "PYTHONPATH=python QEL_ROOT=$PWD .venv/bin/python -m pytest -q tests",
+      "result": "105 passed",
+      "exit_code": 0
+    },
+    "focused": {
+      "command": "pytest -q tests/test_evaluator.py tests/test_isolation_anchor.py",
+      "result": "18 passed",
+      "exit_code": 0
+    },
+    "evaluator_demo": {
+      "command": "python -m qel.cli evaluator-demo",
+      "status": "PASS",
+      "signature_verified": true,
+      "pre_consumption_refusal": "WAITING_AUTHORIZED_COHORT",
+      "second_decision_refusal": "PROTOCOL_VIOLATION",
+      "unacknowledged_refusal": "WAITING_AUTHORIZED_COHORT",
+      "db_mode": "0600",
+      "key_mode": "0600",
+      "data_boundary": "synthetic evaluator calibration vector, not a market result"
+    },
+    "software_checks": {
+      "anchor_outside_sealed_root": true,
+      "anchor_outside_research_artifacts": true,
+      "anchor_chain_valid": true,
+      "anchor_chain_detects_tampering": true,
+      "anchor_generation_monotonic": true,
+      "pre_access_receipt_commits_window_and_alpha": true,
+      "missing_ack_blocks_read": true,
+      "ack_retry_spends_alpha_once": true,
+      "concurrent_consume_one_winner": true,
+      "old_backup_requires_reconcile_and_keeps_alpha": true,
+      "copied_registry_requires_reconcile": true,
+      "copied_consumed_registry_stays_consumed": true,
+      "renamed_cohort_with_same_commitment_refused": true,
+      "signed_batch_rejects_unknown_tampered_duplicate_changed": true,
+      "sibling_output_not_readable_through_api": true
+    }
+  },
+  "blocked_acceptance": {
+    "gate": "T-ISOLATION",
+    "status": "BLOCKED",
+    "missing_capability": "administrator-created Unix principals qel-research and qel-eval, privileged socket ownership changes, and a worker network namespace or firewall",
+    "blocked_checks": [
+      "actual distinct Linux UIDs for research and evaluator",
+      "socket peer credentials and authorized-socket ownership",
+      "worker with no network access",
+      "mount/namespace separation for sibling research outputs"
+    ],
+    "environment": {
+      "uid": 1000,
+      "gid": 1000,
+      "single_uid": true
+    }
+  },
+  "claims_not_made": [
+    "UID separation",
+    "socket isolation",
+    "worker network isolation",
+    "scientific promotion from the synthetic evaluator vector"
+  ],
+  "evidence_hashes": {
+    "evidence/labd/EVALUATOR_ANCHOR_CHAIN.json": "committed with patch",
+    "evidence/labd/EVALUATOR_BATCH_MANIFEST.json": "committed with patch",
+    "evidence/labd/EVALUATOR_ISOLATION_REPORT.json": "committed with patch",
+    "evidence/labd/EVALUATOR_PREACCESS_RECEIPT.json": "committed with patch",
+    "evidence/labd/ISOLATION_LIMITATIONS.json": "committed with patch",
+    "evidence/labd/ISOLATION_TESTS.txt": "committed with patch"
+  },
+  "verdict": "PASS_SOFTWARE_BLOCKED_T_ISOLATION",
+  "acceptance_note": "Software behavior is verified, including irreversible consumption and restore/rename refusal. Acceptance cannot be claimed until an administrator creates separate Linux principals and the real UID/socket/network negatives are executed.",
+  "patch_commit_final": "fa812b4320a600da45b8178be93b6c7255da92df"
+}

@@ -1,0 +1,45 @@
+# TASK-16 evaluator and synthetic release demo
+# utc: 2026-11-09T11:33:54Z
+
+## evaluator-demo
+command: PYTHONPATH=python QEL_ROOT=$PWD python -m qel.cli evaluator-demo --root <tmp>/sealed --out evidence/labd/RELEASE_EVALUATOR_E2E.json
+exit=0 status= PASS
+  pre_consumption_refusal=WAITING_AUTHORIZED_COHORT
+  unacknowledged_refusal=WAITING_AUTHORIZED_COHORT
+  second_decision_refusal=PROTOCOL_VIOLATION
+  signature_verified=True
+  data_boundary=synthetic evaluator calibration vector, not a market result
+  decision_verdict= INSUFFICIENT_EVIDENCE
+  p_profit= 0.08339782252059952 p_control= 0.7509576926093006
+
+## synthetic multi-candidate batch release
+command: PYTHONPATH=python QEL_ROOT=$PWD python - <root> (qel.evaluator.gates.run_synthetic_release_demo) --out evidence/labd/RELEASE_SYNTHETIC_COHORT.json
+exit=0 status= PASS
+  PASS all_outcomes_in_manifest
+  PASS alpha_spent_once
+  PASS changed_inputs_refused
+  PASS contamination_event_recorded
+  PASS contamination_refused
+  PASS duplicate_release_refused
+  PASS exact_retry_same_batch
+  PASS failed_gate_blocks_promotion
+  PASS independent_signature_valid
+  PASS invalid_candidate_in_family
+  PASS no_batch_before_release
+  PASS no_decision_before_release
+  PASS no_manifest_before_release
+  PASS one_signed_batch
+  PASS override_recorded_separately
+  PASS pre_access_receipt_before_consumption
+  PASS raw_inputs_redacted
+  PASS synthetic_labelled
+  PASS tampered_batch_refused
+  synthetic_cohort= True market_result= False
+  fresh_oos_confirmation= EXTERNAL_BLOCKED
+  batch_id= e92dc869bca7d52b3bf8cdb6efc08509b65a3806913248a54e1e684e5f400435
+  promotion_allowed= True gates= {'first_block': None, 'status': 'PASS'}
+  candidate C-STRONG: valid=True verdict=EDGE p_iut=0.006775134179187759 p_holm=0.020325402537563278 promoted=True
+  candidate C-NULL: valid=True verdict=INSUFFICIENT_EVIDENCE p_iut=0.17079760738708005 p_holm=0.3415952147741601 promoted=False
+  candidate C-INVALID: valid=False verdict=INVALID p_iut=1.0 p_holm=1.0 promoted=False
+  negatives: {'changed_inputs': 'CHANGED_INPUTS', 'contamination': 'CONTAMINATED_INPUT', 'duplicate_release': 'DUPLICATE_RELEASE', 'failed_gate_batch': None, 'tampered_batch': 'INVALID_SIGNATURE'}
+  resource= {'maxrss_kib': 111272, 'wall_seconds': 7.872}

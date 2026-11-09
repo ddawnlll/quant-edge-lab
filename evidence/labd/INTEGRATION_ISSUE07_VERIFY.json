@@ -1,0 +1,58 @@
+{
+  "issue": 7,
+  "task": "TASK-14",
+  "kind": "COORDINATOR_INDEPENDENT_VERIFICATION",
+  "integration_branch": "qel/int-20261109",
+  "base_sha": "f6dbde793e9db6c6124f4826b5bdff7e793502c1",
+  "patch_commits": ["ac4944d99482d5b3992550e37cb832d4670c3332", "e2cd191"],
+  "integrated_commits": ["9ce78fd", "168d7f9"],
+  "verification": {
+    "pytest": {"command": "PYTHONPATH=python QEL_ROOT=$PWD .venv/bin/python -m pytest -q tests", "result": "124 passed", "exit_code": 0},
+    "focused": {"command": "pytest -q tests/test_stats.py tests/test_research.py tests/test_decision.py", "result": "27 passed", "exit_code": 0},
+    "production_stats_job": {
+      "command": "python -m qel.cli stats-job --returns <bounded audit fixture>",
+      "exit_code": 0,
+      "status": "PASS",
+      "verdict": "INSUFFICIENT_EVIDENCE",
+      "reason_codes": ["B_BELOW_FROZEN_MINIMUM", "IUT_NOT_REJECTED", "LOW_POWER"],
+      "note": "the production entry point refuses to promote; it does not return EDGE/PROMOTE"
+    },
+    "resolved_audit_case": {
+      "candidate": "noisy +1.0/day panel",
+      "control": "noisy +1.5/day matched control",
+      "b": 10000,
+      "family_size": 1,
+      "verdict": "NO_PROMOTION",
+      "reason_codes": ["NEGATIVE_EVIDENCE_ENDPOINT_B"],
+      "holm_rejected": [false],
+      "endpoint_A_passes_alone": true,
+      "endpoint_B_paired_superiority_fails": true,
+      "blocked_promotion": true
+    },
+    "protocol": {
+      "shared_calendar": true,
+      "shared_initial_capital_denominator": true,
+      "one_bootstrap_index_vector_applied_to_both_endpoints": true,
+      "hac_recomputed_per_replicate": true,
+      "iut": true,
+      "holm_step_down_fixed_family": true,
+      "primary_block": 5,
+      "sensitivity_block": 10,
+      "alpha_schedule": "0.05 / 2^(j+1)",
+      "conservative_mc_upper_bound": true,
+      "waiting_compute_budget": true,
+      "degenerate_variance_and_nonstationarity_handled": true
+    }
+  },
+  "limitations": [
+    "Power/MDE in this issue are HAC/normal approximations used for the decision gate; the full coverage/MDE certificate belongs to TASK-26 and is not claimed here.",
+    "The audit fixtures are synthetic statistical panels, not market results and not a promotion.",
+    "The legacy stats-job output fields are preserved for compatibility; the authoritative verdict is the paired decision."
+  ],
+  "evidence_hashes": {
+    "evidence/labd/DECISION_AUDIT.json": "committed with patch",
+    "evidence/labd/STATS_DECISION_TESTS.txt": "committed with patch"
+  },
+  "verdict": "PASS",
+  "acceptance_note": "The paired decision procedure, shared-index bootstrap, audit regression, production blocking path, and negative/edge cases are verified on the integration branch."
+}

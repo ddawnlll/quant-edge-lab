@@ -1,0 +1,6 @@
+# TASK-16 evaluator/release targeted tests
+# command: PYTHONPATH=python QEL_ROOT=$PWD python -m pytest -q tests/test_evaluator.py tests/test_isolation_anchor.py tests/test_release.py
+# utc: 2026-11-09T11:32:16Z
+.................................                                        [100%]
+33 passed in 19.35s
+# exit=0

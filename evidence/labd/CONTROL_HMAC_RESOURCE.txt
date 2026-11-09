@@ -1,0 +1,19 @@
+TASK-13 / issue #6 resource usage
+cli_command: /home/quant/quant/quant-edge-lab/.venv/bin/python -m qel.cli controls --events /home/quant/quant/quant-edge-lab/data/native/DS-BTCUSDT-LIVE-240S/events.jsonl --trades 240 --notional 100 --seed 7 --replications 1000
+cli_exit_code: 0
+cli_elapsed_seconds: 13.877604
+cli_peak_rss_bytes: 159170560
+cli_peak_rss_mib: 151.797
+evidence_wall_seconds: 36.793683
+batch_elapsed_seconds: 10.369509
+peak_rss_bytes_process: 106397696
+peak_rss_mib_process: 101.469
+seeds_completed: 1000
+executed_trades: 22000
+retained_seed_series: 0
+budget_exhausted: False
+max_seconds: 540
+budget_limit_seconds: 600
+budget_limit_bytes: 1073741824
+within_time_budget: True
+within_memory_budget: True

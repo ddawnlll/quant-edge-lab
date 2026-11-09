@@ -1,0 +1,59 @@
+{
+  "schema_version": "1.1.0",
+  "decision": "USE_PYARROW_PARQUET",
+  "status": "PASS",
+  "duckdb": {
+    "status": "BLOCKED_BACKEND",
+    "failure": "SIGILL_ILLEGAL_INSTRUCTION",
+    "shell_exit_code": 132,
+    "returncode": -4,
+    "signal": 4,
+    "elapsed_seconds": 0.057743,
+    "peak_rss_kb": 17552,
+    "evidence": "evidence/labd/PIT_DUCKDB_LIMITATION.json"
+  },
+  "pyarrow": {
+    "status": "PASS",
+    "backend": "pyarrow.parquet",
+    "row_count": 12418,
+    "event_type_counts": {
+      "Funding": 10,
+      "Mark": 1,
+      "Quote": 137,
+      "Trade": 12270
+    },
+    "elapsed_seconds": 0.959532,
+    "peak_rss_kb": 162092
+  },
+  "semantic_parity": {
+    "status": "PASS",
+    "evidence": "evidence/labd/PIT_PARITY.json",
+    "row_count_equal": true,
+    "event_type_counts_equal": true,
+    "ordered_ts_raw_sha256_equal": true,
+    "ordered_ts_raw_sha256": "75dcb1b933e54766a18b29691facf6d6eaefcdb9570e51409b8d0756035dc8d4",
+    "certificate_counts_equal": true,
+    "deterministic_fixture_dataset_hash_equal": true,
+    "deterministic_fixture_dataset_hash": "d12f1ee48c49042a343ddfe2d2c1927861ccd412f47ea9e17b09fc3fc866222d",
+    "deterministic_fixture_ordered_digest_equal": true,
+    "row_level_provenance_checks": "12418/12418"
+  },
+  "resource_measurement": {
+    "evidence": "evidence/labd/PIT_RESOURCE.json",
+    "duckdb_peak_rss_kb": 17552,
+    "duckdb_elapsed_seconds": 0.057743,
+    "pyarrow_scan_peak_rss_kb": 162092,
+    "pyarrow_scan_elapsed_seconds": 0.959532,
+    "normalize_peak_rss_kb": 206280,
+    "normalize_elapsed_seconds": 20.969605
+  },
+  "coverage_limits": [
+    "SINGLE_INSTRUMENT_CAPTURE",
+    "TOP_OF_BOOK_QUOTES_ONLY",
+    "NO_OBSERVED_L2_DEPTH",
+    "NO_QUEUE_POSITION",
+    "NO_UNIVERSE_COMPLETENESS_WITHOUT_MEMBERSHIP_EVIDENCE",
+    "UPSTREAM_RESPONSE_RAW_HASH_NOT_RECOMPUTABLE_FROM_FRAME"
+  ],
+  "rationale": "DuckDB cannot execute on this CPU, so the certified path is the typed PyArrow/Parquet writer plus an independent stdlib raw scan. The two paths agree on row count, event-type counts, ordered (ts_ns, raw_sha256) digest, and deterministic fixture dataset hash."
+}

@@ -1,0 +1,158 @@
+{
+  "batch_id": "43dc2f2cef168cff65253416deafbf156d35375eec617efa6e1f1cee54a00115",
+  "input_hash": "8cb0e52e28f502d35054f271e38fb5ac0ed35a464ee7be6fcdf4c84d0e0f3b2c",
+  "manifest": {
+    "alpha_den": 200,
+    "alpha_num": 5,
+    "b": 64,
+    "batch_id": "43dc2f2cef168cff65253416deafbf156d35375eec617efa6e1f1cee54a00115",
+    "candidates": [
+      {
+        "candidate_hash": "0dba49a6c2a2a648825c320a95a388ca9dfa4802cc938065ecb9e9b228bfb544",
+        "candidate_id": "C-VALID",
+        "ci_high": 2.0596690467356503e-06,
+        "ci_low": 1.2831880961214923e-06,
+        "holm_significant": false,
+        "mean_daily_return": 1.6714285714285713e-06,
+        "p_control": 0.4800345951312569,
+        "p_holm": 0.9600691902625138,
+        "p_iut": 0.4800345951312569,
+        "p_profit": 0.1506406703901944,
+        "valid": true,
+        "verdict": "INSUFFICIENT_EVIDENCE"
+      },
+      {
+        "candidate_hash": "06a6535c3ff5c9da828e977bc53df452117cd1579a24be9595a0b154d601d75c",
+        "candidate_id": "C-INVALID",
+        "ci_high": null,
+        "ci_low": null,
+        "holm_significant": false,
+        "mean_daily_return": null,
+        "p_control": 1.0,
+        "p_holm": 1.0,
+        "p_iut": 1.0,
+        "p_profit": 1.0,
+        "valid": false,
+        "verdict": "INVALID"
+      }
+    ],
+    "capital": 1000.0,
+    "cohort_id": "COHORT-T15-EVIDENCE",
+    "consumption_receipt": "1f03ef9d3734986e49792d79bd4558aa3a356fe02da62b1348b722f8d8240c21",
+    "control_hash": "f39dd5ff137f6c05b4a8ef0b8771b85fb720b31729a7c78d83a5882f81367b79",
+    "economic_minimum": 0.0001,
+    "family_size": 2,
+    "input_hash": "8cb0e52e28f502d35054f271e38fb5ac0ed35a464ee7be6fcdf4c84d0e0f3b2c",
+    "invalid_in_family": 1,
+    "power": 0.8,
+    "public_key": "e66e462bf2aa5973ddbfc1516c1111de00b820de58f2500fe6a469cfba744de1",
+    "raw_inputs_released": false,
+    "seed": 0,
+    "signature": "27a9501c80e08a7bb4e65abe25b2250c247381f1ed45e7a1ca56d708b1aa42785d2ef989913275d226cdcf8fd04e0d87d97b54dfec281a23d7409561d635ba0f",
+    "window_commitment": "4a6bc3a3fa49a40fdf15ddeac9e9896009aafd553fee74587147e7265a6c4f38"
+  },
+  "public_key": "e66e462bf2aa5973ddbfc1516c1111de00b820de58f2500fe6a469cfba744de1",
+  "signature": "27a9501c80e08a7bb4e65abe25b2250c247381f1ed45e7a1ca56d708b1aa42785d2ef989913275d226cdcf8fd04e0d87d97b54dfec281a23d7409561d635ba0f",
+  "verification": {
+    "batch_id": "43dc2f2cef168cff65253416deafbf156d35375eec617efa6e1f1cee54a00115",
+    "manifest": {
+      "alpha_den": 200,
+      "alpha_num": 5,
+      "b": 64,
+      "candidates": [
+        {
+          "candidate_hash": "0dba49a6c2a2a648825c320a95a388ca9dfa4802cc938065ecb9e9b228bfb544",
+          "candidate_id": "C-VALID",
+          "ci_high": 2.0596690467356503e-06,
+          "ci_low": 1.2831880961214923e-06,
+          "holm_significant": false,
+          "mean_daily_return": 1.6714285714285713e-06,
+          "p_control": 0.4800345951312569,
+          "p_holm": 0.9600691902625138,
+          "p_iut": 0.4800345951312569,
+          "p_profit": 0.1506406703901944,
+          "valid": true,
+          "verdict": "INSUFFICIENT_EVIDENCE"
+        },
+        {
+          "candidate_hash": "06a6535c3ff5c9da828e977bc53df452117cd1579a24be9595a0b154d601d75c",
+          "candidate_id": "C-INVALID",
+          "ci_high": null,
+          "ci_low": null,
+          "holm_significant": false,
+          "mean_daily_return": null,
+          "p_control": 1.0,
+          "p_holm": 1.0,
+          "p_iut": 1.0,
+          "p_profit": 1.0,
+          "valid": false,
+          "verdict": "INVALID"
+        }
+      ],
+      "capital": 1000.0,
+      "cohort_id": "COHORT-T15-EVIDENCE",
+      "consumption_receipt": "1f03ef9d3734986e49792d79bd4558aa3a356fe02da62b1348b722f8d8240c21",
+      "control_hash": "f39dd5ff137f6c05b4a8ef0b8771b85fb720b31729a7c78d83a5882f81367b79",
+      "economic_minimum": 0.0001,
+      "family_size": 2,
+      "invalid_in_family": 1,
+      "power": 0.8,
+      "raw_inputs_released": false,
+      "seed": 0,
+      "window_commitment": "4a6bc3a3fa49a40fdf15ddeac9e9896009aafd553fee74587147e7265a6c4f38"
+    },
+    "reason": null,
+    "valid": true
+  },
+  "verification_with_unchanged_raw_inputs": {
+    "batch_id": "43dc2f2cef168cff65253416deafbf156d35375eec617efa6e1f1cee54a00115",
+    "manifest": {
+      "alpha_den": 200,
+      "alpha_num": 5,
+      "b": 64,
+      "candidates": [
+        {
+          "candidate_hash": "0dba49a6c2a2a648825c320a95a388ca9dfa4802cc938065ecb9e9b228bfb544",
+          "candidate_id": "C-VALID",
+          "ci_high": 2.0596690467356503e-06,
+          "ci_low": 1.2831880961214923e-06,
+          "holm_significant": false,
+          "mean_daily_return": 1.6714285714285713e-06,
+          "p_control": 0.4800345951312569,
+          "p_holm": 0.9600691902625138,
+          "p_iut": 0.4800345951312569,
+          "p_profit": 0.1506406703901944,
+          "valid": true,
+          "verdict": "INSUFFICIENT_EVIDENCE"
+        },
+        {
+          "candidate_hash": "06a6535c3ff5c9da828e977bc53df452117cd1579a24be9595a0b154d601d75c",
+          "candidate_id": "C-INVALID",
+          "ci_high": null,
+          "ci_low": null,
+          "holm_significant": false,
+          "mean_daily_return": null,
+          "p_control": 1.0,
+          "p_holm": 1.0,
+          "p_iut": 1.0,
+          "p_profit": 1.0,
+          "valid": false,
+          "verdict": "INVALID"
+        }
+      ],
+      "capital": 1000.0,
+      "cohort_id": "COHORT-T15-EVIDENCE",
+      "consumption_receipt": "1f03ef9d3734986e49792d79bd4558aa3a356fe02da62b1348b722f8d8240c21",
+      "control_hash": "f39dd5ff137f6c05b4a8ef0b8771b85fb720b31729a7c78d83a5882f81367b79",
+      "economic_minimum": 0.0001,
+      "family_size": 2,
+      "invalid_in_family": 1,
+      "power": 0.8,
+      "raw_inputs_released": false,
+      "seed": 0,
+      "window_commitment": "4a6bc3a3fa49a40fdf15ddeac9e9896009aafd553fee74587147e7265a6c4f38"
+    },
+    "reason": null,
+    "valid": true
+  }
+}

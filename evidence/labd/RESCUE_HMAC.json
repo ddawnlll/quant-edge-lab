@@ -1,0 +1,62 @@
+{
+  "deterministic_same_process": true,
+  "different_family_seed_changes_hash": true,
+  "different_family_seed_reject_ids": [
+    "V-002",
+    "V-016",
+    "V-022"
+  ],
+  "family_seed": 42,
+  "group_denominators": [
+    10,
+    10,
+    5
+  ],
+  "group_detail": [
+    {
+      "denominator": 10,
+      "group": 0,
+      "selected": {
+        "kind": "ORDER_REJECT",
+        "reason": "INSUFFICIENT_CASH",
+        "reject_id": "V-009",
+        "status": "VALID"
+      }
+    },
+    {
+      "denominator": 10,
+      "group": 1,
+      "selected": {
+        "kind": "ORDER_REJECT",
+        "reason": "INSUFFICIENT_CASH",
+        "reject_id": "V-017",
+        "status": "VALID"
+      }
+    },
+    {
+      "denominator": 5,
+      "group": 2,
+      "selected": {
+        "kind": "ORDER_REJECT",
+        "reason": "INSUFFICIENT_CASH",
+        "reject_id": "V-024",
+        "status": "VALID"
+      }
+    }
+  ],
+  "group_size": 10,
+  "groups": 3,
+  "input_records": 32,
+  "invalid_excluded": 7,
+  "invalid_not_in_denominator": true,
+  "method": "HMAC_COUNTER_UNIFORM_RESERVOIR_WITH_FROZEN_FAMILY_SEED",
+  "rescue_hash": "a9f5450885c2cf63f2a4be74568734b2bba15188e88191ff4a6e512e9d12c864",
+  "scope": "DEVELOPMENT_VALID_L1_REJECTS",
+  "selected_reject_ids": [
+    "V-009",
+    "V-017",
+    "V-024"
+  ],
+  "task": "TASK-13",
+  "valid_records": 25
+}

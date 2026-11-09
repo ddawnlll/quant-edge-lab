@@ -1,0 +1,34 @@
+{
+  "backend": "DUCKDB",
+  "status": "BLOCKED_BACKEND",
+  "python": "/home/quant/quant/quant-edge-lab/.venv/bin/python",
+  "duckdb_version": "2.0.0",
+  "query": "SELECT 42 AS answer",
+  "command": [
+    "/home/quant/quant/quant-edge-lab/.venv/bin/python",
+    "/home/quant/.jcode/scratch/duckdb/query.py"
+  ],
+  "query_source": "import duckdb; con = duckdb.connect(); print(con.execute(\"SELECT 42 AS answer\").fetchall())",
+  "returncode": -4,
+  "signal": 4,
+  "signal_name": "SIGILL",
+  "shell_exit_code": 132,
+  "stdout": "",
+  "stderr": "",
+  "elapsed_seconds": 0.057743,
+  "peak_rss_kb": 17552,
+  "cpu": {
+    "model": "Intel(R) Xeon(R) CPU E5-2680 v2 @ 2.80GHz",
+    "flags_summary": "avx present; avx2 absent",
+    "flags_evidence": "evidence/labd/DUCKDB_CPU.txt"
+  },
+  "evidence": [
+    "evidence/labd/DUCKDB_QUERY_EXIT.txt",
+    "evidence/labd/DUCKDB_QUERY_STDERR.txt",
+    "evidence/labd/DUCKDB_CPU.txt"
+  ],
+  "reproduction": "cd /home/quant/quant/qel-w01 && /home/quant/quant/quant-edge-lab/.venv/bin/python /home/quant/.jcode/scratch/duckdb/query.py; echo $?",
+  "observed": "the process terminates with SIGILL before any Python output; stderr is empty",
+  "limitation": "the pinned duckdb 2.0.0 wheel is not runnable on this CPU; the failure is a native illegal instruction, not a SQL or Python error",
+  "decision": "do not use DuckDB for this task; use the PyArrow/Parquet path with independent semantic-parity evidence"
+}

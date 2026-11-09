@@ -1,0 +1,8 @@
+{
+  "command": "/home/quant/quant/quant-edge-lab/.venv/bin/python -m qel.cli controls --events /home/quant/quant/quant-edge-lab/data/native/DS-BTCUSDT-LIVE-240S/events.jsonl --trades 240 --notional 100 --seed 7 --replications 1000",
+  "exit_code": 0,
+  "elapsed_seconds": 13.877604,
+  "peak_rss_bytes": 159170560,
+  "stderr": "",
+  "output_path": "evidence/labd/CONTROLS_HMAC_240S_CLI.json"
+}

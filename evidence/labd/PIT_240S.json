@@ -1,0 +1,85 @@
+{
+  "schema_version": "1.1.0",
+  "dataset_id": "DS-PIT-RECHECK",
+  "capture_id": "CAP-BTCUSDT-1794174239",
+  "raw_events_path": "/home/quant/quant/quant-edge-lab/data/raw/BINANCE_USDM_PUBLIC/BTCUSDT/2026-11-08/CAP-BTCUSDT-1794174239-events.jsonl",
+  "raw_manifest_path": "/home/quant/quant/quant-edge-lab/data/raw/BINANCE_USDM_PUBLIC/BTCUSDT/2026-11-08/CAP-BTCUSDT-1794174239-manifest.json",
+  "raw_segment_sha256": "968146bb19299e387eae4de2546d63456d34b1cd753d74fd46a71c414260c903",
+  "raw_segment_size_bytes": "5145372",
+  "raw_offset_base": "0",
+  "row_count": "12418",
+  "duplicates": 0,
+  "conflicts": 0,
+  "event_type_counts": {
+    "Funding": 10,
+    "Mark": 1,
+    "Quote": 137,
+    "Trade": 12270
+  },
+  "coverage": [
+    "FUNDING",
+    "MARK",
+    "QUOTE",
+    "TRADE"
+  ],
+  "exchange_range": {
+    "start_ns": "1793894400000000000",
+    "end_ns": "1794174480000000000"
+  },
+  "receive_range": {
+    "start_ns": "1794174240006985738",
+    "end_ns": "1794174481093557539"
+  },
+  "gaps": 4,
+  "gap_ranges": [
+    {
+      "start_ns": "1794174240006982390",
+      "end_ns": "1794174245086627105"
+    },
+    {
+      "start_ns": "1794174305992425237",
+      "end_ns": "1794174309544626125"
+    },
+    {
+      "start_ns": "1794174314516319597",
+      "end_ns": "1794174317820133644"
+    },
+    {
+      "start_ns": "1794174473477960378",
+      "end_ns": "1794174476854306249"
+    }
+  ],
+  "raw_hash_scope": "UPSTREAM_RESPONSE",
+  "raw_hash_verified_rows": 1,
+  "raw_hash_unverifiable_rows": 12417,
+  "rows_with_exact_line_sha256": "12418",
+  "rows_with_absolute_offset": "12418",
+  "dataset_hash": "714294ad60cb892a19a53b092da5a17f3e04f9840ceee6d098ba1a35400b2ab4",
+  "ordered_ts_raw_sha256": "75dcb1b933e54766a18b29691facf6d6eaefcdb9570e51409b8d0756035dc8d4",
+  "certificate_sha256": "deb58ed3ba45a019a153620dadd1dadb69781319a737ec2e61d403f6dbc77af8",
+  "certificate_evidence": "evidence/labd/DATASET_CERT_DS-PIT-RECHECK.json",
+  "raw_manifest_evidence": "evidence/labd/PIT_RAW_MANIFEST.json",
+  "provenance_evidence": "evidence/labd/PIT_PROVENANCE.json",
+  "parity_evidence": "evidence/labd/PIT_PARITY.json",
+  "universe_verified": false,
+  "universe_gate": {
+    "code": "UNIVERSE_UNVERIFIED",
+    "status": "BLOCKED",
+    "severity": "BLOCKING",
+    "reason": "NO_MEMBERSHIP_EVIDENCE",
+    "blocks": [
+      "CROSS_SECTIONAL_CLAIM",
+      "GENERALIZED_UNIVERSE_CLAIM"
+    ]
+  },
+  "verdict": "RESTRICTED",
+  "restricted_reasons": [
+    "GAPS_PRESENT",
+    "UNIVERSE_UNVERIFIED",
+    "RAW_HASH_UPSTREAM_UNVERIFIABLE",
+    "QUOTE_SNAPSHOT_OUT_OF_ORDER"
+  ],
+  "command": "cd /home/quant/quant/qel-w01 && PYTHONPATH=python QEL_ROOT=$PWD /home/quant/quant/quant-edge-lab/.venv/bin/python -m qel.cli prepare --events <raw>/CAP-BTCUSDT-1794174239-events.jsonl --manifest <raw>/CAP-BTCUSDT-1794174239-manifest.json --out <scratch>/pit/out --dataset-id DS-PIT-RECHECK",
+  "exit_code": 0,
+  "status": "PASS"
+}

@@ -1,0 +1,116 @@
+{
+  "backend": {
+    "backend_hash": "d8f017c7f6627ca2517094eeab8491df16713074085614d7777bf56c0d5858a5",
+    "normal_backend": "SCIPY_NORM_PPF",
+    "protocol": "HMAC_SHA256_COUNTER_V1",
+    "python": "3.13.5",
+    "scipy_available": true,
+    "t5_backend": "SCIPY_T_PPF_DF5"
+  },
+  "backend_hash": "d8f017c7f6627ca2517094eeab8491df16713074085614d7777bf56c0d5858a5",
+  "counter_mode": "HMAC-SHA256(key, tag || canonical labels || counter)",
+  "inverse_cdf": {
+    "normal": "pinned SciPy norm.ppf with stdlib NormalDist fallback",
+    "t5": "pinned SciPy t.ppf(df=5) * sqrt(3/5) with closed-form bisection fallback"
+  },
+  "key_hex": "aaf3d6e9d3d8ae4faff446eeace3d283817d882a138574c030334ccbd31f11e8",
+  "labels": [
+    "GENERATOR_ID",
+    "PROGRAM_REPLICATION",
+    "VARIANT",
+    "COIN",
+    "TIME",
+    "CONTROL_REPLICATION"
+  ],
+  "protocol": "HMAC_SHA256_COUNTER_V1",
+  "protocol_hash": "30a0ef917ba2484c7966bf13f51cf2973e83235862b5eae408576a0b5d5e8571",
+  "rfc4231_hmac_sha256_case2": "5bdcc146bf60754e6a042426089575c75a003f089d2739839dec58b964ec3843",
+  "self_test": {
+    "backend": {
+      "backend_hash": "d8f017c7f6627ca2517094eeab8491df16713074085614d7777bf56c0d5858a5",
+      "normal_backend": "SCIPY_NORM_PPF",
+      "protocol": "HMAC_SHA256_COUNTER_V1",
+      "python": "3.13.5",
+      "scipy_available": true,
+      "t5_backend": "SCIPY_T_PPF_DF5"
+    },
+    "failures": [],
+    "protocol": "HMAC_SHA256_COUNTER_V1",
+    "protocol_hash": "30a0ef917ba2484c7966bf13f51cf2973e83235862b5eae408576a0b5d5e8571",
+    "status": "PASS",
+    "vectors": 3
+  },
+  "task": "TASK-13",
+  "uniform_rule": "(u64_be >> 11) * 2**-53; four uniforms per 32-byte HMAC block",
+  "vectors": [
+    {
+      "first_8_uniforms": [
+        0.36258670815313065,
+        0.4337616821079239,
+        0.1848186171390337,
+        0.5909583855822466,
+        0.1095576928650911,
+        0.19002993263861934,
+        0.30431499224186076,
+        0.8731729500375687
+      ],
+      "labels": {
+        "COIN": 0,
+        "CONTROL_REPLICATION": 0,
+        "GENERATOR_ID": 4865,
+        "PROGRAM_REPLICATION": 7,
+        "TIME": 0,
+        "VARIANT": 0
+      },
+      "name": "CONTROL_ENTRY_SLOT_0",
+      "normal_index0": -0.3515531359719028,
+      "standardized_t5_index0": -0.2881107277541506
+    },
+    {
+      "first_8_uniforms": [
+        0.17837147698751776,
+        0.02036516497780383,
+        0.7499031651070689,
+        0.7739407045491817,
+        0.14613099310747535,
+        0.39737372259159665,
+        0.21275488358415529,
+        0.6162614031397242
+      ],
+      "labels": {
+        "COIN": 0,
+        "CONTROL_REPLICATION": 0,
+        "GENERATOR_ID": 4866,
+        "PROGRAM_REPLICATION": 7,
+        "TIME": 0,
+        "VARIANT": 0
+      },
+      "name": "CONTROL_SIDE_0",
+      "normal_index0": -0.9215890850710922,
+      "standardized_t5_index0": -0.7860965424448934
+    },
+    {
+      "first_8_uniforms": [
+        0.7642616912282961,
+        0.0701389690540366,
+        0.7651202700571,
+        0.6534280512809186,
+        0.29670134405469006,
+        0.5747584093743388,
+        0.33220005534034636,
+        0.712834180829503
+      ],
+      "labels": {
+        "COIN": 2,
+        "CONTROL_REPLICATION": 0,
+        "GENERATOR_ID": 9001,
+        "PROGRAM_REPLICATION": 0,
+        "TIME": 17,
+        "VARIANT": 3
+      },
+      "name": "CALIBRATION_NORMAL_T5",
+      "normal_index0": 0.7200785759063778,
+      "standardized_t5_index0": 0.6030442194479999
+    }
+  ]
+}

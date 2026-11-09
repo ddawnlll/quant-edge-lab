@@ -8,12 +8,16 @@ use nautilus_backtest::{
     engine::BacktestEngine,
 };
 use nautilus_common::actor::DataActor;
+use nautilus_common::msgbus::{self, switchboard::get_event_position_topic, TypedHandler};
 use nautilus_core::UnixNanos;
 use nautilus_model::{
     data::{Data, FundingRateUpdate, MarkPriceUpdate, QuoteTick, TradeTick},
-    enums::{AccountType, AggressorSide, BookType, OmsType, OrderSide, TimeInForce},
-    events::{OrderFilled, PositionClosed, PositionOpened},
-    identifiers::{InstrumentId, StrategyId, Symbol, TradeId, Venue},
+    enums::{
+        AccountType, AggressorSide, BookType, OmsType, OrderSide, PositionAdjustmentType,
+        PositionSide, TimeInForce,
+    },
+    events::{OrderFilled, PositionClosed, PositionEvent, PositionOpened},
+    identifiers::{InstrumentId, PositionId, StrategyId, Symbol, TradeId, Venue},
     instruments::{CryptoPerpetual, Instrument, InstrumentAny},
     types::{Currency, Money, Price, Quantity},
 };
@@ -208,6 +212,60 @@ impl DataActor for Taker {
     fn on_start(&mut self) -> Result<()> {
         self.subscribe_quotes(self.instrument_id, None, None);
         self.subscribe_trades(self.instrument_id, None, None);
+
+        // The pinned Nautilus build intentionally short-circuits
+        // `PositionEvent::PositionAdjusted` before `Strategy::on_position_event`
+        // (`trading/src/strategy/mod.rs`). Subscribe to the concrete position
+        // event topic so funding adjustments enter the tape at the exact point
+        // the native exchange settles them, in native causal order.
+        //
+        // The settlement identity is deterministic across identical replays:
+        // the native settlement timestamp (`ts_event`) plus the position id and
+        // the strategy position epoch. Nautilus' own adjustment `event_id` is a
+        // random UUID4 and is deliberately excluded because it would break
+        // semantic reproducibility of the tape.
+        let topic = get_event_position_topic(StrategyId::from("TAKER-NATIVE-001"));
+        let tape = self.tape.clone();
+        let epochs: Arc<Mutex<HashMap<PositionId, u64>>> = Arc::new(Mutex::new(HashMap::new()));
+        let epoch_counter = Arc::new(Mutex::new(0u64));
+        let position_handler = TypedHandler::from(move |event: &PositionEvent| match event {
+            PositionEvent::PositionOpened(opened) => {
+                let mut counter = epoch_counter.lock().unwrap();
+                *counter += 1;
+                epochs.lock().unwrap().insert(opened.position_id, *counter);
+            }
+            PositionEvent::PositionAdjusted(adjusted)
+                if adjusted.adjustment_type == PositionAdjustmentType::Funding =>
+            {
+                let Some(money) = adjusted.pnl_change else {
+                    return;
+                };
+                let epoch = epochs
+                    .lock()
+                    .unwrap()
+                    .get(&adjusted.position_id)
+                    .copied()
+                    .unwrap_or_else(|| (*epoch_counter.lock().unwrap()).max(1));
+                let settlement_id = format!(
+                    "FUND:{}:{}:{}",
+                    adjusted.ts_event.as_u64(),
+                    adjusted.position_id,
+                    epoch
+                );
+                tape.lock().unwrap().push(json!({
+                    "type": "FUNDING",
+                    "amount": money.as_decimal().to_string(),
+                    "currency": money.currency.code.to_string(),
+                    "epoch": epoch.to_string(),
+                    "settlement_id": settlement_id,
+                    "position_id": adjusted.position_id.to_string(),
+                    "account_id": adjusted.account_id.to_string(),
+                    "ts_ns": adjusted.ts_event.as_u64().to_string(),
+                }));
+            }
+            _ => {}
+        });
+        msgbus::subscribe_position_events(topic.into(), position_handler, None);
         Ok(())
     }
 
@@ -413,29 +471,89 @@ fn main() -> Result<()> {
         engine.run(None, None, None, false)?;
     }
     let result = engine.get_result();
-    let mut tape = Vec::new();
-    {
+    let venue = Venue::from("BINANCE");
+    let usdt = Currency::from("USDT");
+    let mut tape_values = tape_handle.lock().unwrap().clone();
+    let (native_account, final_mark, native_mark_ts) = {
         let cache = engine.kernel().cache.borrow();
         let sid = StrategyId::from("TAKER-NATIVE-001");
-        let mut seen = std::collections::HashSet::new();
-        let mut positions = cache.positions_open(None, Some(&id), Some(&sid), None, None);
-        positions.extend(cache.positions_closed(None, Some(&id), Some(&sid), None, None));
-        for p in positions {
-            for adj in &p.adjustments {
-                if let Some(money) = adj.pnl_change {
-                    let key = format!("{}:{}:{}", p.id, adj.reason.as_ref().map(|r| r.to_string()).unwrap_or_default(), money.as_f64());
-                    if seen.insert(key) {
-                        tape.push(json!({"type": "FUNDING", "amount": trim(money.as_f64(), 8), "epoch": "1"}));
-                    }
-                }
+        let account = cache.account_for_venue(&venue);
+        let (total, free, locked) = match account.as_ref().and_then(|a| a.balance(Some(usdt))) {
+            Some(balance) => (
+                balance.total.as_decimal(),
+                balance.free.as_decimal(),
+                balance.locked.as_decimal(),
+            ),
+            None => (Decimal::ZERO, Decimal::ZERO, Decimal::ZERO),
+        };
+        let positions = cache.positions_open(None, Some(&id), Some(&sid), None, None);
+        let mark = cache.mark_price(&id);
+        let mut position_qty = Decimal::ZERO;
+        let mut unrealized = Decimal::ZERO;
+        for position in &positions {
+            let signed = if position.side == PositionSide::Short {
+                -position.quantity.as_decimal()
+            } else {
+                position.quantity.as_decimal()
+            };
+            position_qty += signed;
+            if let Some(mark) = &mark {
+                unrealized += position.unrealized_pnl(mark.value).as_decimal();
             }
         }
+        // Use the native mark used for account valuation rather than the last
+        // quote midpoint so the independent mark-to-market identity is directly
+        // comparable with the native account snapshot.
+        let final_mark = mark
+            .as_ref()
+            .map(|mark| mark.value.to_string())
+            .or_else(|| final_mid.map(|mid| trim(mid, 2)));
+        let native_mark_ts = mark.as_ref().map_or(0, |mark| mark.ts_event.as_u64());
+        (
+            json!({
+                "currency": usdt.code.to_string(),
+                "total": total.to_string(),
+                "free": free.to_string(),
+                "locked": locked.to_string(),
+                "unrealized": unrealized.to_string(),
+                "equity": (total + unrealized).to_string(),
+                "position_qty": position_qty.to_string(),
+                "mark": final_mark.clone(),
+            }),
+            final_mark,
+            native_mark_ts,
+        )
+    };
+    let max_ts = tape_values
+        .iter()
+        .filter_map(|value| value.get("ts_ns").and_then(|ts| ts.as_str()))
+        .filter_map(|ts| ts.parse::<u64>().ok())
+        .max()
+        .unwrap_or(0);
+    let mark_ts = native_mark_ts.max(max_ts);
+    if let Some(mark) = final_mark {
+        tape_values.push(json!({
+            "type": "MARK",
+            "price": mark,
+            "ts_ns": mark_ts.to_string(),
+        }));
     }
-    let mut tape_values = tape_handle.lock().unwrap().clone();
-    if let Some(mid) = final_mid {
-        tape_values.push(json!({"type": "MARK", "price": trim(mid, 2)}));
+    tape_values.push(json!({
+        "type": "END_FOLD",
+        "close_cost": "0",
+        "ts_ns": mark_ts.to_string(),
+    }));
+    let mut funding_count = 0usize;
+    let mut funding_total = Decimal::ZERO;
+    for value in &tape_values {
+        if value.get("type").and_then(|kind| kind.as_str()) != Some("FUNDING") {
+            continue;
+        }
+        funding_count += 1;
+        if let Some(amount) = value.get("amount").and_then(|amount| amount.as_str()) {
+            funding_total += amount.parse::<Decimal>().unwrap_or(Decimal::ZERO);
+        }
     }
-    tape_values.push(json!({"type": "END_FOLD", "close_cost": "0"}));
     let output = json!({
         "status": "PASS",
         "tape": tape_values,
@@ -446,7 +564,14 @@ fn main() -> Result<()> {
         "total_orders": result.total_orders,
         "total_positions": result.total_positions,
         "pnl_total": result.summary.get("PnL (total)").cloned(),
-        "tape_extra": tape,
+        "funding": {
+            "count": funding_count,
+            "total": funding_total.to_string(),
+            "source": "PositionAdjusted(Funding) event callback",
+            "amount_currency": "USDT",
+            "amount_exponent": 8,
+        },
+        "native_account": native_account,
         "events_path": events_path,
         "elapsed_ms": started.elapsed().as_millis() as u64,
         "peak_rss_kb": peak_rss_kb(),
@@ -458,4 +583,3 @@ fn main() -> Result<()> {
     }
     Ok(())
 }
-

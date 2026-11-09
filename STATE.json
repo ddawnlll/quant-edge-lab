@@ -3,7 +3,7 @@
   "spec_version": "1.1.0",
   "spec_package_sha256": "db18e7a6e94b8c9b233a48097040d1a3a6c655ea126d5e6805d67d4f6e91fd30",
   "baseline_sha256": "71628e4b4ceceac3447759cdabab131e16237aff9fd7569a09f1bc61e4d70d06",
-  "updated_utc": "2026-11-09T00:33:34Z",
+  "updated_utc": "2026-11-09T11:37:30Z",
   "host": {
     "os": "Debian GNU/Linux 13 (trixie)",
     "kernel": "6.12.115+deb13.1-amd64",
@@ -81,15 +81,16 @@
       ]
     },
     "TASK-06": {
-      "status": "PARTIAL",
+      "status": "DONE",
       "evidence": [
-        "evidence/labd/NORMALIZE.json",
-        "evidence/labd/NORMALIZE_RECHECK.json",
-        "tests/test_normalize.py",
-        "evidence/labd/PROVENANCE_VALIDATION.json",
-        "evidence/labd/WORKER_DATASET_NEGATIVE.txt"
+        "evidence/labd/DATASET_CERT_DS-PIT-RECHECK.json",
+        "evidence/labd/PIT_PARITY.json",
+        "evidence/labd/PIT_PROVENANCE.json",
+        "evidence/labd/PIT_DUCKDB_LIMITATION.json",
+        "evidence/labd/PIT_RESOURCE.json",
+        "evidence/labd/INTEGRATION_ISSUE01_VERIFY.json"
       ],
-      "blocked": "DuckDB illegal instruction"
+      "scope_note": "per-row line hash+offset exact; upstream response hash not reconstructible from frame and explicitly scoped; universe unverified"
     },
     "TASK-07": {
       "status": "DONE",
@@ -102,10 +103,14 @@
     "TASK-08": {
       "status": "DONE_WITH_BLOCKED_CAPABILITY",
       "evidence": [
+        "locks/NATIVE_FEASIBILITY_MANIFEST.json",
         "locks/RUNTIME_LOCK.json",
         "locks/CAPABILITY_VERDICT.md",
         "evidence/native/SPIKE_REPORT.json",
-        "evidence/native/PIN_VERIFICATION.json"
+        "evidence/native/PIN_VERIFICATION.json",
+        "evidence/native/PIN_VERIFICATION_RECHECK.json",
+        "evidence/native/PROTOTYPE_BENCH_10X.json",
+        "evidence/native/PROTOTYPE_BENCH_100X.json"
       ]
     },
     "TASK-09": {
@@ -123,13 +128,15 @@
       ]
     },
     "TASK-11": {
-      "status": "PARTIAL",
+      "status": "DONE_WITH_BLOCKED_CAPABILITY",
       "evidence": [
-        "evidence/labd/NATIVE_RUN_240S.json",
-        "evidence/labd/NATIVE_ARCHIVE_DAY.json",
-        "evidence/labd/NATIVE_ARCHIVE_ACCOUNTING.json",
-        "runtime job JOB-REPLAY-3"
-      ]
+        "evidence/labd/NATIVE_FUNDING_RUN.json",
+        "evidence/labd/NATIVE_FUNDING_RUN_240S.json",
+        "evidence/labd/NATIVE_FUNDING_AUDIT.json",
+        "evidence/labd/FUNDING_MUTATIONS.txt",
+        "evidence/labd/INTEGRATION_ISSUE04_VERIFY.json"
+      ],
+      "blocked": "F22 LocalView remains BLOCKED_BACKEND; taker L1 certificate only"
     },
     "TASK-12": {
       "status": "PARTIAL",
@@ -140,39 +147,50 @@
     "TASK-13": {
       "status": "PARTIAL",
       "evidence": [
-        "evidence/labd/SCREEN.json",
-        "evidence/labd/SCREEN_DAY.json",
-        "evidence/labd/CONTROLS_DAY.json",
-        "evidence/labd/FAMILY_REPORT_DAY.json",
-        "evidence/labd/CONTROL_RECHECK.txt",
-        "evidence/labd/CONTROL_TEST.txt"
-      ]
+        "tests/test_controls.py",
+        "evidence/labd/CONTROLS_HMAC_240S.json",
+        "evidence/labd/CONTROLS_HMAC_SEED_VECTORS.json",
+        "evidence/labd/CONTROL_HMAC_BATCH_SEQ.txt",
+        "evidence/labd/CONTROL_HMAC_SUMMARY.txt",
+        "evidence/labd/RESCUE_HMAC.json",
+        "evidence/labd/INTEGRATION_ISSUE06_VERIFY.json"
+      ],
+      "blocked": "B1 multi-day: only one archive day available"
     },
     "TASK-14": {
-      "status": "PARTIAL",
+      "status": "DONE",
       "evidence": [
         "tests/test_stats.py",
-        "evidence/labd/CALIBRATION_B6.json",
-        "evidence/labd/CALIBRATION_B6_RECHECK.json",
-        "evidence/labd/STATS_ARITHMETIC.txt",
-        "evidence/labd/POWER_GRID.json",
-        "runtime job JOB-STATS-1"
+        "tests/test_decision.py",
+        "evidence/labd/DECISION_AUDIT.json",
+        "evidence/labd/STATS_DECISION_TESTS.txt",
+        "evidence/labd/INTEGRATION_ISSUE07_VERIFY.json"
       ]
     },
     "TASK-15": {
       "status": "PARTIAL",
       "evidence": [
         "tests/test_evaluator.py",
-        "evidence/labd/EVALUATOR_TESTS.txt",
-        "runtime/sealed (not committed)"
-      ]
+        "tests/test_isolation_anchor.py",
+        "evidence/labd/EVALUATOR_ANCHOR_CHAIN.json",
+        "evidence/labd/EVALUATOR_PREACCESS_RECEIPT.json",
+        "evidence/labd/EVALUATOR_ISOLATION_REPORT.json",
+        "evidence/labd/ISOLATION_LIMITATIONS.json",
+        "evidence/labd/INTEGRATION_ISSUE08_VERIFY.json"
+      ],
+      "blocked": "OS-PRINCIPAL-SEPARATION: actual UID/socket/network isolation requires administrator-created principals"
     },
     "TASK-16": {
-      "status": "PARTIAL",
+      "status": "DONE",
       "evidence": [
-        "tests/test_evaluator.py",
-        "evidence/labd/EVALUATOR_E2E.json"
-      ]
+        "tests/test_release.py",
+        "evidence/labd/RELEASE_SYNTHETIC_COHORT.json",
+        "evidence/labd/RELEASE_EVALUATOR_E2E.json",
+        "evidence/labd/TASK16_TESTS.txt",
+        "evidence/labd/TASK16_FULL_TESTS.txt",
+        "evidence/labd/INTEGRATION_ISSUE09_VERIFY.json"
+      ],
+      "scope_note": "synthetic cohort certification; fresh OOS/G4 market confirmation external"
     },
     "TASK-17": {
       "status": "BLOCKED",
@@ -322,5 +340,17 @@
       "reason": "development controls/bootstrap use NumPy PCG64, not the execution HMAC seed protocol"
     }
   ],
-  "next_action": "Wait for the 24h soak to elapse and verify it; keep M4/M6/M7 blocked and do not claim an edge."
+  "next_action": "Wait for the 24h soak to elapse and verify it; keep M4/M6/M7 blocked and do not claim an edge.",
+  "evidence_invalidation": {
+    "reason": "TASK-11 changed terminal MARK to the native mark and moved funding to the primary tape",
+    "stale_until_rerun": [
+      "native-tape-derived screen/controls",
+      "native chunk parity",
+      "native timings that consumed the tape"
+    ],
+    "unaffected": [
+      "conformance fixtures",
+      "synthetic statistics calibration"
+    ]
+  }
 }

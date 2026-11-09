@@ -1,0 +1,33 @@
+{
+  "kind": "COORDINATOR_INTEGRATION_CHECKPOINT",
+  "task_scope": "TASK-19 chunk parity refresh after TASK-11 tape change",
+  "integration_base": "835c5dfcf211ff56842a94764f49c40bbf2becf6",
+  "runner_binary_sha256": "156e0911aa8d93f50a51c692760b947011db39151c013d03d84e51187b1cc13f",
+  "runs": {
+    "240s_unchunked": {"events": 12418, "orders": 15, "positions": 8, "peak_rss_kb": 20160, "elapsed_ms": 273, "tape_sha256": "811ef7a72cfafbcabdeab5daf5b0f6a8790608eae1ecbd8fb52a63f97a320387"},
+    "240s_chunked_2000": {"events": 12418, "orders": 15, "positions": 8, "peak_rss_kb": 19876, "elapsed_ms": 223, "tape_sha256": "811ef7a72cfafbcabdeab5daf5b0f6a8790608eae1ecbd8fb52a63f97a320387"},
+    "archive_unchunked": {"events": 358200, "orders": 307, "positions": 154, "peak_rss_kb": 115972, "elapsed_ms": 5942, "tape_sha256": "ae14e67b5a761a698426969fb3043fd79178ddc66dcda79ed447e489cda1c1c9", "source": "evidence/labd/INTEGRATION_ISSUE04_VERIFY.json"},
+    "archive_chunked_20000": {"events": 358200, "orders": 307, "positions": 154, "peak_rss_kb": 115920, "elapsed_ms": 8763, "tape_sha256": "ae14e67b5a761a698426969fb3043fd79178ddc66dcda79ed447e489cda1c1c9"}
+  },
+  "comparisons": {
+    "240s_status_equal": true,
+    "240s_orders_equal": true,
+    "240s_positions_equal": true,
+    "240s_native_account_equal": true,
+    "240s_funding_equal": true,
+    "240s_tape_byte_equal": true,
+    "archive_status_equal": true,
+    "archive_orders_equal": true,
+    "archive_positions_equal": true,
+    "archive_native_account_equal": true,
+    "archive_funding_equal": true,
+    "archive_tape_byte_equal": true
+  },
+  "limitations": [
+    "This is event-count chunking, not the byte-bounded replay required for TASK-19 acceptance.",
+    "The runner still materializes the entire event vector before chunking; peak RSS does not plateau.",
+    "B2/B3/B4 at 1M/10M/100M events and the <=1 MiB per million event final-decile slope are not certified here.",
+    "The 100x prototype (1.24M events) used 376 MB and grew linearly, confirming the byte-bounded gap."
+  ],
+  "verdict": "PASS_CHUNK_PARITY_ONLY"
+}

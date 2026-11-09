@@ -1,0 +1,51 @@
+{
+  "certificate_sha256": "deb58ed3ba45a019a153620dadd1dadb69781319a737ec2e61d403f6dbc77af8",
+  "checks": {
+    "all_row_declared_hashes_match": true,
+    "all_row_line_hashes_match": true,
+    "all_row_offsets_resolve": true,
+    "all_row_timestamps_match": true,
+    "all_rows_have_immutable_hash": true,
+    "certificate_digest_equal": true,
+    "certificate_event_counts_equal": true,
+    "certificate_row_count_equal": true,
+    "declared_offsets_match_scan": true,
+    "event_type_counts_equal": true,
+    "fixture_certificate_deterministic": true,
+    "fixture_dataset_hash_deterministic": true,
+    "fixture_digest_deterministic": true,
+    "fixture_event_counts_equal": true,
+    "line_offsets_contiguous": true,
+    "ordered_digest_equal": true,
+    "partition_hash_matches_manifest": true,
+    "quality_ref_hash_matches": true,
+    "raw_scan_rows_equal_parquet_rows": true,
+    "universe_gate_is_explicit": true
+  },
+  "dataset_dir": "/home/quant/.jcode/scratch/pit/out/DS-PIT-RECHECK",
+  "dataset_hash": "714294ad60cb892a19a53b092da5a17f3e04f9840ceee6d098ba1a35400b2ab4",
+  "event_type_counts": {
+    "Funding": 10,
+    "Mark": 1,
+    "Quote": 137,
+    "Trade": 12270
+  },
+  "fixture": {
+    "run_a_certificate_sha256": "c186decd02be99c3d2ca9ac1d4bc89c8d6503cfbc54e093c3956ee63dd2d24ea",
+    "run_a_dataset_hash": "d12f1ee48c49042a343ddfe2d2c1927861ccd412f47ea9e17b09fc3fc866222d",
+    "run_a_ordered_ts_raw_sha256": "5f15b6929833b02a599e4bfc269b0579e362813d3ce74ec15aef655c41a3a9fb",
+    "run_b_certificate_sha256": "c186decd02be99c3d2ca9ac1d4bc89c8d6503cfbc54e093c3956ee63dd2d24ea",
+    "run_b_dataset_hash": "d12f1ee48c49042a343ddfe2d2c1927861ccd412f47ea9e17b09fc3fc866222d",
+    "run_b_ordered_ts_raw_sha256": "5f15b6929833b02a599e4bfc269b0579e362813d3ce74ec15aef655c41a3a9fb",
+    "sha256": "6aa6caad86495d2f9c677d9a46572fac675bf12ebba34210eebe4516e2ae250f"
+  },
+  "manifest_path": "/home/quant/quant/quant-edge-lab/data/raw/BINANCE_USDM_PUBLIC/BTCUSDT/2026-11-08/CAP-BTCUSDT-1794174239-manifest.json",
+  "ordered_ts_raw_sha256": "75dcb1b933e54766a18b29691facf6d6eaefcdb9570e51409b8d0756035dc8d4",
+  "raw_offset_base": "0",
+  "raw_path": "/home/quant/quant/quant-edge-lab/data/raw/BINANCE_USDM_PUBLIC/BTCUSDT/2026-11-08/CAP-BTCUSDT-1794174239-events.jsonl",
+  "raw_segment_sha256": "968146bb19299e387eae4de2546d63456d34b1cd753d74fd46a71c414260c903",
+  "row_count": 12418,
+  "row_level_checks_passed": 12418,
+  "row_level_checks_total": 12418,
+  "status": "PASS"
+}

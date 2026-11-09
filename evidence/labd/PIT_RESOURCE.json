@@ -1,0 +1,51 @@
+{
+  "schema_version": "1.1.0",
+  "measurement_host": "Intel(R) Xeon(R) CPU E5-2680 v2 @ 2.80GHz, 11.7 GiB RAM, oVirt RHEL",
+  "method": "subprocess wrapper records monotonic elapsed time and getrusage(RUSAGE_CHILDREN).ru_maxrss; one child per measurement",
+  "duckdb_attempt": {
+    "command": "venv/bin/python query.py (import duckdb; SELECT 42)",
+    "returncode": -4,
+    "signal": 4,
+    "signal_name": "SIGILL",
+    "shell_exit_code": 132,
+    "elapsed_seconds": 0.057743,
+    "peak_rss_kb": 17552,
+    "result": "BLOCKED_BACKEND"
+  },
+  "pyarrow_parquet_scan": {
+    "command": "venv/bin/python parquet_scan.py events.parquet",
+    "row_count": 12418,
+    "event_type_counts": {
+      "Funding": 10,
+      "Mark": 1,
+      "Quote": 137,
+      "Trade": 12270
+    },
+    "ordered_ts_raw_sha256": "75dcb1b933e54766a18b29691facf6d6eaefcdb9570e51409b8d0756035dc8d4",
+    "returncode": 0,
+    "elapsed_seconds": 0.959532,
+    "peak_rss_kb": 162092
+  },
+  "full_normalize_run": {
+    "command": "venv/bin/python -m qel.cli prepare --events CAP-BTCUSDT-1794174239-events.jsonl --manifest CAP-BTCUSDT-1794174239-manifest.json --out <scratch>/pit/out_res --dataset-id DS-PIT-RESOURCE",
+    "row_count": 12418,
+    "dataset_hash": "714294ad60cb892a19a53b092da5a17f3e04f9840ceee6d098ba1a35400b2ab4",
+    "certificate_sha256": "49a986d3b880b15d45da01946246296395748afd68e4b9fdc8388490b1939767",
+    "returncode": 0,
+    "elapsed_seconds": 20.969605,
+    "peak_rss_kb": 206280
+  },
+  "deterministic_fixture": {
+    "raw_sha256": "6aa6caad86495d2f9c677d9a46572fac675bf12ebba34210eebe4516e2ae250f",
+    "dataset_hash": "d12f1ee48c49042a343ddfe2d2c1927861ccd412f47ea9e17b09fc3fc866222d",
+    "ordered_ts_raw_sha256": "5f15b6929833b02a599e4bfc269b0579e362813d3ce74ec15aef655c41a3a9fb",
+    "two_runs_same_dataset_hash": true,
+    "two_runs_same_ordered_digest": true
+  },
+  "status": "PASS",
+  "evidence": [
+    "evidence/labd/PIT_PATH_DECISION.json",
+    "evidence/labd/PIT_DUCKDB_LIMITATION.json",
+    "evidence/labd/PIT_PARITY.json"
+  ]
+}

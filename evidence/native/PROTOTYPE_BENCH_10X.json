@@ -1,0 +1,1722 @@
+{
+  "chunk_events": 0,
+  "elapsed_ms": 2159,
+  "events": 124180,
+  "events_path": "/home/quant/quant/quant-edge-lab/data/native/bench/events_10x.jsonl",
+  "funding": {
+    "amount_currency": "USDT",
+    "amount_exponent": 8,
+    "count": 26,
+    "source": "PositionAdjusted(Funding) event callback",
+    "total": "-0.12106103"
+  },
+  "iterations": 124180,
+  "native_account": {
+    "currency": "USDT",
+    "equity": "996.48808437",
+    "free": "993.85381987",
+    "locked": "2.63426450",
+    "mark": "75264.70",
+    "position_qty": "0.001",
+    "total": "996.48808437",
+    "unrealized": "0.00000000"
+  },
+  "peak_rss_kb": 53332,
+  "pnl_total": null,
+  "profile": "TAKER_L1_FUNDING_STREAMING",
+  "status": "PASS",
+  "tape": [
+    {
+      "cash": "1000",
+      "type": "SET_WALLET"
+    },
+    {
+      "fee": "0.03022836",
+      "price": "75570.9",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794174280814000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03022832",
+      "price": "75570.8",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794174281619000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.0301568",
+      "price": "75392",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794174359292000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.030168",
+      "price": "75420",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794174364796000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03016936",
+      "price": "75423.4",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794174386035000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03015948",
+      "price": "75398.7",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794174396109000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03015844",
+      "price": "75396.1",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794174402710000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.0301534",
+      "price": "75383.5",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794174412601000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03016564",
+      "price": "75414.1",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794174424162000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.0301618",
+      "price": "75404.5",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794174432384000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03015696",
+      "price": "75392.4",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794174439895000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.030149",
+      "price": "75372.5",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794174451272000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03014112",
+      "price": "75352.8",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794174462532000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03011092",
+      "price": "75277.3",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794174472983000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03010588",
+      "price": "75264.7",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794174476060000000",
+      "type": "FILL"
+    },
+    {
+      "account_id": "BINANCE-001",
+      "amount": "-0.00395667",
+      "currency": "USDT",
+      "epoch": "8",
+      "position_id": "BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001",
+      "settlement_id": "FUND:1794182400000000000:BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001:8",
+      "ts_ns": "1794182400000000000",
+      "type": "FUNDING"
+    },
+    {
+      "account_id": "BINANCE-001",
+      "amount": "-0.00413278",
+      "currency": "USDT",
+      "epoch": "8",
+      "position_id": "BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001",
+      "settlement_id": "FUND:1794211200000000000:BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001:8",
+      "ts_ns": "1794211200000000000",
+      "type": "FUNDING"
+    },
+    {
+      "account_id": "BINANCE-001",
+      "amount": "-0.00752647",
+      "currency": "USDT",
+      "epoch": "8",
+      "position_id": "BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001",
+      "settlement_id": "FUND:1794240000000000000:BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001:8",
+      "ts_ns": "1794240000000000000",
+      "type": "FUNDING"
+    },
+    {
+      "fee": "0.03023428",
+      "price": "75585.7",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794260639754000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03023424",
+      "price": "75585.6",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794260643408000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03023368",
+      "price": "75584.2",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794260650041000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03022836",
+      "price": "75570.9",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794260680814000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03022832",
+      "price": "75570.8",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794260681619000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.0301568",
+      "price": "75392",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794260759292000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.030168",
+      "price": "75420",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794260764796000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03016936",
+      "price": "75423.4",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794260786035000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03015948",
+      "price": "75398.7",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794260796109000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03015844",
+      "price": "75396.1",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794260802710000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.0301534",
+      "price": "75383.5",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794260812601000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03016564",
+      "price": "75414.1",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794260824162000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.0301618",
+      "price": "75404.5",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794260832384000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03015696",
+      "price": "75392.4",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794260839895000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.030149",
+      "price": "75372.5",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794260851272000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03014112",
+      "price": "75352.8",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794260862532000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03011092",
+      "price": "75277.3",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794260872983000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03010588",
+      "price": "75264.7",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794260876060000000",
+      "type": "FILL"
+    },
+    {
+      "account_id": "BINANCE-001",
+      "amount": "-0.00395667",
+      "currency": "USDT",
+      "epoch": "17",
+      "position_id": "BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001",
+      "settlement_id": "FUND:1794268800000000000:BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001:17",
+      "ts_ns": "1794268800000000000",
+      "type": "FUNDING"
+    },
+    {
+      "account_id": "BINANCE-001",
+      "amount": "-0.00413278",
+      "currency": "USDT",
+      "epoch": "17",
+      "position_id": "BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001",
+      "settlement_id": "FUND:1794297600000000000:BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001:17",
+      "ts_ns": "1794297600000000000",
+      "type": "FUNDING"
+    },
+    {
+      "account_id": "BINANCE-001",
+      "amount": "-0.00752647",
+      "currency": "USDT",
+      "epoch": "17",
+      "position_id": "BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001",
+      "settlement_id": "FUND:1794326400000000000:BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001:17",
+      "ts_ns": "1794326400000000000",
+      "type": "FUNDING"
+    },
+    {
+      "fee": "0.03023428",
+      "price": "75585.7",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794347039754000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03023424",
+      "price": "75585.6",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794347043408000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03023368",
+      "price": "75584.2",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794347050041000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03022836",
+      "price": "75570.9",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794347080814000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03022832",
+      "price": "75570.8",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794347081619000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.0301568",
+      "price": "75392",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794347159292000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.030168",
+      "price": "75420",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794347164796000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03016936",
+      "price": "75423.4",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794347186035000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03015948",
+      "price": "75398.7",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794347196109000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03015844",
+      "price": "75396.1",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794347202710000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.0301534",
+      "price": "75383.5",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794347212601000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03016564",
+      "price": "75414.1",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794347224162000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.0301618",
+      "price": "75404.5",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794347232384000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03015696",
+      "price": "75392.4",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794347239895000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.030149",
+      "price": "75372.5",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794347251272000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03014112",
+      "price": "75352.8",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794347262532000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03011092",
+      "price": "75277.3",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794347272983000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03010588",
+      "price": "75264.7",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794347276060000000",
+      "type": "FILL"
+    },
+    {
+      "account_id": "BINANCE-001",
+      "amount": "-0.00395667",
+      "currency": "USDT",
+      "epoch": "26",
+      "position_id": "BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001",
+      "settlement_id": "FUND:1794355200000000000:BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001:26",
+      "ts_ns": "1794355200000000000",
+      "type": "FUNDING"
+    },
+    {
+      "account_id": "BINANCE-001",
+      "amount": "-0.00413278",
+      "currency": "USDT",
+      "epoch": "26",
+      "position_id": "BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001",
+      "settlement_id": "FUND:1794384000000000000:BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001:26",
+      "ts_ns": "1794384000000000000",
+      "type": "FUNDING"
+    },
+    {
+      "account_id": "BINANCE-001",
+      "amount": "-0.00752647",
+      "currency": "USDT",
+      "epoch": "26",
+      "position_id": "BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001",
+      "settlement_id": "FUND:1794412800000000000:BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001:26",
+      "ts_ns": "1794412800000000000",
+      "type": "FUNDING"
+    },
+    {
+      "fee": "0.03023428",
+      "price": "75585.7",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794433439754000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03023424",
+      "price": "75585.6",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794433443408000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03023368",
+      "price": "75584.2",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794433450041000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03022836",
+      "price": "75570.9",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794433480814000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03022832",
+      "price": "75570.8",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794433481619000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.0301568",
+      "price": "75392",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794433559292000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.030168",
+      "price": "75420",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794433564796000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03016936",
+      "price": "75423.4",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794433586035000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03015948",
+      "price": "75398.7",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794433596109000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03015844",
+      "price": "75396.1",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794433602710000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.0301534",
+      "price": "75383.5",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794433612601000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03016564",
+      "price": "75414.1",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794433624162000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.0301618",
+      "price": "75404.5",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794433632384000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03015696",
+      "price": "75392.4",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794433639895000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.030149",
+      "price": "75372.5",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794433651272000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03014112",
+      "price": "75352.8",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794433662532000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03011092",
+      "price": "75277.3",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794433672983000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03010588",
+      "price": "75264.7",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794433676060000000",
+      "type": "FILL"
+    },
+    {
+      "account_id": "BINANCE-001",
+      "amount": "-0.00395667",
+      "currency": "USDT",
+      "epoch": "35",
+      "position_id": "BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001",
+      "settlement_id": "FUND:1794441600000000000:BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001:35",
+      "ts_ns": "1794441600000000000",
+      "type": "FUNDING"
+    },
+    {
+      "account_id": "BINANCE-001",
+      "amount": "-0.00413278",
+      "currency": "USDT",
+      "epoch": "35",
+      "position_id": "BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001",
+      "settlement_id": "FUND:1794470400000000000:BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001:35",
+      "ts_ns": "1794470400000000000",
+      "type": "FUNDING"
+    },
+    {
+      "account_id": "BINANCE-001",
+      "amount": "-0.00752647",
+      "currency": "USDT",
+      "epoch": "35",
+      "position_id": "BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001",
+      "settlement_id": "FUND:1794499200000000000:BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001:35",
+      "ts_ns": "1794499200000000000",
+      "type": "FUNDING"
+    },
+    {
+      "fee": "0.03023428",
+      "price": "75585.7",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794519839754000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03023424",
+      "price": "75585.6",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794519843408000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03023368",
+      "price": "75584.2",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794519850041000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03022836",
+      "price": "75570.9",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794519880814000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03022832",
+      "price": "75570.8",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794519881619000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.0301568",
+      "price": "75392",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794519959292000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.030168",
+      "price": "75420",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794519964796000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03016936",
+      "price": "75423.4",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794519986035000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03015948",
+      "price": "75398.7",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794519996109000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03015844",
+      "price": "75396.1",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794520002710000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.0301534",
+      "price": "75383.5",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794520012601000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03016564",
+      "price": "75414.1",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794520024162000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.0301618",
+      "price": "75404.5",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794520032384000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03015696",
+      "price": "75392.4",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794520039895000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.030149",
+      "price": "75372.5",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794520051272000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03014112",
+      "price": "75352.8",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794520062532000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03011092",
+      "price": "75277.3",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794520072983000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03010588",
+      "price": "75264.7",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794520076060000000",
+      "type": "FILL"
+    },
+    {
+      "account_id": "BINANCE-001",
+      "amount": "-0.00395667",
+      "currency": "USDT",
+      "epoch": "44",
+      "position_id": "BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001",
+      "settlement_id": "FUND:1794528000000000000:BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001:44",
+      "ts_ns": "1794528000000000000",
+      "type": "FUNDING"
+    },
+    {
+      "account_id": "BINANCE-001",
+      "amount": "-0.00413278",
+      "currency": "USDT",
+      "epoch": "44",
+      "position_id": "BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001",
+      "settlement_id": "FUND:1794556800000000000:BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001:44",
+      "ts_ns": "1794556800000000000",
+      "type": "FUNDING"
+    },
+    {
+      "account_id": "BINANCE-001",
+      "amount": "-0.00752647",
+      "currency": "USDT",
+      "epoch": "44",
+      "position_id": "BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001",
+      "settlement_id": "FUND:1794585600000000000:BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001:44",
+      "ts_ns": "1794585600000000000",
+      "type": "FUNDING"
+    },
+    {
+      "fee": "0.03023428",
+      "price": "75585.7",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794606239754000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03023424",
+      "price": "75585.6",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794606243408000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03023368",
+      "price": "75584.2",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794606250041000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03022836",
+      "price": "75570.9",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794606280814000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03022832",
+      "price": "75570.8",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794606281619000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.0301568",
+      "price": "75392",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794606359292000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.030168",
+      "price": "75420",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794606364796000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03016936",
+      "price": "75423.4",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794606386035000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03015948",
+      "price": "75398.7",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794606396109000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03015844",
+      "price": "75396.1",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794606402710000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.0301534",
+      "price": "75383.5",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794606412601000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03016564",
+      "price": "75414.1",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794606424162000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.0301618",
+      "price": "75404.5",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794606432384000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03015696",
+      "price": "75392.4",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794606439895000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.030149",
+      "price": "75372.5",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794606451272000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03014112",
+      "price": "75352.8",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794606462532000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03011092",
+      "price": "75277.3",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794606472983000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03010588",
+      "price": "75264.7",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794606476060000000",
+      "type": "FILL"
+    },
+    {
+      "account_id": "BINANCE-001",
+      "amount": "-0.00395667",
+      "currency": "USDT",
+      "epoch": "53",
+      "position_id": "BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001",
+      "settlement_id": "FUND:1794614400000000000:BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001:53",
+      "ts_ns": "1794614400000000000",
+      "type": "FUNDING"
+    },
+    {
+      "account_id": "BINANCE-001",
+      "amount": "-0.00413278",
+      "currency": "USDT",
+      "epoch": "53",
+      "position_id": "BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001",
+      "settlement_id": "FUND:1794643200000000000:BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001:53",
+      "ts_ns": "1794643200000000000",
+      "type": "FUNDING"
+    },
+    {
+      "account_id": "BINANCE-001",
+      "amount": "-0.00752647",
+      "currency": "USDT",
+      "epoch": "53",
+      "position_id": "BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001",
+      "settlement_id": "FUND:1794672000000000000:BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001:53",
+      "ts_ns": "1794672000000000000",
+      "type": "FUNDING"
+    },
+    {
+      "fee": "0.03023428",
+      "price": "75585.7",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794692639754000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03023424",
+      "price": "75585.6",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794692643408000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03023368",
+      "price": "75584.2",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794692650041000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03022836",
+      "price": "75570.9",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794692680814000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03022832",
+      "price": "75570.8",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794692681619000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.0301568",
+      "price": "75392",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794692759292000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.030168",
+      "price": "75420",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794692764796000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03016936",
+      "price": "75423.4",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794692786035000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03015948",
+      "price": "75398.7",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794692796109000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03015844",
+      "price": "75396.1",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794692802710000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.0301534",
+      "price": "75383.5",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794692812601000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03016564",
+      "price": "75414.1",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794692824162000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.0301618",
+      "price": "75404.5",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794692832384000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03015696",
+      "price": "75392.4",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794692839895000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.030149",
+      "price": "75372.5",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794692851272000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03014112",
+      "price": "75352.8",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794692862532000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03011092",
+      "price": "75277.3",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794692872983000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03010588",
+      "price": "75264.7",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794692876060000000",
+      "type": "FILL"
+    },
+    {
+      "account_id": "BINANCE-001",
+      "amount": "-0.00395667",
+      "currency": "USDT",
+      "epoch": "62",
+      "position_id": "BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001",
+      "settlement_id": "FUND:1794700800000000000:BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001:62",
+      "ts_ns": "1794700800000000000",
+      "type": "FUNDING"
+    },
+    {
+      "account_id": "BINANCE-001",
+      "amount": "-0.00413278",
+      "currency": "USDT",
+      "epoch": "62",
+      "position_id": "BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001",
+      "settlement_id": "FUND:1794729600000000000:BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001:62",
+      "ts_ns": "1794729600000000000",
+      "type": "FUNDING"
+    },
+    {
+      "account_id": "BINANCE-001",
+      "amount": "-0.00680619",
+      "currency": "USDT",
+      "epoch": "62",
+      "position_id": "BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001",
+      "settlement_id": "FUND:1794758400000000000:BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001:62",
+      "ts_ns": "1794758400000000000",
+      "type": "FUNDING"
+    },
+    {
+      "fee": "0.03023428",
+      "price": "75585.7",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794779039754000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03023424",
+      "price": "75585.6",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794779043408000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03023368",
+      "price": "75584.2",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794779050041000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03022836",
+      "price": "75570.9",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794779080814000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03022832",
+      "price": "75570.8",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794779081619000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.0301568",
+      "price": "75392",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794779159292000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.030168",
+      "price": "75420",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794779164796000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03016936",
+      "price": "75423.4",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794779186035000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03015948",
+      "price": "75398.7",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794779196109000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03015844",
+      "price": "75396.1",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794779202710000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.0301534",
+      "price": "75383.5",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794779212601000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03016564",
+      "price": "75414.1",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794779224162000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.0301618",
+      "price": "75404.5",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794779232384000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03015696",
+      "price": "75392.4",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794779239895000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.030149",
+      "price": "75372.5",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794779251272000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03014112",
+      "price": "75352.8",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794779262532000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03011092",
+      "price": "75277.3",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794779272983000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03010588",
+      "price": "75264.7",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794779276060000000",
+      "type": "FILL"
+    },
+    {
+      "account_id": "BINANCE-001",
+      "amount": "-0.00395667",
+      "currency": "USDT",
+      "epoch": "71",
+      "position_id": "BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001",
+      "settlement_id": "FUND:1794787200000000000:BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001:71",
+      "ts_ns": "1794787200000000000",
+      "type": "FUNDING"
+    },
+    {
+      "account_id": "BINANCE-001",
+      "amount": "-0.00100253",
+      "currency": "USDT",
+      "epoch": "71",
+      "position_id": "BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001",
+      "settlement_id": "FUND:1794816000000000000:BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001:71",
+      "ts_ns": "1794816000000000000",
+      "type": "FUNDING"
+    },
+    {
+      "account_id": "BINANCE-001",
+      "amount": "-0.00097995",
+      "currency": "USDT",
+      "epoch": "71",
+      "position_id": "BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001",
+      "settlement_id": "FUND:1794844800000000000:BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001:71",
+      "ts_ns": "1794844800000000000",
+      "type": "FUNDING"
+    },
+    {
+      "fee": "0.03023428",
+      "price": "75585.7",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794865439754000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03023424",
+      "price": "75585.6",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794865443408000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03023368",
+      "price": "75584.2",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794865450041000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03022836",
+      "price": "75570.9",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794865480814000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03022832",
+      "price": "75570.8",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794865481619000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.0301568",
+      "price": "75392",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794865559292000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.030168",
+      "price": "75420",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794865564796000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03016936",
+      "price": "75423.4",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794865586035000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03015948",
+      "price": "75398.7",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794865596109000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03015844",
+      "price": "75396.1",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794865602710000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.0301534",
+      "price": "75383.5",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794865612601000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03016564",
+      "price": "75414.1",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794865624162000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.0301618",
+      "price": "75404.5",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794865632384000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03015696",
+      "price": "75392.4",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794865639895000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.030149",
+      "price": "75372.5",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794865651272000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03014112",
+      "price": "75352.8",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794865662532000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03011092",
+      "price": "75277.3",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794865672983000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03010588",
+      "price": "75264.7",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794865676060000000",
+      "type": "FILL"
+    },
+    {
+      "account_id": "BINANCE-001",
+      "amount": "-0.00395667",
+      "currency": "USDT",
+      "epoch": "80",
+      "position_id": "BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001",
+      "settlement_id": "FUND:1794873600000000000:BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001:80",
+      "ts_ns": "1794873600000000000",
+      "type": "FUNDING"
+    },
+    {
+      "account_id": "BINANCE-001",
+      "amount": "-0.00257405",
+      "currency": "USDT",
+      "epoch": "80",
+      "position_id": "BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001",
+      "settlement_id": "FUND:1794931200000000000:BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001:80",
+      "ts_ns": "1794931200000000000",
+      "type": "FUNDING"
+    },
+    {
+      "fee": "0.03023428",
+      "price": "75585.7",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794951839754000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03023424",
+      "price": "75585.6",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794951843408000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03023368",
+      "price": "75584.2",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794951850041000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03022836",
+      "price": "75570.9",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794951880814000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03022832",
+      "price": "75570.8",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794951881619000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.0301568",
+      "price": "75392",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794951959292000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.030168",
+      "price": "75420",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794951964796000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03016936",
+      "price": "75423.4",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794951986035000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03015948",
+      "price": "75398.7",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794951996109000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03015844",
+      "price": "75396.1",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794952002710000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.0301534",
+      "price": "75383.5",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794952012601000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03016564",
+      "price": "75414.1",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794952024162000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.0301618",
+      "price": "75404.5",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794952032384000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03015696",
+      "price": "75392.4",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794952039895000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.030149",
+      "price": "75372.5",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794952051272000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03014112",
+      "price": "75352.8",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794952062532000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03011092",
+      "price": "75277.3",
+      "qty": "0.001",
+      "side": "SELL",
+      "ts_ns": "1794952072983000000",
+      "type": "FILL"
+    },
+    {
+      "fee": "0.03010588",
+      "price": "75264.7",
+      "qty": "0.001",
+      "side": "BUY",
+      "ts_ns": "1794952076060000000",
+      "type": "FILL"
+    },
+    {
+      "price": "75264.70",
+      "ts_ns": "1794952080000000000",
+      "type": "MARK"
+    },
+    {
+      "close_cost": "0",
+      "ts_ns": "1794952080000000000",
+      "type": "END_FOLD"
+    }
+  ],
+  "total_orders": 177,
+  "total_positions": 89
+}
