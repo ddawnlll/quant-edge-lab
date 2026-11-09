@@ -170,9 +170,14 @@
       "status": "PARTIAL",
       "evidence": [
         "tests/test_evaluator.py",
-        "evidence/labd/EVALUATOR_TESTS.txt",
-        "runtime/sealed (not committed)"
-      ]
+        "tests/test_isolation_anchor.py",
+        "evidence/labd/EVALUATOR_ANCHOR_CHAIN.json",
+        "evidence/labd/EVALUATOR_PREACCESS_RECEIPT.json",
+        "evidence/labd/EVALUATOR_ISOLATION_REPORT.json",
+        "evidence/labd/ISOLATION_LIMITATIONS.json",
+        "evidence/labd/INTEGRATION_ISSUE08_VERIFY.json"
+      ],
+      "blocked": "OS-PRINCIPAL-SEPARATION: actual UID/socket/network isolation requires administrator-created principals"
     },
     "TASK-16": {
       "status": "PARTIAL",

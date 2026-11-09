@@ -21,7 +21,7 @@ is a scientific promotion.
 | TASK-12 | Preregistration and walk-forward datasets | PARTIAL | split/control declarations implemented; one full archive day plus 240s live capture, but no multi-day walk-forward evidence |
 | TASK-13 | Matched controls and batch screen | PARTIAL | 12 variants + 8 controls matched on calendar/trade count, not holding time; candidate mean -7.16 vs control -14.59, verdict INSUFFICIENT_EVIDENCE |
 | TASK-14 | Dependent stats and frozen protocols | PARTIAL | HAC, stationary bootstrap, IUT, Holm, F27/F28, full 1,000-program B6 re-run after bootstrap fix and `JOB-STATS-1` sealed through qeld; full MDE/coverage certificate pending |
-| TASK-15 | Evaluator principal and private consumption registry | PARTIAL | separate private DB, key 0600, pre-access receipt and anchor, concurrent second decision refused; distinct OS owner unavailable without sudo |
+| TASK-15 | Evaluator principal and private consumption registry | PARTIAL | independent outside-root anchor chain with fsync/ack, pre-access receipt committing window+alpha, race one-winner, ack-timeout retry spends once, restore/rename/copied-registry refusal, signed batch registry; 18 focused tests and evaluator-demo PASS; actual UID/socket/network isolation remains blocked on administrator-created principals; `evidence/labd/INTEGRATION_ISSUE08_VERIFY.json` |
 | TASK-16 | Signed scientific evaluator | PARTIAL | Ed25519 E2E: frozen cohort, pre-access receipt, signed verdict verified, second decision refused; no fresh OOS cohort exists |
 | TASK-17 | Passive queue and composite execution | BLOCKED | CAP-L2-QUEUE missing hook in pinned Nautilus; fixture F02 only |
 | TASK-18 | Two-world adapter and queue cross-check | BLOCKED | CAP-LOCAL-VIEW / queue hooks absent |
