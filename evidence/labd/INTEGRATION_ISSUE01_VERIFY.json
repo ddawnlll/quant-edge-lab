@@ -1,0 +1,79 @@
+{
+  "issue": 1,
+  "task": "TASK-06",
+  "kind": "COORDINATOR_INDEPENDENT_VERIFICATION",
+  "integration_branch": "qel/int-20261109",
+  "base_sha": "f6dbde793e9db6c6124f4826b5bdff7e793502c1",
+  "patch_commit": "7cda7715e5fe3d49fc5d320ee7c9bb63fa8f6cfd",
+  "integrated_commit": "48543c6",
+  "input": {
+    "raw_segment": "data/raw/BINANCE_USDM_PUBLIC/BTCUSDT/2026-11-08/CAP-BTCUSDT-1794174239-events.jsonl",
+    "raw_bytes": 5145372,
+    "raw_lines": 12418
+  },
+  "verification": {
+    "pytest": {"command": "PYTHONPATH=python QEL_ROOT=$PWD .venv/bin/python -m pytest -q tests", "result": "91 passed", "exit_code": 0},
+    "focused": {"command": "pytest -q tests/test_normalize.py tests/test_pit.py", "result": "39 passed", "exit_code": 0},
+    "independent_prepare_rerun": {
+      "dataset_id": "DS-PIT-RECHECK",
+      "rows": 12418,
+      "dataset_hash": "714294ad60cb892a19a53b092da5a17f3e04f9840ceee6d098ba1a35400b2ab4",
+      "certificate_sha256": "deb58ed3ba45a019a153620dadd1dadb69781319a737ec2e61d403f6dbc77af8",
+      "matches_worker_evidence": true
+    },
+    "independent_scan": {
+      "script": "coordinator standard-library byte scan; does not import qel.prepare",
+      "rows": 12418,
+      "unique_offsets": 12418,
+      "covered_bytes_with_lf": 5145372,
+      "coverage_complete": true,
+      "line_hash_errors": 0,
+      "timestamp_errors": 0,
+      "declared_hash_errors": 0,
+      "tamper_byte_detected_by_line_hash": true,
+      "result": "PASS"
+    },
+    "duckdb_reproduction": {
+      "command": "venv/bin/python -c 'import duckdb; duckdb.connect().execute(\"SELECT 42\")'",
+      "shell_exit_code": 132,
+      "signal": "SIGILL",
+      "stderr": "",
+      "peak_rss_kb": 17552,
+      "result": "BLOCKED_BACKEND"
+    },
+    "pyarrow_path_resource": {
+      "rows": 12418,
+      "elapsed_seconds": 0.959532,
+      "peak_rss_kb": 162092,
+      "result": "certified for this dataset"
+    }
+  },
+  "gates": {
+    "future_known_rule_rejected": true,
+    "conflicting_rule_rejected": true,
+    "conflicting_duplicate_rejected": true,
+    "identical_duplicate_dropped": true,
+    "sequence_regression_rejected": true,
+    "snapshot_sequence_checked": true,
+    "quote_invariants_checked": true,
+    "atomic_timestamp_units_checked": true,
+    "historical_listing_delisting_preserved": true,
+    "universe_unverified_reported": true,
+    "completeness_not_inferred_from_checksum": true
+  },
+  "limitations": [
+    "The collector RAW_FRAME_V1 raw_sha256 covers the upstream HTTP response body, which is not stored in the NDJSON frame. Per-row provenance therefore uses the exact stored line bytes: line_sha256 plus raw_offset/raw_len verified for all 12418 rows. 12417 rows carry an upstream hash that cannot be recomputed from the frame and are explicitly marked unverified; this is recorded, not hidden.",
+    "The universe is single-instrument and unverified; cross-sectional claims remain blocked with UNIVERSE_UNVERIFIED.",
+    "DuckDB 2.0.0 is unusable on this CPU (SIGILL). The PyArrow/Parquet path is the runtime decision with semantic-parity and resource evidence.",
+    "L2 depth is not present in the public capture; the quote stream is top-of-book and is not claimed as depth."
+  ],
+  "evidence_hashes": {
+    "evidence/labd/DATASET_CERT_DS-PIT-RECHECK.json": "committed with patch",
+    "evidence/labd/PIT_PARITY.json": "committed with patch",
+    "evidence/labd/PIT_PROVENANCE.json": "committed with patch",
+    "evidence/labd/PIT_DUCKDB_LIMITATION.json": "committed with patch",
+    "evidence/labd/PIT_RESOURCE.json": "committed with patch"
+  },
+  "verdict": "PASS_WITH_RECORDED_PROVENANCE_LIMITATION",
+  "acceptance_note": "Software and evidence satisfy the TASK-06 contract at this scope. The upstream-response hash limitation is an explicit, tested restriction, not a silent weakening; no cross-sectional claim is made."
+}
