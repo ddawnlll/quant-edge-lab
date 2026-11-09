@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 from decimal import Decimal
 from pathlib import Path
 
@@ -15,6 +16,7 @@ from ..contract.schema import validate_def
 
 PRICE_EXPONENT = 8
 QTY_EXPONENT = 8
+DATASET_ID = re.compile(r"^[A-Z][A-Z0-9_-]+$")
 
 
 def _canonical_decimal(text: str) -> str:
@@ -51,6 +53,8 @@ def normalize_capture(events_path: str, manifest_path: str, out_root: str, datas
     if segment.get("size_bytes") != str(events.stat().st_size):
         raise ValueError("raw segment size does not match manifest")
     dataset_id = dataset_id or ("DS-" + Path(events_path).stem.upper().replace("-", "_")[:60])
+    if not DATASET_ID.fullmatch(dataset_id):
+        raise ValueError(f"invalid dataset id {dataset_id!r}")
     rows = []
     seen_trades: dict[str, str] = {}
     duplicates = 0

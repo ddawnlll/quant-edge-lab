@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -20,6 +21,8 @@ import (
 )
 
 const sourceID = "BINANCE_USDM_PUBLIC"
+
+var symbolPattern = regexp.MustCompile(`^[A-Z0-9_-]+$`)
 
 type Collector struct {
 	Client  *http.Client
@@ -30,6 +33,9 @@ type Collector struct {
 }
 
 func New(root, symbol string) (*Collector, error) {
+	if root == "" || !symbolPattern.MatchString(symbol) {
+		return nil, fmt.Errorf("invalid collector root or symbol")
+	}
 	exe, _ := os.Executable()
 	raw, _ := os.ReadFile(exe)
 	return &Collector{
@@ -293,6 +299,9 @@ func jsonInt(v any) int64 {
 
 // DownloadArchive fetches one daily Binance Vision archive and verifies its checksum.
 func (c *Collector) DownloadArchive(ctx context.Context, date string) (map[string]any, error) {
+	if parsed, err := time.Parse("2006-01-02", date); err != nil || parsed.Format("2006-01-02") != date {
+		return nil, fmt.Errorf("invalid archive date %q", date)
+	}
 	base := "https://data.binance.vision/data/futures/um/daily"
 	files := []string{
 		fmt.Sprintf("aggTrades/%s/%s-aggTrades-%s.zip", c.Symbol, c.Symbol, date),

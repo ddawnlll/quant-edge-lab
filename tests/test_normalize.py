@@ -43,6 +43,8 @@ def test_normalize_and_tamper_rejected(tmp_path):
     assert result["rows"] == 1
     quality = json.loads((tmp_path / "out/DS-TEST/quality.json").read_text())
     assert quality["gap_ranges"] == [{"start_ns": "1500", "end_ns": "1600"}]
+    with pytest.raises(ValueError, match="dataset id"):
+        normalize_capture(str(events), str(manifest), str(tmp_path / "out3"), "../../EVIL")
     events.write_text(events.read_text() + "\n")
     with pytest.raises(ValueError, match="segment"):
         normalize_capture(str(events), str(manifest), str(tmp_path / "out2"), "DS-TEST-2")

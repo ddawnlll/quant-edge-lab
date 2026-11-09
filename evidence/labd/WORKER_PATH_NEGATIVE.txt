@@ -1,0 +1,2 @@
+{"generation":0,"ledger_event_hash":"a14d667d59cd38c4edcde5242385f0efe02aad72bc3c41a6a9a77ba144ef0d82","request_id":"REQ-JOB-TRAVERSAL-1794184120","resource_id":"JOB-TRAVERSAL-1794184120","reused":false,"state":"QUEUED"}
+{"generation":1,"job_id":"JOB-TRAVERSAL-1794184120","latest_attempt_id":"ATT-1","outputs":[],"reason_code":"UNSUPPORTED_CAPABILITY","state":"FAILED","usage":null}

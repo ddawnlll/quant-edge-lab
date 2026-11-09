@@ -1,0 +1,10 @@
+=== RUN   TestCollectorRejectsUnsafePathInputs
+--- PASS: TestCollectorRejectsUnsafePathInputs (0.21s)
+PASS
+ok  	github.com/ddawnlll/quant-edge-lab/labd/collect	0.243s
+=== RUN   TestSafePathContainment
+--- PASS: TestSafePathContainment (0.00s)
+=== RUN   TestCommandRejectsTraversal
+--- PASS: TestCommandRejectsTraversal (0.00s)
+PASS
+ok  	github.com/ddawnlll/quant-edge-lab/labd/worker	0.040s

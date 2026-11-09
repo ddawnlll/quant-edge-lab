@@ -188,10 +188,17 @@ func (w *Worker) params(ctx context.Context, env map[string]any) (map[string]any
 func (w *Worker) command(ctx context.Context, kind string, params map[string]any, outPath string) (*exec.Cmd, error) {
 	py := abs(filepath.Join(w.Root, "..", ".venv", "bin", "python"))
 	bin := abs(filepath.Join(w.Root, "..", "bin"))
+	path := func(key, fallback string) (string, error) {
+		return w.safePath(str(params[key], fallback))
+	}
 	switch kind {
 	case "capture":
 		mode := str(params["mode"], "live")
-		args := []string{"--mode", mode, "--symbol", str(params["symbol"], "BTCUSDT"), "--root", str(params["raw_root"], "data/raw"), "--out", outPath}
+		rawRoot, err := path("raw_root", "data/raw")
+		if err != nil {
+			return nil, err
+		}
+		args := []string{"--mode", mode, "--symbol", str(params["symbol"], "BTCUSDT"), "--root", rawRoot, "--out", outPath}
 		if mode == "archive" {
 			args = append(args, "--date", str(params["date"], ""))
 		} else {
@@ -199,30 +206,82 @@ func (w *Worker) command(ctx context.Context, kind string, params map[string]any
 		}
 		return exec.CommandContext(ctx, filepath.Join(bin, "qel-collect"), args...), nil
 	case "prepare":
+		events, err := path("events", "")
+		if err != nil {
+			return nil, err
+		}
+		manifest, err := path("manifest", "")
+		if err != nil {
+			return nil, err
+		}
+		out, err := path("out", "data/normalized")
+		if err != nil {
+			return nil, err
+		}
 		return exec.CommandContext(ctx, py, "-m", "qel.cli", "prepare",
-			"--events", str(params["events"], ""),
-			"--manifest", str(params["manifest"], ""),
-			"--out", str(params["out"], "data/normalized"),
+			"--events", events,
+			"--manifest", manifest,
+			"--out", out,
 			"--dataset-id", str(params["dataset_id"], "")), nil
 	case "native-input":
+		parquet, err := path("parquet", "")
+		if err != nil {
+			return nil, err
+		}
+		out, err := path("out", "")
+		if err != nil {
+			return nil, err
+		}
 		return exec.CommandContext(ctx, py, "-m", "qel.cli", "native-input",
-			"--parquet", str(params["parquet"], ""),
-			"--out", str(params["out"], "")), nil
+			"--parquet", parquet,
+			"--out", out), nil
 	case "replay":
+		events, err := path("events", "")
+		if err != nil {
+			return nil, err
+		}
+		strategy, err := path("strategy", "")
+		if err != nil {
+			return nil, err
+		}
 		return exec.CommandContext(ctx, filepath.Join(bin, "qel-native-runner"),
-			"--events", str(params["events"], ""),
-			"--strategy", str(params["strategy"], ""),
+			"--events", events,
+			"--strategy", strategy,
 			"--out", outPath,
 			"--notional", str(params["notional"], "100")), nil
 	case "conformance":
 		return exec.CommandContext(ctx, py, "-m", "qel.cli", "fixtures", "--out", outPath), nil
 	case "audit":
-		return exec.CommandContext(ctx, py, "-m", "qel.cli", "accounting", "--tape", str(params["tape"], "")), nil
+		tape, err := path("tape", "")
+		if err != nil {
+			return nil, err
+		}
+		return exec.CommandContext(ctx, py, "-m", "qel.cli", "accounting", "--tape", tape), nil
 	case "statistics":
-		return exec.CommandContext(ctx, py, "-m", "qel.cli", "stats-job", "--returns", str(params["returns"], ""), "--out", outPath), nil
+		returns, err := path("returns", "")
+		if err != nil {
+			return nil, err
+		}
+		return exec.CommandContext(ctx, py, "-m", "qel.cli", "stats-job", "--returns", returns, "--out", outPath), nil
 	default:
 		return nil, fmt.Errorf("unsupported job kind %s", kind)
 	}
+}
+
+func (w *Worker) safePath(value string) (string, error) {
+	if value == "" {
+		return "", fmt.Errorf("empty path parameter")
+	}
+	root := abs(filepath.Join(w.Root, ".."))
+	if !filepath.IsAbs(value) {
+		value = filepath.Join(root, value)
+	}
+	value = abs(value)
+	rel, err := filepath.Rel(root, value)
+	if err != nil || rel == ".." || strings.HasPrefix(rel, ".."+string(os.PathSeparator)) {
+		return "", fmt.Errorf("path outside repository root: %s", value)
+	}
+	return value, nil
 }
 
 func (w *Worker) seal(ctx context.Context, job *queue.Job, report []byte, usage map[string]any) (map[string]any, error) {
