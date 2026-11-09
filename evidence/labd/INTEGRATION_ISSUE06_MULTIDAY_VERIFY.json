@@ -1,0 +1,68 @@
+{
+  "issue": 6,
+  "task": "TASK-13",
+  "kind": "COORDINATOR_INDEPENDENT_VERIFICATION_MULTIDAY",
+  "integration_branch": "qel/followup3-20261109",
+  "base_sha": "ddfe151",
+  "patch_commit": "003c2e63dd0895c5773b4e3a6eaeccc3dbc32f18",
+  "integrated_commit": "9495a1b",
+  "verification": {
+    "pytest": {"command": "QEL_DATA_ROOT=/home/quant/quant/quant-edge-lab/data PYTHONPATH=python QEL_ROOT=$PWD .venv/bin/python -m pytest -q tests", "result": "238 passed", "exit_code": 0},
+    "corpus": {
+      "path": "data/native/DS-MULTIDAY-10M/events.jsonl",
+      "sha256": "38a94cd1023d628a50b2ead719667a3f8ca89f2030d24e5da88ac19849b7005f",
+      "total_events": 11247697,
+      "calendar": ["2026-10-30", "2026-10-31", "2026-11-01", "2026-11-02", "2026-11-03", "2026-11-04", "2026-11-05", "2026-11-06"],
+      "window_quote_events": 323648
+    },
+    "controls": {
+      "replications": 1000,
+      "batch_completed": 1000,
+      "sequential_completed": 1000,
+      "batch_daily_series_hash": "7c066c13cb9f8c943b953f83704cc8cd45014bb2673792b8fb8fc26e54691b19",
+      "sequential_daily_series_hash": "7c066c13cb9f8c943b953f83704cc8cd45014bb2673792b8fb8fc26e54691b19",
+      "batch_seed_series_hash": "c4395ae65054fc5528a43f8f53cd220e3a79b3d1953c7f5831710a5d7dcdf1e8",
+      "sequential_seed_series_hash": "c4395ae65054fc5528a43f8f53cd220e3a79b3d1953c7f5831710a5d7dcdf1e8",
+      "series_equal": true,
+      "sequential_elapsed_seconds": 155.84
+    },
+    "no_lookahead": {
+      "future_price_mutation_selection_unchanged": true,
+      "future_candidate_fill_mutation_selection_unchanged": true,
+      "candidate_fills_used_for_selection": false
+    },
+    "f27": {
+      "status": "PASS",
+      "scope": "MULTI_DAY_CALENDAR_CONTROLS_AND_IUT_ARITHMETIC",
+      "calendar_days": ["2026-10-30", "2026-10-31", "2026-11-01", "2026-11-02"],
+      "iut_combined_p": "1/25",
+      "negative_calendar_mismatch": "CALENDAR_MISMATCH"
+    },
+    "engine_fixes": {
+      "ema_state_quantised_to_1e-9": true,
+      "day_string_cache": true,
+      "exact_price_parsed_once": true,
+      "stratum_lookup_cached": true,
+      "single_day_outputs_unchanged": true
+    }
+  },
+  "acceptance_boundary": {
+    "F27": "PASS at multi-day calendar controls/IUT arithmetic scope",
+    "batch_sequential_multiday": "PASS",
+    "B1": "OPEN: no warm-p90 1M-row/8-variant batch-screen driver in this worktree",
+    "T-PROTOCOL": "INSUFFICIENT_HISTORY: 8 available days vs the required 12-month/3-month walk-forward windows",
+    "full_task13_acceptance": "NOT CLAIMED"
+  },
+  "claims_not_made": [
+    "full TASK-13 acceptance",
+    "B1 benchmark completion",
+    "12-month/3-month walk-forward evidence",
+    "a positive edge or promotion"
+  ],
+  "evidence_hashes": {
+    "evidence/labd/CONTROLS_HMAC_MULTIDAY.json": "committed with patch",
+    "evidence/labd/CONTROL_HMAC_MULTIDAY.txt": "committed with patch"
+  },
+  "verdict": "PASS_MULTIDAY_F27_AND_BATCH_SEQUENTIAL",
+  "acceptance_note": "Multi-day control evidence is integrated. F27 is PASS at the calendar/IUT scope and batch/sequential are identical. B1 and T-PROTOCOL remain open, so #6 stays EVIDENCE_PENDING."
+}

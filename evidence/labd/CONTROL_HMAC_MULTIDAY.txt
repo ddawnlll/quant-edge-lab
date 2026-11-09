@@ -1,0 +1,76 @@
+TASK-13 / issue #6 - matched controls multi-day evidence
+branch: qel/issue-06-multiday
+base_sha: 69caec2e782096477aadbc9cbc3cd7ba1eb7dd0c
+
+input
+  source_corpus: /home/quant/quant/quant-edge-lab/data/native/DS-MULTIDAY-10M/events.jsonl
+  source_sha256: 38a94cd1023d628a50b2ead719667a3f8ca89f2030d24e5da88ac19849b7005f
+  date_window: 2026-10-30..2026-11-02 (4 consecutive UTC days)
+  selection: first Quote at/after each 60-second UTC boundary
+  quote_count: 5760; quotes_sha256: 75cb5d2084330963366f957c50490f2bd450b99aa9fae4004da9631ed1774a43
+  full_native_window: 323648 quotes, sha256 debcf8e3799f6a3f3dfb4803abca27ebe51d3fb4211d858f7a93c1e39b85a72f (supplementary batch run NOT_RUN_TIME_BOX)
+
+protocol
+  draw_mapping: HMAC_SHA256_COUNTER_V1
+  seed_protocol_hash: 30a0ef917ba2484c7966bf13f51cf2973e83235862b5eae408576a0b5d5e8571
+  family_hash: 5dcd508d2114e71c1bad419efa61202a7a369f4f8d5a6de861422cd66486720b
+  plan_hash: db22590f2cfe93b4972b6763b1613dabb6e227acc2422fe3dfea1963df9e4cac
+  selection_plan_hash: 33b6dd55556fa0e27657d1270d9713d8d8a54c749e893edd7fa6bd254a87328f
+  replications: 1000 / required 1000 / completed 1000
+  target_trades_per_day: {"2026-10-30": 0, "2026-10-31": 22, "2026-11-01": 22, "2026-11-02": 22}
+  executed_trades: 66000; rejected_orders: 0; missing_mark_seeds: 0
+  control_mean: -4.02869595; control_std: 0.19428034
+  daily_series_hash: 7c066c13cb9f8c943b953f83704cc8cd45014bb2673792b8fb8fc26e54691b19
+  seed_series_hash: c4395ae65054fc5528a43f8f53cd220e3a79b3d1953c7f5831710a5d7dcdf1e8
+
+batch vs sequential (1000 seeds each)
+  equal: True; series_equal: True; seed_series_equal: True
+  batch/sequential daily hash: 7c066c13cb9f8c943b953f83704cc8cd45014bb2673792b8fb8fc26e54691b19
+  batch/sequential seed hash:  c4395ae65054fc5528a43f8f53cd220e3a79b3d1953c7f5831710a5d7dcdf1e8
+  batch_elapsed_seconds: 43.115; sequential_elapsed_seconds: 155.842
+
+per day (seeds, valid, missing, zero, mean_pnl, trades, target, rejected, exposure_ns, holding_ns)
+  2026-10-30 1000 1000 0 1000 0 0 0 0 0 0
+  2026-10-31 1000 1000 0 0 -1.3611901224 22000 22000 0 1320470000000000 1320470000000000
+  2026-11-01 1000 1000 0 0 -1.23398670604 22000 22000 0 1320084000000000 1320084000000000
+  2026-11-02 1000 1000 0 0 -1.43351912388 22000 22000 0 1320184000000000 1320184000000000
+  zero-trade training day 2026-10-30 remains in the series as 0 (1000/1000 zero-trade seeds).
+  per_stratum rows: 24; sum trades: 66000
+
+rejected-order diagnostics
+  {"bounded_memory": true, "executed_trades": 66000, "missing_mark_seeds": 0, "reject_reasons": {}, "rejected_orders": 0, "retained_seed_series": 0, "schedule_shortfall": 0, "streaming_aggregation": true, "truncated_seeds": 0, "zero_trade_seeds": 0}
+
+frozen trend/pullback control (separate, not in random mean)
+  daily_series_hash: dc03efdab21e3d51aa061a19995d7c182b574716a8f1109f3a2f71403bacf75f
+  days: [["2026-10-30", "NO_TRADES", 0, "0"], ["2026-10-31", "VALID", 346, "-21.87709356"], ["2026-11-01", "VALID", 377, "-24.0528142"], ["2026-11-02", "VALID", 365, "-23.88232972"]]
+
+no-lookahead
+  future prices mutated: 4320 quotes x1.5 after train_end_ns=1793404785000000000
+  selection_plan_hash unchanged: True; plan_hash unchanged: True; seed selection hashes unchanged: True
+  fabricated candidate fills: selection unchanged True; candidate_fills_used_for_selection=False
+
+trials and resources
+  financial trials preserved: 1000/1000; dropped: 0
+  cost reservation hash: 322b9ecf938c9d44a3e80b3b2bf50de39cc983e3f97fe967aafa9ec629b7342f
+  peak RSS: 119234560 B (113.7 MiB); wall: 219.232 s; limits peak < 2 GiB
+
+F27: PASS (scope MULTI_DAY_CALENDAR_CONTROLS_AND_IUT_ARITHMETIC)
+  included_days=4; zero-trade days in denominator=['2026-10-30']; market_histories=1
+  IUT max rule holds: True; CALENDAR_MISMATCH negative case rejected: True
+
+B1: B1_OPEN (not claimed)
+  missing run: Warm 1M-row x 8-variant batch screen with p90 over warm batches: `python -m qel.cli screen --strategy <base.json> --events <1M-row-subset> --out <dir>` against a built screen/replay runner.
+
+T-PROTOCOL: INSUFFICIENT_HISTORY (open, no 12m/3m walk-forward claimed)
+  available: 8 days 2026-10-30..2026-11-06 (~0.26 months); required minimum ~457 days (15 months); shortfall ~449 days
+  default split (5/3/1/1) needs 9 days; shortfall 1 day
+  non-acceptance diagnostic (3/2/1/1) produced: [{"embargo_days": 1, "purge_days": 1, "test_end": "2026-11-04", "test_start": "2026-11-03", "train_end": "2026-11-01", "train_start": "2026-10-30"}]
+
+checks
+  focused: 39 passed, exit 0 (tests/test_controls_multiday.py + tests/test_controls.py + tests/test_research.py)
+  full: 232 passed, exit 0
+
+notes
+  - control.py fix: exact-Fraction EMA denominator grew ~4.4 bits/step and never finished on 80k-step training windows; implemented a frozen 1e-9 quantised state. 240S daily/seed/per-stratum outputs are bit-identical before/after.
+  - control.py fix: per-trade stratum scans replaced with cached last-timestamp/bisect lookups; sequential re-uses the immutable converted quote tape but still rebuilds strata/calendar/targets per seed. Selection semantics unchanged.
+  - Multi-day evidence is not a promotion. B1 and T-PROTOCOL remain open; full TASK-13 acceptance is not claimed.
