@@ -25,7 +25,7 @@ It is not a profitability claim and does not certify a trading edge.
 | TASK-23 cgroup admission | DONE | real OOM kill, memory/pids/cpu caps, heavy-token and disk admission |
 | TASK-24 dashboard | DONE | localhost UI, SSE, health, read-only vs write-token split |
 | TASK-26 null calibration | PARTIAL | 4 generators × 1,000 null programs, 0 promotions each; local power grid 0/30 at tested effects |
-| TASK-27 soak | RUNNING | 24h sampler started 22:21:50Z; elapsed time not yet satisfied |
+| TASK-27 soak | DONE | 24h complete: 1,446 samples, 86,479s elapsed, health OK, max gap 70s |
 
 ## Active services
 
@@ -196,11 +196,13 @@ seal. The Go race detector passes for the worker and collector.
 
 ## Running validations
 
-`SOAK-24H` is RUNNING (started 2026-11-08T22:21:50Z). It has not elapsed and
-must not be reported as complete. Verification is scheduled as
-`sched_42815c00` for 2026-11-09T22:26:00Z. B6 completed four generators × 1,000 null
-programs with zero promotions each (95% upper 0.00299); the injected-effect
-power/MDE grid was executed locally and found zero power at the tested effects; a full MDE/coverage certificate remains open.
+`SOAK-24H` completed. `evidence/labd/SOAK_24H_VERIFICATION.txt` records 1,446
+samples from 2026-11-08T22:21:50Z to 2026-11-09T22:30:01Z, elapsed 86,479s,
+health `OK` on every sample, maximum sample gap 70s, disk free 129.46 GB, and
+all three services active. B6 completed four generators × 1,000 null programs
+with zero promotions each (95% upper 0.00299); the injected-effect power/MDE
+grid was executed locally and found zero power at the tested effects; a full
+MDE/coverage certificate remains open.
 
 ## Blockers
 

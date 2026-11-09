@@ -1,0 +1,18 @@
+verified_utc 2026-11-09T22:30:22Z
+samples 1446
+first 2026-11-08T22:21:50Z elapsed 0
+last 2026-11-09T22:30:01Z elapsed 86479
+required_elapsed_s 86400
+elapsed_ok True
+health_states ['OK']
+max_sample_gap_s 70.0
+median_sample_gap_s 60.0
+disk_free_min_bytes 129464082432
+disk_free_last_bytes 129464082432
+last_queue_counts {"blocked": 0, "queued": 0, "running": 0}
+qel-qeld_active active pid 800710
+qel-worker_active active pid 822946
+qel-soak_active active pid 702661
+git_head f6a850b2026d2910cc0673be5e1a88d9cf7d3a63
+git_remote_main f6a850b2026d2910cc0673be5e1a88d9cf7d3a63
+git_status ?? evidence/labd/SOAK_24H_VERIFICATION.txt

@@ -12,8 +12,9 @@ certificate), TASK-13 (HMAC controls), TASK-14 (paired decision), TASK-15
 (evaluator anchor/consumption, T-ISOLATION blocked) and TASK-16 (signed
 synthetic cohort release). Python 164 tests, Go `./labd/...`, Rust policy tests,
 the spec manifest and the offline validator pass. No positive edge is claimed
-and no live trading authority exists. The 24-hour soak is still running; the
-7-day stage and B8 remain open. M4 queue/LocalView capabilities are
+and no live trading authority exists. The 24-hour soak completed with 1,446
+healthy samples and 86,479s elapsed; the 7-day stage and B8 remain open. M4
+queue/LocalView capabilities are
 `BLOCKED_BACKEND` in the pinned Nautilus commit.
 
 ## Verified on the integration branch
@@ -79,9 +80,9 @@ and no live trading authority exists. The 24-hour soak is still running; the
    materializes the whole vector.
 5. **#13 / TASK-25**: B0-B5 release benchmarks under 4 GiB and 8 GiB are not run.
 6. **#14 / TASK-26**: full 1000-program B6 FWER/coverage/MDE certificate remains; the protocol is implemented but the estimated compute is 1,085.64 core-hours on this host. #7 and #9 stay B6-pending until that report exists.
-7. **#15 / TASK-27**: 24h soak matures at 2026-11-09T22:21:50Z; a scheduled
-   verification wakes at 22:26Z (`sched_1a3a7492`). The 7-day stage and B8 are
-   open; a second wake is set for 2026-11-16T22:26Z (`sched_d9b2017c`).
+7. **#15 / TASK-27**: 24h soak is DONE: 1,446 samples, 86,479s, health OK
+   throughout, max sample gap 70s; `evidence/labd/SOAK_24H_VERIFICATION.txt`.
+   The 7-day stage and B8 remain open and were not started by this run.
 8. **#16 / TASK-28**: `WAITING_FRESH_OOS`; no untouched window or confirmation
    authority.
 9. **#17 / TASK-29**: `INSUFFICIENT_OBSERVATION`; 15 orders/1 day vs the

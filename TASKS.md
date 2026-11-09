@@ -33,7 +33,7 @@ is a scientific promotion.
 | TASK-24 | Operator dashboard and controls | DONE | localhost dashboard + SSE + health; read-only principal cannot control |
 | TASK-25 | Benchmark corpus and performance evidence | PARTIAL | frozen B0/B1/B5 corpora and harnesses; cgroup-v2-enforced RP-4G/RP-8G runs: B0 p90 2.30 ms (target 100) with 0 JIT, B1 1M rows x 8 variants p90 2.66 s (target 10), B5 100k events/1k artifacts with 0 lost commits, 0 torn PASS, read 810 ms and restore 0.47 min; T-RELEASE PASS; B2/B3/B4 not re-run under the enforced profiles and B4 100M remains blocked; `evidence/labd/INTEGRATION_ISSUE13_VERIFY.json` |
 | TASK-26 | Statistical null and injection calibration | PARTIAL | exact B6 workload implemented: four frozen generators, 16 variants, 3 cohorts, 1500/500 days, 1000 controls, HMAC seed labels, paired decision, coverage and power reports; bounded pilot (1 program/generator) is `PILOT_NOT_ACCEPTANCE`; estimated full B6 is 1,085.64 core-hours on this host, so the 1000-program FWER certificate remains `COMPUTE_BUDGET_INSUFFICIENT`; nonstationary control correctly blocked; `evidence/labd/INTEGRATION_ISSUE14_VERIFY.json` |
-| TASK-27 | Continuous research soak | RUNNING | systemd `qel-soak` samples every 60s; 24h not yet elapsed |
+| TASK-27 | Continuous research soak | DONE | 24h complete: 1,446 samples, elapsed 86,479s, health OK throughout, max sample gap 70s; `evidence/labd/SOAK_24H_VERIFICATION.txt` |
 | TASK-28 | First frozen confirmation cohort | BLOCKED | `WAITING_FRESH_OOS`; no untouched window and no authorization |
 | TASK-29 | Forward calibration protocol and evidence | BLOCKED | `INSUFFICIENT_OBSERVATION`; 15 orders/15 fills/1 day vs 200/50/10 |
 | TASK-30 | Bot export and rollback package | BLOCKED | gate refuses `CAPITAL_UNAUTHORIZED`; no live capital authorization |
@@ -53,4 +53,3 @@ derived from a native tape (TASK-13 screen/controls, TASK-19 chunk parity,
 TASK-25 timings that consumed the tape, and the archive PnL figures) is stale
 until re-run on the integrated runner. The conformance fixtures and the
 synthetic statistics calibration are not affected by this change.
-
