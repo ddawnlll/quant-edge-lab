@@ -3,7 +3,7 @@
   "spec_version": "1.1.0",
   "spec_package_sha256": "db18e7a6e94b8c9b233a48097040d1a3a6c655ea126d5e6805d67d4f6e91fd30",
   "baseline_sha256": "71628e4b4ceceac3447759cdabab131e16237aff9fd7569a09f1bc61e4d70d06",
-  "updated_utc": "2026-11-09T00:33:34Z",
+  "updated_utc": "2026-11-09T10:38:00Z",
   "host": {
     "os": "Debian GNU/Linux 13 (trixie)",
     "kernel": "6.12.115+deb13.1-amd64",
@@ -81,15 +81,16 @@
       ]
     },
     "TASK-06": {
-      "status": "PARTIAL",
+      "status": "DONE",
       "evidence": [
-        "evidence/labd/NORMALIZE.json",
-        "evidence/labd/NORMALIZE_RECHECK.json",
-        "tests/test_normalize.py",
-        "evidence/labd/PROVENANCE_VALIDATION.json",
-        "evidence/labd/WORKER_DATASET_NEGATIVE.txt"
+        "evidence/labd/DATASET_CERT_DS-PIT-RECHECK.json",
+        "evidence/labd/PIT_PARITY.json",
+        "evidence/labd/PIT_PROVENANCE.json",
+        "evidence/labd/PIT_DUCKDB_LIMITATION.json",
+        "evidence/labd/PIT_RESOURCE.json",
+        "evidence/labd/INTEGRATION_ISSUE01_VERIFY.json"
       ],
-      "blocked": "DuckDB illegal instruction"
+      "scope_note": "per-row line hash+offset exact; upstream response hash not reconstructible from frame and explicitly scoped; universe unverified"
     },
     "TASK-07": {
       "status": "DONE",
@@ -102,10 +103,14 @@
     "TASK-08": {
       "status": "DONE_WITH_BLOCKED_CAPABILITY",
       "evidence": [
+        "locks/NATIVE_FEASIBILITY_MANIFEST.json",
         "locks/RUNTIME_LOCK.json",
         "locks/CAPABILITY_VERDICT.md",
         "evidence/native/SPIKE_REPORT.json",
-        "evidence/native/PIN_VERIFICATION.json"
+        "evidence/native/PIN_VERIFICATION.json",
+        "evidence/native/PIN_VERIFICATION_RECHECK.json",
+        "evidence/native/PROTOTYPE_BENCH_10X.json",
+        "evidence/native/PROTOTYPE_BENCH_100X.json"
       ]
     },
     "TASK-09": {
@@ -123,13 +128,15 @@
       ]
     },
     "TASK-11": {
-      "status": "PARTIAL",
+      "status": "DONE_WITH_BLOCKED_CAPABILITY",
       "evidence": [
-        "evidence/labd/NATIVE_RUN_240S.json",
-        "evidence/labd/NATIVE_ARCHIVE_DAY.json",
-        "evidence/labd/NATIVE_ARCHIVE_ACCOUNTING.json",
-        "runtime job JOB-REPLAY-3"
-      ]
+        "evidence/labd/NATIVE_FUNDING_RUN.json",
+        "evidence/labd/NATIVE_FUNDING_RUN_240S.json",
+        "evidence/labd/NATIVE_FUNDING_AUDIT.json",
+        "evidence/labd/FUNDING_MUTATIONS.txt",
+        "evidence/labd/INTEGRATION_ISSUE04_VERIFY.json"
+      ],
+      "blocked": "F22 LocalView remains BLOCKED_BACKEND; taker L1 certificate only"
     },
     "TASK-12": {
       "status": "PARTIAL",
@@ -322,5 +329,17 @@
       "reason": "development controls/bootstrap use NumPy PCG64, not the execution HMAC seed protocol"
     }
   ],
-  "next_action": "Wait for the 24h soak to elapse and verify it; keep M4/M6/M7 blocked and do not claim an edge."
+  "next_action": "Wait for the 24h soak to elapse and verify it; keep M4/M6/M7 blocked and do not claim an edge.",
+  "evidence_invalidation": {
+    "reason": "TASK-11 changed terminal MARK to the native mark and moved funding to the primary tape",
+    "stale_until_rerun": [
+      "native-tape-derived screen/controls",
+      "native chunk parity",
+      "native timings that consumed the tape"
+    ],
+    "unaffected": [
+      "conformance fixtures",
+      "synthetic statistics calibration"
+    ]
+  }
 }

@@ -12,12 +12,12 @@ is a scientific promotion.
 | TASK-03 | Ledger and atomic artifact store | DONE | crash fault matrix, backup/restore, chain verification including payload content and event-ID recomputation, blob-corruption rejection and reseal repair; `labd/ledger`, `labd/artifacts` tests |
 | TASK-04 | Control protocol and durable queue | DONE | 4-byte framing, peer credentials, leases, idempotency, worker path containment and fail-closed traversal jobs; `labd/control`, `labd/queue`, `labd/worker` tests |
 | TASK-05 | Raw acquisition and source evidence | DONE | live 20s/240s captures and verified daily archive; collector rejects unsafe symbols/dates; `evidence/labd/LIVE_CAPTURE*.json` |
-| TASK-06 | Normalize and PIT datasets | PARTIAL | Arrow/Parquet normalization verifies the raw segment hash/size, rejects tampered raw input and unsafe dataset IDs, and reports the capture's four loss/gap ranges; DuckDB 2.0.0 aborts with illegal instruction on this CPU (no AVX2), so the DuckDB path is blocked and PyArrow is used |
+| TASK-06 | Normalize and PIT datasets | DONE | per-row exact line hash/offset verified for all 12,418 rows with full byte coverage; sequence/snapshot/quote/duplicate/timestamp negatives; bitemporal valid+known-time rules, historical listing/delisting, UNIVERSE_UNVERIFIED gate; DuckDB 2.0.0 reproduces SIGILL (exit 132) and PyArrow/Parquet is the certified path with parity/resource evidence; upstream-response `raw_sha256` is not recomputable from the frame and is explicitly scoped, never hidden; `evidence/labd/INTEGRATION_ISSUE01_VERIFY.json` |
 | TASK-07 | Typed operators and policy evaluator | DONE | 26 operators, DAG validation, EMA/STD reference, leakage negatives, direct arithmetic/window/stateful/boolean operator tests; `policy/rust` tests |
 | TASK-08 | Native feasibility | DONE_WITH_BLOCKED_CAPABILITY | taker/funding/streaming verified; local clone, remote tag, Cargo.lock, source, binary and spike report hashes re-verified; LocalView/L2 queue/isolation BLOCKED_BACKEND; `locks/`, `evidence/native/PIN_VERIFICATION.json` |
 | TASK-09 | Independent accounting implementation | DONE | exact tape reconstruction, residual 0 on native run; `tests/test_accounting.py` |
 | TASK-10 | Venue funding, margin and liquidation profile | PARTIAL | generic synthetic margin path and F11/F12 pass; no venue-certified historical tier/liquidation claim |
-| TASK-11 | Minimum native taker end-to-end slice | PARTIAL | 15 orders / 8 positions native run, sealed job, residual 0; F22 LocalView remains blocked |
+| TASK-11 | Minimum native taker end-to-end slice | DONE_WITH_BLOCKED_CAPABILITY | archive day 358,200 events / 307 orders / 154 positions; two funding settlements now on the primary tape with attributable epochs; independent cash/equity/position exact, residual 0; omitted/repeated/late/future-epoch/after-END postings visible or rejected; semantic replay identical; F22 LocalView remains BLOCKED_BACKEND and is not claimed; `evidence/labd/INTEGRATION_ISSUE04_VERIFY.json` |
 | TASK-12 | Preregistration and walk-forward datasets | PARTIAL | split/control declarations implemented; one full archive day plus 240s live capture, but no multi-day walk-forward evidence |
 | TASK-13 | Matched controls and batch screen | PARTIAL | 12 variants + 8 controls matched on calendar/trade count, not holding time; candidate mean -7.16 vs control -14.59, verdict INSUFFICIENT_EVIDENCE |
 | TASK-14 | Dependent stats and frozen protocols | PARTIAL | HAC, stationary bootstrap, IUT, Holm, F27/F28, full 1,000-program B6 re-run after bootstrap fix and `JOB-STATS-1` sealed through qeld; full MDE/coverage certificate pending |
@@ -44,3 +44,13 @@ is a scientific promotion.
 
 - None accepted. Native missing hooks are recorded as `BLOCKED_BACKEND`, not
   silently weakened. DuckDB is an environment limitation, not a spec change.
+
+## Evidence invalidation after the TASK-11 funding/tape fix
+
+TASK-11 changed the native runner's terminal MARK from the last quote midpoint
+to the native mark and moved funding onto the primary tape. Any earlier report
+derived from a native tape (TASK-13 screen/controls, TASK-19 chunk parity,
+TASK-25 timings that consumed the tape, and the archive PnL figures) is stale
+until re-run on the integrated runner. The conformance fixtures and the
+synthetic statistics calibration are not affected by this change.
+
