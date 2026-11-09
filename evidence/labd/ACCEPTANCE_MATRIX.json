@@ -1,0 +1,86 @@
+{
+  "schema": "qel.acceptance_matrix/1.1",
+  "generated_utc": "2026-11-09T14:06:00Z",
+  "main_sha": "7e2ad5ba25a1e0c3df9b7c2c17add43561e4740a",
+  "purpose": "Map every required check in issues #1-#18 to a concrete observed result or an explicit external blocker. Aggregate test counts are not used as acceptance evidence.",
+  "interpretation_assumptions": [
+    "The 18 GitHub issues map to TASK-06,08,10,11,12,13,14,15,16,17,18,19,25,26,27,28,29,30 as supplied in the request.",
+    "Implement and verify means shipped software plus reproducible local evidence. It does not imply scientific promotion, fresh OOS confirmation, or live trading authority.",
+    "One integration PR was opened for the first verified batch. Verified follow-up work used separate PRs because the first PR had already merged; the coordinator alone pushed and merged.",
+    "No paid services, real-money orders, or new external dependencies were used. Public Binance Vision archives were downloaded for multi-day evidence.",
+    "DuckDB 2.0.0 is unusable on this CPU (SIGILL); PyArrow/Parquet is the recorded runtime decision.",
+    "The pinned Nautilus backend is the candidate. Missing LocalView/L2/queue hooks are BLOCKED_BACKEND, not forked or monkey-patched.",
+    "Full B6 and B4 100M are compute/storage-limited in this environment; pilots and 10M runs are labelled as such, never as acceptance.",
+    "Worker effort was set to high via [agents].swarm_effort. The configured provider/model was preserved."
+  ],
+  "observed_public_interfaces": {
+    "conformance": {
+      "command": "python -m qel.cli fixtures",
+      "exit_code": 0,
+      "result": "44/44 scenarios PASS",
+      "required_observed": {"F01": "PASS", "F08": "PASS", "F14": "PASS", "F15": "PASS", "F17": "PASS", "F19": "PASS", "F27": "PASS", "F28": "PASS", "F29": "PASS"}
+    },
+    "pit_prepare": {
+      "command": "python -m qel.cli prepare --events <raw capture> --manifest <manifest>",
+      "exit_code": 0,
+      "result": "rows=12418, dataset_hash=714294ad..., certificate_sha256=deb58ed3..., universe_verified=false, verdict=RESTRICTED"
+    },
+    "native_replay": {
+      "command": "qel-native-runner --events DS-ARCHIVE-BTCUSDT-2026-11-07 --strategy taker_1m --chunk-bytes 8388608",
+      "exit_code": 0,
+      "result": "358200 events, 307 orders, 154 positions, funding_count=2, peak_rss_kb=42456"
+    },
+    "independent_accounting": {
+      "command": "python -m qel.cli accounting --tape <native tape>",
+      "exit_code": 0,
+      "result": "equity=991.10431345, total_cash=991.11310345, position_qty=0.001, funding_cash=-0.00300075, unexplained_residual=0, postings_balanced=true"
+    },
+    "evaluator": {
+      "command": "python -m qel.cli evaluator-demo",
+      "exit_code": 0,
+      "result": "PASS, signature_verified=true, pre_consumption_refusal=WAITING_AUTHORIZED_COHORT, second_decision_refusal=PROTOCOL_VIOLATION"
+    },
+    "stats_job": {
+      "command": "python -m qel.cli stats-job --returns <audit fixture>",
+      "exit_code": 0,
+      "result": "verdict=INSUFFICIENT_EVIDENCE, reason_codes=B_BELOW_FROZEN_MINIMUM,IUT_NOT_REJECTED,LOW_POWER"
+    },
+    "controls": {
+      "command": "python -m qel.cli controls --events <240s tape> --trades 22 --replications 1000",
+      "exit_code": 0,
+      "result": "1000 seeds, HMAC_SHA256_COUNTER_V1, matched_on includes holding_time, acceptance fields explicitly single-day/open"
+    },
+    "go": {"command": "go test ./labd/...", "exit_code": 0},
+    "rust": {"command": "cargo test --release", "exit_code": 0},
+    "manifest": {"command": "sha256sum -c MANIFEST.sha256", "exit_code": 0},
+    "validator": {"command": "validate_spec.py", "exit_code": 0, "result": "PASS_SPECIFICATION_ONLY, 20/20 negative mutants rejected"},
+    "pytest": {"command": "pytest -q tests with QEL_DATA_ROOT", "exit_code": 0, "result": "248 passed"}
+  },
+  "issues": [
+    {"issue": 1, "task": "TASK-06", "checks": {"F14": "PASS in 44/44", "F19": "PASS in 44/44", "F29": "PASS in 44/44", "T-DATA-PROV": "PASS via real prepare + independent byte scan"}, "status": "ACCEPTED", "blocker": "upstream response hash not reconstructible from frame; line hash/offset used and scoped; universe unverified"},
+    {"issue": 2, "task": "TASK-08", "checks": {"T-NATIVE-SPIKE": "PASS, pin 12/12 and semantic recheck", "F01": "PASS", "F08": "PASS", "F15": "PASS", "F22": "BLOCKED_BACKEND", "B4": "prototype only; full B4 belongs to #13"}, "status": "ACCEPTED_WITH_BLOCKED_CAPABILITIES", "blocker": "CAP-LOCAL-VIEW, CAP-L2-QUEUE, CAP-ISOLATED"},
+    {"issue": 3, "task": "TASK-10", "checks": {"F08": "PASS", "F09": "PASS", "F10": "PASS", "F11": "PASS", "F12": "PASS", "F13": "PASS", "F16": "PASS"}, "status": "PARTIAL_EVIDENCE_PENDING", "blocker": "no venue-certified historical fee/funding/margin rules and no native liquidation path"},
+    {"issue": 4, "task": "TASK-11", "checks": {"F01": "PASS", "F03": "PASS", "F04": "PASS", "F08": "PASS", "F09": "PASS", "F10": "PASS", "F13": "PASS", "F15": "PASS", "F23": "PASS", "T-ACCOUNT": "PASS via real native runner + accounting CLI, residual 0", "F22": "BLOCKED_BACKEND"}, "status": "EVIDENCE_PENDING_F22", "blocker": "F22 required for full TASK-11 acceptance"},
+    {"issue": 5, "task": "TASK-12", "checks": {"T-PROTOCOL": "INSUFFICIENT_HISTORY", "F18": "PASS", "F19": "PASS"}, "status": "OPEN", "blocker": "needs 12-month/3-month walk-forward history; 8 days available"},
+    {"issue": 6, "task": "TASK-13", "checks": {"F27": "PASS at multi-day calendar/IUT scope", "B1": "OPEN (no warm-p90 1M-row/8-variant driver run under the screen path)", "T-PROTOCOL": "INSUFFICIENT_HISTORY"}, "status": "EVIDENCE_PENDING_B1_T_PROTOCOL", "blocker": "B1 and 12-month T-PROTOCOL"},
+    {"issue": 7, "task": "TASK-14", "checks": {"F27": "PASS", "F28": "PASS", "B6": "PILOT_NOT_ACCEPTANCE"}, "status": "EVIDENCE_PENDING_B6", "blocker": "full 1000-program B6 needs ~1085 core-hours"},
+    {"issue": 8, "task": "TASK-15", "checks": {"F20": "PASS", "F25": "PASS", "F26": "PASS", "T-ISOLATION": "BLOCKED"}, "status": "BLOCKED_T_ISOLATION", "blocker": "administrator-created qel-research/qel-eval UIDs, socket ownership, worker network isolation"},
+    {"issue": 9, "task": "TASK-16", "checks": {"F18": "PASS", "F20": "PASS", "F25": "PASS", "F28": "PASS", "B6": "PILOT_NOT_ACCEPTANCE"}, "status": "EVIDENCE_PENDING_B6", "blocker": "full B6; fresh OOS/G4 external"},
+    {"issue": 10, "task": "TASK-17", "checks": {"F02": "BLOCKED_BACKEND", "F03/F04/F05/F06/F07/F29/F31/F33/F34": "not executed natively"}, "status": "BLOCKED_BACKEND", "blocker": "CAP-L2-QUEUE"},
+    {"issue": 11, "task": "TASK-18", "checks": {"F01": "PASS in conformance", "F02": "BLOCKED_BACKEND", "F04": "PASS in conformance", "F22": "BLOCKED_BACKEND", "T-QUEUE": "BLOCKED_BACKEND"}, "status": "BLOCKED_BACKEND", "blocker": "CAP-LOCAL-VIEW and CAP-L2-QUEUE"},
+    {"issue": 12, "task": "TASK-19", "checks": {"F15": "PASS", "B2": "PASS p90 20.5s", "B3": "PASS p90 20.5s", "B4": "10M PASS 0.0502 MiB/M; 100M BLOCKED_NOT_RUN"}, "status": "PARTIAL_EVIDENCE_PENDING", "blocker": "B4 100M and delegated cgroup measurement"},
+    {"issue": 13, "task": "TASK-25", "checks": {"B0": "PASS 2.30 ms, 0 JIT", "B1": "PASS 2.66 s", "B2": "not re-run under enforced profiles", "B3": "not re-run under enforced profiles", "B4": "not re-run under enforced profiles; 100M blocked", "B5": "PASS 0 lost/0 torn, read 810 ms, restore 0.47 min", "T-RELEASE": "PASS"}, "status": "PARTIAL_EVIDENCE_PENDING", "blocker": "B2/B3/B4 profile re-runs and B4 100M"},
+    {"issue": 14, "task": "TASK-26", "checks": {"B6": "PILOT_NOT_ACCEPTANCE", "F27": "PASS", "F28": "PASS"}, "status": "OPEN_COMPUTE_BUDGET", "blocker": "full 1000-program B6 compute"},
+    {"issue": 15, "task": "TASK-27", "checks": {"B7": "not certified", "B8": "not run", "T-RECOVERY": "partial", "T-AGENT": "partial"}, "status": "WAITING_TIME", "blocker": "24h soak wake 22:26Z, 7-day stage, fault drills, B8 budget"},
+    {"issue": 16, "task": "TASK-28", "checks": {"G0-G4": "not run", "F25": "PASS"}, "status": "BLOCKED_FRESH_OOS", "blocker": "no untouched OOS window or confirmation authority"},
+    {"issue": 17, "task": "TASK-29", "checks": {"T-FORWARD": "INSUFFICIENT_OBSERVATION", "G5": "not met"}, "status": "BLOCKED_AUTHORIZATION", "blocker": "15 orders/1 day vs 200/50/10 and no capital authorization"},
+    {"issue": 18, "task": "TASK-30", "checks": {"T-EXPORT": "offline software only", "G6": "not run", "F07": "conformance PASS", "F31": "conformance PASS"}, "status": "BLOCKED_CAPITAL", "blocker": "CAPITAL_UNAUTHORIZED for live activation; no G6 live reconnect/rollback proof"}
+  ],
+  "summary": {
+    "integrated": 11,
+    "accepted": 2,
+    "closed": 2,
+    "open": 16,
+    "traceability": "every required check is mapped to an observed result or an explicit blocker"
+  }
+}
