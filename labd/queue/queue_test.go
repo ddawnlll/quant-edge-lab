@@ -30,9 +30,9 @@ func envelope(jobID, idem string, financial bool) map[string]any {
 			"visibility":     "DEVELOPMENT",
 			"media_type":     "application/json",
 		}},
-		"strategy_hash":    fmt.Sprintf("%064x", 3),
-		"binary_hash":      fmt.Sprintf("%064x", 4),
-		"environment_hash": fmt.Sprintf("%064x", 5),
+		"strategy_hash":         fmt.Sprintf("%064x", 3),
+		"binary_hash":           fmt.Sprintf("%064x", 4),
+		"environment_hash":      fmt.Sprintf("%064x", 5),
 		"required_capabilities": []any{"CAP-TAKER-REPLAY"},
 		"resource_limits": map[string]any{
 			"memory_max_mib": 256, "memory_high_mib": 192, "cpu_millicores": 500,

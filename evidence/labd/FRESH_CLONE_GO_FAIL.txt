@@ -1,0 +1,26 @@
+# github.com/ddawnlll/quant-edge-lab/cmd/qel-worker
+cmd/qel-worker/main.go:13:2: no required module provides package github.com/ddawnlll/quant-edge-lab/labd/artifacts; to add it:
+	go get github.com/ddawnlll/quant-edge-lab/labd/artifacts
+FAIL	github.com/ddawnlll/quant-edge-lab/cmd/qel-worker [setup failed]
+# github.com/ddawnlll/quant-edge-lab/cmd/qeld
+cmd/qel-worker/main.go:13:2: no required module provides package github.com/ddawnlll/quant-edge-lab/labd/artifacts; to add it:
+	go get github.com/ddawnlll/quant-edge-lab/labd/artifacts
+FAIL	github.com/ddawnlll/quant-edge-lab/cmd/qeld [setup failed]
+# github.com/ddawnlll/quant-edge-lab/labd/control
+cmd/qel-worker/main.go:13:2: no required module provides package github.com/ddawnlll/quant-edge-lab/labd/artifacts; to add it:
+	go get github.com/ddawnlll/quant-edge-lab/labd/artifacts
+FAIL	github.com/ddawnlll/quant-edge-lab/labd/control [setup failed]
+# github.com/ddawnlll/quant-edge-lab/labd/worker
+cmd/qel-worker/main.go:13:2: no required module provides package github.com/ddawnlll/quant-edge-lab/labd/artifacts; to add it:
+	go get github.com/ddawnlll/quant-edge-lab/labd/artifacts
+FAIL	github.com/ddawnlll/quant-edge-lab/labd/worker [setup failed]
+?   	github.com/ddawnlll/quant-edge-lab/cmd/qel-collect	[no test files]
+ok  	github.com/ddawnlll/quant-edge-lab/cmd/qel-submit	(cached)
+?   	github.com/ddawnlll/quant-edge-lab/contracts/go/cmd/qel-contract	[no test files]
+?   	github.com/ddawnlll/quant-edge-lab/contracts/go/qelcontract	[no test files]
+ok  	github.com/ddawnlll/quant-edge-lab/labd/cgroup	(cached)
+?   	github.com/ddawnlll/quant-edge-lab/labd/collect	[no test files]
+ok  	github.com/ddawnlll/quant-edge-lab/labd/ledger	(cached)
+ok  	github.com/ddawnlll/quant-edge-lab/labd/memory	(cached)
+ok  	github.com/ddawnlll/quant-edge-lab/labd/queue	(cached)
+FAIL

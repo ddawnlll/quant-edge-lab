@@ -43,6 +43,24 @@ class SealedRegistry:
         self._migrate()
         self._ensure_key()
 
+    def close(self) -> None:
+        db = getattr(self, "db", None)
+        if db is not None:
+            db.close()
+            self.db = None
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *_):
+        self.close()
+
+    def __del__(self):
+        try:
+            self.close()
+        except Exception:
+            pass
+
     def _migrate(self) -> None:
         self.db.execute("PRAGMA journal_mode=WAL")
         self.db.execute("PRAGMA synchronous=FULL")

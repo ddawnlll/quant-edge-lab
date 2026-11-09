@@ -1,0 +1,8 @@
+D=/home/quant/.jcode/scratch/qel-fresh.LCYLuI
+root=/home/quant/.jcode/scratch/qel-fresh.LCYLuI
+health={"sqlite_source_id":"2026-10-16 14:45:20 555e07ef33f69a0957d24d8e555b702464a131d6f1607f4c3c1e4551e8e6ca76","sqlite_version":"3.54.1","status":"OK"}
+verify={"chain":"verified","status":"OK"}
+token_mode=600
+db_mode=640
+socket_mode=660
+dash=200

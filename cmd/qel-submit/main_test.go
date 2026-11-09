@@ -14,3 +14,16 @@ func TestWaitComplete(t *testing.T) {
 		}
 	}
 }
+
+func TestFailureStates(t *testing.T) {
+	for _, state := range []string{"FAILED", "RESOURCE_LIMIT", "ABORTED"} {
+		if !isFailureState(state) {
+			t.Fatalf("%s not marked failure", state)
+		}
+	}
+	for _, state := range []string{"OUTPUT_SEALED", "DECIDED", "WAITING_DATA", "QUEUED"} {
+		if isFailureState(state) {
+			t.Fatalf("%s unexpectedly marked failure", state)
+		}
+	}
+}

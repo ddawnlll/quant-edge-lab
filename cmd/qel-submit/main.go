@@ -28,6 +28,15 @@ func isWaitComplete(state string) bool {
 	}
 }
 
+func isFailureState(state string) bool {
+	return state == "FAILED" || state == "RESOURCE_LIMIT" || state == "ABORTED"
+}
+
+func fatal(v any) {
+	fmt.Fprintln(os.Stderr, "qel-submit:", v)
+	os.Exit(2)
+}
+
 func hash(b []byte) string {
 	s := sha256.Sum256(b)
 	return hex.EncodeToString(s[:])
@@ -47,11 +56,11 @@ func main() {
 	}
 	raw, err := os.ReadFile(*paramsPath)
 	if err != nil {
-		panic(err)
+		fatal(err)
 	}
 	var params map[string]any
 	if err := json.Unmarshal(raw, &params); err != nil {
-		panic(err)
+		fatal(err)
 	}
 	_ = params
 	tokenPath := *root + "/http.token"
@@ -60,7 +69,7 @@ func main() {
 	}
 	token, err := os.ReadFile(tokenPath)
 	if err != nil {
-		panic("read http token: " + err.Error())
+		fatal("read http token: " + err.Error())
 	}
 	auth := "Bearer " + strings.TrimSpace(string(token))
 	post := func(url string, body []byte) (*http.Response, error) {
@@ -74,18 +83,18 @@ func main() {
 	}
 	sealResp, err := post(*httpAddr+"/v1/dev/params", raw)
 	if err != nil {
-		panic(err)
+		fatal(err)
 	}
 	sealBody, _ := io.ReadAll(sealResp.Body)
 	sealResp.Body.Close()
 	if sealResp.StatusCode >= 300 {
-		panic(string(sealBody))
+		fatal(string(sealBody))
 	}
 	var sealed struct {
 		Artifact map[string]any `json:"artifact"`
 	}
 	if err := json.Unmarshal(sealBody, &sealed); err != nil {
-		panic(err)
+		fatal(err)
 	}
 	ref := sealed.Artifact
 	if *jobID == "" {
@@ -135,12 +144,12 @@ func main() {
 		return h
 	}()
 	if err := qelcontract.ValidateDef("JobEnvelope", env); err != nil {
-		panic(err)
+		fatal(err)
 	}
 	body, _ := json.Marshal(env)
 	resp, err := post(*httpAddr+"/v1/jobs", body)
 	if err != nil {
-		panic(err)
+		fatal(err)
 	}
 	defer resp.Body.Close()
 	out, _ := io.ReadAll(resp.Body)
@@ -162,6 +171,9 @@ func main() {
 			state, _ := status["state"].(string)
 			if isWaitComplete(state) {
 				fmt.Println(strings.TrimSpace(string(data)))
+				if isFailureState(state) {
+					os.Exit(1)
+				}
 				return
 			}
 		}

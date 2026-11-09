@@ -1,0 +1,2 @@
+qel-submit: jsonschema validation failed with 'urn:qel:runtime:1.1.0#/$defs/JobEnvelope'
+- at '/kind': value must be one of 'capture', 'prepare', 'screen', 'replay', 'queue_check', 'statistics', 'audit', 'sealed_eval', 'report', 'forward', 'export', 'conformance', 'benchmark', 'agent_task'

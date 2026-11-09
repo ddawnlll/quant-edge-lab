@@ -10,7 +10,7 @@ dist/
 # runtime state and large data are never committed
 runtime/
 data/
-artifacts/
+/artifacts/
 var/
 *.sqlite
 *.sqlite-wal
