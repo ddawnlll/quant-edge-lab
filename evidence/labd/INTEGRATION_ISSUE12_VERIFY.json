@@ -1,0 +1,70 @@
+{
+  "issue": 12,
+  "task": "TASK-19",
+  "kind": "COORDINATOR_INDEPENDENT_VERIFICATION",
+  "integration_branch": "qel/followup2-20261109",
+  "base_sha": "69caec2e782096477aadbc9cbc3cd7ba1eb7dd0c",
+  "patch_commit": "47ec706b35f4364986d6ccfcf00bd9e8ae03bc29",
+  "integrated_commit": "f3fa5c8",
+  "verification": {
+    "pytest": {"command": "QEL_DATA_ROOT=/home/quant/quant/quant-edge-lab/data PYTHONPATH=python QEL_ROOT=$PWD .venv/bin/python -m pytest -q tests", "result": "228 passed", "exit_code": 0},
+    "byte_bounded_parity": {
+      "240s": {"events": 12418, "orders": 15, "positions": 8, "tape_sha256": "72de4436740e34c68212c0756b3a79161185719b801ffede2416ebe1fc6dbc4f", "chunk_bytes": 512, "batches": 1315, "peak_rss_kb": 19864, "tape_equal": true},
+      "archive_day": {"events": 358200, "orders": 307, "positions": 154, "funding_count": 2, "funding_total": "-0.00300075", "tape_sha256": "82a3363945ea95fde11624d332e61396c6af1bad60c46cab840ff548de951440", "chunk_bytes": 8388608, "batches": 6, "peak_rss_kb": 42036, "tape_equal": true},
+      "atomicity": {"record_split_count": 0, "same_timestamp_group_split_count": 0, "sub_line_budget_parity": "chunk-bytes=1 completed all 12418 records and matched the materialized tape", "funding_state_continuous": true}
+    },
+    "b2": {"workload": "quote/trade replay", "events": 1241800, "warm_p90_seconds": 20.545, "target_seconds": 30, "passed": true},
+    "b3": {"workload": "atomic quote/trade streaming", "events": 1241800, "p90_seconds": 20.545, "target_seconds": 120, "passed": true},
+    "b4_10m": {
+      "corpus": "data/native/DS-MULTIDAY-10M/events.jsonl",
+      "corpus_sha256": "38a94cd1023d628a50b2ead719667a3f8ca89f2030d24e5da88ac19849b7005f",
+      "events": 11247697,
+      "batches": 177,
+      "elapsed_ms": 151723,
+      "peak_rss_kb": 44464,
+      "final_decile_slope_bytes_per_million_events": 52624.8,
+      "final_decile_slope_mib_per_million_events": 0.0502,
+      "target_mib_per_million_events": 1.0,
+      "passed": true,
+      "oom_events": 0,
+      "active_positions_end": 1,
+      "epochs_retained_end": 245,
+      "purged_closed_orders": 3401,
+      "purged_closed_positions": 90
+    },
+    "b4_100m": {
+      "status": "BLOCKED_NOT_RUN",
+      "reason": "time box: the 10M run took 151.7 s; a 100M run is projected at about 1349 s (22.5 min), longer than the remaining assignment time box",
+      "disk_sufficient": true,
+      "projected_peak_rss_kb": 45000,
+      "projected_slope": 52624.8,
+      "note": "projection only; not certified"
+    },
+    "resource_limits": {"max_active_orders": true, "max_epochs": true, "resource_limit_result": true, "purge_closed_state": true},
+    "f15": {"fixture": "F15", "status": "PASS"}
+  },
+  "acceptance_boundary": {
+    "status": "PARTIAL/EVIDENCE_PENDING",
+    "missing": [
+      "B4 100M-event run (only 1.24M and 11.25M were executed)",
+      "cgroup memory.peak/memory.current measurement; the cgroup v2 memory controller was not delegated, so VmHWM was used",
+      "B2/B3 at the full declared 1M/10M/100M sizes as applicable"
+    ],
+    "note": "Byte-bounded replay, purge/resource limits, parity and the 10M plateau are verified. The 100M plateau is explicitly not certified."
+  },
+  "claims_not_made": [
+    "B4 100M certified",
+    "cgroup-measured peak memory",
+    "full TASK-19 acceptance"
+  ],
+  "evidence_hashes": {
+    "evidence/labd/STREAMING_PARITY.json": "committed with patch",
+    "evidence/labd/B2_QUOTE_TRADE_REPLAY.json": "committed with patch",
+    "evidence/labd/B3_L2_ATOMIC_STREAMING.json": "committed with patch",
+    "evidence/labd/B4_MEMORY_PLATEAU.json": "committed with patch",
+    "evidence/labd/B4_100M_BLOCKED.json": "committed with patch",
+    "evidence/labd/F15_CONFORMANCE.json": "committed with patch"
+  },
+  "verdict": "PASS_B2_B3_AND_10M_PLATEAU",
+  "acceptance_note": "Engineering is integrated and independently verified. Full TASK-19 acceptance remains EVIDENCE_PENDING on the 100M run and cgroup measurement."
+}

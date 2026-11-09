@@ -1,0 +1,65 @@
+{
+  "kind": "TASK19_B4_MEMORY_PLATEAU",
+  "task": "TASK-19",
+  "required_check": "B4",
+  "runner_binary_sha256": "e8d7e4f363257ec94f6ef0185e4610917513ce9733766afc063921f02db8199a",
+  "resource_measurement": {
+    "method": "per-process VmHWM (peak) and VmRSS samples from /proc/self/status after every published batch",
+    "cgroup": "unavailable: this scope exposes no /sys/fs/cgroup/memory.peak or memory.current; cgroup v2 memory controller is not delegated",
+    "worker_memory_limit_bytes": 2147483648,
+    "samples_artifact": "resource.rss_samples embedded in the runner receipt; 1.24M runs used 20 batch samples, 10M used 177"
+  },
+  "runs": {
+    "bench_1_24m": {
+      "corpus": "data/native/bench/events_100x.jsonl",
+      "events": 1241800,
+      "strategy": "taker_1s",
+      "chunk_bytes": 8388608,
+      "batches": 20,
+      "peak_rss_kb": 43880,
+      "first_rss_kb": 21404,
+      "last_rss_kb": 43880,
+      "final_decile_slope_bytes_per_million_events": [458293.7, 1260307.7, 572867.1],
+      "final_decile_note": "only 2 samples in the final decile at 20 batches, so the 1.24M slope is warmup/allocator noise; run 2 exceeds 1 MiB/M while peak RSS is unchanged from the other runs",
+      "orders": 1797,
+      "positions": 899,
+      "active_positions_end": 1,
+      "epochs_retained_end": 10,
+      "purged_closed_orders": 1797,
+      "purged_closed_positions": 15
+    },
+    "multiday_10m": {
+      "corpus": "data/native/DS-MULTIDAY-10M/events.jsonl",
+      "corpus_sha256": "38a94cd1023d628a50b2ead719667a3f8ca89f2030d24e5da88ac19849b7005f",
+      "corpus_bytes": 1484328129,
+      "events": 11247697,
+      "strategy": "taker_1m",
+      "chunk_bytes": 8388608,
+      "batches": 177,
+      "elapsed_ms": 151723,
+      "peak_rss_kb": 44464,
+      "first_rss_kb": 19996,
+      "last_rss_kb": 44464,
+      "final_decile_start_rss_kb": 44412,
+      "final_decile_end_rss_kb": 44464,
+      "final_decile_events": 1011842,
+      "final_decile_slope_bytes_per_million_events": 52624.8,
+      "final_decile_slope_mib_per_million_events": 0.0502,
+      "orders": 3401,
+      "positions": 1701,
+      "active_positions_end": 1,
+      "epochs_retained_end": 245,
+      "purged_closed_orders": 3401,
+      "purged_closed_positions": 90
+    }
+  },
+  "targets": {
+    "peak_within_worker_memory_max": {"value": true, "evidence": "44.5 MiB peak vs 2048 MiB limit"},
+    "active_state_growth_unbounded": {"value": false, "evidence": "active positions end 1, retained epochs 245, all closed orders purged"},
+    "postwarmup_last_decile_memory_slope_bytes_per_million_events": {"value": 52624.8, "target": 1048576, "operator": "LE", "passed": true},
+    "run_completed": {"value": true},
+    "oom_events": {"value": 0}
+  },
+  "plateau_evidence": "Peak RSS is 43.7 MiB at 1.24M events and 44.5 MiB at 11.25M events, a flat plateau rather than the linear growth of the 1.24M-event prototype (376 MB).",
+  "verdict": "PASS_AT_10M"
+}

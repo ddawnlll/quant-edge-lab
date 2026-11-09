@@ -3,7 +3,7 @@
   "spec_version": "1.1.0",
   "spec_package_sha256": "db18e7a6e94b8c9b233a48097040d1a3a6c655ea126d5e6805d67d4f6e91fd30",
   "baseline_sha256": "71628e4b4ceceac3447759cdabab131e16237aff9fd7569a09f1bc61e4d70d06",
-  "updated_utc": "2026-11-09T12:09:00Z",
+  "updated_utc": "2026-11-09T12:53:50Z",
   "host": {
     "os": "Debian GNU/Linux 13 (trixie)",
     "kernel": "6.12.115+deb13.1-amd64",
@@ -208,8 +208,17 @@
     "TASK-19": {
       "status": "PARTIAL",
       "evidence": [
-        "evidence/native/SPIKE_REPORT.json"
-      ]
+        "native/runner/src/main.rs",
+        "tests/test_streaming.py",
+        "evidence/labd/STREAMING_PARITY.json",
+        "evidence/labd/B2_QUOTE_TRADE_REPLAY.json",
+        "evidence/labd/B3_L2_ATOMIC_STREAMING.json",
+        "evidence/labd/B4_MEMORY_PLATEAU.json",
+        "evidence/labd/B4_100M_BLOCKED.json",
+        "evidence/labd/F15_CONFORMANCE.json",
+        "evidence/labd/INTEGRATION_ISSUE12_VERIFY.json"
+      ],
+      "blocked": "B4 100M not run (projected 22.5 min) and cgroup memory controller unavailable; 10M plateau certified at 0.0502 MiB/M"
     },
     "TASK-20": {
       "status": "DONE",

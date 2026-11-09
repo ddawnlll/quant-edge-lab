@@ -1,0 +1,24 @@
+{
+  "kind": "TASK19_B3_L2_ATOMIC_STREAMING",
+  "task": "TASK-19",
+  "required_check": "B3",
+  "workload": "atomic quote/trade streaming replay",
+  "corpus": "data/native/bench/events_100x.jsonl",
+  "corpus_events": 1241800,
+  "strategy": "policy/examples/taker_1s.json",
+  "mode": "--chunk-bytes 8388608",
+  "runner_binary_sha256": "e8d7e4f363257ec94f6ef0185e4610917513ce9733766afc063921f02db8199a",
+  "runs": [
+    {"run": 1, "status": "PASS", "events": 1241800, "batches": 20, "elapsed_ms": 20518, "wall_ms": 20545, "peak_rss_kb": 43744},
+    {"run": 2, "status": "PASS", "events": 1241800, "batches": 20, "elapsed_ms": 19574, "wall_ms": 19609, "peak_rss_kb": 43880},
+    {"run": 3, "status": "PASS", "events": 1241800, "batches": 20, "elapsed_ms": 19111, "wall_ms": 19144, "peak_rss_kb": 43572}
+  ],
+  "atomicity": {
+    "record_split_count": 0,
+    "same_timestamp_group_split_count": 0,
+    "sub_line_budget_parity": "chunk-bytes=1 completed all 12418 records and matched the materialized tape",
+    "funding_state_continuous": true
+  },
+  "metric": {"name": "p90_seconds", "value": 20.545, "target": 120.0, "operator": "LE", "passed": true},
+  "verdict": "PASS"
+}
