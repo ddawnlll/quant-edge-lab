@@ -1,0 +1,51 @@
+B6 / TASK-26 - PILOT_NOT_ACCEPTANCE
+label: PILOT_NOT_ACCEPTANCE
+seed protocol hash: 30a0ef917ba2484c7966bf13f51cf2973e83235862b5eae408576a0b5d5e8571
+decision method: SB_HAC_STUDENTIZED_SHARED_INDEX_IUT_HOLM_V1
+
+per generator:
+  GAUSSIAN_AR1_RHO_0_3: programs=1 promotions=0 rate=0.000000 cp95_upper=0.950000 target_pass=False coverage=PASS coverage_rate=1.0 blocked_endpoints=0 family_sizes={'2': 3} zero_eligible_cohorts=0 certified_stationary=False
+  STUDENT_T_DF5_AR1: programs=1 promotions=0 rate=0.000000 cp95_upper=0.950000 target_pass=False coverage=PASS coverage_rate=1.0 blocked_endpoints=0 family_sizes={'2': 3} zero_eligible_cohorts=0 certified_stationary=False
+  FIVE_COIN_COMMON_FACTOR_LOADING_0_6: programs=1 promotions=0 rate=0.000000 cp95_upper=0.950000 target_pass=False coverage=PASS coverage_rate=1.0 blocked_endpoints=0 family_sizes={'2': 3} zero_eligible_cohorts=0 certified_stationary=False
+  FROZEN_REGIME_SHIFT_NEGATIVE_CONTROL: programs=1 promotions=0 rate=0.000000 cp95_upper=0.950000 target_pass=None coverage=FAILED_OR_BLOCKED_NONSTATIONARY coverage_rate=None blocked_endpoints=2 family_sizes={'0': 1, '1': 2} zero_eligible_cohorts=1 certified_stationary=False
+
+cohort alpha spending (actual decision family size):
+  GAUSSIAN_AR1_RHO_0_3: j=0 alpha=0.025 family_sizes={'2': 1} b_required={'2': 9999} max_resamples=51199 unresolved=0
+  GAUSSIAN_AR1_RHO_0_3: j=1 alpha=0.0125 family_sizes={'2': 1} b_required={'2': 9999} max_resamples=51199 unresolved=0
+  GAUSSIAN_AR1_RHO_0_3: j=2 alpha=0.00625 family_sizes={'2': 1} b_required={'2': 9999} max_resamples=51199 unresolved=0
+  STUDENT_T_DF5_AR1: j=0 alpha=0.025 family_sizes={'2': 1} b_required={'2': 9999} max_resamples=51199 unresolved=0
+  STUDENT_T_DF5_AR1: j=1 alpha=0.0125 family_sizes={'2': 1} b_required={'2': 9999} max_resamples=51199 unresolved=0
+  STUDENT_T_DF5_AR1: j=2 alpha=0.00625 family_sizes={'2': 1} b_required={'2': 9999} max_resamples=51199 unresolved=0
+  FIVE_COIN_COMMON_FACTOR_LOADING_0_6: j=0 alpha=0.025 family_sizes={'2': 1} b_required={'2': 9999} max_resamples=51199 unresolved=0
+  FIVE_COIN_COMMON_FACTOR_LOADING_0_6: j=1 alpha=0.0125 family_sizes={'2': 1} b_required={'2': 9999} max_resamples=51199 unresolved=0
+  FIVE_COIN_COMMON_FACTOR_LOADING_0_6: j=2 alpha=0.00625 family_sizes={'2': 1} b_required={'2': 9999} max_resamples=51199 unresolved=0
+  FROZEN_REGIME_SHIFT_NEGATIVE_CONTROL: j=0 alpha=0.025 family_sizes={'0': 1} b_required={'0': 0} max_resamples=51199 unresolved=0
+  FROZEN_REGIME_SHIFT_NEGATIVE_CONTROL: j=1 alpha=0.0125 family_sizes={'1': 1} b_required={'1': 9999} max_resamples=51199 unresolved=0
+  FROZEN_REGIME_SHIFT_NEGATIVE_CONTROL: j=2 alpha=0.00625 family_sizes={'1': 1} b_required={'1': 9999} max_resamples=51199 unresolved=0
+
+power curve (injected variant 0):
+  GAUSSIAN_AR1_RHO_0_3: effect=0.0 programs=1 detections=0 power=0.0 mde_daily_median=None
+  GAUSSIAN_AR1_RHO_0_3: effect=0.0005 programs=1 detections=0 power=0.0 mde_daily_median=0.0015443227611493132
+  GAUSSIAN_AR1_RHO_0_3: effect=0.001 programs=1 detections=0 power=0.0 mde_daily_median=0.0015443227611493132
+  GAUSSIAN_AR1_RHO_0_3: effect=0.002 programs=1 detections=0 power=0.0 mde_daily_median=0.0015443227611493132
+  STUDENT_T_DF5_AR1: effect=0.0 programs=1 detections=0 power=0.0 mde_daily_median=None
+  STUDENT_T_DF5_AR1: effect=0.0005 programs=1 detections=0 power=0.0 mde_daily_median=0.0013893971418800783
+  STUDENT_T_DF5_AR1: effect=0.001 programs=1 detections=0 power=0.0 mde_daily_median=0.0013893971418800783
+  STUDENT_T_DF5_AR1: effect=0.002 programs=1 detections=1 power=1.0 mde_daily_median=0.0013893971418800783
+  FIVE_COIN_COMMON_FACTOR_LOADING_0_6: effect=0.0 programs=1 detections=0 power=0.0 mde_daily_median=None
+  FIVE_COIN_COMMON_FACTOR_LOADING_0_6: effect=0.0005 programs=1 detections=0 power=0.0 mde_daily_median=0.001254239081885383
+  FIVE_COIN_COMMON_FACTOR_LOADING_0_6: effect=0.001 programs=1 detections=0 power=0.0 mde_daily_median=0.001254239081885383
+  FIVE_COIN_COMMON_FACTOR_LOADING_0_6: effect=0.002 programs=1 detections=1 power=1.0 mde_daily_median=0.001254239081885383
+  FROZEN_REGIME_SHIFT_NEGATIVE_CONTROL: effect=0.0 programs=1 detections=0 power=0.0 mde_daily_median=None
+  FROZEN_REGIME_SHIFT_NEGATIVE_CONTROL: effect=0.0005 programs=1 detections=0 power=0.0 mde_daily_median=None
+  FROZEN_REGIME_SHIFT_NEGATIVE_CONTROL: effect=0.001 programs=1 detections=0 power=0.0 mde_daily_median=None
+  FROZEN_REGIME_SHIFT_NEGATIVE_CONTROL: effect=0.002 programs=1 detections=0 power=0.0 mde_daily_median=None
+
+coverage matrix complete=True problems=[]
+
+targets: {"coverage_report_present": {"expected": true, "operator": "EQ", "pass": true, "value": true}, "null_fwer_95cp_upper_per_generator": {"metric": "null_fwer_95cp_upper_per_generator", "operator": "LE", "pass": false, "per_generator": {"FIVE_COIN_COMMON_FACTOR_LOADING_0_6": 0.95, "GAUSSIAN_AR1_RHO_0_3": 0.95, "STUDENT_T_DF5_AR1": 0.95}, "threshold": 0.075, "value": 0.95}, "power_curve_report_present": {"expected": true, "operator": "EQ", "pass": true, "value": true}}
+blockers: ['COMPUTE_BUDGET_INSUFFICIENT', 'NULL_FWER_UPPER_ABOVE_TARGET']
+resources: wall=896.041s cpu=0.190s peak_rss=152485888 B workers=4
+compute budget: est_s_per_program=198.294 est_full_core_hours=1186.61 est_full_wall_hours=296.65 fits_budget=False
+identity records_signature: 94ab1c3c54116a6ad559df0111dd1b098c6ca4b6818f30c8aab784e8e7f9c6ce
+artifact report_sha256: 1ddc45182c32d05c2079b2e12d3919c059a7dd762e50613bb51bc726ac2f4bbc
