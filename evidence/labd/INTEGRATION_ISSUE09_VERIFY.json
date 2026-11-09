@@ -1,0 +1,68 @@
+{
+  "issue": 9,
+  "task": "TASK-16",
+  "kind": "COORDINATOR_INDEPENDENT_VERIFICATION",
+  "integration_branch": "qel/int-20261109",
+  "base_sha": "f6dbde793e9db6c6124f4826b5bdff7e793502c1",
+  "patch_commit": "bb97b58ca3d6be865dc0b68c5f38c92a1b7d21f0",
+  "integrated_commit": "ddf72a0",
+  "verification": {
+    "pytest": {"command": "PYTHONPATH=python QEL_ROOT=$PWD .venv/bin/python -m pytest -q tests", "result": "164 passed", "exit_code": 0},
+    "focused": {"command": "pytest -q tests/test_evaluator.py tests/test_isolation_anchor.py tests/test_release.py", "result": "14 release tests + existing evaluator/isolation tests passed", "exit_code": 0},
+    "evaluator_demo": {
+      "command": "python -m qel.cli evaluator-demo",
+      "status": "PASS",
+      "signature_verified": true,
+      "pre_consumption_refusal": "WAITING_AUTHORIZED_COHORT",
+      "second_decision_refusal": "PROTOCOL_VIOLATION",
+      "data_boundary": "synthetic evaluator calibration vector, not a market result"
+    },
+    "release_checks": {
+      "one_signed_batch": true,
+      "independent_signature_valid": true,
+      "canonical_serialization": "RFC8785_JCS",
+      "all_outcomes_in_manifest": true,
+      "invalid_candidate_in_family": true,
+      "failed_gate_blocks_promotion": true,
+      "no_decision_before_release": true,
+      "no_manifest_before_release": true,
+      "no_batch_before_release": true,
+      "alpha_spent_once": true,
+      "exact_retry_same_batch": true,
+      "changed_inputs_refused": true,
+      "tampered_batch_refused": true,
+      "duplicate_release_refused": true,
+      "contamination_refused": true,
+      "override_recorded_separately": true,
+      "raw_inputs_redacted": true,
+      "synthetic_labelled": true
+    },
+    "lineage_and_gates": {
+      "caller_supplied_metrics_rejected": true,
+      "unsigned_code_rejected": true,
+      "missing_gate_fields_fail_closed": true,
+      "invalid_lineage_rejected": true,
+      "unregistered_signing_keys_rejected": true,
+      "signed_result_bound_to_scope_evidence_gates_and_receipt": true
+    }
+  },
+  "certification_boundary": {
+    "synthetic_cohort": true,
+    "market_result": false,
+    "fresh_oos_confirmation": "EXTERNAL_BLOCKED",
+    "g4_market_confirmation": "EXTERNAL_BLOCKED"
+  },
+  "claims_not_made": [
+    "a fresh OOS confirmation",
+    "a market G4 outcome",
+    "a scientific promotion or edge"
+  ],
+  "evidence_hashes": {
+    "evidence/labd/RELEASE_SYNTHETIC_COHORT.json": "committed with patch",
+    "evidence/labd/RELEASE_EVALUATOR_E2E.json": "committed with patch",
+    "evidence/labd/TASK16_TESTS.txt": "committed with patch",
+    "evidence/labd/TASK16_FULL_TESTS.txt": "committed with patch"
+  },
+  "verdict": "PASS_SYNTHETIC_COHORT",
+  "acceptance_note": "The signed multi-candidate synthetic cohort, gate fail-closed behavior, redacted manifest, retry/tamper/duplicate/contamination negatives and independently verified signature are complete. Market confirmation remains external."
+}
