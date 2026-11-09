@@ -1,0 +1,59 @@
+{
+  "kind": "TASK19_STREAMING_IMPLEMENTATION",
+  "task": "TASK-19",
+  "issue": 12,
+  "milestone": "M4",
+  "title": "Bounded replay and cache purge",
+  "base_sha": "69caec2e782096477aadbc9cbc3cd7ba1eb7dd0c",
+  "branch": "qel/issue-12-streaming",
+  "runner_binary_sha256": "e8d7e4f363257ec94f6ef0185e4610917513ce9733766afc063921f02db8199a",
+  "implementation": {
+    "reader": "BufReader<File>::read_line parses only complete NDJSON lines; a record is never split across a chunk.",
+    "byte_budget": "--chunk-bytes N bounds each published batch. The reader completes the current same-timestamp group before crossing the boundary, so a timestamp boundary is never cut. --chunk 0 and --chunk-bytes 0 keep the materialized reference mode for exact parity comparison.",
+    "state_preservation": "Each batch uses engine.add_data(batch, None, true, true), engine.run(None, None, None, true), engine.clear_data(). Open positions, timers, pending commands, queue and funding state stay continuous. engine.end() runs once after the final batch.",
+    "funding": "Funding-rate updates are pre-collected in a bounded pass and injected at their economic timestamp, including historical backfill lines that arrive at the end of a capture. This reproduces the global timestamp order used by the materialized reference without buffering economic events.",
+    "durable_purge": "After each published batch the runner purges closed cache orders and closed positions (cache.purge_closed_orders / cache.purge_closed_positions) with --purge-buffer-secs. Open positions, pending commands and undelivered funding are retained by the cache guards. The funding epoch ledger releases closed epochs only after --epoch-retention-ns; settlement ids in the tape remain the auditable history.",
+    "resource_limits": {
+      "max_active_orders": "--max-active-orders (default 10000); exhaustion returns status RESOURCE_LIMIT with reason MAX_ACTIVE_ORDERS",
+      "max_epochs": "--max-epochs (default 1000000) counts active plus retained closed epochs; exhaustion returns RESOURCE_LIMIT reason MAX_EPOCHS",
+      "max_pending_fundings": "--max-pending-fundings (default 100000); exhaustion is an explicit RESOURCE_LIMIT error",
+      "failure_contract": "RESOURCE_LIMIT emits partial_tape=true and no MARK/END_FOLD. The runner does not force-flatten, skip economic events, or silently drop records; the receipt reports the processed prefix and the observed value."
+    },
+    "rss_sampling": "--rss-samples PATH writes one JSON line per published batch with VmRSS, VmHWM, active orders/positions, retained epochs and purge counters."
+  },
+  "new_flags": [
+    "--chunk-bytes",
+    "--max-active-orders",
+    "--max-epochs",
+    "--max-pending-fundings",
+    "--purge-buffer-secs",
+    "--epoch-retention-ns",
+    "--rss-samples",
+    "--no-purge"
+  ],
+  "changed_paths": [
+    "native/runner/src/main.rs",
+    "tests/test_streaming.py",
+    "evidence/labd/STREAMING_IMPLEMENTATION.json",
+    "evidence/labd/STREAMING_PARITY.json",
+    "evidence/labd/STREAMING_TESTS_FOCUSED.txt",
+    "evidence/labd/STREAMING_TESTS_FULL.txt",
+    "evidence/labd/B2_QUOTE_TRADE_REPLAY.json",
+    "evidence/labd/B3_L2_ATOMIC_STREAMING.json",
+    "evidence/labd/B4_MEMORY_PLATEAU.json",
+    "evidence/labd/B4_100M_BLOCKED.json",
+    "evidence/labd/F15_CONFORMANCE.json"
+  ],
+  "certified": {
+    "byte_bounded_parity": true,
+    "same_timestamp_boundary": true,
+    "funding_continuity": true,
+    "closed_state_purge": true,
+    "resource_limit_receipt": true,
+    "f15": true,
+    "b2": true,
+    "b3": true,
+    "b4_10m_plateau": true,
+    "b4_100m": false
+  }
+}

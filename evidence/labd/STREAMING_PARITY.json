@@ -1,0 +1,77 @@
+{
+  "kind": "TASK19_STREAMING_PARITY",
+  "task": "TASK-19",
+  "runner_binary_sha256": "e8d7e4f363257ec94f6ef0185e4610917513ce9733766afc063921f02db8199a",
+  "reference_mode": "materialized (--chunk 0 --chunk-bytes 0, one engine.run(streaming=false))",
+  "bounded_mode": "byte_bounded (--chunk-bytes N, add_data/run/clear_data per batch, engine.end at EOF)",
+  "runs": {
+    "live_240s_reference": {
+      "events": 12418,
+      "total_orders": 15,
+      "total_positions": 8,
+      "native_account_total": "999.45238652",
+      "native_account_equity": "999.45238652",
+      "funding_count": 0,
+      "tape_sha256": "72de4436740e34c68212c0756b3a79161185719b801ffede2416ebe1fc6dbc4f",
+      "peak_rss_kb": 19864
+    },
+    "live_240s_chunk_bytes_512": {
+      "events": 12418,
+      "total_orders": 15,
+      "total_positions": 8,
+      "native_account_total": "999.45238652",
+      "native_account_equity": "999.45238652",
+      "funding_count": 0,
+      "tape_sha256": "72de4436740e34c68212c0756b3a79161185719b801ffede2416ebe1fc6dbc4f",
+      "batches": 1315,
+      "peak_rss_kb": 19864
+    },
+    "archive_reference": {
+      "events": 358200,
+      "total_orders": 307,
+      "total_positions": 154,
+      "native_account_total": "991.11310345",
+      "native_account_equity": "991.10431345",
+      "funding_count": 2,
+      "funding_total": "-0.00300075",
+      "tape_sha256": "82a3363945ea95fde11624d332e61396c6af1bad60c46cab840ff548de951440",
+      "peak_rss_kb": 82080
+    },
+    "archive_chunk_bytes_8388608": {
+      "events": 358200,
+      "total_orders": 307,
+      "total_positions": 154,
+      "native_account_total": "991.11310345",
+      "native_account_equity": "991.10431345",
+      "funding_count": 2,
+      "funding_total": "-0.00300075",
+      "tape_sha256": "82a3363945ea95fde11624d332e61396c6af1bad60c46cab840ff548de951440",
+      "batches": 6,
+      "peak_rss_kb": 42036
+    }
+  },
+  "comparisons": {
+    "live_240s_tape_byte_equal": true,
+    "live_240s_native_account_equal": true,
+    "live_240s_funding_equal": true,
+    "live_240s_orders_positions_equal": true,
+    "archive_tape_byte_equal": true,
+    "archive_native_account_equal": true,
+    "archive_funding_equal": true,
+    "archive_orders_positions_equal": true,
+    "regression_vs_pre_task_runner": {
+      "live_240s_tape_equal": true,
+      "live_240s_native_account_equal": true,
+      "archive_tape_equal": true,
+      "archive_native_account_equal": true,
+      "pre_task_runner_built_from_sha": "69caec2e782096477aadbc9cbc3cd7ba1eb7dd0c"
+    }
+  },
+  "boundary_cases": {
+    "sub_line_byte_budget": "chunk-bytes=1 publishes only complete records; events=12418 and tape ends with END_FOLD (tests/test_streaming.py::test_sub_line_chunk_budget_never_splits_records)",
+    "same_timestamp_groups": "flush waits for a timestamp change, so a timestamp boundary is never crossed mid-group",
+    "final_same_timestamp_boundary_archive": "day-end Mark 1794095999999000000 and Funding 1794096000000000000 replay in global timestamp order; both reference and bounded runs emit the same 2 funding postings",
+    "late_funding_backfill": "240s capture stores 10 historical Funding lines at EOF; pre-collected and injected at their economic timestamps so both modes emit funding_count=0"
+  },
+  "verdict": "PASS"
+}

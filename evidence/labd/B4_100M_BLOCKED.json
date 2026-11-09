@@ -1,0 +1,28 @@
+{
+  "kind": "TASK19_B4_100M_BLOCKED",
+  "task": "TASK-19",
+  "required_check": "B4",
+  "status": "BLOCKED_NOT_RUN",
+  "claim": "The 100M-event plateau is NOT certified. No 100M run was executed.",
+  "reason": "Time box. The measured 10M-event run took 151.7 s, so a single 100M run is projected at about 1349 s (22.5 min), longer than the remaining assignment time box. Disk is not the blocker.",
+  "measured_basis": {
+    "events": 11247697,
+    "elapsed_ms": 151723,
+    "ms_per_million_events": 13489.1,
+    "projected_100m_elapsed_ms": 1348910,
+    "projected_100m_elapsed_minutes": 22.48,
+    "peak_rss_kb": 44464,
+    "final_decile_slope_bytes_per_million_events": 52624.8
+  },
+  "storage": {
+    "free_bytes_at_check": 135291469824,
+    "projected_100m_bytes": 14843281290,
+    "sufficient": true
+  },
+  "required_command": "mkdir -p /home/quant/quant/quant-edge-lab/data/native/DS-MULTIDAY-100M && for i in $(seq 1 10); do cat data/native/DS-MULTIDAY-10M/events.jsonl; done > data/native/DS-MULTIDAY-100M/events.jsonl && sha256sum data/native/DS-MULTIDAY-100M/events.jsonl && /home/quant/quant/.build-cache/qel-native/release/qel-native-runner --events data/native/DS-MULTIDAY-100M/events.jsonl --strategy policy/examples/taker_1m.json --chunk-bytes 8388608 --rss-samples evidence/labd/B4_100M.rss.jsonl --out evidence/labd/B4_100M.json",
+  "projection_only_not_certified": {
+    "extrapolated_peak_rss_kb": 45000,
+    "extrapolated_final_decile_slope_bytes_per_million_events": 52624.8,
+    "note": "Extrapolation from the 10M plateau; it is not a substitute for the 100M run."
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "kind": "TASK19_B2_QUOTE_TRADE_REPLAY",
+  "task": "TASK-19",
+  "required_check": "B2",
+  "workload": "quote/trade replay",
+  "corpus": "data/native/bench/events_100x.jsonl",
+  "corpus_events": 1241800,
+  "strategy": "policy/examples/taker_1s.json",
+  "mode": "--chunk-bytes 8388608",
+  "runner_binary_sha256": "e8d7e4f363257ec94f6ef0185e4610917513ce9733766afc063921f02db8199a",
+  "runs": [
+    {"run": 1, "status": "PASS", "events": 1241800, "batches": 20, "elapsed_ms": 20518, "wall_ms": 20545, "peak_rss_kb": 43744, "total_orders": 1797, "total_positions": 899},
+    {"run": 2, "status": "PASS", "events": 1241800, "batches": 20, "elapsed_ms": 19574, "wall_ms": 19609, "peak_rss_kb": 43880, "total_orders": 1797, "total_positions": 899},
+    {"run": 3, "status": "PASS", "events": 1241800, "batches": 20, "elapsed_ms": 19111, "wall_ms": 19144, "peak_rss_kb": 43572, "total_orders": 1797, "total_positions": 899}
+  ],
+  "metric": {"name": "warm_p90_seconds", "value": 20.545, "target": 30.0, "operator": "LE", "passed": true},
+  "note": "p90 of three warm runs uses the slowest observed wall time (20.545 s), conservative for n=3.",
+  "verdict": "PASS"
+}

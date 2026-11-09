@@ -1,0 +1,18 @@
+{
+  "kind": "TASK19_F15_CONFORMANCE",
+  "task": "TASK-19",
+  "required_check": "F15",
+  "fixture": "F15",
+  "title": "Chunk and timestamp boundary",
+  "command": "PYTHONPATH=python QEL_ROOT=$PWD .venv/bin/python -m qel.cli fixtures --fixture F15 --out <scratch>/f15.json",
+  "exit_code": 0,
+  "status": "PASS",
+  "summary": {"total_scenarios": 1, "passed": 1, "failed": 0, "fixtures": {"F15": "PASS"}},
+  "checks": [
+    {"path": "economic_event_sequences_equal", "operator": "EQ", "expected": true, "actual": true, "passed": true},
+    {"path": "timer_state_preserved", "operator": "EQ", "expected": true, "actual": true, "passed": true},
+    {"path": "semantic_hashes_equal", "operator": "EQ", "expected": true, "actual": true, "passed": true}
+  ],
+  "metrics": {"certified": true, "book_state": "VALID", "economic_event_sequences_equal": true},
+  "verdict": "PASS"
+}
