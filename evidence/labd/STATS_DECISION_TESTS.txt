@@ -5,35 +5,479 @@ environment: PYTHONPATH=python QEL_ROOT=$PWD (repo .venv python)
 
 =============== COMMAND 1 ===============
 $ cd /home/quant/quant/qel-w07 && PYTHONPATH=python QEL_ROOT=$PWD .venv/bin/python -m pytest -q tests/test_stats.py tests/test_research.py tests/test_decision.py
-...........................                                              [100%]
-27 passed in 18.86s
+.............................                                            [100%]
+29 passed in 25.00s
 EXIT=0
 
 =============== COMMAND 2 ===============
 $ PYTHONPATH=python QEL_ROOT=$PWD .venv/bin/python -m pytest -q tests
-........................................................................ [ 66%]
-....................................                                     [100%]
-108 passed in 37.49s
+........................................................................ [ 65%]
+......................................                                   [100%]
+110 passed in 42.21s
 EXIT=0
 
-=============== CLI: stats-job (bounded audit fixture) ===============
+=============== CLI: stats-job (bounded audit fixture, default b=256) ===============
 $ PYTHONPATH=python QEL_ROOT=$PWD .venv/bin/python -m qel.cli stats-job --returns <scratch>/decision_fixture.json
-{
-  "b": 256,
-  "ci_low": 0.0009743861172566394,
-  "data_boundary": "TASK-14 bounded audit fixture",
-  "mean_daily_return": 0.001,
-  "p_control_upper": 0.04520253738123321,
-  "p_iut": 0.04520253738123321,
-  "p_profit_upper": 0.04520253738123321,
-  "status": "PASS",
-  "verdict": "EDGE"
-}
 EXIT=0
+{
+  "adjusted_p": 1.0,
+  "b": 256,
+  "budget": {
+    "alpha_schedule": "0.05 / 2^(j+1)",
+    "b_requested": 256,
+    "b_required": 9999,
+    "b_used": 256,
+    "block": 5,
+    "family_index": 0,
+    "family_size": 1,
+    "max_resamples": 1000000,
+    "resolved": false,
+    "seed": 0,
+    "sensitivity_block": 10,
+    "unresolvable": false
+  },
+  "ci_high": 0.0010192078489827808,
+  "ci_low": 0.000976668006427828,
+  "data_boundary": "TASK-14 bounded audit fixture",
+  "decision": {
+    "adjusted_p": 1.0,
+    "alpha": {
+      "family_index": 0,
+      "family_size": 1,
+      "frozen": 0.025,
+      "nominal": 0.025,
+      "schedule": "0.05 / 2^(j+1)"
+    },
+    "budget": {
+      "alpha_schedule": "0.05 / 2^(j+1)",
+      "b_requested": 256,
+      "b_required": 9999,
+      "b_used": 256,
+      "block": 5,
+      "family_index": 0,
+      "family_size": 1,
+      "max_resamples": 1000000,
+      "resolved": false,
+      "seed": 0,
+      "sensitivity_block": 10,
+      "unresolvable": false
+    },
+    "calendar_hash": "207c5056e5f6db60e43a521d81765091398e0084b3a25a793494f1581738be16",
+    "capital": "1000",
+    "computable": true,
+    "first_day": "2026-01-01",
+    "floors": {
+      "control": "0.0",
+      "economic": "0.0001"
+    },
+    "holm": {
+      "adjusted": [
+        1.0
+      ],
+      "alpha": 0.025,
+      "candidate_id": "CANDIDATE",
+      "family_size": 1,
+      "members": [
+        "CANDIDATE"
+      ],
+      "padded_members": 0,
+      "pvalues": [
+        1.0
+      ],
+      "rejected": [
+        false
+      ],
+      "self_adjusted_p": 1.0,
+      "self_rejected": false,
+      "self_threshold": 0.025,
+      "thresholds": [
+        0.025
+      ]
+    },
+    "holm_threshold": 0.025,
+    "iut_p_upper": 1.0,
+    "last_day": "2026-04-30",
+    "method": "SB_HAC_STUDENTIZED_SHARED_INDEX_IUT_HOLM_V1",
+    "method_hash": "6d0f5e9d86df880a3f1ace02d61a12bca38b4c8f37343b0b5250722d3ea2e717",
+    "n_days": 120,
+    "n_symbols_candidate": 1,
+    "n_symbols_control": 1,
+    "power": {
+      "endpoint_a": 1.0,
+      "endpoint_b": 0.0,
+      "mde_daily_endpoint_a": 3.829274466819273e-05,
+      "mde_daily_endpoint_b": 3.681383248324912e-05,
+      "target": 0.8
+    },
+    "primary": {
+      "b": 256,
+      "block": 5,
+      "endpoints": {
+        "A": {
+          "ci_high_two_sided": 0.0010239642625287987,
+          "ci_low_two_sided": 0.0009700679497149227,
+          "ci_lower_95": 0.000976668006427828,
+          "ci_upper_95": 0.0010192078489827808,
+          "floor": 0.0001,
+          "hac_se": 1.3668241972659012e-05,
+          "mde_daily": 3.829274466819273e-05,
+          "mean_daily_return": 0.001,
+          "name": "A",
+          "negative_evidence": false,
+          "p_raw": 0.0038910505836575876,
+          "p_upper": 0.024295195407693194,
+          "power": 1.0,
+          "t_obs": 65.84606870439494
+        },
+        "B": {
+          "ci_high_two_sided": -0.0004715790544764532,
+          "ci_low_two_sided": -0.0005280177546978945,
+          "ci_lower_95": -0.0005222095342862905,
+          "ci_upper_95": -0.0004758928005527389,
+          "floor": 0.0,
+          "hac_se": 1.31403579106708e-05,
+          "mde_daily": 3.681383248324912e-05,
+          "mean_daily_return": -0.0005,
+          "name": "B",
+          "negative_evidence": true,
+          "p_raw": 1.0,
+          "p_upper": 1.0,
+          "power": 0.0,
+          "t_obs": -38.050713945467834
+        }
+      },
+      "iut": {
+        "p_raw": 1.0,
+        "p_upper": 1.0
+      },
+      "mean_control": 0.0015,
+      "seed": 0
+    },
+    "reason_codes": [
+      "B_BELOW_FROZEN_MINIMUM",
+      "IUT_NOT_REJECTED",
+      "LOW_POWER"
+    ],
+    "sensitivity": {
+      "b": 256,
+      "block": 10,
+      "endpoints": {
+        "A": {
+          "ci_high_two_sided": 0.0010211574886715596,
+          "ci_low_two_sided": 0.0009784573788661909,
+          "ci_lower_95": 0.000982897543589733,
+          "ci_upper_95": 0.0010173884448798317,
+          "floor": 0.0001,
+          "hac_se": 1.3668241972659012e-05,
+          "mde_daily": 3.829274466819273e-05,
+          "mean_daily_return": 0.001,
+          "name": "A",
+          "negative_evidence": false,
+          "p_raw": 0.0038910505836575876,
+          "p_upper": 0.024295195407693194,
+          "power": 1.0,
+          "t_obs": 65.84606870439494
+        },
+        "B": {
+          "ci_high_two_sided": -0.00047931767299503686,
+          "ci_low_two_sided": -0.0005189672420157276,
+          "ci_lower_95": -0.000515480246661771,
+          "ci_upper_95": -0.00048356920782526274,
+          "floor": 0.0,
+          "hac_se": 1.31403579106708e-05,
+          "mde_daily": 3.681383248324912e-05,
+          "mean_daily_return": -0.0005,
+          "name": "B",
+          "negative_evidence": true,
+          "p_raw": 1.0,
+          "p_upper": 1.0,
+          "power": 0.0,
+          "t_obs": -38.050713945467834
+        }
+      },
+      "iut": {
+        "p_raw": 1.0,
+        "p_upper": 1.0
+      },
+      "mean_control": 0.0015,
+      "seed": 1000003
+    },
+    "stationarity": {
+      "candidate": {
+        "min_half": 50,
+        "n": 120,
+        "n_first": 60,
+        "n_second": 60,
+        "statistic": 0.0,
+        "status": "PASS",
+        "threshold": 3.29,
+        "variance_ratio": 1.0,
+        "variance_ratio_max": 4.0
+      },
+      "difference": {
+        "min_half": 50,
+        "n": 120,
+        "n_first": 60,
+        "n_second": 60,
+        "statistic": 0.0,
+        "status": "PASS",
+        "threshold": 3.29,
+        "variance_ratio": 1.0,
+        "variance_ratio_max": 4.0
+      },
+      "status": "PASS"
+    },
+    "status": "BLOCKED",
+    "verdict": "INSUFFICIENT_EVIDENCE",
+    "zero_trade_days_candidate": 0,
+    "zero_trade_days_control": 0
+  },
+  "decision_status": "BLOCKED",
+  "mean_daily_return": 0.001,
+  "mean_excess_return": -0.0005,
+  "method_hash": "6d0f5e9d86df880a3f1ace02d61a12bca38b4c8f37343b0b5250722d3ea2e717",
+  "p_control_upper": 1.0,
+  "p_iut": 1.0,
+  "p_profit_upper": 0.024295195407693194,
+  "reason_codes": [
+    "B_BELOW_FROZEN_MINIMUM",
+    "IUT_NOT_REJECTED",
+    "LOW_POWER"
+  ],
+  "status": "PASS",
+  "verdict": "INSUFFICIENT_EVIDENCE"
+}
 
-note: the legacy stats-job reports EDGE because it bootstraps candidate and control separately against zero;
-      the paired decision (DECISION_AUDIT.json) blocks the same candidate at endpoint B. python/qel/stats/job.py
-      is outside TASK-14 write scope; wiring it to paired_decision is a follow-up.
+The production stats-job path now returns the paired verdict (INSUFFICIENT_EVIDENCE because
+b=256 is below the frozen B minimum); it no longer returns EDGE for the audit candidate.
+
+=============== CLI: stats-job (resolved audit fixture, payload b=9999) ===============
+$ PYTHONPATH=python QEL_ROOT=$PWD .venv/bin/python -m qel.cli stats-job --returns <scratch>/decision_fixture_b9999.json
+EXIT=0
+{
+  "adjusted_p": 1.0,
+  "b": 9999,
+  "budget": {
+    "alpha_schedule": "0.05 / 2^(j+1)",
+    "b_requested": 9999,
+    "b_required": 9999,
+    "b_used": 9999,
+    "block": 5,
+    "family_index": 0,
+    "family_size": 1,
+    "max_resamples": 1000000,
+    "resolved": true,
+    "seed": 0,
+    "sensitivity_block": 10,
+    "unresolvable": false
+  },
+  "ci_high": 0.0010227046279537649,
+  "ci_low": 0.0009769762863977528,
+  "data_boundary": "TASK-14 resolved audit fixture",
+  "decision": {
+    "adjusted_p": 1.0,
+    "alpha": {
+      "family_index": 0,
+      "family_size": 1,
+      "frozen": 0.025,
+      "nominal": 0.025,
+      "schedule": "0.05 / 2^(j+1)"
+    },
+    "budget": {
+      "alpha_schedule": "0.05 / 2^(j+1)",
+      "b_requested": 9999,
+      "b_required": 9999,
+      "b_used": 9999,
+      "block": 5,
+      "family_index": 0,
+      "family_size": 1,
+      "max_resamples": 1000000,
+      "resolved": true,
+      "seed": 0,
+      "sensitivity_block": 10,
+      "unresolvable": false
+    },
+    "calendar_hash": "207c5056e5f6db60e43a521d81765091398e0084b3a25a793494f1581738be16",
+    "capital": "1000",
+    "computable": true,
+    "first_day": "2026-01-01",
+    "floors": {
+      "control": "0.0",
+      "economic": "0.0001"
+    },
+    "holm": {
+      "adjusted": [
+        1.0
+      ],
+      "alpha": 0.025,
+      "candidate_id": "CANDIDATE",
+      "family_size": 1,
+      "members": [
+        "CANDIDATE"
+      ],
+      "padded_members": 0,
+      "pvalues": [
+        1.0
+      ],
+      "rejected": [
+        false
+      ],
+      "self_adjusted_p": 1.0,
+      "self_rejected": false,
+      "self_threshold": 0.025,
+      "thresholds": [
+        0.025
+      ]
+    },
+    "holm_threshold": 0.025,
+    "iut_p_upper": 1.0,
+    "last_day": "2026-04-30",
+    "method": "SB_HAC_STUDENTIZED_SHARED_INDEX_IUT_HOLM_V1",
+    "method_hash": "ce19cff0e69851c458f3c78497d6427a9c31be1bf44aa156021dd02447ad114b",
+    "n_days": 120,
+    "n_symbols_candidate": 1,
+    "n_symbols_control": 1,
+    "power": {
+      "endpoint_a": 1.0,
+      "endpoint_b": 0.0,
+      "mde_daily_endpoint_a": 3.829274466819273e-05,
+      "mde_daily_endpoint_b": 3.681383248324912e-05,
+      "target": 0.8
+    },
+    "primary": {
+      "b": 9999,
+      "block": 5,
+      "endpoints": {
+        "A": {
+          "ci_high_two_sided": 0.0010280705440321983,
+          "ci_low_two_sided": 0.0009714201546032531,
+          "ci_lower_95": 0.0009769762863977528,
+          "ci_upper_95": 0.0010227046279537649,
+          "floor": 0.0001,
+          "hac_se": 1.3668241972659012e-05,
+          "mde_daily": 3.829274466819273e-05,
+          "mean_daily_return": 0.001,
+          "name": "A",
+          "negative_evidence": false,
+          "p_raw": 0.0001,
+          "p_upper": 0.0006296913865736156,
+          "power": 1.0,
+          "t_obs": 65.84606870439494
+        },
+        "B": {
+          "ci_high_two_sided": -0.00047281729468696455,
+          "ci_low_two_sided": -0.0005278436444289237,
+          "ci_lower_95": -0.0005228280288411692,
+          "ci_upper_95": -0.00047751387604387047,
+          "floor": 0.0,
+          "hac_se": 1.31403579106708e-05,
+          "mde_daily": 3.681383248324912e-05,
+          "mean_daily_return": -0.0005,
+          "name": "B",
+          "negative_evidence": true,
+          "p_raw": 1.0,
+          "p_upper": 1.0,
+          "power": 0.0,
+          "t_obs": -38.050713945467834
+        }
+      },
+      "iut": {
+        "p_raw": 1.0,
+        "p_upper": 1.0
+      },
+      "mean_control": 0.0015,
+      "seed": 0
+    },
+    "reason_codes": [
+      "NEGATIVE_EVIDENCE_ENDPOINT_B"
+    ],
+    "sensitivity": {
+      "b": 9999,
+      "block": 10,
+      "endpoints": {
+        "A": {
+          "ci_high_two_sided": 0.0010211133374876556,
+          "ci_low_two_sided": 0.0009790679700483011,
+          "ci_lower_95": 0.0009827125966702806,
+          "ci_upper_95": 0.0010174903987224448,
+          "floor": 0.0001,
+          "hac_se": 1.3668241972659012e-05,
+          "mde_daily": 3.829274466819273e-05,
+          "mean_daily_return": 0.001,
+          "name": "A",
+          "negative_evidence": false,
+          "p_raw": 0.0001,
+          "p_upper": 0.0006296913865736156,
+          "power": 1.0,
+          "t_obs": 65.84606870439494
+        },
+        "B": {
+          "ci_high_two_sided": -0.00047998369273811586,
+          "ci_low_two_sided": -0.0005197713002010401,
+          "ci_lower_95": -0.0005166370089532897,
+          "ci_upper_95": -0.00048339716508149176,
+          "floor": 0.0,
+          "hac_se": 1.31403579106708e-05,
+          "mde_daily": 3.681383248324912e-05,
+          "mean_daily_return": -0.0005,
+          "name": "B",
+          "negative_evidence": true,
+          "p_raw": 1.0,
+          "p_upper": 1.0,
+          "power": 0.0,
+          "t_obs": -38.050713945467834
+        }
+      },
+      "iut": {
+        "p_raw": 1.0,
+        "p_upper": 1.0
+      },
+      "mean_control": 0.0015,
+      "seed": 1000003
+    },
+    "stationarity": {
+      "candidate": {
+        "min_half": 50,
+        "n": 120,
+        "n_first": 60,
+        "n_second": 60,
+        "statistic": 0.0,
+        "status": "PASS",
+        "threshold": 3.29,
+        "variance_ratio": 1.0,
+        "variance_ratio_max": 4.0
+      },
+      "difference": {
+        "min_half": 50,
+        "n": 120,
+        "n_first": 60,
+        "n_second": 60,
+        "statistic": 0.0,
+        "status": "PASS",
+        "threshold": 3.29,
+        "variance_ratio": 1.0,
+        "variance_ratio_max": 4.0
+      },
+      "status": "PASS"
+    },
+    "status": "PASS",
+    "verdict": "NO_PROMOTION",
+    "zero_trade_days_candidate": 0,
+    "zero_trade_days_control": 0
+  },
+  "decision_status": "PASS",
+  "mean_daily_return": 0.001,
+  "mean_excess_return": -0.0005,
+  "method_hash": "ce19cff0e69851c458f3c78497d6427a9c31be1bf44aa156021dd02447ad114b",
+  "p_control_upper": 1.0,
+  "p_iut": 1.0,
+  "p_profit_upper": 0.0006296913865736156,
+  "reason_codes": [
+    "NEGATIVE_EVIDENCE_ENDPOINT_B"
+  ],
+  "status": "PASS",
+  "verdict": "NO_PROMOTION"
+}
 
 =============== CLI: power (bounded, --programs 2) ===============
 $ PYTHONPATH=python QEL_ROOT=$PWD .venv/bin/python -m qel.cli power --programs 2

@@ -3,11 +3,13 @@
 from __future__ import annotations
 
 import datetime
+import json
 import math
 from fractions import Fraction
 
 import pytest
 
+from qel.stats.job import run_job
 from qel.stats.core import (
     DecisionError,
     family_decision,
@@ -302,3 +304,48 @@ def test_two_half_diagnostic_reports_insufficient_history():
     diag = two_half_diagnostic([1.0, 2.0, 1.5])
     assert diag["status"] == "INSUFFICIENT"
     assert diag["reason"] == "INSUFFICIENT_N"
+
+
+def _write_audit_fixture(tmp_path):
+    n = 120
+    payload = {
+        "candidate_daily": [
+            f"{1.0 + 0.1 * math.sin(2 * math.pi * t / 20):.12f}" for t in range(n)
+        ],
+        "control_daily": [
+            f"{1.5 + 0.15 * math.sin(2 * math.pi * t / 20 + 0.7):.12f}" for t in range(n)
+        ],
+        "capital": "1000",
+        "economic_minimum": "0.0001",
+        "control_minimum": "0",
+        "power": "0.8",
+        "data_boundary": "TASK-14 audit fixture",
+    }
+    path = tmp_path / "audit_fixture.json"
+    path.write_text(json.dumps(payload))
+    return path
+
+
+def test_stats_job_audit_fixture_never_returns_edge_or_promote(tmp_path):
+    """The production stats-job path must return the paired verdict, not EDGE."""
+    result = run_job(str(_write_audit_fixture(tmp_path)))
+    assert result["verdict"] in (
+        "NO_PROMOTION",
+        "INSUFFICIENT_EVIDENCE",
+        "WAITING_COMPUTE_BUDGET",
+    )
+    assert result["verdict"] not in ("EDGE", "PROMOTE")
+    assert result["status"] == "PASS"
+    assert result["p_iut"] == 1.0
+    assert result["p_control_upper"] == 1.0
+    assert "IUT_NOT_REJECTED" in result["reason_codes"]
+    assert result["data_boundary"] == "TASK-14 audit fixture"
+
+
+def test_stats_job_audit_fixture_is_no_promotion_when_resolved(tmp_path):
+    result = run_job(str(_write_audit_fixture(tmp_path)), b=AUDIT_B)
+    assert result["verdict"] == "NO_PROMOTION"
+    assert result["status"] == "PASS"
+    assert "NEGATIVE_EVIDENCE_ENDPOINT_B" in result["reason_codes"]
+    assert result["p_iut"] == 1.0
+    assert result["decision_status"] == "PASS"

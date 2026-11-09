@@ -428,7 +428,7 @@
     "python": "3.13.5",
     "scipy": "1.18.1"
   },
-  "generated_at_utc": "2026-11-09T10:55:50.504981+00:00",
+  "generated_at_utc": "2026-11-09T11:06:20.434430+00:00",
   "holm": {
     "adjusted": [
       1.0
@@ -458,23 +458,46 @@
     "p_raw": 1.0,
     "p_upper": 1.0
   },
-  "legacy_cli_contrast": {
-    "command": "python -m qel.cli stats-job --returns <TASK-14 fixture>",
-    "exit_code": 0,
-    "legacy_output": {
-      "b": 256,
-      "ci_low": 0.0009743861172566394,
-      "data_boundary": "TASK-14 bounded audit fixture",
-      "mean_daily_return": 0.001,
-      "p_control_upper": 0.04520253738123321,
-      "p_iut": 0.04520253738123321,
-      "p_profit_upper": 0.04520253738123321,
-      "status": "PASS",
-      "verdict": "EDGE"
-    },
-    "note": "The legacy stats-job entry point (python/qel/stats/job.py) bootstraps candidate and control separately against zero and reports EDGE; it does not implement the paired superiority endpoint. It is outside this task's write scope and remains a follow-up for the coordinator."
-  },
   "milestone": "M3",
+  "production_cli": {
+    "bounded_b256": {
+      "b": 256,
+      "command": "python -m qel.cli stats-job --returns <TASK-14 audit fixture>",
+      "exit_code": 0,
+      "note": "b=256 is below the frozen B minimum, so the production path blocks with INSUFFICIENT_EVIDENCE instead of EDGE",
+      "p_control_upper": 1.0,
+      "p_iut": 1.0,
+      "p_profit_upper": 0.024295195407693194,
+      "reason_codes": [
+        "B_BELOW_FROZEN_MINIMUM",
+        "IUT_NOT_REJECTED",
+        "LOW_POWER"
+      ],
+      "status": "PASS",
+      "verdict": "INSUFFICIENT_EVIDENCE"
+    },
+    "never_edge": true,
+    "promote_boundary": "PROMOTE only under paired IUT/Holm rejection with a resolved frozen B and adequate power",
+    "resolved_b9999": {
+      "adjusted_p": 1.0,
+      "b": 9999,
+      "command": "python -m qel.cli stats-job --returns <TASK-14 audit fixture with payload b=9999>",
+      "exit_code": 0,
+      "p_control_upper": 1.0,
+      "p_iut": 1.0,
+      "p_profit_upper": 0.0006296913865736156,
+      "reason_codes": [
+        "NEGATIVE_EVIDENCE_ENDPOINT_B"
+      ],
+      "status": "PASS",
+      "verdict": "NO_PROMOTION"
+    }
+  },
+  "production_path": {
+    "adapter": "python/qel/stats/job.py run_job -> qel.stats.core.paired_decision",
+    "entry_point": "python -m qel.cli stats-job",
+    "note": "the job returns the faithful paired verdict and reason codes; it never bootstraps the control against zero"
+  },
   "protocol": {
     "alpha": {
       "family_index": 0,
