@@ -1,0 +1,648 @@
+{
+  "artifact_hashes": {
+    "backend_hash": "d8f017c7f6627ca2517094eeab8491df16713074085614d7777bf56c0d5858a5",
+    "method_hashes": [
+      "06a31d3d97938d0454770c27db6e7066f7c9d684f7aadd92954e63cc7009dead",
+      "0af7f6c70b98eaa8afe89997256baae2283ce5cf456418f078800d00a6275ae7",
+      "0d8c791cf17f81eee6f77a120a05c4866a754bf0a84fb12abcc070d60dd7dcfd",
+      "17855af4b9945e19527fe3d276ad7bab103ce7337510f632320649eab1f4b121",
+      "1aa7197a160c8dca793cad227d3d91fdc2bde813cec6995c5ea5327eaf6cb453",
+      "265c53845128d2a1cbe6ba23354107ac91977a8528a33f15f130638a2bbb24e0",
+      "2f303a7705ad5f820ef4b6b59877dc78a5ac0a29f77ada5ca0d030f88bfbdd0d",
+      "43134389e67842d7df7080460a41b6842c8f700a2ff1380eeca2361c466f24fd",
+      "447d30cf48555c56a73dbe3d9d64388bf6236fd7f2319510500af768a046434f",
+      "5fe5bf53ecd68b8aa8affdb5dd994e6f01f5732b40ab0fa1f52fc9dd9a2d20cc",
+      "60574ea7ae32c8771f1921b7f0e9ca4bba0abb9e52d15a26de3d69e78dc411a9",
+      "645a54a4968146e975aa8d0151eb5a265cafa6dcb8c1a7ae72bd196656d1335a",
+      "8dcf87bad81b93cf2253efc35534c71125c4c8a316e45f3abdd9d33443640bdc",
+      "a13e8dca7fce6429ea5620322af7492fa5362e4bbe3e881ca1229148ce34f627",
+      "a6bb1f35bf35dc72715423d9ef97fab23138f76f2fabafccd7e71511b65a1c28",
+      "a8bce1012af8960efd3c3c30a9cbd964472e77b68d3519a11629671aab4f1b8d",
+      "bb1ff70a799354d0a06f997caf958be21e377beccf04887e24d98f80ecb89b8c",
+      "c3245fb07adfcf36ccdbc4b84cfa82a46059b2b96a485e9203285b74325d3b35",
+      "cdc701346589ba456bef0d369297adc8769b4c0e4bd16a959ea9ed064dae8519",
+      "ce213ab9283a9b0fae8217ce7cddd8d63996fa465487690c4e980ad3515977c7",
+      "e81926e7e1d5d9b52a9a32a5bc57f35edc2f420d1b1414cba88510ffdd38893c",
+      "fa3fb83d1c6cf0b43df8155996bf3924daf83dea83c8881c13594c896f84ebbc"
+    ],
+    "report_sha256": "70e4e8c46dcb7c07f9ffe29fec93e54e77cbba61d665eb9b77fd9dc8ba38e5ce",
+    "seed_protocol_hash": "30a0ef917ba2484c7966bf13f51cf2973e83235862b5eae408576a0b5d5e8571",
+    "workload_sha256": "aaef4b6c187e8da043b3ed1360098b3bfbbfad4d1080962abf89419b11d6a511"
+  },
+  "benchmark": "B6",
+  "blockers": [
+    "COMPUTE_BUDGET_INSUFFICIENT",
+    "NULL_FWER_UPPER_ABOVE_TARGET",
+    "INCOMPLETE_PROGRAM_SELECTION"
+  ],
+  "compute_budget": {
+    "estimated_full_program_core_hours": 1085.6371358466438,
+    "estimated_full_program_core_seconds": 3908293.6890479177,
+    "estimated_seconds_per_program": 488.5367111309897,
+    "full_workload_required": {
+      "cohorts": 3,
+      "control_replications": 1000,
+      "effects": [
+        0.0,
+        0.0005,
+        0.001,
+        0.002
+      ],
+      "fresh_days_per_cohort": 500,
+      "generators": 4,
+      "history_days_development": 1500,
+      "programs_per_generator": 1000
+    },
+    "pilot_wall_seconds": 580.214988029009,
+    "programs_completed": 4
+  },
+  "executed": {
+    "base_seed": 0,
+    "cohorts": 3,
+    "control_replications": 1000,
+    "family_variants": 16,
+    "fresh_days_per_cohort": 500,
+    "generators": [
+      "GAUSSIAN_AR1_RHO_0_3",
+      "STUDENT_T_DF5_AR1",
+      "FIVE_COIN_COMMON_FACTOR_LOADING_0_6",
+      "FROZEN_REGIME_SHIFT_NEGATIVE_CONTROL"
+    ],
+    "history_days_development": 1500,
+    "power_cohorts": 1,
+    "power_programs_per_effect": 1,
+    "programs_per_generator": 1,
+    "workers": 4
+  },
+  "generators": [
+    {
+      "blocked_cohorts": 0,
+      "certified_stationary": false,
+      "clopper_pearson_upper_95": 0.95,
+      "cohort_alpha_spending": [
+        {
+          "alpha_frozen": 0.025,
+          "alpha_nominal": 0.025,
+          "b_required": 12799,
+          "b_used": 12799,
+          "cohort": 1,
+          "family_size": 16,
+          "fresh_days": 500,
+          "fresh_end": 2000,
+          "fresh_start": 1500,
+          "j": 0,
+          "max_resamples": 12800,
+          "resolved": true,
+          "schedule": "0.05 / 2^(j+1)"
+        },
+        {
+          "alpha_frozen": 0.0125,
+          "alpha_nominal": 0.0125,
+          "b_required": 25599,
+          "b_used": 25599,
+          "cohort": 2,
+          "family_size": 16,
+          "fresh_days": 500,
+          "fresh_end": 2500,
+          "fresh_start": 2000,
+          "j": 1,
+          "max_resamples": 25600,
+          "resolved": true,
+          "schedule": "0.05 / 2^(j+1)"
+        },
+        {
+          "alpha_frozen": 0.00625,
+          "alpha_nominal": 0.00625,
+          "b_required": 51199,
+          "b_used": 51199,
+          "cohort": 3,
+          "family_size": 16,
+          "fresh_days": 500,
+          "fresh_end": 3000,
+          "fresh_start": 2500,
+          "j": 2,
+          "max_resamples": 51200,
+          "resolved": true,
+          "schedule": "0.05 / 2^(j+1)"
+        }
+      ],
+      "coverage": {
+        "blocked_endpoints": 0,
+        "blocked_reasons": {},
+        "coverage_rate": 1.0,
+        "covered_endpoints": 6,
+        "evaluated_endpoints": 6,
+        "status": "PASS",
+        "waiting_endpoints": 0
+      },
+      "design": {
+        "coins": 1,
+        "generator": "GAUSSIAN_AR1_RHO_0_3",
+        "generator_id": 1,
+        "innovation": "NORMAL",
+        "regime_shift": false,
+        "stationary_design": true
+      },
+      "false_promotion_rate": 0.0,
+      "generator": "GAUSSIAN_AR1_RHO_0_3",
+      "method_hashes": [
+        "0d8c791cf17f81eee6f77a120a05c4866a754bf0a84fb12abcc070d60dd7dcfd",
+        "17855af4b9945e19527fe3d276ad7bab103ce7337510f632320649eab1f4b121",
+        "1aa7197a160c8dca793cad227d3d91fdc2bde813cec6995c5ea5327eaf6cb453",
+        "43134389e67842d7df7080460a41b6842c8f700a2ff1380eeca2361c466f24fd",
+        "8dcf87bad81b93cf2253efc35534c71125c4c8a316e45f3abdd9d33443640bdc",
+        "a6bb1f35bf35dc72715423d9ef97fab23138f76f2fabafccd7e71511b65a1c28"
+      ],
+      "programs": 1,
+      "promotions": 0,
+      "resources": {
+        "elapsed_seconds": 232.75552029599203,
+        "max_program_elapsed_seconds": 232.75552029599203,
+        "max_program_peak_rss_bytes": 100679680
+      },
+      "selection": {
+        "candidates_max_per_cohort": 2,
+        "incomplete": false,
+        "programs_with_selection": 1,
+        "selected_total": 6,
+        "variants_screened": 16
+      },
+      "target_applicable": true,
+      "target_pass": false,
+      "threshold": 0.075,
+      "verdict_counts": {
+        "INSUFFICIENT_EVIDENCE": 5,
+        "NO_PROMOTION": 1
+      }
+    },
+    {
+      "blocked_cohorts": 0,
+      "certified_stationary": false,
+      "clopper_pearson_upper_95": 0.95,
+      "cohort_alpha_spending": [
+        {
+          "alpha_frozen": 0.025,
+          "alpha_nominal": 0.025,
+          "b_required": 12799,
+          "b_used": 12799,
+          "cohort": 1,
+          "family_size": 16,
+          "fresh_days": 500,
+          "fresh_end": 2000,
+          "fresh_start": 1500,
+          "j": 0,
+          "max_resamples": 12800,
+          "resolved": true,
+          "schedule": "0.05 / 2^(j+1)"
+        },
+        {
+          "alpha_frozen": 0.0125,
+          "alpha_nominal": 0.0125,
+          "b_required": 25599,
+          "b_used": 25599,
+          "cohort": 2,
+          "family_size": 16,
+          "fresh_days": 500,
+          "fresh_end": 2500,
+          "fresh_start": 2000,
+          "j": 1,
+          "max_resamples": 25600,
+          "resolved": true,
+          "schedule": "0.05 / 2^(j+1)"
+        },
+        {
+          "alpha_frozen": 0.00625,
+          "alpha_nominal": 0.00625,
+          "b_required": 51199,
+          "b_used": 51199,
+          "cohort": 3,
+          "family_size": 16,
+          "fresh_days": 500,
+          "fresh_end": 3000,
+          "fresh_start": 2500,
+          "j": 2,
+          "max_resamples": 51200,
+          "resolved": true,
+          "schedule": "0.05 / 2^(j+1)"
+        }
+      ],
+      "coverage": {
+        "blocked_endpoints": 0,
+        "blocked_reasons": {},
+        "coverage_rate": 1.0,
+        "covered_endpoints": 6,
+        "evaluated_endpoints": 6,
+        "status": "PASS",
+        "waiting_endpoints": 0
+      },
+      "design": {
+        "coins": 1,
+        "generator": "STUDENT_T_DF5_AR1",
+        "generator_id": 2,
+        "innovation": "T5",
+        "regime_shift": false,
+        "stationary_design": true
+      },
+      "false_promotion_rate": 0.0,
+      "generator": "STUDENT_T_DF5_AR1",
+      "method_hashes": [
+        "2f303a7705ad5f820ef4b6b59877dc78a5ac0a29f77ada5ca0d030f88bfbdd0d",
+        "60574ea7ae32c8771f1921b7f0e9ca4bba0abb9e52d15a26de3d69e78dc411a9",
+        "a13e8dca7fce6429ea5620322af7492fa5362e4bbe3e881ca1229148ce34f627",
+        "bb1ff70a799354d0a06f997caf958be21e377beccf04887e24d98f80ecb89b8c",
+        "cdc701346589ba456bef0d369297adc8769b4c0e4bd16a959ea9ed064dae8519",
+        "fa3fb83d1c6cf0b43df8155996bf3924daf83dea83c8881c13594c896f84ebbc"
+      ],
+      "programs": 1,
+      "promotions": 0,
+      "resources": {
+        "elapsed_seconds": 236.7792789050145,
+        "max_program_elapsed_seconds": 236.7792789050145,
+        "max_program_peak_rss_bytes": 100798464
+      },
+      "selection": {
+        "candidates_max_per_cohort": 2,
+        "incomplete": false,
+        "programs_with_selection": 1,
+        "selected_total": 6,
+        "variants_screened": 16
+      },
+      "target_applicable": true,
+      "target_pass": false,
+      "threshold": 0.075,
+      "verdict_counts": {
+        "INSUFFICIENT_EVIDENCE": 6
+      }
+    },
+    {
+      "blocked_cohorts": 0,
+      "certified_stationary": false,
+      "clopper_pearson_upper_95": 0.95,
+      "cohort_alpha_spending": [
+        {
+          "alpha_frozen": 0.025,
+          "alpha_nominal": 0.025,
+          "b_required": 12799,
+          "b_used": 12799,
+          "cohort": 1,
+          "family_size": 16,
+          "fresh_days": 500,
+          "fresh_end": 2000,
+          "fresh_start": 1500,
+          "j": 0,
+          "max_resamples": 12800,
+          "resolved": true,
+          "schedule": "0.05 / 2^(j+1)"
+        },
+        {
+          "alpha_frozen": 0.0125,
+          "alpha_nominal": 0.0125,
+          "b_required": 25599,
+          "b_used": 25599,
+          "cohort": 2,
+          "family_size": 16,
+          "fresh_days": 500,
+          "fresh_end": 2500,
+          "fresh_start": 2000,
+          "j": 1,
+          "max_resamples": 25600,
+          "resolved": true,
+          "schedule": "0.05 / 2^(j+1)"
+        },
+        {
+          "alpha_frozen": 0.00625,
+          "alpha_nominal": 0.00625,
+          "b_required": 51199,
+          "b_used": 51199,
+          "cohort": 3,
+          "family_size": 16,
+          "fresh_days": 500,
+          "fresh_end": 3000,
+          "fresh_start": 2500,
+          "j": 2,
+          "max_resamples": 51200,
+          "resolved": true,
+          "schedule": "0.05 / 2^(j+1)"
+        }
+      ],
+      "coverage": {
+        "blocked_endpoints": 0,
+        "blocked_reasons": {},
+        "coverage_rate": 1.0,
+        "covered_endpoints": 6,
+        "evaluated_endpoints": 6,
+        "status": "PASS",
+        "waiting_endpoints": 0
+      },
+      "design": {
+        "coins": 5,
+        "generator": "FIVE_COIN_COMMON_FACTOR_LOADING_0_6",
+        "generator_id": 3,
+        "innovation": "NORMAL",
+        "regime_shift": false,
+        "stationary_design": true
+      },
+      "false_promotion_rate": 0.0,
+      "generator": "FIVE_COIN_COMMON_FACTOR_LOADING_0_6",
+      "method_hashes": [
+        "0af7f6c70b98eaa8afe89997256baae2283ce5cf456418f078800d00a6275ae7",
+        "447d30cf48555c56a73dbe3d9d64388bf6236fd7f2319510500af768a046434f",
+        "5fe5bf53ecd68b8aa8affdb5dd994e6f01f5732b40ab0fa1f52fc9dd9a2d20cc",
+        "a8bce1012af8960efd3c3c30a9cbd964472e77b68d3519a11629671aab4f1b8d",
+        "ce213ab9283a9b0fae8217ce7cddd8d63996fa465487690c4e980ad3515977c7",
+        "e81926e7e1d5d9b52a9a32a5bc57f35edc2f420d1b1414cba88510ffdd38893c"
+      ],
+      "programs": 1,
+      "promotions": 0,
+      "resources": {
+        "elapsed_seconds": 488.5367111309897,
+        "max_program_elapsed_seconds": 488.5367111309897,
+        "max_program_peak_rss_bytes": 100020224
+      },
+      "selection": {
+        "candidates_max_per_cohort": 2,
+        "incomplete": false,
+        "programs_with_selection": 1,
+        "selected_total": 6,
+        "variants_screened": 16
+      },
+      "target_applicable": true,
+      "target_pass": false,
+      "threshold": 0.075,
+      "verdict_counts": {
+        "INSUFFICIENT_EVIDENCE": 6
+      }
+    },
+    {
+      "blocked_cohorts": 3,
+      "certified_stationary": false,
+      "clopper_pearson_upper_95": 0.95,
+      "cohort_alpha_spending": [
+        {
+          "alpha_frozen": 0.025,
+          "alpha_nominal": 0.025,
+          "b_required": 12799,
+          "b_used": 12799,
+          "cohort": 1,
+          "family_size": 16,
+          "fresh_days": 500,
+          "fresh_end": 2000,
+          "fresh_start": 1500,
+          "j": 0,
+          "max_resamples": 12800,
+          "resolved": true,
+          "schedule": "0.05 / 2^(j+1)"
+        },
+        {
+          "alpha_frozen": 0.0125,
+          "alpha_nominal": 0.0125,
+          "b_required": 25599,
+          "b_used": 25599,
+          "cohort": 2,
+          "family_size": 16,
+          "fresh_days": 500,
+          "fresh_end": 2500,
+          "fresh_start": 2000,
+          "j": 1,
+          "max_resamples": 25600,
+          "resolved": true,
+          "schedule": "0.05 / 2^(j+1)"
+        },
+        {
+          "alpha_frozen": 0.00625,
+          "alpha_nominal": 0.00625,
+          "b_required": 51199,
+          "b_used": 51199,
+          "cohort": 3,
+          "family_size": 16,
+          "fresh_days": 500,
+          "fresh_end": 3000,
+          "fresh_start": 2500,
+          "j": 2,
+          "max_resamples": 51200,
+          "resolved": true,
+          "schedule": "0.05 / 2^(j+1)"
+        }
+      ],
+      "coverage": {
+        "blocked_endpoints": 4,
+        "blocked_reasons": {
+          "NONSTATIONARY": 4
+        },
+        "coverage_rate": null,
+        "covered_endpoints": 0,
+        "evaluated_endpoints": 0,
+        "status": "FAILED_OR_BLOCKED_NONSTATIONARY",
+        "waiting_endpoints": 0
+      },
+      "design": {
+        "coins": 5,
+        "generator": "FROZEN_REGIME_SHIFT_NEGATIVE_CONTROL",
+        "generator_id": 4,
+        "innovation": "NORMAL",
+        "regime_shift": true,
+        "stationary_design": false
+      },
+      "false_promotion_rate": 0.0,
+      "generator": "FROZEN_REGIME_SHIFT_NEGATIVE_CONTROL",
+      "method_hashes": [
+        "06a31d3d97938d0454770c27db6e7066f7c9d684f7aadd92954e63cc7009dead",
+        "265c53845128d2a1cbe6ba23354107ac91977a8528a33f15f130638a2bbb24e0",
+        "645a54a4968146e975aa8d0151eb5a265cafa6dcb8c1a7ae72bd196656d1335a",
+        "c3245fb07adfcf36ccdbc4b84cfa82a46059b2b96a485e9203285b74325d3b35"
+      ],
+      "programs": 1,
+      "promotions": 0,
+      "resources": {
+        "elapsed_seconds": 340.6326607759984,
+        "max_program_elapsed_seconds": 340.6326607759984,
+        "max_program_peak_rss_bytes": 97112064
+      },
+      "selection": {
+        "candidates_max_per_cohort": 2,
+        "incomplete": true,
+        "programs_with_selection": 1,
+        "selected_total": 4,
+        "variants_screened": 16
+      },
+      "target_applicable": false,
+      "target_pass": null,
+      "threshold": 0.075,
+      "verdict_counts": {
+        "INSUFFICIENT_EVIDENCE": 4
+      }
+    }
+  ],
+  "label": "PILOT_NOT_ACCEPTANCE",
+  "nonstationary_control": {
+    "blocked_or_failed_coverage": true,
+    "certified_stationary": false,
+    "generators": [
+      "FROZEN_REGIME_SHIFT_NEGATIVE_CONTROL"
+    ]
+  },
+  "power_curve": {
+    "effects": [
+      0.0,
+      0.0005,
+      0.001,
+      0.002
+    ],
+    "generator": "GAUSSIAN_AR1_RHO_0_3",
+    "injected_variant": 0,
+    "programs_per_effect": 1,
+    "rows": [
+      {
+        "cohorts": 1,
+        "detections": 0,
+        "effect_daily": 0.0,
+        "mde_daily_median": null,
+        "power": 0.0,
+        "programs": 1
+      },
+      {
+        "cohorts": 1,
+        "detections": 0,
+        "effect_daily": 0.0005,
+        "mde_daily_median": 0.0015443227611493132,
+        "power": 0.0,
+        "programs": 1
+      },
+      {
+        "cohorts": 1,
+        "detections": 0,
+        "effect_daily": 0.001,
+        "mde_daily_median": 0.0015443227611493132,
+        "power": 0.0,
+        "programs": 1
+      },
+      {
+        "cohorts": 1,
+        "detections": 0,
+        "effect_daily": 0.002,
+        "mde_daily_median": 0.0015443227611493132,
+        "power": 0.0,
+        "programs": 1
+      }
+    ]
+  },
+  "protocol": {
+    "alpha_schedule": "0.05 / 2^(j+1)",
+    "backend": {
+      "backend_hash": "d8f017c7f6627ca2517094eeab8491df16713074085614d7777bf56c0d5858a5",
+      "normal_backend": "SCIPY_NORM_PPF",
+      "protocol": "HMAC_SHA256_COUNTER_V1",
+      "python": "3.13.5",
+      "scipy_available": true,
+      "t5_backend": "SCIPY_T_PPF_DF5"
+    },
+    "decision_method": "SB_HAC_STUDENTIZED_SHARED_INDEX_IUT_HOLM_V1",
+    "family_size": 16,
+    "required_resamples_per_cohort": {
+      "j0": 12799,
+      "j1": 25599,
+      "j2": 51199
+    },
+    "seed_protocol": "HMAC_SHA256_COUNTER_V1",
+    "seed_protocol_hash": "30a0ef917ba2484c7966bf13f51cf2973e83235862b5eae408576a0b5d5e8571"
+  },
+  "resolution": {
+    "monte_carlo_resolved": true,
+    "program_selection_complete": false
+  },
+  "resources": {
+    "peak_rss_bytes": 155398144,
+    "wall_seconds": 580.214988029009,
+    "workers": 4
+  },
+  "status": "PILOT_NOT_ACCEPTANCE",
+  "targets": {
+    "coverage_report_present": {
+      "expected": true,
+      "operator": "EQ",
+      "pass": true,
+      "value": true
+    },
+    "null_fwer_95cp_upper_per_generator": {
+      "metric": "null_fwer_95cp_upper_per_generator",
+      "operator": "LE",
+      "pass": false,
+      "per_generator": {
+        "FIVE_COIN_COMMON_FACTOR_LOADING_0_6": 0.95,
+        "GAUSSIAN_AR1_RHO_0_3": 0.95,
+        "STUDENT_T_DF5_AR1": 0.95
+      },
+      "threshold": 0.075,
+      "value": 0.95
+    },
+    "power_curve_report_present": {
+      "expected": true,
+      "operator": "EQ",
+      "pass": true,
+      "value": true
+    }
+  },
+  "task": "TASK-26",
+  "workload": {
+    "batch_resamples_max": 64,
+    "benchmark": "B6",
+    "block_length_primary": 5,
+    "block_length_sensitivity": 10,
+    "candidates_max_per_cohort": 2,
+    "cohorts": 3,
+    "control_replications": 1000,
+    "family_variants": 16,
+    "fresh_days_per_cohort": 500,
+    "generator_law": {
+      "loading_common": 0.6,
+      "loading_idiosyncratic": 0.8,
+      "rho": 0.3,
+      "seed_labels": [
+        "GENERATOR_ID",
+        "PROGRAM_REPLICATION",
+        "VARIANT",
+        "COIN",
+        "TIME",
+        "CONTROL_REPLICATION"
+      ],
+      "standardized_t5": "t5_inverseCDF(U)*sqrt(3/5)"
+    },
+    "generator_sd": 0.01,
+    "hac_lag": 5,
+    "history_days_development": 1500,
+    "independent_null_programs": 1000,
+    "injected_daily_effects": [
+      0.0,
+      0.0005,
+      0.001,
+      0.002
+    ],
+    "law_interpretation": {
+      "candidate_control_replication_label": 0,
+      "control_replication_labels": "1..CONTROL_REPLICATIONS (never 0)",
+      "factor_labels": {
+        "COIN": 65535,
+        "VARIANT": 65535
+      },
+      "five_coin_generators": [
+        "FIVE_COIN_COMMON_FACTOR_LOADING_0_6",
+        "FROZEN_REGIME_SHIFT_NEGATIVE_CONTROL"
+      ],
+      "regime_shift": "common factor mean +1 first half, -1 second half of every evaluation window",
+      "single_coin_generators": [
+        "GAUSSIAN_AR1_RHO_0_3",
+        "STUDENT_T_DF5_AR1"
+      ]
+    },
+    "nonstationary_expected": "BLOCK_OR_REPORT_FAILED_COVERAGE_NOT_CERTIFY",
+    "null_generators": [
+      "GAUSSIAN_AR1_RHO_0_3",
+      "STUDENT_T_DF5_AR1",
+      "FIVE_COIN_COMMON_FACTOR_LOADING_0_6",
+      "FROZEN_REGIME_SHIFT_NEGATIVE_CONTROL"
+    ],
+    "random_protocol": "HMAC_SHA256_COUNTER_V1;inverseCDFnormal/t5inpinnedSciPy",
+    "selection": "FULL_FROZEN_WALKFORWARD_SELECTION_PLUS_IUT_PLUS_HOLM_PLUS_ALPHA_SPENDING",
+    "task": "TASK-26"
+  }
+}

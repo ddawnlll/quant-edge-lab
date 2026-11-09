@@ -1,0 +1,76 @@
+B6 / TASK-26 (issue #14) - PILOT EVIDENCE, NOT ACCEPTANCE
+branch: qel/issue-14-calibration
+base_sha: 48bfaafd4846f12c34f9401d17110651a3c4bc92
+
+verdict: PILOT_NOT_ACCEPTANCE
+The full B6 workload was NOT executed and MUST NOT be closed from this file.
+blockers reported by the run:
+  COMPUTE_BUDGET_INSUFFICIENT
+  NULL_FWER_UPPER_ABOVE_TARGET
+  INCOMPLETE_PROGRAM_SELECTION
+
+executed workload (bounded pilot)
+  programs per generator        : 1        (B6 requires 1000)
+  generators                    : 4        (all four B6 generators)
+  cohorts                       : 3
+  development days              : 1500
+  fresh days per cohort         : 500
+  family variants               : 16
+  candidates max per cohort     : 2
+  control replications          : 1000
+  primary/sensitivity block     : 5 / 10
+  HAC lag                       : 5
+  bootstrap batch               : 64
+  B per cohort (frozen minimum) : 12799 / 25599 / 51199
+  alpha per cohort (j=0,1,2)    : 0.025 / 0.0125 / 0.00625
+  power grid                    : GAUSSIAN_AR1_RHO_0_3, effects 0, 0.0005, 0.001, 0.002,
+                                  1 program per effect, cohort 1 only
+
+per-generator result (1 program each; a zero-promotion count at n=1 proves nothing)
+  GAUSSIAN_AR1_RHO_0_3              promotions=0 cp95_upper=0.950 coverage=PASS 6/6  blocked=0
+  STUDENT_T_DF5_AR1                 promotions=0 cp95_upper=0.950 coverage=PASS 6/6  blocked=0
+  FIVE_COIN_COMMON_FACTOR_LOADING_0_6 promotions=0 cp95_upper=0.950 coverage=PASS 6/6 blocked=0
+  FROZEN_REGIME_SHIFT_NEGATIVE_CONTROL promotions=0 cp95_upper=0.950
+                                    coverage=FAILED_OR_BLOCKED_NONSTATIONARY, 4 blocked endpoints
+                                    all 3 cohorts blocked with reason NONSTATIONARY
+                                    certified_stationary=false
+
+  The regime-shift negative control was blocked by the frozen two-half stationarity
+  alarm in every cohort and was never certified as stationary. That is the required
+  negative-control behavior, and it is the sole source of the
+  INCOMPLETE_PROGRAM_SELECTION blocker: on the shifted paths only 1 variant had a
+  positive min(T_profit,T_control) score in cohorts 2-3, so the frozen "top 2 eligible"
+  rule advanced 1 candidate. Stationary generators selected 2/2 in all cohorts.
+
+power/MDE (cohort 1, family_size 16, Holm threshold 0.0015625, B=12799)
+  effect 0.0    : 0 detections, mde_daily ~0.00154
+  effect 0.0005 : 0 detections, mde_daily ~0.00154
+  effect 0.001  : 0 detections, mde_daily ~0.00154
+  effect 0.002  : 0 detections, mde_daily ~0.00154
+  Diagnostic re-run at effect 0.002: the injected variant was selected, endpoint
+  power was 0.65 / 0.96 but the conservative MC upper p-value (0.0187) exceeded the
+  Holm threshold alpha/16=0.0015625, so IUT/Holm correctly did not reject. At the
+  frozen 16-variant Holm family this design needs larger effects or longer fresh
+  windows; the reported MDE alone is not sufficient for promotion.
+
+compute budget (why the full run was not attempted)
+  measured pilot wall            : 580.215 s (4 worker processes, one heavy wave at a time)
+  measured seconds per program   : 488.537 s (1500 dev + 3x500 fresh days, 1000 controls)
+  estimated full B6 core time    : 3,908,294 s = 1085.64 core-hours
+  estimated full B6 at 6 workers : ~181 hours wall, far outside the 45 minute box
+  peak RSS (largest worker)      : 155,398,144 B (148.2 MiB) - well under 2 GiB
+  workers                        : 4
+
+smallest honest path to acceptance
+  The per-program cost is dominated by (a) 1000 control replications x 5 coins x 3000
+  HMAC draws and (b) the frozen B requirement (12799/25599/51199) x 2 block lengths x 2
+  candidates x 3 cohorts inside paired_decision. A dedicated long-running B6 job
+  (~180 h wall at 6 workers, or a hardware/parallelism increase) is required. The
+  workload parameters in this implementation are the frozen B6 values; nothing was
+  silently reduced, and this file is labelled PILOT_NOT_ACCEPTANCE.
+
+commands
+  pytest -q tests/test_calibration.py                -> exit 0, see B6_TESTS_FOCUSED.txt
+  pytest -q tests                                    -> exit 0, see B6_TESTS_FULL.txt
+  python -m qel.cli calibrate ... --label PILOT_NOT_ACCEPTANCE
+                                                     -> exit 1 (non-acceptance), see B6_PILOT_RUN.txt

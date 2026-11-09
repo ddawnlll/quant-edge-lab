@@ -20,7 +20,8 @@ from .prepare.native_input import to_native_input
 from .prepare.normalize import normalize_capture
 from .research.control import matched_controls
 from .research.screen import run_variants
-from .stats.core import calibrate_nulls, power_grid
+from .stats.calibration import render_summary_text, run_calibration
+from .stats.core import power_grid
 from .stats.job import run_job
 
 
@@ -178,10 +179,24 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--programs", type=int, default=200)
     p.add_argument("--out")
 
-    p = sub.add_parser("calibrate", help="statistical null calibration")
-    p.add_argument("--programs", type=int, default=100)
+    p = sub.add_parser("calibrate", help="B6 statistical null and injection calibration")
+    p.add_argument("--programs", type=int, default=1000)
     p.add_argument("--generator", action="append", default=None)
+    p.add_argument("--cohorts", type=int, default=3)
+    p.add_argument("--dev-days", type=int, default=1500)
+    p.add_argument("--fresh-days", type=int, default=500)
+    p.add_argument("--control-replications", type=int, default=1000)
+    p.add_argument("--family-size", type=int, default=16)
+    p.add_argument("--effects", default=None, help="comma-separated injected daily effects")
+    p.add_argument("--power-programs", type=int, default=2)
+    p.add_argument("--power-cohorts", type=int, default=None)
+    p.add_argument("--workers", type=int, default=4)
+    p.add_argument("--base-seed", type=int, default=0)
+    p.add_argument("--b", type=int, default=None, help="bootstrap resamples (default: frozen minimum)")
+    p.add_argument("--max-resamples", type=int, default=None)
+    p.add_argument("--label", default=None)
     p.add_argument("--out")
+    p.add_argument("--summary-out")
 
     p = sub.add_parser("controls", help="run matched random-entry controls")
     p.add_argument("--events", required=True)
@@ -267,9 +282,31 @@ def main(argv: list[str] | None = None) -> int:
         _write(args.out, payload)
         return 0
     if args.command == "calibrate":
-        payload = calibrate_nulls(programs=args.programs, generators=args.generator)
+        effects = None
+        if args.effects:
+            effects = [float(part) for part in args.effects.split(",") if part.strip()]
+        payload = run_calibration(
+            programs=args.programs,
+            generators=args.generator,
+            cohorts=args.cohorts,
+            dev_days=args.dev_days,
+            fresh_days=args.fresh_days,
+            control_replications=args.control_replications,
+            effects=effects,
+            power_programs=args.power_programs,
+            power_cohorts=args.power_cohorts,
+            family_size=args.family_size,
+            workers=args.workers,
+            base_seed=args.base_seed,
+            b=args.b,
+            max_resamples=args.max_resamples,
+            label=args.label,
+        )
         _write(args.out, payload)
-        return 0 if payload.get("pass", payload.get("status") == "PASS") else 1
+        if args.summary_out:
+            Path(args.summary_out).parent.mkdir(parents=True, exist_ok=True)
+            Path(args.summary_out).write_text(render_summary_text(payload))
+        return 0 if payload["status"] == "ACCEPTANCE" else 1
     if args.command == "controls":
         payload = matched_controls(args.events, args.trades, args.notional, args.seed, args.replications)
         _write(None, payload)
