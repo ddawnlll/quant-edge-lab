@@ -1,0 +1,29 @@
+{
+  "dataset_id": "DS-PIT-RECHECK",
+  "dataset_path": "data/normalized/DS-PIT-RECHECK/dataset.json",
+  "partition_path": "data/normalized/DS-PIT-RECHECK/events.parquet",
+  "certificate_path": "data/normalized/DS-PIT-RECHECK/dataset_certificate.json",
+  "rows": 12418,
+  "duplicates": 0,
+  "conflicts": 0,
+  "coverage": [
+    "FUNDING",
+    "MARK",
+    "QUOTE",
+    "TRADE"
+  ],
+  "dataset_hash": "714294ad60cb892a19a53b092da5a17f3e04f9840ceee6d098ba1a35400b2ab4",
+  "ordered_ts_raw_sha256": "75dcb1b933e54766a18b29691facf6d6eaefcdb9570e51409b8d0756035dc8d4",
+  "certificate_sha256": "deb58ed3ba45a019a153620dadd1dadb69781319a737ec2e61d403f6dbc77af8",
+  "raw_hash_scope": "UPSTREAM_RESPONSE",
+  "raw_hash_verified_rows": 1,
+  "raw_hash_unverifiable_rows": 12417,
+  "rows_with_exact_line_sha256": 12418,
+  "rows_with_absolute_offset": 12418,
+  "raw_offset_base": "0",
+  "universe_verified": false,
+  "universe_gate": "UNIVERSE_UNVERIFIED",
+  "verdict": "RESTRICTED",
+  "status": "PASS",
+  "note": "runtime output is published under the run out-root; this evidence records the immutable hashes and the schema-validated certificate"
+}

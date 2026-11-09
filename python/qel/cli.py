@@ -148,6 +148,9 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--manifest", required=True)
     p.add_argument("--out", required=True)
     p.add_argument("--dataset-id", default=None)
+    p.add_argument("--rules", default=None, help="bitemporal rules JSON")
+    p.add_argument("--decision-ns", default=None, help="dataset decision time in integer ns")
+    p.add_argument("--path-decision", default=None, help="runtime backend decision JSON")
 
     p = sub.add_parser("archive-native", help="build a native input from a daily archive")
     p.add_argument("--agg", required=True)
@@ -221,7 +224,18 @@ def main(argv: list[str] | None = None) -> int:
         _write(args.out, payload)
         return 0 if payload["status"] == "PASS" else 1
     if args.command == "prepare":
-        payload = normalize_capture(args.events, args.manifest, args.out, args.dataset_id)
+        path_decision = None
+        if args.path_decision:
+            path_decision = json.loads(Path(args.path_decision).read_text())
+        payload = normalize_capture(
+            args.events,
+            args.manifest,
+            args.out,
+            args.dataset_id,
+            rules_path=args.rules,
+            decision_ns=args.decision_ns,
+            path_decision=path_decision,
+        )
         print(json.dumps(payload, indent=2, sort_keys=True))
         return 0
     if args.command == "archive-native":

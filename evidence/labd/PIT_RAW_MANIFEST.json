@@ -1,0 +1,20 @@
+{
+  "dataset_id": "DS-PIT-RECHECK",
+  "input_hashes": {
+    "events_sha256": "968146bb19299e387eae4de2546d63456d34b1cd753d74fd46a71c414260c903",
+    "manifest_sha256": "7577e2c2f3d957e6894ca017cb5db22d79b324010501f1b58b955b65f9805959",
+    "rules_sha256": null
+  },
+  "raw_format": "RAW_FRAME_V1",
+  "raw_hash_scope": "UPSTREAM_RESPONSE",
+  "raw_index_sha256": "54ef34deec1f44dc336f1a839056f2f83724e41130520666c0c36d80810d0223",
+  "raw_offset_base": "0",
+  "row_count": "12418",
+  "rows_with_line_sha256": "12418",
+  "rows_with_raw_offset": "12418",
+  "rows_with_unverifiable_upstream_hash": "12417",
+  "rows_with_verified_declared_hash": "1",
+  "schema_version": "1.1.0",
+  "segment_sha256": "968146bb19299e387eae4de2546d63456d34b1cd753d74fd46a71c414260c903",
+  "segment_size_bytes": "5145372"
+}

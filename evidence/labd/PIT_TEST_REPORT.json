@@ -1,0 +1,77 @@
+{
+  "schema_version": "1.1.0",
+  "status": "PASS",
+  "commands": [
+    {
+      "command": "cd /home/quant/quant/qel-w01 && PYTHONPATH=python QEL_ROOT=$PWD /home/quant/quant/quant-edge-lab/.venv/bin/python -m pytest -q tests/test_normalize.py tests/test_pit.py",
+      "exit_code": 0,
+      "result": "39 passed in 1.65s"
+    },
+    {
+      "command": "cd /home/quant/quant/qel-w01 && PYTHONPATH=python QEL_ROOT=$PWD /home/quant/quant/quant-edge-lab/.venv/bin/python -m pytest -q tests",
+      "exit_code": 0,
+      "result": "79 passed in 17.68s"
+    },
+    {
+      "command": "cd /home/quant/quant/qel-w01 && PYTHONPATH=python QEL_ROOT=$PWD /home/quant/quant/quant-edge-lab/.venv/bin/python -m qel.cli prepare --events <raw>/CAP-BTCUSDT-1794174239-events.jsonl --manifest <raw>/CAP-BTCUSDT-1794174239-manifest.json --out <scratch>/pit/out --dataset-id DS-PIT-RECHECK",
+      "exit_code": 0,
+      "result": "rows=12418 dataset_hash=714294ad60cb892a19a53b092da5a17f3e04f9840ceee6d098ba1a35400b2ab4 certificate_sha256=deb58ed3ba45a019a153620dadd1dadb69781319a737ec2e61d403f6dbc77af8"
+    },
+    {
+      "command": "venv/bin/python <scratch>/pit/parity.py <raw events> <raw manifest> <dataset dir> <fixture> <run1> <run2>",
+      "exit_code": 0,
+      "result": "status=PASS; 19/19 parity checks; 12418/12418 row provenance checks"
+    },
+    {
+      "command": "venv/bin/python <scratch>/duckdb/query.py",
+      "exit_code": 132,
+      "result": "SIGILL before query execution; stderr empty"
+    }
+  ],
+  "positive_cases": [
+    "quote + trade + mark + funding normalize successfully",
+    "raw_offset_base is stored and applied to every row",
+    "deterministic rerun produces identical dataset and certificate hashes",
+    "known bitemporal rules join successfully",
+    "complete universe membership evidence verifies the universe",
+    "historical listing/delisting is preserved across half-open valid ranges",
+    "payload-canonical raw hash scope verifies strictly"
+  ],
+  "negative_cases": [
+    "tampered raw byte -> RAW_HASH_MISMATCH",
+    "conflicting trade duplicate -> DUPLICATE_CONFLICT",
+    "conflicting quote duplicate -> DUPLICATE_CONFLICT",
+    "bid > ask -> QUOTE_BID_GT_ASK",
+    "non-positive bid/ask -> QUOTE_BID_NONPOSITIVE / QUOTE_ASK_NONPOSITIVE",
+    "negative quote size -> QUOTE_NEGATIVE_SIZE",
+    "incomplete quote -> QUOTE_INCOMPLETE",
+    "non-integer/negative/boolean timestamp -> INVALID_TIMESTAMP",
+    "sequence regression -> SEQUENCE_REGRESSION",
+    "duplicate sequence with different event -> SEQUENCE_CONFLICT",
+    "snapshot without sequence -> SNAPSHOT_MISSING_SEQUENCE",
+    "non-boolean snapshot flag -> SNAPSHOT_INVALID",
+    "truncated raw tail -> TRUNCATED_TAIL",
+    "blank raw line -> MALFORMED_LINE",
+    "invalid dataset id -> INVALID_DATASET_ID",
+    "declared raw offset mismatch -> RAW_OFFSET_MISMATCH",
+    "unknown universe -> UNIVERSE_UNVERIFIED gate, never silently complete",
+    "future-known rule -> RULE_FUTURE_KNOWN",
+    "conflicting rule at same valid+known time -> RULE_CONFLICT",
+    "invalid InstrumentRule schema -> RULES_SCHEMA_INVALID"
+  ],
+  "evidence": [
+    "evidence/labd/PIT_PARITY.json",
+    "evidence/labd/PIT_PROVENANCE.json",
+    "evidence/labd/PIT_RESOURCE.json",
+    "evidence/labd/PIT_PATH_DECISION.json",
+    "evidence/labd/PIT_DUCKDB_LIMITATION.json",
+    "evidence/labd/DATASET_CERT_DS-PIT-RECHECK.json",
+    "evidence/labd/NORMALIZE_PIT_RECHECK.json",
+    "evidence/labd/PIT_240S.json",
+    "evidence/labd/PIT_RAW_MANIFEST.json"
+  ],
+  "unresolved_blockers": [
+    "DuckDB 2.0.0 is BLOCKED_BACKEND on this CPU (SIGILL); PyArrow/Parquet is the certified path",
+    "collector RAW_FRAME_V1 raw_sha256 hashes the upstream HTTP body, which is not stored in the NDJSON frame; per-row exact line hashes are used instead and the limitation is explicit"
+  ]
+}

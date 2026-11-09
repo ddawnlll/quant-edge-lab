@@ -1,0 +1,48 @@
+{
+  "schema_version": "1.1.0",
+  "dataset_id": "DS-PIT-RECHECK",
+  "raw_segment_sha256": "968146bb19299e387eae4de2546d63456d34b1cd753d74fd46a71c414260c903",
+  "raw_offset_base": "0",
+  "row_count": 12418,
+  "event_type_counts": {
+    "Funding": 10,
+    "Mark": 1,
+    "Quote": 137,
+    "Trade": 12270
+  },
+  "ordered_ts_raw_sha256": "75dcb1b933e54766a18b29691facf6d6eaefcdb9570e51409b8d0756035dc8d4",
+  "dataset_hash": "714294ad60cb892a19a53b092da5a17f3e04f9840ceee6d098ba1a35400b2ab4",
+  "certificate_sha256": "deb58ed3ba45a019a153620dadd1dadb69781319a737ec2e61d403f6dbc77af8",
+  "independent_scan": "Python standard library byte scan of the exact raw NDJSON segment; no normalizer code reused",
+  "row_level_checks_passed": 12418,
+  "row_level_checks_total": 12418,
+  "checks": {
+    "line_offsets_contiguous": true,
+    "declared_offsets_match_scan": true,
+    "raw_scan_rows_equal_parquet_rows": true,
+    "event_type_counts_equal": true,
+    "ordered_digest_equal": true,
+    "certificate_digest_equal": true,
+    "certificate_row_count_equal": true,
+    "certificate_event_counts_equal": true,
+    "partition_hash_matches_manifest": true,
+    "quality_ref_hash_matches": true,
+    "all_rows_have_immutable_hash": true,
+    "all_row_offsets_resolve": true,
+    "all_row_line_hashes_match": true,
+    "all_row_declared_hashes_match": true,
+    "all_row_timestamps_match": true,
+    "universe_gate_is_explicit": true
+  },
+  "raw_hash_semantics": {
+    "line_sha256": "SHA-256 of the exact stored NDJSON line bytes excluding LF; recomputed and verified for all 12418 rows",
+    "raw_sha256": "collector RAW_FRAME_V1 upstream HTTP response body hash; the body is not stored in the frame, so 12417 rows are explicitly unverifiable and 1 row matched a stored candidate",
+    "restriction": "upstream hash mismatch cannot be detected from the frame alone; this limitation is recorded rather than papered over"
+  },
+  "status": "PASS",
+  "evidence": [
+    "evidence/labd/PIT_PARITY.json",
+    "evidence/labd/PIT_RAW_MANIFEST.json",
+    "evidence/labd/DATASET_CERT_DS-PIT-RECHECK.json"
+  ]
+}
