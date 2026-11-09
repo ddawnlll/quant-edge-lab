@@ -1,0 +1,79 @@
+{
+  "issue": 14,
+  "task": "TASK-26",
+  "kind": "COORDINATOR_INDEPENDENT_VERIFICATION",
+  "integration_branch": "qel/followup-20261109",
+  "base_sha": "48bfaafd4846f12c34f9401d17110651a3c4bc92",
+  "patch_commit": "8380db4",
+  "integrated_commit": "55f6de7",
+  "verification": {
+    "pytest": {"command": "PYTHONPATH=python QEL_ROOT=$PWD .venv/bin/python -m pytest -q tests", "result": "222 passed", "exit_code": 0},
+    "focused": {"command": "pytest -q tests/test_calibration.py", "result": "18 passed", "exit_code": 0},
+    "b6_workload_descriptor": {
+      "programs_per_generator": 1000,
+      "generators": ["GAUSSIAN_AR1_RHO_0_3", "STUDENT_T_DF5_AR1", "FIVE_COIN_COMMON_FACTOR_LOADING_0_6", "FROZEN_REGIME_SHIFT_NEGATIVE_CONTROL"],
+      "cohorts": 3,
+      "development_days": 1500,
+      "fresh_days_per_cohort": 500,
+      "family_variants": 16,
+      "control_replications": 1000,
+      "effects": ["0", "0.0005", "0.001", "0.002"],
+      "block_primary": 5,
+      "block_sensitivity": 10,
+      "hac_lag": 5,
+      "batch_resamples_max": 64,
+      "seed_protocol": "HMAC_SHA256_COUNTER_V1"
+    },
+    "pilot": {
+      "label": "PILOT_NOT_ACCEPTANCE",
+      "programs_per_generator": 1,
+      "wall_seconds": 580.215,
+      "peak_rss_bytes": 155398144,
+      "workers": 4,
+      "estimated_full_core_hours": 1085.64,
+      "per_generator": {
+        "GAUSSIAN_AR1_RHO_0_3": {"promotions": 0, "cp95_upper": 0.95, "coverage": "PASS 6/6"},
+        "STUDENT_T_DF5_AR1": {"promotions": 0, "cp95_upper": 0.95, "coverage": "PASS 6/6"},
+        "FIVE_COIN_COMMON_FACTOR_LOADING_0_6": {"promotions": 0, "cp95_upper": 0.95, "coverage": "PASS 6/6"},
+        "FROZEN_REGIME_SHIFT_NEGATIVE_CONTROL": {"promotions": 0, "cp95_upper": 0.95, "coverage": "FAILED_OR_BLOCKED_NONSTATIONARY", "blocked_endpoints": 4}
+      },
+      "power_curve_present": true,
+      "coverage_report_present": true
+    },
+    "blockers": [
+      "COMPUTE_BUDGET_INSUFFICIENT",
+      "NULL_FWER_UPPER_ABOVE_TARGET",
+      "INCOMPLETE_PROGRAM_SELECTION"
+    ]
+  },
+  "acceptance_boundary": {
+    "status": "PILOT_NOT_ACCEPTANCE",
+    "reason": "The full B6 workload requires an estimated 1,085.64 core-hours on this host. The pilot executed one program per generator to validate the law, selection, paired decision, coverage and power machinery. It is not a B6 certificate and cannot close #14.",
+    "what_is_verified": [
+      "exact four-generator law with HMAC seed labels",
+      "16-variant family selection, 3 cohorts, cohort alpha spending",
+      "paired decision path, coverage report and power curve",
+      "nonstationary negative control blocked by the two-half stationarity alarm",
+      "bounded memory and sequential execution"
+    ],
+    "what_is_missing": [
+      "1000 null programs per generator",
+      "full 95% Clopper-Pearson upper bound at the required sample size",
+      "resolved Monte Carlo per the frozen minimum B"
+    ]
+  },
+  "claims_not_made": [
+    "B6 acceptance",
+    "a zero-promotion FWER certificate",
+    "a power or MDE certificate at the required resolution"
+  ],
+  "evidence_hashes": {
+    "evidence/labd/B6_PILOT.json": "committed with patch",
+    "evidence/labd/B6_PILOT.txt": "committed with patch",
+    "evidence/labd/B6_PILOT_NOTES.txt": "committed with patch",
+    "evidence/labd/B6_TESTS_FOCUSED.txt": "committed with patch",
+    "evidence/labd/B6_TESTS_FULL.txt": "committed with patch"
+  },
+  "verdict": "PILOT_NOT_ACCEPTANCE",
+  "acceptance_note": "Engineering is integrated and the B6 protocol is implemented. #14 remains OPEN on compute budget; the full B6 report must be produced on a larger compute allocation before #7, #9 and #14 can close."
+}

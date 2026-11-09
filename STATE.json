@@ -3,7 +3,7 @@
   "spec_version": "1.1.0",
   "spec_package_sha256": "db18e7a6e94b8c9b233a48097040d1a3a6c655ea126d5e6805d67d4f6e91fd30",
   "baseline_sha256": "71628e4b4ceceac3447759cdabab131e16237aff9fd7569a09f1bc61e4d70d06",
-  "updated_utc": "2026-11-09T12:04:40Z",
+  "updated_utc": "2026-11-09T12:09:00Z",
   "host": {
     "os": "Debian GNU/Linux 13 (trixie)",
     "kernel": "6.12.115+deb13.1-amd64",
@@ -256,9 +256,16 @@
     "TASK-26": {
       "status": "PARTIAL",
       "evidence": [
-        "evidence/labd/CALIBRATION_B6.json",
-        "evidence/labd/CALIBRATION_B6_RECHECK.json"
-      ]
+        "python/qel/stats/calibration.py",
+        "tests/test_calibration.py",
+        "evidence/labd/B6_PILOT.json",
+        "evidence/labd/B6_PILOT.txt",
+        "evidence/labd/B6_PILOT_NOTES.txt",
+        "evidence/labd/B6_TESTS_FOCUSED.txt",
+        "evidence/labd/B6_TESTS_FULL.txt",
+        "evidence/labd/INTEGRATION_ISSUE14_VERIFY.json"
+      ],
+      "blocked": "COMPUTE_BUDGET_INSUFFICIENT: full B6 estimated 1085.64 core-hours; pilot only (1 program per generator) is PILOT_NOT_ACCEPTANCE"
     },
     "TASK-27": {
       "status": "RUNNING",
