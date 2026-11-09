@@ -23,3 +23,8 @@ Guessed or environment-constrained interpretations:
    behavior. They are not market results and cannot promote a strategy.
 6. **No real-money orders, paid calls, or new dependencies on paid services**
    were introduced. The public GitHub repository is the only external write.
+7. **Development controls and bootstrap calibration use seeded NumPy PCG64**,
+   not the execution `HMAC_SHA256_COUNTER_V1` seed protocol. Their reports now
+   say so. A frozen confirmation cohort must adopt the HMAC protocol before it
+   can be treated as spec-conforming; the current M2/M3 evidence is explicitly
+   development-only.

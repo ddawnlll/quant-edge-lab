@@ -81,9 +81,12 @@ def studentized_bootstrap_p(
     z = arr - arr.mean()
     k = 0
     done = 0
-    while done < b:
+    attempts = 0
+    max_attempts = b * 20
+    while done < b and attempts < max_attempts:
         chunk = min(batch, b - done)
         for _ in range(chunk):
+            attempts += 1
             idx = stationary_bootstrap_indices(n, block, rng)
             sample = z[idx]
             try:
@@ -95,7 +98,9 @@ def studentized_bootstrap_p(
             t_star = float(sample.mean() / se_star)
             if t_star >= t_obs:
                 k += 1
-        done += chunk
+            done += 1
+    if done < b:
+        raise ValueError("BOOTSTRAP_DEGENERATE")
     m = b
     p_raw = (k + 1) / (m + 1)
     p_upper = p_raw

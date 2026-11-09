@@ -29,8 +29,10 @@ def control_spec(family_id: str, seed: int, variants: int = 12) -> dict:
         "schema_version": "1.1.0",
         "family_id": family_id,
         "seed": seed,
-        "draw_mapping": "HMAC_SHA256_COUNTER_V1",
-        "matched_on": ["calendar", "trade_count", "holding_time"],
+        "draw_mapping": "NUMPY_PCG64_DETERMINISTIC",
+        "seed_protocol_note": "development controls use NumPy PCG64; this is not the execution HMAC seed protocol",
+        "matched_on": ["calendar", "trade_count"],
+        "holding_time_note": "holding time is reported, not selected; use a holding-time target before claiming that match",
         "controls": [
             {"control_id": f"CTRL-{i}", "seed": hash_jcs({"seed": seed, "i": i})}
             for i in range(2)
@@ -109,6 +111,16 @@ def run_variants(binary: str, events: str, base: dict, out_dir: str, count: int 
             continue
         data = json.loads(report.read_text())
         pnl = tape_net_pnl(data["tape"])
+        if dec(pnl["residual"]) != 0:
+            results.append(
+                {
+                    "strategy_id": sid,
+                    "status": "BLOCKED",
+                    "error": "ACCOUNTING_RESIDUAL",
+                    "residual": pnl["residual"],
+                }
+            )
+            continue
         results.append(
             {
                 "strategy_id": sid,
@@ -126,7 +138,11 @@ def run_variants(binary: str, events: str, base: dict, out_dir: str, count: int 
         verdict = classify(0.5, 0.1, float(mean) - 1.0, float(mean) + 1.0, 0.0001)
     return {
         "schema_version": "1.1.0",
-        "status": "PASS" if results else "BLOCKED",
+        "status": (
+            "PASS"
+            if results and all(r["status"] == "PASS" for r in results)
+            else ("PARTIAL" if results else "BLOCKED")
+        ),
         "verdict": verdict,
         "variants": results,
         "variant_count": len(results),

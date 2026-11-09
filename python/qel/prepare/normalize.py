@@ -146,6 +146,10 @@ def normalize_capture(events_path: str, manifest_path: str, out_root: str, datas
     schema_version = "1.1.0"
     license_id = manifest.get("license_id", "BINANCE_PUBLIC_DATA_TERMS")
     coverage = sorted({r["event_type"].upper() for r in rows})
+    gap_ranges = [
+        {"start_ns": str(event["start_ns"]), "end_ns": str(event["end_ns"])}
+        for event in manifest.get("loss_events", [])
+    ]
     quality = {
         "dataset_hash": dataset_hash,
         "normalizer_hash": sha256_hex(Path(__file__).read_bytes()),
@@ -158,7 +162,7 @@ def normalize_capture(events_path: str, manifest_path: str, out_root: str, datas
         "availability_range": {"start_ns": str(start_ns or 0), "end_ns": str(end_ns or 0)},
         "duplicates": duplicates,
         "conflicts": conflicts,
-        "gap_ranges": [],
+        "gap_ranges": gap_ranges,
         "clock_uncertainty_ns": "5000000",
         "coverage": coverage,
         "universe_verified": False,

@@ -109,3 +109,31 @@ func TestDeletedFirstLedgerEventIsDetected(t *testing.T) {
 		t.Fatal("deleted first event was not detected")
 	}
 }
+
+func TestTamperedPayloadContentIsDetected(t *testing.T) {
+	l := openTest(t)
+	ctx := context.Background()
+	if _, err := l.Append(ctx, Input{EventType: "JobStateChanged", Payload: map[string]any{"n": 1}}); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := l.db.ExecContext(ctx, `UPDATE ledger_events SET payload_json='{"n":99}' WHERE seq='1'`); err != nil {
+		t.Fatal(err)
+	}
+	if err := l.VerifyChain(ctx); err == nil {
+		t.Fatal("tampered payload content was not detected")
+	}
+}
+
+func TestTamperedEventIDIsDetected(t *testing.T) {
+	l := openTest(t)
+	ctx := context.Background()
+	if _, err := l.Append(ctx, Input{EventType: "JobStateChanged", Payload: map[string]any{"n": 1}}); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := l.db.ExecContext(ctx, `UPDATE ledger_events SET event_id=? WHERE seq='1'`, string(make([]byte, 64))); err != nil {
+		t.Fatal(err)
+	}
+	if err := l.VerifyChain(ctx); err == nil {
+		t.Fatal("tampered event id was not detected")
+	}
+}

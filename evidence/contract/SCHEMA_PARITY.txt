@@ -1,0 +1,15 @@
+valid_example:
+VALID StrategySpec
+rc=0
+VALID StrategySpec
+rc=0
+VALID StrategySpec
+rc=0
+invalid_overflow:
+ERROR: $.max_holding_ns: integer above declared domain
+rc=1
+Error: $.max_holding_ns: integer above declared domain
+rc=1
+    raise ValidationError_(f"{path}: integer outside declared domain")
+qel.contract.schema.ValidationError_: $.max_holding_ns: integer outside declared domain
+python_rc=1

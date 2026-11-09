@@ -1,0 +1,9 @@
+prior_report {'events': 12418, 'total_orders': 15, 'total_positions': 8, 'chunk_events': None, 'status': 'PASS'}
+unchunked {'events': 12418, 'total_orders': 15, 'total_positions': 8, 'chunk_events': 0, 'status': 'PASS'}
+chunked {'events': 12418, 'total_orders': 15, 'total_positions': 8, 'chunk_events': 2000, 'status': 'PASS'}
+events MATCH
+total_orders MATCH
+total_positions MATCH
+tape MATCH
+tape_extra MATCH
+rss_kb 19860

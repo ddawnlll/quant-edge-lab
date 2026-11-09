@@ -137,6 +137,23 @@ func TestVersionMismatchRejected(t *testing.T) {
 	}
 }
 
+func TestBearerTokenAuthorization(t *testing.T) {
+	s, _ := testServer(t)
+	s.HTTPToken = "secret-token"
+	req := httptest.NewRequest(http.MethodPost, "/v1/jobs", nil)
+	if s.authorized(req) {
+		t.Fatal("missing token accepted")
+	}
+	req.Header.Set("Authorization", "Bearer wrong")
+	if s.authorized(req) {
+		t.Fatal("wrong token accepted")
+	}
+	req.Header.Set("Authorization", "Bearer secret-token")
+	if !s.authorized(req) {
+		t.Fatal("correct token rejected")
+	}
+}
+
 func TestUnixPeerCredentialAndPing(t *testing.T) {
 	s, dir := testServer(t)
 	ctx, cancel := context.WithCancel(context.Background())

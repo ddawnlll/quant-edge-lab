@@ -15,6 +15,7 @@
       "quality_ref_hash_ok": true,
       "quality_dataset_hash_ok": true,
       "quality_clean": true,
+      "gaps_reported": true,
       "time_range_agrees": true
     },
     "status": "PASS"
@@ -23,6 +24,7 @@
     "status": "PASS",
     "checks": {
       "native_sha_ok": true,
+      "native_row_count_ok": true,
       "agg_sha_ok": true,
       "mark_sha_ok": true,
       "funding_sha_ok": true
@@ -32,6 +34,7 @@
       "Mark": 1440,
       "Quote": 72084,
       "Trade": 284672
-    }
+    },
+    "native_rows": 358200
   }
 }

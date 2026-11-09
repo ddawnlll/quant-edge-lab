@@ -1,0 +1,4 @@
+spec_zip_sha256=db18e7a6e94b8c9b233a48097040d1a3a6c655ea126d5e6805d67d4f6e91fd30
+spec_files=18
+package_files=18
+comparison:

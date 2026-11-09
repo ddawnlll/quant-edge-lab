@@ -1,0 +1,16 @@
+{
+  "conflicts": 0,
+  "coverage": [
+    "FUNDING",
+    "MARK",
+    "QUOTE",
+    "TRADE"
+  ],
+  "dataset_hash": "f58088ce77e87b2174af4d5c44c7276a789f38d1f56922500d3cca32cc06ef34",
+  "dataset_id": "DS-BTCUSDT-LIVE-240S",
+  "dataset_path": "data/normalized/DS-BTCUSDT-LIVE-240S/dataset.json",
+  "duplicates": 0,
+  "partition_path": "data/normalized/DS-BTCUSDT-LIVE-240S/events.parquet",
+  "rows": 12418,
+  "universe_verified": false
+}

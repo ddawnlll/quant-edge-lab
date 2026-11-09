@@ -496,7 +496,7 @@ func (l *Ledger) Payload(ctx context.Context, eventHash string) (map[string]any,
 
 // VerifyChain recomputes every previous/event hash and checks the sequence.
 func (l *Ledger) VerifyChain(ctx context.Context) error {
-	rows, err := l.db.QueryContext(ctx, `SELECT seq,previous_hash,event_hash,payload_hash,recorded_at_ns,effective_at_ns,
+	rows, err := l.db.QueryContext(ctx, `SELECT seq,event_id,previous_hash,event_hash,payload_hash,payload_json,recorded_at_ns,effective_at_ns,
 		actor_principal,role,tool_version,program_id,family_id,hypothesis_id,run_key,attempt_id,event_type,artifact_refs_json,supersedes,reason_code,source,record_scope
 		FROM ledger_events ORDER BY seq`)
 	if err != nil {
@@ -506,9 +506,9 @@ func (l *Ledger) VerifyChain(ctx context.Context) error {
 	previous := "0"
 	wantSeq := 1
 	for rows.Next() {
-		var seq, prev, hash, payloadHash, recorded, effective, actor, role, tool, eventType, scope, refsRaw string
+		var seq, eventID, prev, hash, payloadHash, payloadRaw, recorded, effective, actor, role, tool, eventType, scope, refsRaw string
 		var program, family, hypothesis, runKey, attempt, supersedes, reason, source sql.NullString
-		if err := rows.Scan(&seq, &prev, &hash, &payloadHash, &recorded, &effective, &actor, &role, &tool,
+		if err := rows.Scan(&seq, &eventID, &prev, &hash, &payloadHash, &payloadRaw, &recorded, &effective, &actor, &role, &tool,
 			&program, &family, &hypothesis, &runKey, &attempt, &eventType, &refsRaw, &supersedes, &reason, &source, &scope); err != nil {
 			return err
 		}
@@ -519,6 +519,17 @@ func (l *Ledger) VerifyChain(ctx context.Context) error {
 			return fmt.Errorf("sequence gap at seq %s, want %d", seq, wantSeq)
 		}
 		wantSeq++
+		var payload map[string]any
+		if err := json.Unmarshal([]byte(payloadRaw), &payload); err != nil {
+			return fmt.Errorf("payload decode at seq %s: %w", seq, err)
+		}
+		computedPayload, err := qelcontract.HashJCS(payload)
+		if err != nil {
+			return fmt.Errorf("payload hash at seq %s: %w", seq, err)
+		}
+		if computedPayload != payloadHash {
+			return fmt.Errorf("payload content mismatch at seq %s", seq)
+		}
 		var refs []any
 		if err := json.Unmarshal([]byte(refsRaw), &refs); err != nil {
 			return err
@@ -541,6 +552,13 @@ func (l *Ledger) VerifyChain(ctx context.Context) error {
 		}
 		if recomputed != hash {
 			return fmt.Errorf("hash mismatch at seq %s", seq)
+		}
+		recomputedID, err := qelcontract.DomainHash("QEL.EVENT.1.1\x00", material)
+		if err != nil {
+			return err
+		}
+		if recomputedID != eventID {
+			return fmt.Errorf("event id mismatch at seq %s", seq)
 		}
 		previous = hash
 	}

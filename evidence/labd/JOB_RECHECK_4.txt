@@ -1,0 +1,2 @@
+{"generation":0,"ledger_event_hash":"1a1b9f21aec02a24d12e259e4c21e8dab0a49e399614c8f1f213f173c726e455","request_id":"REQ-JOB-VAL3-1794182958","resource_id":"JOB-VAL3-1794182958","reused":false,"state":"QUEUED"}
+{"generation":1,"job_id":"JOB-VAL3-1794182958","latest_attempt_id":"ATT-1","outputs":[{"media_type":"application/json","schema_id":"urn:qel:job:report","schema_version":"1.1.0","sha256":"0ff0a8ce9dfc7836a79355f12f6e7071e9850569bdb60eca0ce1fb15b50ffed0","size_bytes":"150326","visibility":"DEVELOPMENT"}],"reason_code":null,"state":"OUTPUT_SEALED","usage":null}

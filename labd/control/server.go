@@ -2,6 +2,7 @@ package control
 
 import (
 	"context"
+	"crypto/subtle"
 	"database/sql"
 	"encoding/base64"
 	"encoding/json"
@@ -63,7 +64,9 @@ func (s *Server) authorized(r *http.Request) bool {
 	if s.HTTPToken == "" {
 		return false
 	}
-	return r.Header.Get("Authorization") == "Bearer "+s.HTTPToken
+	got := []byte(r.Header.Get("Authorization"))
+	want := []byte("Bearer " + s.HTTPToken)
+	return len(got) == len(want) && subtle.ConstantTimeCompare(got, want) == 1
 }
 
 func allowedRole(role, op string) bool {

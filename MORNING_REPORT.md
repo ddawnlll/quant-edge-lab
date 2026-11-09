@@ -1,6 +1,6 @@
 # Morning Report
 
-Status time: 2026-11-08T23:46Z. This is a development and verification report.
+Status time: 2026-11-09T00:10Z. This is a development and verification report.
 It is not a profitability claim and does not certify a trading edge.
 
 ## Implemented and verified
@@ -10,15 +10,15 @@ It is not a profitability claim and does not certify a trading edge.
 | Bootstrap | DONE | ZIP SHA-256 `db18e7a6…fd30`, MANIFEST OK, baseline `71628e4b…d06`, spec validator PASS |
 | TASK-01 contract SDK | DONE | Python/Go/Rust JCS, decimals, schemas, run keys; cross-language match |
 | TASK-02 fixture oracle | DONE | 44/44 scenarios, 10/10 mutation controls caught (expected and input) |
-| TASK-03 ledger/artifacts | DONE | crash matrix, orphan/acked checks, backup restore, hash chain |
+| TASK-03 ledger/artifacts | DONE | crash matrix, orphan/acked checks, backup restore, payload/event-ID/hash-chain verification, blob repair |
 | TASK-04 control/queue | DONE | 4-byte framing, peer credentials, leases, idempotency, stale generation |
 | TASK-05 public capture | DONE | 20s and 240s live captures; verified daily archive |
-| TASK-06 normalize/PIT | PARTIAL | Arrow/Parquet + manifests; DuckDB unusable on this CPU |
+| TASK-06 normalize/PIT | PARTIAL | Arrow/Parquet + manifests, raw-segment verification, capture gaps reported; DuckDB unusable on this CPU |
 | TASK-07 typed policy | DONE | 26 operators, DAG/type/leak checks, EMA48/STD96 reference, direct operator coverage |
 | TASK-08 native feasibility | DONE_WITH_BLOCKED_CAPABILITY | Nautilus v1.231.0 spike and pin re-verified; LocalView/L2 queue blocked |
 | TASK-09 independent accounting | DONE | exact tape reconstruction; native residual 0 |
 | TASK-11 native taker slice | PARTIAL | 15 orders/8 positions live slice; full archive day 307 orders/154 positions, residual 0; F22 blocked |
-| TASK-14 dependent stats | PARTIAL | HAC/bootstrap/IUT/Holm/F27/F28, four-generator B6, and `JOB-STATS-1` sealed through qeld; full MDE/coverage certificate pending |
+| TASK-14 dependent stats | PARTIAL | HAC/bootstrap/IUT/Holm/F27/F28 and four-generator B6 re-run after the bootstrap fix, `JOB-STATS-1` sealed through qeld; full MDE/coverage certificate pending |
 | TASK-15/16 evaluator | PARTIAL | E2E frozen cohort + pre-access receipt + Ed25519 verdict verified; OS owner split blocked |
 | TASK-20 recovery | DONE | worker killed, lease requeued, generation 2 sealed |
 | TASK-21/22 memory/agent | DONE | FTS claims, CAS assignment, stale rejection, rebuild |
@@ -102,7 +102,42 @@ unknown paths 404, non-GET root 405, HEAD 200, dashboard CSP/nosniff present,
 listener is `127.0.0.1:8787`, and token/socket/DB modes are 600/660/640.
 Fixture mutation controls now catch 10/10 cases. Provenance checks additionally
 prove every raw offset is used exactly once and row counts, partition size,
-quality reference, time range, and clean-quality verdict agree.
+quality reference, time range, and reported gaps agree with the capture.
+
+## Validation pass 4
+
+`evidence/labd/VALIDATION_PASS_4.txt` is the latest consolidated pass: the
+vendored spec tree is byte-identical to the extracted package, 120 canonical
+vectors and 40 run-key vectors match across Python/Go/Rust, valid/invalid
+schema decisions agree, 41 Python tests pass, all Go packages pass, and 7 Rust
+policy tests pass.
+
+Deeper checks found and fixed additional integrity gaps:
+
+- `VerifyChain` now recomputes the stored payload hash and event ID, so editing
+  `payload_json` or `event_id` without rehashing is detected.
+- Re-sealing an artifact now verifies an existing blob and atomically repairs a
+  corrupted blob instead of silently reusing it.
+- normalization now records the capture's four loss/gap ranges in the quality
+  certificate instead of publishing an empty gap list.
+- the sealed evaluator uses `INSERT OR IGNORE` and refuses a concurrent second
+  decision instead of overwriting the first.
+- the bootstrap requires the full requested number of non-degenerate
+  replicates; the four-generator 1,000-program B6 was rerun and remains 0
+  promotions per generator with 95% upper 0.00299.
+- control reports now state they match calendar and trade count only, and use
+  documented NumPy PCG64 draws rather than claiming the execution HMAC seed
+  protocol. `ASSUMPTIONS.md` records this as a development-only limitation.
+- oracle metrics are unchanged when every `expected` field is removed, proving
+  the fixtures are not self-fulfilling.
+- native replays are bit-identical on rerun; unchunked and 2,000-event chunked
+  runs match at 15 orders/8 positions, and the archive variant reconciles with
+  residual 0.
+
+The full B6 recheck took 508 s and is stored in
+`evidence/labd/CALIBRATION_B6.json`; the bounded 100-program recheck is also
+kept. The live ledger still verifies after rebuilding/restarting `qeld` and
+`qel-worker`, and `JOB-VAL3-1794182958` sealed end to end.
 
 ## Measured resources
 
@@ -118,7 +153,7 @@ quality reference, time range, and clean-quality verdict agree.
 - Archive day: 358,200 events (284,672 observed trades, 72,084 synthetic L1
   quotes, 1,440 marks, 4 funding settlements), 307 orders, 154 positions,
   8.5 s, 113 MiB RSS; independent accounting residual 0.
-- Python tests: 37 passed. Go packages: ledger, artifacts, queue, control,
+- Python tests: 41 passed. Go packages: ledger, artifacts, queue, control,
   memory, cgroup, submit pass. Rust policy: 7 tests pass.
 
 ## Running validations

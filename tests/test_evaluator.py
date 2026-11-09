@@ -33,6 +33,15 @@ def test_signed_decision_verifies(tmp_path):
     assert not reg.verify({k: v for k, v in decision.items() if k != "signature"})
     other = SealedRegistry(str(tmp_path / "other"))
     assert not reg.verify({**decision, "public_key": other.public_key_hex()})
+    with pytest.raises(SealedError):
+        reg.decide(
+            "COHORT-0",
+            [0.002, 0.001, 0.003, 0.002, 0.001],
+            [0.0, 0.001, -0.001, 0.0, 0.0],
+            capital=1000,
+            economic_minimum=0.0001,
+            b=64,
+        )
 
 
 def test_no_consumption_no_decision(tmp_path):

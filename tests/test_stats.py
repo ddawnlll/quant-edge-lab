@@ -50,6 +50,23 @@ def test_hac_and_bootstrap_smoke():
     assert result.p_upper >= result.p_raw
 
 
+def test_hac_exact_small_sample():
+    assert hac_se([1.0, 2.0, 3.0], lag=0) == pytest.approx((2.0 / 3.0 / 3.0) ** 0.5)
+    assert hac_se([1.0, 2.0, 3.0, 4.0], lag=0) == pytest.approx((1.25 / 4.0) ** 0.5)
+    assert hac_se([1.0, 2.0, 3.0, 4.0], lag=1) == pytest.approx(0.625)
+    with pytest.raises(ValueError):
+        hac_se([2.0, 2.0, 2.0])
+    with pytest.raises(ValueError):
+        hac_se([1.0, 2.0])
+
+
+def test_walk_forward_rejects_invalid_and_short_windows():
+    with pytest.raises(ValueError):
+        walk_forward_splits(["a", "b"], 0, 1, 0, 0)
+    with pytest.raises(ValueError):
+        walk_forward_splits(["a"], 1, 1, 0, 0)
+
+
 def test_null_generators_and_regime_block():
     from qel.stats.core import null_generator, stationarity_screen
 

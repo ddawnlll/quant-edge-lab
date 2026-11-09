@@ -6,6 +6,8 @@
     "rust"
   ],
   "mismatches": [],
+  "runkey_vectors": 40,
+  "runkey_mismatches": [],
   "nfc_negative_rejections": 2,
   "status": "PASS"
 }

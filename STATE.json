@@ -3,7 +3,7 @@
   "spec_version": "1.1.0",
   "spec_package_sha256": "db18e7a6e94b8c9b233a48097040d1a3a6c655ea126d5e6805d67d4f6e91fd30",
   "baseline_sha256": "71628e4b4ceceac3447759cdabab131e16237aff9fd7569a09f1bc61e4d70d06",
-  "updated_utc": "2026-11-08T23:47:16Z",
+  "updated_utc": "2026-11-09T00:11:09Z",
   "host": {
     "os": "Debian GNU/Linux 13 (trixie)",
     "kernel": "6.12.115+deb13.1-amd64",
@@ -52,7 +52,8 @@
         "labd/artifacts tests",
         "evidence/labd/RECOVERY_REPORT.txt",
         "evidence/labd/LEDGER_TESTS.txt",
-        "evidence/labd/TAMPER_TESTS.txt"
+        "evidence/labd/TAMPER_TESTS.txt",
+        "evidence/labd/VALIDATION_PASS_4.txt"
       ]
     },
     "TASK-04": {
@@ -74,6 +75,7 @@
       "status": "PARTIAL",
       "evidence": [
         "evidence/labd/NORMALIZE.json",
+        "evidence/labd/NORMALIZE_RECHECK.json",
         "tests/test_normalize.py",
         "evidence/labd/PROVENANCE_VALIDATION.json"
       ],
@@ -131,7 +133,9 @@
         "evidence/labd/SCREEN.json",
         "evidence/labd/SCREEN_DAY.json",
         "evidence/labd/CONTROLS_DAY.json",
-        "evidence/labd/FAMILY_REPORT_DAY.json"
+        "evidence/labd/FAMILY_REPORT_DAY.json",
+        "evidence/labd/CONTROL_RECHECK.txt",
+        "evidence/labd/CONTROL_TEST.txt"
       ]
     },
     "TASK-14": {
@@ -139,6 +143,8 @@
       "evidence": [
         "tests/test_stats.py",
         "evidence/labd/CALIBRATION_B6.json",
+        "evidence/labd/CALIBRATION_B6_RECHECK.json",
+        "evidence/labd/STATS_ARITHMETIC.txt",
         "evidence/labd/POWER_GRID.json",
         "runtime job JOB-STATS-1"
       ]
@@ -147,6 +153,7 @@
       "status": "PARTIAL",
       "evidence": [
         "tests/test_evaluator.py",
+        "evidence/labd/EVALUATOR_TESTS.txt",
         "runtime/sealed (not committed)"
       ]
     },
@@ -215,7 +222,8 @@
     "TASK-26": {
       "status": "PARTIAL",
       "evidence": [
-        "evidence/labd/CALIBRATION_B6.json"
+        "evidence/labd/CALIBRATION_B6.json",
+        "evidence/labd/CALIBRATION_B6_RECHECK.json"
       ]
     },
     "TASK-27": {
@@ -223,7 +231,7 @@
       "evidence": [
         "runtime/soak/soak.jsonl"
       ],
-      "elapsed_s": 4692
+      "elapsed_s": 6136
     },
     "TASK-28": {
       "status": "BLOCKED",
@@ -297,6 +305,10 @@
     {
       "id": "FORWARD-DATA",
       "reason": "15 orders/15 fills/1 day observed, below 200/50/10"
+    },
+    {
+      "id": "CONTROL-SEED-PROTOCOL",
+      "reason": "development controls/bootstrap use NumPy PCG64, not the execution HMAC seed protocol"
     }
   ],
   "next_action": "Wait for the 24h soak to elapse and verify it; keep M4/M6/M7 blocked and do not claim an edge."

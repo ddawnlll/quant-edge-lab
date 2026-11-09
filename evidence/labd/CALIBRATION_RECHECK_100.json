@@ -1,0 +1,43 @@
+{
+  "generators": [
+    {
+      "binomial_upper_95": 0.029513049607039925,
+      "false_promotion_rate": 0.0,
+      "generator": "ar1",
+      "pass": true,
+      "programs": 100,
+      "promotions": 0,
+      "threshold": 0.075
+    },
+    {
+      "binomial_upper_95": 0.029513049607039925,
+      "false_promotion_rate": 0.0,
+      "generator": "t5",
+      "pass": true,
+      "programs": 100,
+      "promotions": 0,
+      "threshold": 0.075
+    },
+    {
+      "binomial_upper_95": 0.029513049607039925,
+      "false_promotion_rate": 0.0,
+      "generator": "common_factor",
+      "pass": true,
+      "programs": 100,
+      "promotions": 0,
+      "threshold": 0.075
+    },
+    {
+      "binomial_upper_95": 0.029513049607039925,
+      "false_promotion_rate": 0.0,
+      "generator": "regime_shift",
+      "pass": true,
+      "programs": 100,
+      "promotions": 0,
+      "threshold": 0.075
+    }
+  ],
+  "note": "bounded local calibration",
+  "status": "PASS",
+  "threshold": 0.075
+}

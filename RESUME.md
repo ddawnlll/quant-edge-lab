@@ -1,6 +1,6 @@
 # Resume
 
-Updated: 2026-11-08T23:47Z. Repository:
+Updated: 2026-11-09T00:10Z. Repository:
 <https://github.com/ddawnlll/quant-edge-lab> (`main`; see `git log -1` for the current tip
 time of writing).
 
@@ -18,19 +18,19 @@ zero residual.
 ## Verified now
 
 - Spec ZIP SHA-256 `db18e7a6…fd30`; MANIFEST OK; baseline `71628e4b…d06`.
-- 44/44 fixture scenarios; 10/10 mutation controls; 37 Python tests; Go
+- 44/44 fixture scenarios; 10/10 mutation controls; 41 Python tests; Go
   ledger/artifacts/queue/control/memory/cgroup/submit tests; 7 Rust policy
-  tests. `evidence/labd/VALIDATION_PASS_3.txt` is the latest consolidated pass.
+  tests. `evidence/labd/VALIDATION_PASS_4.txt` is the latest consolidated pass.
 - 120 randomized canonical vectors match across Python/Go/Rust; native pin
   hashes and the upstream tag commit were re-verified
   (`evidence/native/PIN_VERIFICATION.json`).
-- Tamper checks reject ledger payload/payload deletion/first-event deletion,
-  corrupted artifact blobs, malformed evaluator signatures, and raw capture
-  mismatch before normalization.
+- Tamper checks reject ledger payload content, event-ID and sequence tampering,
+  corrupted artifact blobs (and repair them on reseal), malformed evaluator
+  signatures, and raw capture mismatch before normalization.
 - cgroup v2 OOM kill and memory/pids/cpu caps measured; worker crash recovered
   as generation 2 after lease requeue.
-- B6: four generators × 1,000 programs, 0 promotions each, 95% upper
-  0.00299; injected-effect power/MDE grid still open.
+- B6: four generators × 1,000 programs re-run after the bootstrap fix, 0
+  promotions each, 95% upper 0.00299; injected-effect power/MDE grid still open.
 - Archive day: 358,200 events, 307 orders, 154 positions, residual 0. The L1
   quote is an explicit synthetic assumption around observed trades.
 
@@ -52,6 +52,9 @@ zero residual.
    evaluator owner. Record the exact evidence; do not claim isolation before.
 6. Forward calibration needs more observed market time and explicit
    authorization; collect data but do not place real-money orders.
+7. A frozen confirmation cohort must replace the development NumPy PCG64
+   control/bootstrap draws with the execution HMAC seed protocol before it is
+   treated as spec-conforming (`ASSUMPTIONS.md`).
 
 ## Commands
 

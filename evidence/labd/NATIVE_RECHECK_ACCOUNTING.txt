@@ -1,0 +1,11 @@
+{
+  "orders": 134,
+  "positions": 67,
+  "tape_events": 137,
+  "net_pnl": "-3.3408384",
+  "realized": "0.72526",
+  "fees": "4.0660984",
+  "funding": "0",
+  "residual": "0",
+  "fills": 134
+}

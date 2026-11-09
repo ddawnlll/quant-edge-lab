@@ -1,0 +1,16 @@
+time_utc=2026-11-09T00:02:20Z
+ledger_page:
+events 3 has_more True next 3
+seqs ['1', '2', '3']
+jobs_status:
+OUTPUT_SEALED ATT-1 1
+sse:
+data: {"event_id":"1794182540","kind":"HEARTBEAT","projection":{"alpha_next":{"den":"40","num":"1"},"artifact_refs":[],"capital_break_even":null,"generated_ns":"1794182540705659582","generation":0,"lab_cost":"0","ledger_cursor":"116","oos_state":"WAITING_FRESH_OOS","queue_counts":{"blocked":0,"queued":0,"running":0},"resource_profile_id":"RP-8G","risk_state":"RUNNING","trading_net_i":"0"}}
+
+data: {"event_id":"1794182541","kind":"HEARTBEAT","projection":{"alpha_next":{"den":"40","num":"1"},"artifact_refs":[],"capital_break_even":null,"generated_ns":"1794182541705728558","generation":0,"lab_cost":"0","ledger_cursor":"116","oos_state":"WAITING_FRESH_OOS","queue_counts":{"blocked":0,"queued":0,"running":0},"resource_profile_id":"RP-8G","risk_state":"RUNNING","trading_net_i":"0"}}
+
+time_utc=2026-11-09T00:02:29Z
+page1 ['1', '2', '3']
+page2 ['4', '5', '6']
+disjoint True
+ordered True

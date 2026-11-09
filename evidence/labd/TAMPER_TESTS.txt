@@ -1,2 +1,10 @@
-ok  	github.com/ddawnlll/quant-edge-lab/labd/ledger	0.526s
-ok  	github.com/ddawnlll/quant-edge-lab/labd/artifacts	0.500s
+=== RUN   TestSealAndRead
+--- PASS: TestSealAndRead (0.47s)
+=== RUN   TestFaultMatrixKeepsInvariants
+--- PASS: TestFaultMatrixKeepsInvariants (0.39s)
+=== RUN   TestTamperedBlobIsRejected
+--- PASS: TestTamperedBlobIsRejected (0.18s)
+=== RUN   TestResealRepairsCorruptBlob
+--- PASS: TestResealRepairsCorruptBlob (0.11s)
+PASS
+ok  	github.com/ddawnlll/quant-edge-lab/labd/artifacts	1.197s

@@ -258,10 +258,13 @@ class SealedRegistry:
             "created_ns": _now(),
         }
         signature = self._key().sign(canonical_bytes(body)).hex()
-        self.db.execute(
-            "INSERT OR REPLACE INTO decisions VALUES(?,?,?,?,?)",
+        inserted = self.db.execute(
+            "INSERT OR IGNORE INTO decisions VALUES(?,?,?,?,?)",
             (cohort_id, verdict, json.dumps(body, sort_keys=True), signature, _now()),
         )
+        if inserted.rowcount != 1:
+            self.db.rollback()
+            raise SealedError("PROTOCOL_VIOLATION", "decision already issued")
         self.db.execute("UPDATE cohorts SET state='RELEASED' WHERE cohort_id=?", (cohort_id,))
         self.db.commit()
         return {**body, "signature": signature, "public_key": self.public_key_hex()}

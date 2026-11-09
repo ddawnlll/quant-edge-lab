@@ -1,0 +1,153 @@
+== time ==
+2026-11-09T00:07:50Z
+== vendored spec tree ==
+== native pin ==
+{
+  "status": "PASS",
+  "checks": {
+    "head_matches_pin": true,
+    "worktree_clean": true,
+    "tag_points_at_head": true,
+    "remote_tag_dereferences_to_pin": true,
+    "cargo_lock_hash_matches": true,
+    "spike_source_hash_matches": true,
+    "spike_report_hash_matches": true,
+    "binary_hash_matches": true,
+    "binary_size_matches": true,
+    "fixture_corpus_hash_matches": true,
+    "runtime_lock_unresolved": true,
+    "verified_profile_present": true
+  },
+  "head": "27a8e54e7ac3c57d6cbf8891f0283dfbaee97317",
+  "tag": "v1.231.0",
+  "remote_tag_commit": "27a8e54e7ac3c57d6cbf8891f0283dfbaee97317",
+  "source_pin_sha256": "91df291a5b9a7ff7b87f71e0e314e7544bfc2a95acda65bfec42e2403a0f3d29",
+  "runtime_lock_sha256": "a20c2b4d16b7be5fcc1e3fef0b48ed78dc23398bdd78ac8fe074b9a4a64156ae"
+}
+== cross-language fuzz ==
+{
+  "vectors": 120,
+  "languages": [
+    "python",
+    "go",
+    "rust"
+  ],
+  "mismatches": [],
+  "runkey_vectors": 40,
+  "runkey_mismatches": [],
+  "nfc_negative_rejections": 2,
+  "status": "PASS"
+}
+== schema parity ==
+VALID StrategySpec
+VALID StrategySpec
+VALID StrategySpec
+PASS all three languages reject the invalid strategy
+== python tests ==
+.........................................                                [100%]
+41 passed in 24.92s
+== go tests ==
+?   	github.com/ddawnlll/quant-edge-lab/cmd/qel-collect	[no test files]
+ok  	github.com/ddawnlll/quant-edge-lab/cmd/qel-submit	(cached)
+?   	github.com/ddawnlll/quant-edge-lab/cmd/qel-worker	[no test files]
+?   	github.com/ddawnlll/quant-edge-lab/cmd/qeld	[no test files]
+?   	github.com/ddawnlll/quant-edge-lab/contracts/go/cmd/qel-contract	[no test files]
+?   	github.com/ddawnlll/quant-edge-lab/contracts/go/qelcontract	[no test files]
+ok  	github.com/ddawnlll/quant-edge-lab/labd/artifacts	0.422s
+ok  	github.com/ddawnlll/quant-edge-lab/labd/cgroup	(cached)
+?   	github.com/ddawnlll/quant-edge-lab/labd/collect	[no test files]
+ok  	github.com/ddawnlll/quant-edge-lab/labd/control	0.764s
+ok  	github.com/ddawnlll/quant-edge-lab/labd/ledger	0.975s
+ok  	github.com/ddawnlll/quant-edge-lab/labd/memory	(cached)
+ok  	github.com/ddawnlll/quant-edge-lab/labd/queue	0.737s
+?   	github.com/ddawnlll/quant-edge-lab/labd/worker	[no test files]
+== rust policy tests ==
+    Finished `release` profile [optimized] target(s) in 0.14s
+     Running unittests src/lib.rs (target/release/deps/qel_policy-460c34f9f6d51216)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/operators.rs (target/release/deps/operators-a07cd97fd4fa0540)
+
+running 4 tests
+test boolean_operators_exact ... ok
+test arithmetic_and_unary_operators ... ok
+test window_operators_exact ... ok
+test lag_ema_er_pivot_exact ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/policy.rs (target/release/deps/policy-c0aa8cca288137fe)
+
+running 3 tests
+test validates_example_and_warmup ... ok
+test leakage_and_type_attacks_rejected ... ok
+test reference_features_and_no_early_decision ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+   Doc-tests qel_policy
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+== fixture mutations ==
+== provenance ==
+{
+  "live_capture": {
+    "capture": "CAP-BTCUSDT-1794174239",
+    "raw_events": 12418,
+    "normalized_rows": 12418,
+    "rows_with_resolved_raw_offset": 12418,
+    "rows_with_matching_raw_hash": 12418,
+    "checks": {
+      "raw_segment_hash_ok": true,
+      "all_raw_offsets_used": true,
+      "normalized_offsets_unique": true,
+      "row_counts_agree": true,
+      "partition_size_ok": true,
+      "dataset_partition_hash_ok": true,
+      "quality_ref_hash_ok": true,
+      "quality_dataset_hash_ok": true,
+      "quality_clean": true,
+      "gaps_reported": true,
+      "time_range_agrees": true
+    },
+    "status": "PASS"
+  },
+  "archive_native": {
+    "status": "PASS",
+    "checks": {
+      "native_sha_ok": true,
+      "native_row_count_ok": true,
+      "agg_sha_ok": true,
+      "mark_sha_ok": true,
+      "funding_sha_ok": true
+    },
+    "counts": {
+      "Funding": 4,
+      "Mark": 1440,
+      "Quote": 72084,
+      "Trade": 284672
+    },
+    "native_rows": 358200
+  }
+}
+== http negatives ==
+PASS health_no_auth=200
+PASS jobs_no_token=401
+PASS jobs_bad_token=401
+PASS jobs_malformed=400
+PASS unknown_path=404
+PASS post_root=405
+PASS head_root=200
+PASS dashboard_csp=present
+PASS dashboard_nosniff=nosniff
+PASS listen_localhost=OK
+PASS token_mode=600
+PASS socket_mode=660
+PASS db_mode=640
+PASS ledger_verify={"chain":"verified","status":"OK"}

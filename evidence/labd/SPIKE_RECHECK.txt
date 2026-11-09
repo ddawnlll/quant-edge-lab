@@ -1,0 +1,12 @@
+status MATCH
+profile MATCH
+iterations MATCH
+total_orders MATCH
+total_positions MATCH
+position_after_chunk_1 MATCH
+position_qty_end MATCH
+funding_adjustments MATCH
+hooks MATCH
+blocked_capabilities MATCH
+verified_capabilities MATCH
+elapsed_ms 31 peak_rss_kb 15632

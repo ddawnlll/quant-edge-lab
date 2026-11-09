@@ -18,3 +18,12 @@ def test_acceptance_fixtures_pass():
 def test_mutations_are_caught():
     report = mutations()
     assert report["all_caught"], report
+
+
+def test_expected_values_do_not_influence_derived_metrics():
+    harness = Harness()
+    baseline = {id(record): harness.run(record)["metrics"] for record in harness.records}
+    for record in harness.records:
+        record["expected"] = []
+    independent = {id(record): harness.run(record)["metrics"] for record in harness.records}
+    assert baseline == independent

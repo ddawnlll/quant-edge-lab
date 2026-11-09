@@ -1,14 +1,18 @@
 === RUN   TestBackupRestoreChain
---- PASS: TestBackupRestoreChain (0.13s)
+--- PASS: TestBackupRestoreChain (0.18s)
 === RUN   TestAppendPageAndChain
---- PASS: TestAppendPageAndChain (0.05s)
+--- PASS: TestAppendPageAndChain (0.12s)
 === RUN   TestIdempotency
---- PASS: TestIdempotency (0.05s)
+--- PASS: TestIdempotency (0.06s)
 === RUN   TestTamperedLedgerIsDetected
---- PASS: TestTamperedLedgerIsDetected (0.06s)
+--- PASS: TestTamperedLedgerIsDetected (0.08s)
 === RUN   TestDeletedLedgerEventIsDetected
---- PASS: TestDeletedLedgerEventIsDetected (0.07s)
+--- PASS: TestDeletedLedgerEventIsDetected (0.08s)
 === RUN   TestDeletedFirstLedgerEventIsDetected
---- PASS: TestDeletedFirstLedgerEventIsDetected (0.08s)
+--- PASS: TestDeletedFirstLedgerEventIsDetected (0.07s)
+=== RUN   TestTamperedPayloadContentIsDetected
+--- PASS: TestTamperedPayloadContentIsDetected (0.07s)
+=== RUN   TestTamperedEventIDIsDetected
+--- PASS: TestTamperedEventIDIsDetected (0.18s)
 PASS
-ok  	github.com/ddawnlll/quant-edge-lab/labd/ledger	0.472s
+ok  	github.com/ddawnlll/quant-edge-lab/labd/ledger	0.886s

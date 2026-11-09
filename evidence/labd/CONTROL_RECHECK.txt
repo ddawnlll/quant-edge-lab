@@ -1,0 +1,4 @@
+deterministic True
+status PASS trades 15 replications 8
+control_trade_counts [15, 15, 15, 15, 15, 15, 15, 15]
+mean -0.90910254 std 0.07140515

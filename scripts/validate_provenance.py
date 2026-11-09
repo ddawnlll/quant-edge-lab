@@ -57,6 +57,10 @@ def validate_capture(capture_json: str, dataset_dir: str) -> dict:
     actual_part_hash = sha(ROOT / dataset_dir / "events.parquet")
     quality = json.loads((ROOT / dataset_dir / "quality.json").read_text())
     quality_ref = dataset["quality_certificate"]
+    expected_gaps = [
+        {"start_ns": str(event["start_ns"]), "end_ns": str(event["end_ns"])}
+        for event in manifest.get("loss_events", [])
+    ]
     checks = {
         "raw_segment_hash_ok": True,
         "all_raw_offsets_used": normalized_offsets == raw_offsets,
@@ -66,7 +70,8 @@ def validate_capture(capture_json: str, dataset_dir: str) -> dict:
         "dataset_partition_hash_ok": part["sha256"] == actual_part_hash,
         "quality_ref_hash_ok": quality_ref["sha256"] == sha(ROOT / dataset_dir / "quality.json"),
         "quality_dataset_hash_ok": quality["dataset_hash"] == actual_part_hash,
-        "quality_clean": quality["duplicates"] == 0 and quality["conflicts"] == 0 and quality["gap_ranges"] == [],
+        "quality_clean": quality["duplicates"] == 0 and quality["conflicts"] == 0,
+        "gaps_reported": quality["gap_ranges"] == expected_gaps,
         "time_range_agrees": dataset["time_range"] == quality["availability_range"],
     }
     return {
@@ -85,8 +90,11 @@ def validate_capture(capture_json: str, dataset_dir: str) -> dict:
 def validate_archive() -> dict:
     manifest = json.loads((ROOT / "evidence/labd/ARCHIVE_NATIVE_MANIFEST.json").read_text())
     native = ROOT / manifest["native_input"]
+    counts = manifest["counts"]
+    native_rows = sum(1 for _ in native.open())
     checks = {
         "native_sha_ok": sha(native) == manifest["native_sha256"],
+        "native_row_count_ok": native_rows == sum(int(v) for v in counts.values()),
         "agg_sha_ok": sha(ROOT / "data/raw/ARCHIVE_BINANCE_USDM/BTCUSDT/2026-11-07/BTCUSDT-aggTrades-2026-11-07.zip")
         == manifest["input_hashes"]["agg_trades"],
         "mark_sha_ok": sha(ROOT / "data/raw/ARCHIVE_BINANCE_USDM/BTCUSDT/2026-11-07/BTCUSDT-1m-2026-11-07.zip")
@@ -94,7 +102,12 @@ def validate_archive() -> dict:
         "funding_sha_ok": sha(ROOT / "data/raw/ARCHIVE_BINANCE_USDM/BTCUSDT/2026-11-07/funding.json")
         == manifest["input_hashes"]["funding"],
     }
-    return {"status": "PASS" if all(checks.values()) else "FAIL", "checks": checks, "counts": manifest["counts"]}
+    return {
+        "status": "PASS" if all(checks.values()) else "FAIL",
+        "checks": checks,
+        "counts": counts,
+        "native_rows": native_rows,
+    }
 
 
 def main() -> int:
