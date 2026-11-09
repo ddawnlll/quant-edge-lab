@@ -1,0 +1,115 @@
+{
+  "schema": "qel.native.feasibility_manifest/1.1",
+  "task": "TASK-08",
+  "issue": 2,
+  "generated_utc": "2026-11-09T10:34:00Z",
+  "scope": "Minimal pinned native feasibility spike. This is not a production benchmark and not an edge claim.",
+  "repository": "https://github.com/ddawnlll/quant-edge-lab",
+  "base_sha": "f6dbde793e9db6c6124f4826b5bdff7e793502c1",
+  "source_pin": {
+    "repository": "https://github.com/nautechsystems/nautilus_trader",
+    "tag": "v1.231.0",
+    "commit": "27a8e54e7ac3c57d6cbf8891f0283dfbaee97317",
+    "crate_workspace_version": "0.61.0",
+    "license": "LGPL-3.0-or-later",
+    "target": "x86_64-unknown-linux-gnu",
+    "profile": "release",
+    "rust_toolchain": "1.99.1",
+    "cargo": "1.99.1",
+    "dependency_count": 177,
+    "dependency_lock_sha256": "d018d97bf6621a56235e69c34f5dfd24534b157e1a7cf7687e831f306432f1d1",
+    "spike_source_sha256": "1ffd3c21eac12e80e8c33f10900b175391b74446eac6dc6f53228f8ebca2c413",
+    "spike_binary_sha256": "e1d538c366b5a7a19f8637968c1b331a79e7bf5b394d36e49925d1c91f2fe383",
+    "spike_binary_bytes": 12079632,
+    "fixture_corpus_sha256": "99e44c42f20971a93f4f7e9b1c7af5e86dc7ea4ad6a872dfd970b94ba0bc1e0e"
+  },
+  "spike_report": {
+    "path": "evidence/native/SPIKE_REPORT.json",
+    "sha256": "5b85c36cddc00b5c8ee75f76847fe9066371bd36cd860665759662a3ba9262b0",
+    "profile": "TAKER_L1_FUNDING_STREAMING",
+    "status": "PASS",
+    "peak_rss_kb": 15644,
+    "elapsed_ms": 23,
+    "funding_adjustments": 1,
+    "position_after_chunk_1": 1,
+    "position_qty_end": "0.1",
+    "semantic_recheck": {
+      "status": "PASS",
+      "elapsed_ms": 48,
+      "peak_rss_kb": 15752,
+      "differences_from_recorded": ["elapsed_ms", "peak_rss_kb"],
+      "all_other_fields_equal": true
+    }
+  },
+  "verified_capabilities": [
+    {
+      "id": "CAP-TAKER-REPLAY",
+      "evidence": "pure-Rust event-driven taker replay; 15 orders / 8 positions on the 240s capture; 307 orders / 154 positions on the archive day",
+      "tests": ["F01", "F08", "F15"]
+    },
+    {
+      "id": "CAP-FUNDING",
+      "evidence": "one funding settlement at the chunk boundary; funding is now emitted on the primary tape with attributable epoch (see evidence/labd/NATIVE_FUNDING_RUN.json)",
+      "tests": ["F08", "F09"]
+    },
+    {
+      "id": "CAP-STREAMING",
+      "evidence": "open position, timer and funding state survive clear_data() between chunks",
+      "tests": ["F15"]
+    }
+  ],
+  "blocked_capabilities": [
+    {
+      "id": "CAP-LOCAL-VIEW",
+      "status": "BLOCKED_BACKEND",
+      "exact_revision": "27a8e54e7ac3c57d6cbf8891f0283dfbaee97317",
+      "missing_hook": "Nautilus exposes one shared Cache to strategies (Strategy::cache()); there is no separate immutable LocalView and no API that prevents native cache access. Strategy::handle_position_event also returns before PositionAdjusted callbacks.",
+      "failing_case": "The strategy can read exchange cache state and receives fill callbacks immediately; a two-world exchange-effect/delayed-local-delivery split cannot be constructed without forking.",
+      "dependent_tasks": ["TASK-18"]
+    },
+    {
+      "id": "CAP-L2-QUEUE",
+      "status": "BLOCKED_BACKEND",
+      "exact_revision": "27a8e54e7ac3c57d6cbf8891f0283dfbaee97317",
+      "missing_hook": "SimulatedExchange has no per-price queue-ahead model, no own-consumption liquidity budget and no L2 queue API.",
+      "failing_case": "F02 queue-ahead depletion and one-shared-level-budget cannot be executed on the pinned engine.",
+      "dependent_tasks": ["TASK-17", "TASK-18", "TASK-19"]
+    },
+    {
+      "id": "CAP-ISOLATED",
+      "status": "BLOCKED_BACKEND",
+      "exact_revision": "27a8e54e7ac3c57d6cbf8891f0283dfbaee97317",
+      "missing_hook": "A single shared cache and in-process callback path cannot prove a process-level research/evaluator split inside one engine.",
+      "failing_case": "No supported in-engine isolation boundary.",
+      "dependent_tasks": ["TASK-15 isolation certificate"]
+    }
+  ],
+  "resource_profile": {
+    "kind": "NATIVE_PROTOTYPE_NOT_B4",
+    "spike": {"events": 5, "peak_rss_kb": 15644, "elapsed_ms": 23},
+    "runner_240s": {"events": 12418, "orders": 15, "positions": 8, "peak_rss_kb": 20092, "elapsed_ms": 129, "source": "evidence/labd/NATIVE_FUNDING_RUN_240S.json"},
+    "runner_archive_day": {"events": 358200, "orders": 307, "positions": 154, "peak_rss_kb": 115972, "elapsed_ms": 5942, "source": "evidence/labd/NATIVE_FUNDING_RUN.json"},
+    "runner_bench_10x": {"events": 124180, "orders": 177, "positions": 89, "peak_rss_kb": 53332, "elapsed_ms": 2159, "evidence": "evidence/native/PROTOTYPE_BENCH_10X.json", "sha256": "19bb92b009c6a31a6450f3798ffb169fd0a7e57d51b72ad3c272d43e3f123db4"},
+    "runner_bench_100x": {"events": 1241800, "orders": 1797, "positions": 899, "peak_rss_kb": 376308, "elapsed_ms": 24958, "evidence": "evidence/native/PROTOTYPE_BENCH_100X.json", "sha256": "a9859ae32adc371b8ace94721adc3ff605293d66b6be68650c9aaaea7e69bbe8"},
+    "b4_boundary": "The runner currently materializes the whole event vector, so the 1.24M-event prototype already shows linear growth. The production B4 1M/10M/100M plateau and the <=1 MiB per million event final-decile slope are NOT certified here; they belong to TASK-19 and TASK-25."
+  },
+  "test_evidence": {
+    "conformance": "evidence/conformance/FIXTURE_REPORT.json: 44/44 scenarios PASS, including F01 order causality, F08 funding boundary and F15 chunk/timestamp boundary",
+    "pin_verification": "scripts/verify_native_pin.py: PASS (12/12 checks) at the pinned commit",
+    "native_funding_audit": "evidence/labd/INTEGRATION_ISSUE04_VERIFY.json: independent cash/equity/position residual 0"
+  },
+  "reproduction": [
+    "python3 scripts/verify_native_pin.py",
+    "/home/quant/quant/.build-cache/qel-native/release/qel-native-spike /tmp/spike.json",
+    "cd native/spike && CARGO_TARGET_DIR=/home/quant/quant/.build-cache/qel-native cargo build --release"
+  ],
+  "runtime_lock_status": "UNRESOLVED",
+  "decision": "No backend change is adopted. The pinned engine remains the candidate with a scoped taker certificate; M4 queue/LocalView work stays disabled until a supported hook or an ADR-selected backend exists.",
+  "claims_not_made": [
+    "L2 queue or passive fill fidelity",
+    "LocalView delayed delivery",
+    "full liquidation/ADL parity",
+    "production B4 memory plateau",
+    "profitability or edge"
+  ]
+}
