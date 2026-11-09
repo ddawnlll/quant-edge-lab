@@ -1,0 +1,72 @@
+{
+  "issue": 4,
+  "task": "TASK-11",
+  "kind": "COORDINATOR_INDEPENDENT_VERIFICATION",
+  "integration_branch": "qel/int-20261109",
+  "base_sha": "f6dbde793e9db6c6124f4826b5bdff7e793502c1",
+  "patch_commit": "555543e935f3aa951a957614e54f56fc15a51a7d",
+  "integrated_commit": "598b91f",
+  "native_pin": {
+    "repository": "https://github.com/nautechsystems/nautilus_trader",
+    "tag": "v1.231.0",
+    "commit": "27a8e54e7ac3c57d6cbf8891f0283dfbaee97317"
+  },
+  "verification": {
+    "pytest": {"command": "PYTHONPATH=python QEL_ROOT=$PWD .venv/bin/python -m pytest -q tests", "result": "53 passed", "exit_code": 0},
+    "cargo_build": {"command": "CARGO_TARGET_DIR=/home/quant/quant/.build-cache/qel-native cargo build --release", "exit_code": 0},
+    "native_run": {
+      "command": "qel-native-runner --events data/native/DS-ARCHIVE-BTCUSDT-2026-11-07/events.jsonl --strategy policy/examples/taker_1m.json",
+      "events": 358200,
+      "orders": 307,
+      "positions": 154,
+      "elapsed_ms": 5942,
+      "peak_rss_kb": 115972,
+      "run_sha256": "e03a104a56aa3103dd627120204b307e42d8c936ceb5deb657a780aea796e8b4",
+      "semantic_repeat_equal": true,
+      "semantic_repeat_sha256": "ee482acfaeb6a5bcb1bd12563fc9ce26c23f6107a2b7e3ac272ea075bd85fe2c",
+      "tape_sha256": "ae14e67b5a761a698426969fb3043fd79178ddc66dcda79ed447e489cda1c1c9"
+    },
+    "reconciliation": {
+      "funding_events": 2,
+      "funding_cash": "-0.00300075",
+      "funding_by_epoch": {"94": "0.00098598", "154": "-0.00398673"},
+      "reconstructed_cash": "991.11310345",
+      "native_cash": "991.11310345",
+      "reconstructed_equity": "991.10431345",
+      "native_equity": "991.10431345",
+      "reconstructed_position": "0.001",
+      "native_position": "0.001",
+      "cash_diff": "0",
+      "equity_diff": "0",
+      "position_diff": "0",
+      "unexplained_residual": "0",
+      "postings_balanced": true
+    },
+    "mutations": {
+      "remove_funding_visible": {"passed": true, "cash_diff": "12003/4000000"},
+      "duplicate_settlement_rejected": {"passed": true, "code": "PROTOCOL_VIOLATION"},
+      "future_epoch_rejected": {"passed": true, "code": "PROTOCOL_VIOLATION"},
+      "funding_after_end_fold_rejected": {"passed": true, "code": "PROTOCOL_VIOLATION"},
+      "reordered_fills_rejected": {"passed": true, "code": "OUT_OF_ORDER"}
+    }
+  },
+  "scoped_claims": [
+    "taker-only L1 quote/trade/mark/funding archive replay",
+    "nonzero funding is present on the primary economic tape with attributable epoch and deterministic settlement identity",
+    "independent exact accounting matches native cash, equity and position with zero unexplained residual",
+    "identical inputs reproduce semantically identical outputs"
+  ],
+  "non_claims": [
+    "F22 LocalView delayed delivery remains BLOCKED_BACKEND; the two-world split is not certified",
+    "L2 queue, passive fill and shared-level consumption remain unavailable in the pinned backend",
+    "funding crossing maintenance margin and liquidation are not certified by this issue"
+  ],
+  "evidence_hashes": {
+    "evidence/labd/NATIVE_FUNDING_RUN.json": "348f803a0827947859a9bbbc775831dd26a5e6affe7d140494870744ddffb337",
+    "evidence/labd/NATIVE_FUNDING_RUN_240S.json": "b69f6a31e2a14e247cf484df75eabf368dcbc90565eebcecc0ed9b95b12b48f2",
+    "evidence/labd/NATIVE_FUNDING_AUDIT.json": "d6767208e5816ad935b951354a35eab825326756d557bddcabec4d6da9ec492e",
+    "evidence/labd/FUNDING_MUTATIONS.txt": "e07bcccaefc4169ef402cb6aa9d42dcfa36ee0aadef8dda19c18ad9ddd67e617"
+  },
+  "verdict": "PASS_SCOPED_TAKER",
+  "acceptance_note": "Engineering verified on the integration branch. Acceptance remains scoped to the taker L1 certificate; full TASK-11 acceptance requires F22 LocalView evidence that the pinned backend does not expose."
+}
