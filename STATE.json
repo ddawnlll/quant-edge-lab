@@ -156,14 +156,13 @@
       ]
     },
     "TASK-14": {
-      "status": "PARTIAL",
+      "status": "DONE",
       "evidence": [
         "tests/test_stats.py",
-        "evidence/labd/CALIBRATION_B6.json",
-        "evidence/labd/CALIBRATION_B6_RECHECK.json",
-        "evidence/labd/STATS_ARITHMETIC.txt",
-        "evidence/labd/POWER_GRID.json",
-        "runtime job JOB-STATS-1"
+        "tests/test_decision.py",
+        "evidence/labd/DECISION_AUDIT.json",
+        "evidence/labd/STATS_DECISION_TESTS.txt",
+        "evidence/labd/INTEGRATION_ISSUE07_VERIFY.json"
       ]
     },
     "TASK-15": {
