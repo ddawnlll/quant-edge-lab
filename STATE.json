@@ -299,6 +299,7 @@
       "evidence": [
         "runtime/soak/soak.jsonl",
         "evidence/labd/SOAK_24H_VERIFY.json",
+        "evidence/labd/SOAK_24H_VERIFICATION.txt",
         "evidence/labd/RECOVERY_REPORT.txt",
         "evidence/labd/RECOVERY_MEMORY_CGROUP.txt"
       ],
@@ -326,13 +327,13 @@
   "services": {
     "qel-qeld": {
       "systemd": "qel-qeld.service",
-      "pid": 744722,
+      "pid": 800710,
       "endpoint": "http://127.0.0.1:8787",
       "state": "active"
     },
     "qel-worker": {
       "systemd": "qel-worker.service",
-      "pid": 743919,
+      "pid": 822946,
       "state": "active"
     },
     "qel-soak": {
@@ -344,10 +345,15 @@
   "running_validations": [
     {
       "id": "SOAK-24H",
-      "status": "RUNNING",
+      "status": "DONE",
       "started_utc": "2026-11-08T22:21:50Z",
       "required_hours": 24,
       "evidence": "runtime/soak/soak.jsonl",
+      "completed_utc": "2026-11-09T22:30:01Z",
+      "elapsed_s": 86479,
+      "samples": 1446,
+      "health": "OK",
+      "max_sample_gap_s": 70,
       "verification_schedule": "sched_42815c00",
       "verification_wake_at": "2026-11-09T22:26:00Z"
     }
@@ -382,7 +388,7 @@
       "reason": "development controls/bootstrap use NumPy PCG64, not the execution HMAC seed protocol"
     }
   ],
-  "next_action": "Wait for the 24h soak to elapse and verify it; keep M4/M6/M7 blocked and do not claim an edge.",
+  "next_action": "24h soak is verified; keep M4/M6/M7 blocked, do not claim an edge, and leave the 7-day stage/B8 to a separately authorized run.",
   "evidence_invalidation": {
     "reason": "TASK-11 changed terminal MARK to the native mark and moved funding to the primary tape",
     "stale_until_rerun": [
