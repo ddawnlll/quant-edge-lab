@@ -1,6 +1,6 @@
 # Resume
 
-Updated: 2026-11-09T00:10Z. Repository:
+Updated: 2026-11-09T00:24Z. Repository:
 <https://github.com/ddawnlll/quant-edge-lab> (`main`; see `git log -1` for the current tip
 time of writing).
 
@@ -20,7 +20,12 @@ zero residual.
 - Spec ZIP SHA-256 `db18e7a6…fd30`; MANIFEST OK; baseline `71628e4b…d06`.
 - 44/44 fixture scenarios; 10/10 mutation controls; 41 Python tests; Go
   ledger/artifacts/queue/control/memory/cgroup/submit tests; 7 Rust policy
-  tests. `evidence/labd/VALIDATION_PASS_4.txt` is the latest consolidated pass.
+  tests. `evidence/labd/VALIDATION_PASS_5.txt` is the latest consolidated pass.
+- A clean clone at `ceb06b0` has 410 tracked files and passes all three test
+  suites; the previous `.gitignore` had hidden `labd/artifacts/` from git and
+  is fixed to `/artifacts/`.
+- `go vet`, `gofmt`, the Go race detector, Python `compileall`, and
+  `pytest -W error` are clean; Rust clippy is not installed.
 - 120 randomized canonical vectors match across Python/Go/Rust; native pin
   hashes and the upstream tag commit were re-verified
   (`evidence/native/PIN_VERIFICATION.json`).

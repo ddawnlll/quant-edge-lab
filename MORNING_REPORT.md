@@ -1,6 +1,6 @@
 # Morning Report
 
-Status time: 2026-11-09T00:10Z. This is a development and verification report.
+Status time: 2026-11-09T00:24Z. This is a development and verification report.
 It is not a profitability claim and does not certify a trading edge.
 
 ## Implemented and verified
@@ -138,6 +138,27 @@ The full B6 recheck took 508 s and is stored in
 `evidence/labd/CALIBRATION_B6.json`; the bounded 100-program recheck is also
 kept. The live ledger still verifies after rebuilding/restarting `qeld` and
 `qel-worker`, and `JOB-VAL3-1794182958` sealed end to end.
+
+## Validation pass 5
+
+`evidence/labd/VALIDATION_PASS_5.txt` adds static analysis and clean-room
+checks. `go vet`, `gofmt`, the Go race detector, Python `compileall`, and
+`pytest -W error` are clean. Rust clippy is unavailable because the component
+is not installed; Rust tests still pass. A fresh empty runtime root starts
+`qeld`, creates its token/DB/socket with modes 600/640/660, verifies the empty
+chain, and serves the dashboard.
+
+The fresh-clone check found a packaging defect: `.gitignore` used
+`artifacts/`, which silently excluded the `labd/artifacts/` source directory
+from every push. A clean clone therefore failed to build `qeld` and
+`qel-worker`. The rule is now `/artifacts/`; the two source files are
+published, and a clean clone at `ceb06b0` has 410 tracked files and passes 41
+Python tests, all Go packages, and 7 Rust tests.
+
+`qel-submit` now reports schema errors instead of panicking and exits 1 when a
+waited job ends `FAILED`, `RESOURCE_LIMIT`, or `ABORTED`; the invalid-kind and
+failed-parameter paths are recorded in `WORKER_NEGATIVE.txt` and
+`WORKER_PROTOCOL_NEGATIVE.txt`.
 
 ## Measured resources
 

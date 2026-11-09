@@ -1,0 +1,27 @@
+clone=/home/quant/.jcode/scratch/qel-clone2.auddv2/repo
+head=ceb06b0
+tracked_files=410
+artifact_sources=2
+.........................................                                [100%]
+41 passed in 20.77s
+pytest_rc=0
+?   	github.com/ddawnlll/quant-edge-lab/cmd/qel-worker	[no test files]
+?   	github.com/ddawnlll/quant-edge-lab/cmd/qeld	[no test files]
+?   	github.com/ddawnlll/quant-edge-lab/contracts/go/cmd/qel-contract	[no test files]
+?   	github.com/ddawnlll/quant-edge-lab/contracts/go/qelcontract	[no test files]
+ok  	github.com/ddawnlll/quant-edge-lab/labd/artifacts	0.965s
+ok  	github.com/ddawnlll/quant-edge-lab/labd/cgroup	0.322s
+?   	github.com/ddawnlll/quant-edge-lab/labd/collect	[no test files]
+ok  	github.com/ddawnlll/quant-edge-lab/labd/control	1.240s
+ok  	github.com/ddawnlll/quant-edge-lab/labd/ledger	1.471s
+ok  	github.com/ddawnlll/quant-edge-lab/labd/memory	0.359s
+ok  	github.com/ddawnlll/quant-edge-lab/labd/queue	1.089s
+?   	github.com/ddawnlll/quant-edge-lab/labd/worker	[no test files]
+go_rc=0
+   Doc-tests qel_policy
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+rust_rc=0
