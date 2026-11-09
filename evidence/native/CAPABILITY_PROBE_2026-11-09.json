@@ -1,0 +1,265 @@
+{
+  "probe": "native-capability-probe",
+  "date": "2026-11-09",
+  "read_only": true,
+  "does_not_change_capability_claims": true,
+  "pinned": {
+    "root": "/home/quant/quant/src-clones/nautilus",
+    "head": "27a8e54e7ac3c57d6cbf8891f0283dfbaee97317",
+    "tag": "v1.231.0",
+    "head_matches_expected": true,
+    "tag_matches_expected": true,
+    "hooks": [
+      {
+        "hook": "liquidation_venue_config",
+        "status": "PRESENT",
+        "path": "crates/backtest/src/config.rs",
+        "symbol_present": "liquidation_enabled",
+        "symbol_present_hits": 4,
+        "symbol_absent": null,
+        "symbol_absent_hits": null,
+        "matches": true
+      },
+      {
+        "hook": "liquidation_engine_step",
+        "status": "PRESENT",
+        "path": "crates/backtest/src/engine.rs",
+        "symbol_present": "run_venue_liquidations",
+        "symbol_present_hits": 2,
+        "symbol_absent": null,
+        "symbol_absent_hits": null,
+        "matches": true
+      },
+      {
+        "hook": "liquidation_exchange",
+        "status": "PRESENT",
+        "path": "crates/backtest/src/exchange.rs",
+        "symbol_present": "process_liquidations",
+        "symbol_present_hits": 1,
+        "symbol_absent": null,
+        "symbol_absent_hits": null,
+        "matches": true
+      },
+      {
+        "hook": "liquidation_matching_engine",
+        "status": "PRESENT",
+        "path": "crates/execution/src/matching_engine/engine.rs",
+        "symbol_present": "liquidate_open_positions",
+        "symbol_present_hits": 1,
+        "symbol_absent": null,
+        "symbol_absent_hits": null,
+        "matches": true
+      },
+      {
+        "hook": "liquidation_maintenance_margin",
+        "status": "PARTIAL",
+        "path": "crates/model/src/accounts/margin.rs",
+        "symbol_present": "total_maintenance_margin",
+        "symbol_present_hits": 3,
+        "symbol_absent": null,
+        "symbol_absent_hits": null,
+        "matches": true
+      },
+      {
+        "hook": "liquidation_quote_based_trigger",
+        "status": "PARTIAL",
+        "path": "crates/common/src/cache/mod.rs",
+        "symbol_present": "let Some(quote) = self.quote(&position.instrument_id)",
+        "symbol_present_hits": 1,
+        "symbol_absent": null,
+        "symbol_absent_hits": null,
+        "matches": true
+      },
+      {
+        "hook": "l2_queue_position",
+        "status": "PRESENT",
+        "path": "crates/execution/src/matching_engine/engine.rs",
+        "symbol_present": "snapshot_queue_position",
+        "symbol_present_hits": 3,
+        "symbol_absent": null,
+        "symbol_absent_hits": null,
+        "matches": true
+      },
+      {
+        "hook": "l2_queue_shared_budget",
+        "status": "PRESENT",
+        "path": "crates/execution/src/matching_engine/engine.rs",
+        "symbol_present": "decrement_queue_on_trade",
+        "symbol_present_hits": 2,
+        "symbol_absent": null,
+        "symbol_absent_hits": null,
+        "matches": true
+      },
+      {
+        "hook": "l2_liquidity_consumption",
+        "status": "PRESENT",
+        "path": "crates/execution/src/matching_engine/engine.rs",
+        "symbol_present": "apply_liquidity_consumption",
+        "symbol_present_hits": 5,
+        "symbol_absent": null,
+        "symbol_absent_hits": null,
+        "matches": true
+      },
+      {
+        "hook": "l2_exact_level_qty",
+        "status": "PRESENT",
+        "path": "crates/model/src/orderbook/book.rs",
+        "symbol_present": "get_quantity_at_level",
+        "symbol_present_hits": 2,
+        "symbol_absent": null,
+        "symbol_absent_hits": null,
+        "matches": true
+      },
+      {
+        "hook": "local_view_feed_latency",
+        "status": "MISSING",
+        "path": "crates/execution/src/models/latency.rs",
+        "symbol_present": null,
+        "symbol_present_hits": null,
+        "symbol_absent": "feed_latency",
+        "symbol_absent_hits": 0,
+        "matches": true
+      },
+      {
+        "hook": "local_view_immutable_type",
+        "status": "MISSING",
+        "path": "crates/trading/src/strategy/mod.rs",
+        "symbol_present": null,
+        "symbol_present_hits": null,
+        "symbol_absent": "LocalView",
+        "symbol_absent_hits": 0,
+        "matches": true
+      },
+      {
+        "hook": "local_view_shared_cache",
+        "status": "PRESENT_SHARED_CACHE",
+        "path": "crates/common/src/actor/data_actor.rs",
+        "symbol_present": "fn cache(&self)",
+        "symbol_present_hits": 1,
+        "symbol_absent": null,
+        "symbol_absent_hits": null,
+        "matches": true
+      }
+    ]
+  },
+  "candidate": {
+    "root": "/home/quant/quant/src-clones/hftbacktest",
+    "head": "20cd9470a431e90c526eca6975ef389073c9aca5",
+    "tag": "v1.8.4",
+    "head_matches_expected": true,
+    "tag_matches_expected": true,
+    "hooks": [
+      {
+        "hook": "queue_model_trait",
+        "status": "PRESENT",
+        "path": "rust/src/backtest/models/queue.rs",
+        "symbol_present": "pub trait QueueModel",
+        "symbol_present_hits": 1,
+        "symbol_absent": null,
+        "symbol_absent_hits": null,
+        "matches": true
+      },
+      {
+        "hook": "queue_model_risk_adverse",
+        "status": "PRESENT",
+        "path": "rust/src/backtest/models/queue.rs",
+        "symbol_present": "RiskAdverseQueueModel",
+        "symbol_present_hits": 3,
+        "symbol_absent": null,
+        "symbol_absent_hits": null,
+        "matches": true
+      },
+      {
+        "hook": "queue_model_probability",
+        "status": "PRESENT",
+        "path": "rust/src/backtest/models/queue.rs",
+        "symbol_present": "ProbQueueModel",
+        "symbol_present_hits": 5,
+        "symbol_absent": null,
+        "symbol_absent_hits": null,
+        "matches": true
+      },
+      {
+        "hook": "queue_own_consumption_budget",
+        "status": "MISSING",
+        "path": "rust/src/backtest/proc/partialfillexchange.rs",
+        "symbol_present": null,
+        "symbol_present_hits": null,
+        "symbol_absent": "consum",
+        "symbol_absent_hits": 0,
+        "matches": true
+      },
+      {
+        "hook": "local_processor",
+        "status": "PRESENT",
+        "path": "rust/src/backtest/proc/local.rs",
+        "symbol_present": "pub struct Local<",
+        "symbol_present_hits": 1,
+        "symbol_absent": null,
+        "symbol_absent_hits": null,
+        "matches": true
+      },
+      {
+        "hook": "local_feed_latency_observation",
+        "status": "PRESENT",
+        "path": "rust/src/backtest/proc/local.rs",
+        "symbol_present": "fn feed_latency(&self)",
+        "symbol_present_hits": 1,
+        "symbol_absent": null,
+        "symbol_absent_hits": null,
+        "matches": true
+      },
+      {
+        "hook": "local_order_latency",
+        "status": "PRESENT",
+        "path": "rust/src/backtest/models/latencies.rs",
+        "symbol_present": "pub trait LatencyModel",
+        "symbol_present_hits": 1,
+        "symbol_absent": null,
+        "symbol_absent_hits": null,
+        "matches": true
+      },
+      {
+        "hook": "local_view_immutable_type",
+        "status": "MISSING",
+        "path": "rust/src/backtest",
+        "symbol_present": null,
+        "symbol_present_hits": null,
+        "symbol_absent": "LocalView",
+        "symbol_absent_hits": 0,
+        "matches": true
+      },
+      {
+        "hook": "margin_or_liquidation",
+        "status": "MISSING",
+        "path": "rust/src/backtest",
+        "symbol_present": null,
+        "symbol_present_hits": null,
+        "symbol_absent": "liquidation",
+        "symbol_absent_hits": 0,
+        "matches": true
+      },
+      {
+        "hook": "streaming_chunked_reader",
+        "status": "PRESENT",
+        "path": "rust/src/backtest/reader.rs",
+        "symbol_present": "pub fn release(&mut self",
+        "symbol_present_hits": 1,
+        "symbol_absent": null,
+        "symbol_absent_hits": null,
+        "matches": true
+      },
+      {
+        "hook": "state_purge_closed_export",
+        "status": "MISSING",
+        "path": "rust/src/backtest",
+        "symbol_present": null,
+        "symbol_present_hits": null,
+        "symbol_absent": "purge",
+        "symbol_absent_hits": 0,
+        "matches": true
+      }
+    ]
+  },
+  "candidate_license": "MIT License"
+}
