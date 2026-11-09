@@ -1,0 +1,75 @@
+{
+  "events_corpus_sha256": "a0649d5131d0cbc6550fd94a659c57b2fbdb0feb2b70db280ed9f2f096f8abaa",
+  "fixture": "F17",
+  "kind": "TASK25_B5_CRASH_MATRIX",
+  "report": {
+    "lost_committed_decisions": 0,
+    "status": "PASS",
+    "torn_pass": 0,
+    "trials": [
+      {
+        "acked_events": 350,
+        "delay_ms": 2000,
+        "events_on_disk": 350,
+        "kill_signal": "SIGKILL",
+        "lost_committed_decisions": 0,
+        "status": "PASS",
+        "torn_pass": 0,
+        "trial": 0
+      },
+      {
+        "acked_events": 100,
+        "delay_ms": 2200,
+        "events_on_disk": 100,
+        "kill_signal": "SIGKILL",
+        "lost_committed_decisions": 0,
+        "status": "PASS",
+        "torn_pass": 0,
+        "trial": 1
+      },
+      {
+        "acked_events": 0,
+        "delay_ms": 2400,
+        "events_on_disk": 0,
+        "kill_signal": "SIGKILL",
+        "lost_committed_decisions": 0,
+        "status": "PASS",
+        "torn_pass": 0,
+        "trial": 2
+      },
+      {
+        "acked_events": 100,
+        "delay_ms": 2600,
+        "events_on_disk": 100,
+        "kill_signal": "SIGKILL",
+        "lost_committed_decisions": 0,
+        "status": "PASS",
+        "torn_pass": 0,
+        "trial": 3
+      },
+      {
+        "acked_events": 150,
+        "delay_ms": 2800,
+        "events_on_disk": 150,
+        "kill_signal": "SIGKILL",
+        "lost_committed_decisions": 0,
+        "status": "PASS",
+        "torn_pass": 0,
+        "trial": 4
+      },
+      {
+        "acked_events": 600,
+        "delay_ms": 3000,
+        "events_on_disk": 600,
+        "kill_signal": "SIGKILL",
+        "lost_committed_decisions": 0,
+        "status": "PASS",
+        "torn_pass": 0,
+        "trial": 5
+      }
+    ]
+  },
+  "required_check": "B5",
+  "trials": 6,
+  "verdict": "PASS"
+}

@@ -1,0 +1,34 @@
+{
+  "counts": {
+    "b0_dag_nodes": 256,
+    "b1_rows": 1000000,
+    "b1_variants": 8,
+    "b5_artifact_pointers": 1000,
+    "b5_ledger_events": 100000
+  },
+  "files": {
+    "b0_policy_256.json": {
+      "bytes": 73906,
+      "sha256": "83ed0c8257661adcae5cd7efbdee4793f50c3f2a6075008eb8149bb64b197283"
+    },
+    "b1_bars.csv": {
+      "bytes": 39885919,
+      "sha256": "39c0e50c98293242af0de6a585eb45091ca2ae068ab128764cae764f31af8d54"
+    },
+    "b1_workload.json": {
+      "bytes": 1006,
+      "sha256": "f2cbbab073c4427e9dd36ec515e7effb69b9fffc7c084ff9de36767a1c82bf3f"
+    },
+    "b5_artifacts.json": {
+      "bytes": 194258,
+      "sha256": "146be12409490352503c4b689002b3600551f12976775afddb36876bc8253d22"
+    },
+    "b5_events.jsonl": {
+      "bytes": 22698922,
+      "sha256": "a0649d5131d0cbc6550fd94a659c57b2fbdb0feb2b70db280ed9f2f096f8abaa"
+    }
+  },
+  "frozen_before_timed_run": true,
+  "generator_version": "qel-bench-corpus-1.0.0",
+  "kind": "TASK25_FROZEN_CORPUS_MANIFEST"
+}

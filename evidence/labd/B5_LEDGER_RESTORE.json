@@ -1,0 +1,628 @@
+{
+  "corpus": {
+    "artifact_declaration_sha256": "146be12409490352503c4b689002b3600551f12976775afddb36876bc8253d22",
+    "artifact_pointers": 1000,
+    "frozen_before_timed_run": true,
+    "ledger_events": 100000,
+    "manifest_sha256": "7a729ba1d233e162d82c6b74c2b8d5abee89781ea0f86985220daccb97c5f8dd",
+    "path": "benchmarks/corpus/b5_events.jsonl",
+    "sha256": "a0649d5131d0cbc6550fd94a659c57b2fbdb0feb2b70db280ed9f2f096f8abaa"
+  },
+  "correctness": {
+    "evidence": "F17 crash matrix in each profile report; labd/ledger and labd/artifacts test suites",
+    "required": [
+      "F17",
+      "F25",
+      "F26"
+    ]
+  },
+  "environment": {
+    "cargo": "cargo 1.99.1 (5f94df478 2026-08-27)",
+    "cgroup_version": "v2",
+    "cpu_count": "6",
+    "cpu_model": "Intel(R) Xeon(R) CPU E5-2680 v2 @ 2.80GHz",
+    "go": "go version go1.27.3 linux/amd64",
+    "host": "12735.example.com",
+    "kernel": "6.12.115+deb13.1-amd64",
+    "memory_total_kib": 12227160,
+    "platform": "Linux-6.12.115+deb13.1-amd64-x86_64-with-glibc2.41",
+    "profile_mechanism": "transient systemd user scope with MemoryMax and MemorySwapMax=0",
+    "python": "3.13.5",
+    "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)",
+    "swap_disabled_in_scope": true,
+    "systemd": "systemd 257 (257.13-1~deb13u1)"
+  },
+  "kind": "TASK25_B5_LEDGER_RESTORE",
+  "per_profile_targets": {
+    "RP-4G": {
+      "artifact_pointers": 1000,
+      "crash_matrix_status": "PASS",
+      "ledger_events": 101000,
+      "lost_committed_decisions": {
+        "operator": "EQ",
+        "passed": true,
+        "target": 0,
+        "value": 0
+      },
+      "metadata_restore_minutes": {
+        "operator": "LE",
+        "passed": true,
+        "target": 60,
+        "value": 0.45466587211666665
+      },
+      "read_transaction_ms": {
+        "operator": "LE",
+        "passed": true,
+        "target": 2000,
+        "value": 605.100118
+      },
+      "torn_pass": {
+        "operator": "EQ",
+        "passed": true,
+        "target": 0,
+        "value": 0
+      },
+      "verdict": "PASS"
+    },
+    "RP-8G": {
+      "artifact_pointers": 1000,
+      "crash_matrix_status": "PASS",
+      "ledger_events": 101000,
+      "lost_committed_decisions": {
+        "operator": "EQ",
+        "passed": true,
+        "target": 0,
+        "value": 0
+      },
+      "metadata_restore_minutes": {
+        "operator": "LE",
+        "passed": true,
+        "target": 60,
+        "value": 0.4655678252666667
+      },
+      "read_transaction_ms": {
+        "operator": "LE",
+        "passed": true,
+        "target": 2000,
+        "value": 810.425591
+      },
+      "torn_pass": {
+        "operator": "EQ",
+        "passed": true,
+        "target": 0,
+        "value": 0
+      },
+      "verdict": "PASS"
+    }
+  },
+  "profiles": {
+    "RP-4G": {
+      "declared_memory_max_bytes": 4294967296,
+      "enforced": true,
+      "enforcement": "CGROUP_V2_MEMORY_MAX",
+      "id": "RP-4G",
+      "memory_swap_max_bytes": 0,
+      "peak_within_limit": true,
+      "peaks": {
+        "run": {
+          "peak_bytes": 449458176,
+          "peak_mib": 428.64
+        }
+      },
+      "report": {
+        "append_batch_events": 500,
+        "append_events_per_second": 1332.6775680131516,
+        "append_transactions": 200,
+        "append_wall_ms": 75036.90495,
+        "artifact_declaration_sha256": "146be12409490352503c4b689002b3600551f12976775afddb36876bc8253d22",
+        "artifact_pointers_referenced": 1000,
+        "artifact_pointers_sealed": 1000,
+        "artifact_scan_after_append": {
+          "acked_commit_lost_count": 0,
+          "failure_usage_retained": false,
+          "failure_usage_retained_count": 0,
+          "orphan_final_count": 0,
+          "orphan_final_detected": false,
+          "partial_package_pass_count": 0,
+          "temporary_file_count": 0
+        },
+        "crash_matrix": {
+          "authoritative_source": "evidence/labd/raw/B5_CRASH_RP-4G.json",
+          "fixture": "F17",
+          "in_band_report": {
+            "lost_committed_decisions": 0,
+            "status": "PASS",
+            "torn_pass": 0,
+            "trials": [
+              {
+                "acked_events": 0,
+                "delay_ms": 60,
+                "events_on_disk": 0,
+                "kill_signal": "SIGKILL",
+                "lost_committed_decisions": 0,
+                "status": "PASS",
+                "torn_pass": 0,
+                "trial": 0
+              },
+              {
+                "acked_events": 0,
+                "delay_ms": 120,
+                "events_on_disk": 0,
+                "kill_signal": "SIGKILL",
+                "lost_committed_decisions": 0,
+                "status": "PASS",
+                "torn_pass": 0,
+                "trial": 1
+              },
+              {
+                "acked_events": 0,
+                "delay_ms": 200,
+                "events_on_disk": 0,
+                "kill_signal": "SIGKILL",
+                "lost_committed_decisions": 0,
+                "status": "PASS",
+                "torn_pass": 0,
+                "trial": 2
+              },
+              {
+                "acked_events": 0,
+                "delay_ms": 300,
+                "events_on_disk": 0,
+                "kill_signal": "SIGKILL",
+                "lost_committed_decisions": 0,
+                "status": "PASS",
+                "torn_pass": 0,
+                "trial": 3
+              },
+              {
+                "acked_events": 0,
+                "delay_ms": 420,
+                "events_on_disk": 0,
+                "kill_signal": "SIGKILL",
+                "lost_committed_decisions": 0,
+                "status": "PASS",
+                "torn_pass": 0,
+                "trial": 4
+              },
+              {
+                "acked_events": 0,
+                "delay_ms": 560,
+                "events_on_disk": 0,
+                "kill_signal": "SIGKILL",
+                "lost_committed_decisions": 0,
+                "status": "PASS",
+                "torn_pass": 0,
+                "trial": 5
+              }
+            ]
+          },
+          "report": {
+            "lost_committed_decisions": 0,
+            "status": "PASS",
+            "torn_pass": 0,
+            "trials": [
+              {
+                "acked_events": 300,
+                "delay_ms": 2000,
+                "events_on_disk": 300,
+                "kill_signal": "SIGKILL",
+                "lost_committed_decisions": 0,
+                "status": "PASS",
+                "torn_pass": 0,
+                "trial": 0
+              },
+              {
+                "acked_events": 600,
+                "delay_ms": 2200,
+                "events_on_disk": 600,
+                "kill_signal": "SIGKILL",
+                "lost_committed_decisions": 0,
+                "status": "PASS",
+                "torn_pass": 0,
+                "trial": 1
+              },
+              {
+                "acked_events": 300,
+                "delay_ms": 2400,
+                "events_on_disk": 300,
+                "kill_signal": "SIGKILL",
+                "lost_committed_decisions": 0,
+                "status": "PASS",
+                "torn_pass": 0,
+                "trial": 2
+              },
+              {
+                "acked_events": 350,
+                "delay_ms": 2600,
+                "events_on_disk": 350,
+                "kill_signal": "SIGKILL",
+                "lost_committed_decisions": 0,
+                "status": "PASS",
+                "torn_pass": 0,
+                "trial": 3
+              },
+              {
+                "acked_events": 0,
+                "delay_ms": 2800,
+                "events_on_disk": 0,
+                "kill_signal": "SIGKILL",
+                "lost_committed_decisions": 0,
+                "status": "PASS",
+                "torn_pass": 0,
+                "trial": 4
+              },
+              {
+                "acked_events": 600,
+                "delay_ms": 3000,
+                "events_on_disk": 600,
+                "kill_signal": "SIGKILL",
+                "lost_committed_decisions": 0,
+                "status": "PASS",
+                "torn_pass": 0,
+                "trial": 5
+              }
+            ]
+          },
+          "separate_from_timed_reads": true,
+          "trials": 6
+        },
+        "event_type_counts": {
+          "ArtifactPointer": 20000,
+          "DecisionRecorded": 40000,
+          "JobStateChanged": 20000,
+          "PassRecorded": 20000
+        },
+        "events_corpus": "/home/quant/quant/qel-w13/benchmarks/corpus/b5_events.jsonl",
+        "events_corpus_sha256": "a0649d5131d0cbc6550fd94a659c57b2fbdb0feb2b70db280ed9f2f096f8abaa",
+        "failed_attempts": [],
+        "journal_mode": "WAL",
+        "kind": "TASK25_B5_LEDGER_RESTORE",
+        "ledger_events_appended": 100000,
+        "ledger_events_target": 100000,
+        "ledger_events_total": 101000,
+        "read_transaction": {
+          "max_ms": null,
+          "median_ms": 571.30369,
+          "min_ms": null,
+          "p90_ms": 605.100118,
+          "repeats": 12,
+          "rows_per_transaction": [
+            101000,
+            101000,
+            101000,
+            101000,
+            101000,
+            101000,
+            101000,
+            101000,
+            101000,
+            101000,
+            101000,
+            101000,
+            101000,
+            101000
+          ],
+          "samples_ms": null,
+          "warm_ms": [
+            508.58464299999997,
+            666.36288
+          ],
+          "warmups": 2
+        },
+        "required_check": "B5",
+        "restore": {
+          "artifact_scan": {
+            "acked_commit_lost_count": 0,
+            "failure_usage_retained": false,
+            "failure_usage_retained_count": 0,
+            "orphan_final_count": 0,
+            "orphan_final_detected": false,
+            "partial_package_pass_count": 0,
+            "temporary_file_count": 0
+          },
+          "chain_valid": true,
+          "events": 101000,
+          "mechanism": "SQLITE_VACUUM_INTO_BACKUP_THEN_OPEN_AND_FULL_HASH_CHAIN",
+          "minutes": 0.45466587211666665,
+          "wall_seconds": 27.279952327
+        },
+        "seal_wall_ms": 23805.337726,
+        "sqlite_synchronous": "FULL",
+        "targets": {
+          "lost_committed_decisions": {
+            "operator": "EQ",
+            "passed": true,
+            "target": 0,
+            "value": 0
+          },
+          "metadata_restore_minutes": {
+            "operator": "LE",
+            "passed": true,
+            "target": 60,
+            "value": 0.45466587211666665
+          },
+          "read_transaction_ms": {
+            "operator": "LE",
+            "passed": true,
+            "target": 2000,
+            "value": 605.100118
+          },
+          "torn_pass": {
+            "operator": "EQ",
+            "passed": true,
+            "target": 0,
+            "value": 0
+          }
+        },
+        "verdict": "PASS"
+      }
+    },
+    "RP-8G": {
+      "declared_memory_max_bytes": 8589934592,
+      "enforced": true,
+      "enforcement": "CGROUP_V2_MEMORY_MAX",
+      "id": "RP-8G",
+      "memory_swap_max_bytes": 0,
+      "peak_within_limit": true,
+      "peaks": {
+        "run": {
+          "peak_bytes": 413249536,
+          "peak_mib": 394.11
+        }
+      },
+      "report": {
+        "append_batch_events": 500,
+        "append_events_per_second": 1467.228292968011,
+        "append_transactions": 200,
+        "append_wall_ms": 68155.719515,
+        "artifact_declaration_sha256": "146be12409490352503c4b689002b3600551f12976775afddb36876bc8253d22",
+        "artifact_pointers_referenced": 1000,
+        "artifact_pointers_sealed": 1000,
+        "artifact_scan_after_append": {
+          "acked_commit_lost_count": 0,
+          "failure_usage_retained": false,
+          "failure_usage_retained_count": 0,
+          "orphan_final_count": 0,
+          "orphan_final_detected": false,
+          "partial_package_pass_count": 0,
+          "temporary_file_count": 0
+        },
+        "crash_matrix": {
+          "authoritative_source": "evidence/labd/raw/B5_CRASH_RP-8G.json",
+          "fixture": "F17",
+          "in_band_report": {
+            "lost_committed_decisions": 0,
+            "status": "PASS",
+            "torn_pass": 0,
+            "trials": [
+              {
+                "acked_events": 0,
+                "delay_ms": 60,
+                "events_on_disk": 0,
+                "kill_signal": "SIGKILL",
+                "lost_committed_decisions": 0,
+                "status": "PASS",
+                "torn_pass": 0,
+                "trial": 0
+              },
+              {
+                "acked_events": 0,
+                "delay_ms": 120,
+                "events_on_disk": 0,
+                "kill_signal": "SIGKILL",
+                "lost_committed_decisions": 0,
+                "status": "PASS",
+                "torn_pass": 0,
+                "trial": 1
+              },
+              {
+                "acked_events": 0,
+                "delay_ms": 200,
+                "events_on_disk": 0,
+                "kill_signal": "SIGKILL",
+                "lost_committed_decisions": 0,
+                "status": "PASS",
+                "torn_pass": 0,
+                "trial": 2
+              },
+              {
+                "acked_events": 0,
+                "delay_ms": 300,
+                "events_on_disk": 0,
+                "kill_signal": "SIGKILL",
+                "lost_committed_decisions": 0,
+                "status": "PASS",
+                "torn_pass": 0,
+                "trial": 3
+              },
+              {
+                "acked_events": 0,
+                "delay_ms": 420,
+                "events_on_disk": 0,
+                "kill_signal": "SIGKILL",
+                "lost_committed_decisions": 0,
+                "status": "PASS",
+                "torn_pass": 0,
+                "trial": 4
+              },
+              {
+                "acked_events": 0,
+                "delay_ms": 560,
+                "events_on_disk": 0,
+                "kill_signal": "SIGKILL",
+                "lost_committed_decisions": 0,
+                "status": "PASS",
+                "torn_pass": 0,
+                "trial": 5
+              }
+            ]
+          },
+          "report": {
+            "lost_committed_decisions": 0,
+            "status": "PASS",
+            "torn_pass": 0,
+            "trials": [
+              {
+                "acked_events": 350,
+                "delay_ms": 2000,
+                "events_on_disk": 350,
+                "kill_signal": "SIGKILL",
+                "lost_committed_decisions": 0,
+                "status": "PASS",
+                "torn_pass": 0,
+                "trial": 0
+              },
+              {
+                "acked_events": 100,
+                "delay_ms": 2200,
+                "events_on_disk": 100,
+                "kill_signal": "SIGKILL",
+                "lost_committed_decisions": 0,
+                "status": "PASS",
+                "torn_pass": 0,
+                "trial": 1
+              },
+              {
+                "acked_events": 0,
+                "delay_ms": 2400,
+                "events_on_disk": 0,
+                "kill_signal": "SIGKILL",
+                "lost_committed_decisions": 0,
+                "status": "PASS",
+                "torn_pass": 0,
+                "trial": 2
+              },
+              {
+                "acked_events": 100,
+                "delay_ms": 2600,
+                "events_on_disk": 100,
+                "kill_signal": "SIGKILL",
+                "lost_committed_decisions": 0,
+                "status": "PASS",
+                "torn_pass": 0,
+                "trial": 3
+              },
+              {
+                "acked_events": 150,
+                "delay_ms": 2800,
+                "events_on_disk": 150,
+                "kill_signal": "SIGKILL",
+                "lost_committed_decisions": 0,
+                "status": "PASS",
+                "torn_pass": 0,
+                "trial": 4
+              },
+              {
+                "acked_events": 600,
+                "delay_ms": 3000,
+                "events_on_disk": 600,
+                "kill_signal": "SIGKILL",
+                "lost_committed_decisions": 0,
+                "status": "PASS",
+                "torn_pass": 0,
+                "trial": 5
+              }
+            ]
+          },
+          "separate_from_timed_reads": true,
+          "trials": 6
+        },
+        "event_type_counts": {
+          "ArtifactPointer": 20000,
+          "DecisionRecorded": 40000,
+          "JobStateChanged": 20000,
+          "PassRecorded": 20000
+        },
+        "events_corpus": "/home/quant/quant/qel-w13/benchmarks/corpus/b5_events.jsonl",
+        "events_corpus_sha256": "a0649d5131d0cbc6550fd94a659c57b2fbdb0feb2b70db280ed9f2f096f8abaa",
+        "failed_attempts": [],
+        "journal_mode": "WAL",
+        "kind": "TASK25_B5_LEDGER_RESTORE",
+        "ledger_events_appended": 100000,
+        "ledger_events_target": 100000,
+        "ledger_events_total": 101000,
+        "read_transaction": {
+          "max_ms": null,
+          "median_ms": 580.307642,
+          "min_ms": null,
+          "p90_ms": 810.425591,
+          "repeats": 12,
+          "rows_per_transaction": [
+            101000,
+            101000,
+            101000,
+            101000,
+            101000,
+            101000,
+            101000,
+            101000,
+            101000,
+            101000,
+            101000,
+            101000,
+            101000,
+            101000
+          ],
+          "samples_ms": null,
+          "warm_ms": [
+            859.414718,
+            895.298763
+          ],
+          "warmups": 2
+        },
+        "required_check": "B5",
+        "restore": {
+          "artifact_scan": {
+            "acked_commit_lost_count": 0,
+            "failure_usage_retained": false,
+            "failure_usage_retained_count": 0,
+            "orphan_final_count": 0,
+            "orphan_final_detected": false,
+            "partial_package_pass_count": 0,
+            "temporary_file_count": 0
+          },
+          "chain_valid": true,
+          "events": 101000,
+          "mechanism": "SQLITE_VACUUM_INTO_BACKUP_THEN_OPEN_AND_FULL_HASH_CHAIN",
+          "minutes": 0.4655678252666667,
+          "wall_seconds": 27.934069516
+        },
+        "seal_wall_ms": 25890.569355,
+        "sqlite_synchronous": "FULL",
+        "targets": {
+          "lost_committed_decisions": {
+            "operator": "EQ",
+            "passed": true,
+            "target": 0,
+            "value": 0
+          },
+          "metadata_restore_minutes": {
+            "operator": "LE",
+            "passed": true,
+            "target": 60,
+            "value": 0.4655678252666667
+          },
+          "read_transaction_ms": {
+            "operator": "LE",
+            "passed": true,
+            "target": 2000,
+            "value": 810.425591
+          },
+          "torn_pass": {
+            "operator": "EQ",
+            "passed": true,
+            "target": 0,
+            "value": 0
+          }
+        },
+        "verdict": "PASS"
+      }
+    }
+  },
+  "profiles_enforced": true,
+  "required_check": "B5",
+  "status": "PASS",
+  "targets_met": true,
+  "task": "TASK-25",
+  "title": "Ledger and restore: 100,000 events, 1,000 artifact pointers, F17"
+}

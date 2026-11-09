@@ -1,0 +1,71 @@
+{
+  "compilation_path": "INTERPRETED_NO_NATIVE_JIT_PATH",
+  "corpus": "/home/quant/quant/qel-w13/benchmarks/corpus/b0_policy_256.json",
+  "corpus_sha256": "83ed0c8257661adcae5cd7efbdee4793f50c3f2a6075008eb8149bb64b197283",
+  "dag_nodes_measured": 256,
+  "dag_sha256_canonical": "43614dd41e09d77718e5ccee6e7a082d783facc37a110571de402f58e4aec819",
+  "failed_attempts": [],
+  "include": [
+    "PARSE",
+    "SCHEMA",
+    "TYPECHECK",
+    "HASH"
+  ],
+  "kind": "TASK25_B0_TYPED_SPECIFICATION",
+  "metric": {
+    "name": "p90_ms",
+    "operator": "LE",
+    "passed": true,
+    "target": 100.0,
+    "value": 4.543987
+  },
+  "mode": "native",
+  "modes_timed_separately": [
+    "schema-only",
+    "native"
+  ],
+  "native_jit_compilations": 0,
+  "operator_set": "OPERATOR_SET_1_1",
+  "phase_median_ms": {
+    "hash": 1.265664,
+    "parse": 1.748938,
+    "schema": 0.09894800000000001,
+    "typecheck_and_engine": 1.284383
+  },
+  "required_check": "B0",
+  "timed": {
+    "max_ms": 5.3345199999999995,
+    "median_ms": 4.3483225,
+    "min_ms": 4.267417,
+    "p90_ms": 4.543987,
+    "repeats": 12,
+    "samples_ms": [
+      4.267417,
+      4.288551,
+      4.31225,
+      4.322817,
+      4.329739,
+      4.343817,
+      4.352828000000001,
+      4.360250000000001,
+      4.363686,
+      4.478906,
+      4.543987,
+      5.3345199999999995
+    ]
+  },
+  "timed_repeats": 12,
+  "verdict": "PASS",
+  "warm": {
+    "max_ms": 7.220814,
+    "median_ms": 6.235562,
+    "min_ms": 5.25031,
+    "p90_ms": 7.220814,
+    "repeats": 2,
+    "samples_ms": [
+      5.25031,
+      7.220814
+    ]
+  },
+  "warmups": 2
+}

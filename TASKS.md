@@ -31,7 +31,7 @@ is a scientific promotion.
 | TASK-22 | Durable memory projections | DONE | rebuild from cited claims; FTS query test |
 | TASK-23 | cgroup and economic admission | DONE | delegated cgroup v2; OOM kill, memory/pids/cpu limits and admission tested |
 | TASK-24 | Operator dashboard and controls | DONE | localhost dashboard + SSE + health; read-only principal cannot control |
-| TASK-25 | Benchmark corpus and performance evidence | PARTIAL | native spike and job timings recorded; B0-B4 full corpus not run |
+| TASK-25 | Benchmark corpus and performance evidence | PARTIAL | frozen B0/B1/B5 corpora and harnesses; cgroup-v2-enforced RP-4G/RP-8G runs: B0 p90 2.30 ms (target 100) with 0 JIT, B1 1M rows x 8 variants p90 2.66 s (target 10), B5 100k events/1k artifacts with 0 lost commits, 0 torn PASS, read 810 ms and restore 0.47 min; T-RELEASE PASS; B2/B3/B4 not re-run under the enforced profiles and B4 100M remains blocked; `evidence/labd/INTEGRATION_ISSUE13_VERIFY.json` |
 | TASK-26 | Statistical null and injection calibration | PARTIAL | exact B6 workload implemented: four frozen generators, 16 variants, 3 cohorts, 1500/500 days, 1000 controls, HMAC seed labels, paired decision, coverage and power reports; bounded pilot (1 program/generator) is `PILOT_NOT_ACCEPTANCE`; estimated full B6 is 1,085.64 core-hours on this host, so the 1000-program FWER certificate remains `COMPUTE_BUDGET_INSUFFICIENT`; nonstationary control correctly blocked; `evidence/labd/INTEGRATION_ISSUE14_VERIFY.json` |
 | TASK-27 | Continuous research soak | RUNNING | systemd `qel-soak` samples every 60s; 24h not yet elapsed |
 | TASK-28 | First frozen confirmation cohort | BLOCKED | `WAITING_FRESH_OOS`; no untouched window and no authorization |

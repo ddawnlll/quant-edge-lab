@@ -1,0 +1,30 @@
+{
+  "check_status": {
+    "B0": "PASS",
+    "B1": "PASS",
+    "B2": "EVIDENCE_PENDING_PROFILE_ENFORCEMENT",
+    "B3": "EVIDENCE_PENDING_PROFILE_ENFORCEMENT",
+    "B4": "EVIDENCE_PENDING_100M_AND_PROFILE_ENFORCEMENT",
+    "B5": "PASS",
+    "T-RELEASE": "SEE_T_RELEASE_BUILD"
+  },
+  "full_acceptance_claimed": false,
+  "kind": "TASK25_ACCEPTANCE",
+  "missing_items": [
+    "B4 100M events: BLOCKED_NOT_RUN (see evidence/labd/B4_100M_BLOCKED.json)",
+    "B2: prior TASK-19 evidence exists but was not re-run under the enforced RP-4G/RP-8G profiles",
+    "B3: prior TASK-19 evidence exists but was not re-run under the enforced RP-4G/RP-8G profiles",
+    "B4: prior TASK-19 evidence exists but was not re-run under the enforced RP-4G/RP-8G profiles"
+  ],
+  "required_checks": [
+    "B0",
+    "B1",
+    "B2",
+    "B3",
+    "B4",
+    "B5",
+    "T-RELEASE"
+  ],
+  "status": "PARTIAL/EVIDENCE_PENDING",
+  "task": "TASK-25"
+}
