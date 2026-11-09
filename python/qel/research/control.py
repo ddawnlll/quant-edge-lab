@@ -148,15 +148,27 @@ def _num_str(value: Fraction, places: int = 12) -> str:
         return text.rstrip("0").rstrip(".") if "." in text else text
 
 
-def _day_of(ts: int) -> str:
-    # UTC calendar day without depending on the host timezone.
-    import datetime
+_DAY_CACHE: dict[int, str] = {}
 
-    return (
-        datetime.datetime.fromtimestamp(ts // 1_000_000_000, tz=datetime.timezone.utc)
-        .date()
-        .isoformat()
-    )
+
+def _day_of(ts: int) -> str:
+    # UTC calendar day without depending on the host timezone.  Multi-day
+    # preparation calls this once per quote; cache by epoch-day so the cost is
+    # one datetime conversion per day rather than per quote.
+    day_number = ts // 86_400_000_000_000
+    cached = _DAY_CACHE.get(day_number)
+    if cached is None:
+        import datetime
+
+        cached = (
+            datetime.datetime.fromtimestamp(
+                day_number * 86_400, tz=datetime.timezone.utc
+            )
+            .date()
+            .isoformat()
+        )
+        _DAY_CACHE[day_number] = cached
+    return cached
 
 
 def _peak_rss_bytes() -> int:
@@ -209,13 +221,19 @@ def _to_quote(raw: Mapping[str, Any] | Quote) -> Quote:
         ask = ask_exact
     # Prefer the exact decimal only when it still agrees with the visible
     # float.  This keeps a price-mutation test honest instead of silently
-    # reading a stale companion field.
-    if bid_exact is not None and float(Fraction(str(bid_exact))) == float(bid):
+    # reading a stale companion field.  Parse each exact string once: a
+    # multi-day tape is hundreds of thousands of quotes and repeated Fraction
+    # parsing dominates preparation.
+    if bid_exact is not None:
         bid_f = Fraction(str(bid_exact))
+        if float(bid_f) != float(bid):
+            bid_f = Fraction(str(bid))
     else:
         bid_f = Fraction(str(bid))
-    if ask_exact is not None and float(Fraction(str(ask_exact))) == float(ask):
+    if ask_exact is not None:
         ask_f = Fraction(str(ask_exact))
+        if float(ask_f) != float(ask):
+            ask_f = Fraction(str(ask))
     else:
         ask_f = Fraction(str(ask))
     return Quote(ts=ts, bid=bid_f, ask=ask_f)
@@ -267,6 +285,7 @@ class ControlPlan:
     day_indices: Mapping[str, tuple[int, ...]]
     eval_indices: Mapping[str, tuple[int, ...]]
     eval_indices_by_stratum: Mapping[str, Mapping[str, tuple[int, ...]]]
+    eval_ts_by_stratum: Mapping[str, Mapping[str, tuple[int, ...]]]
     train_end_ns: int
     eval_start_ns: int
     eval_end_ns: int
@@ -325,10 +344,18 @@ def _ema(values: Sequence[Fraction], window: int) -> list[Fraction]:
     if not values:
         return []
     alpha = Fraction(2, window + 1)
+    # An unquantised Fraction EMA grows its denominator by roughly 4.4 bits per
+    # step.  A multi-day training window is 80k+ steps, so the exact rational
+    # becomes astronomically large and preparation never finishes.  Rounding
+    # the state to a fixed 1e-9 grid at each step keeps the recursion bounded
+    # and deterministic while staying far below the price tick used by the
+    # tapes.
+    quantum = Fraction(1, 1_000_000_000)
     out: list[Fraction] = []
     state = values[0]
     for value in values:
         state = alpha * value + (1 - alpha) * state
+        state = Fraction(round(state / quantum)) * quantum
         out.append(state)
     return out
 
@@ -471,6 +498,7 @@ def prepare_control_plan(
         by_day.setdefault(_day_of(item.ts), []).append(idx)
     eval_by_day: dict[str, list[int]] = {}
     eval_by_stratum: dict[str, dict[str, list[int]]] = {}
+    eval_ts_by_stratum: dict[str, dict[str, list[int]]] = {}
     for idx, item in enumerate(q):
         if item.ts <= train_end_ns:
             continue
@@ -478,6 +506,7 @@ def prepare_control_plan(
         eval_by_day.setdefault(day, []).append(idx)
         key = _stratum_key(_hour_of(item.ts))
         eval_by_stratum.setdefault(day, {}).setdefault(key, []).append(idx)
+        eval_ts_by_stratum.setdefault(day, {}).setdefault(key, []).append(item.ts)
 
     calendar = tuple(sorted(by_day))
     target_by_day: dict[str, int] = {}
@@ -569,6 +598,10 @@ def prepare_control_plan(
         eval_indices_by_stratum={
             day: {key: tuple(indices) for key, indices in groups.items()}
             for day, groups in eval_by_stratum.items()
+        },
+        eval_ts_by_stratum={
+            day: {key: tuple(timestamps) for key, timestamps in groups.items()}
+            for day, groups in eval_ts_by_stratum.items()
         },
         train_end_ns=train_end_ns,
         eval_start_ns=eval_start_ns,
@@ -679,11 +712,13 @@ def _choose_stratum(
     seed_index: int,
     time_index: int,
 ) -> str | None:
-    available = {
-        key: [idx for idx in indices if plan.quotes[idx].ts >= cursor_ns]
-        for key, indices in plan.eval_indices_by_stratum.get(day, {}).items()
-    }
-    available = {key: idxs for key, idxs in available.items() if idxs}
+    # Indices within a day/stratum are stored in ascending timestamp order, so
+    # the last timestamp answers "is any quote still available after the
+    # cursor?" without rescanning the whole day for every trade.
+    available = {}
+    for key, indices in plan.eval_indices_by_stratum.get(day, {}).items():
+        if indices and plan.quotes[indices[-1]].ts >= cursor_ns:
+            available[key] = indices
     if not available:
         return None
     weights = {key: plan.strata[key].weight for key in available if key in plan.strata}
@@ -781,12 +816,10 @@ def _run_seed_account(
                     "rejected_orders": 0,
                 },
             )
-            candidates = [
-                idx
-                for idx in plan.eval_indices_by_stratum.get(day, {}).get(stratum, ())
-                if plan.quotes[idx].ts >= cursor_ts
-            ]
-            if not candidates:
+            stratum_indices = plan.eval_indices_by_stratum.get(day, {}).get(stratum, ())
+            stratum_ts = plan.eval_ts_by_stratum.get(day, {}).get(stratum, ())
+            first_available = bisect.bisect_left(stratum_ts, cursor_ts)
+            if first_available >= len(stratum_indices):
                 break
             jitter_u = uniform_at(
                 plan.labels(GENERATOR_ENTRY_JITTER, trade_ordinal, seed_index), 0
@@ -794,8 +827,10 @@ def _run_seed_account(
             # Jitter only between the first two available quotes in the chosen
             # stratum.  A wider jump can spend the calendar budget before the
             # target count is reached on short tapes.
-            jitter_span = min(len(candidates), 2)
-            entry_idx = candidates[min(jitter_span - 1, int(jitter_u * jitter_span))]
+            jitter_span = min(len(stratum_indices) - first_available, 2)
+            entry_idx = stratum_indices[
+                first_available + min(jitter_span - 1, int(jitter_u * jitter_span))
+            ]
             entry_quote = plan.quotes[entry_idx]
 
             side_u = uniform_at(
@@ -1470,8 +1505,16 @@ def _execute_plan(
     mode = execution.upper()
     if mode not in {"BATCH", "SEQUENTIAL"}:
         raise ControlError("INVALID_EXECUTION_MODE")
+    # Both modes consume the same immutable quote tape.  Convert raw records to
+    # frozen Quote objects once per execution: SEQUENTIAL still rebuilds the
+    # strata, calendar and targets for every seed, but it does not re-parse the
+    # identical tape hundreds of times.  On a multi-day tape that re-parsing is
+    # the dominant cost and made a 1,000-seed sequential run infeasible.
+    prepared_quotes: Sequence[Mapping[str, Any] | Quote] = quotes
+    if quotes and not isinstance(quotes[0], Quote):
+        prepared_quotes = tuple(_to_quote(raw) for raw in quotes)
     plan = prepare_control_plan(
-        quotes,
+        prepared_quotes,
         trades,
         notional,
         seed,
@@ -1498,7 +1541,7 @@ def _execute_plan(
         active_plan = plan
         if mode == "SEQUENTIAL":
             active_plan = prepare_control_plan(
-                quotes,
+                prepared_quotes,
                 trades,
                 notional,
                 seed,
