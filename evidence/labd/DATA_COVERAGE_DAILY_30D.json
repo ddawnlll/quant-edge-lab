@@ -1,0 +1,59 @@
+{
+  "schema_version": "1.1.0",
+  "dataset": "BINANCE_USDM_DAILY_ARCHIVE_BTCUSDT",
+  "data_root": "/home/quant/quant/quant-edge-lab/data/raw/ARCHIVE_BINANCE_USDM/BTCUSDT",
+  "range": {
+    "first_date": "2026-10-09",
+    "last_date": "2026-11-07",
+    "calendar_days": 30,
+    "complete_days": 28,
+    "incomplete_days": ["2026-10-28", "2026-10-29"]
+  },
+  "incomplete_detail": [
+    {
+      "date": "2026-10-28",
+      "reason": "INCOMPLETE_ARCHIVE_DAY",
+      "agg_trades_present": false,
+      "mark_klines_present": false,
+      "funding_present": false,
+      "bytes": 0
+    },
+    {
+      "date": "2026-10-29",
+      "reason": "INCOMPLETE_ARCHIVE_DAY",
+      "agg_trades_present": true,
+      "mark_klines_present": false,
+      "funding_present": false,
+      "bytes": 22063043
+    }
+  ],
+  "daily_observation_policy": "complete means both the aggTrades and 1m markPriceKlines archives are present and non-empty; funding.json is tracked separately",
+  "bytes": {
+    "all_30_days": 381549389,
+    "complete_28_days": 359486346
+  },
+  "funding_days_present": 1,
+  "protocol_results": {
+    "raw_30_day_calendar": {
+      "status": "INCOMPLETE_DAY",
+      "first_rejected_date": "2026-10-28",
+      "evidence": "evidence/labd/PROTOCOL_ARCHIVE_30D.json"
+    },
+    "contiguous_complete_prefix_2026-10-09_2026-10-27": {
+      "status": "INSUFFICIENT_HISTORY",
+      "available_total_days": 19,
+      "available_discovery_days": 13,
+      "required_discovery_days": 548,
+      "shortfall_days": 535,
+      "evidence": "evidence/labd/PROTOCOL_ARCHIVE_19D.json"
+    }
+  },
+  "gap_to_26_month_target": {
+    "target_window_ending": "2026-11-07",
+    "target_start_about_26_months": "2024-09-08",
+    "missing_range_before_available_daily_archive": ["2024-09-08", "2026-10-08"],
+    "note": "the monthly markPriceKlines archives now cover this window; the daily aggTrades/mark archive is still only 30 calendar days and cannot run the full research-control workload",
+    "bounded_download_command": "python3 - <<'PY'\nimport datetime, pathlib, urllib.request\nroot = pathlib.Path('/home/quant/quant/quant-edge-lab/data/raw/ARCHIVE_BINANCE_USDM/BTCUSDT')\nday, end = datetime.date(2024, 9, 8), datetime.date(2026, 10, 8)\nwhile day <= end:\n    for kind, suffix in (('aggTrades', 'aggTrades'), ('markPriceKlines', '1m')):\n        out = root / day.isoformat() / f'BTCUSDT-{suffix}-{day}.zip'\n        if not out.exists():\n            out.parent.mkdir(parents=True, exist_ok=True)\n            urllib.request.urlretrieve(f'https://data.binance.vision/data/futures/um/daily/{kind}/BTCUSDT/{out.name}', out)\n    day += datetime.timedelta(days=1)\nPY",
+    "estimated_bytes": "about 9.7 GB for the full daily archive window at the observed 12.7 MB/day compression ratio; not run in this worktree"
+  }
+}

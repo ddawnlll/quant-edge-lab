@@ -8,20 +8,42 @@ from pathlib import Path
 
 from ..accounting.core import dec, fmt, reconstruct
 from ..contract.canonical import hash_jcs
-from ..stats.core import classify, family_decision, walk_forward_splits
+from ..stats.core import classify, family_decision
+from .protocol import (
+    DAY_NS,
+    build_calendar,
+    preregistration_manifest,
+    split_manifest as protocol_split_manifest,
+)
 
 
-def split_manifest(dates: list[str], train_days: int = 5, test_days: int = 3, purge: int = 1, embargo: int = 1) -> dict:
-    splits = walk_forward_splits(dates, train_days, test_days, purge, embargo)
-    return {
-        "schema_version": "1.1.0",
-        "split_id": "SPLIT-" + hash_jcs({"dates": dates, "splits": splits})[:16].upper(),
-        "calendar": "UTC",
-        "splits": splits,
-        "purge_days": purge,
-        "embargo_days": embargo,
-        "split_hash": hash_jcs(splits),
-    }
+def split_manifest(
+    dates: list[str] | dict,
+    symbol: str = "BTC",
+    *,
+    horizon_ns: int = DAY_NS,
+    embargo_ns: int = 0,
+    latency_ns: int = 0,
+) -> dict:
+    """Canonical TASK-12 calendar split (month-based, sealed reserve).
+
+    ``dates`` may be a list of complete UTC days or a full calendar payload.
+    The legacy day-count helper in ``stats.core`` is no longer the research
+    split entry point.
+    """
+    payload = dates if isinstance(dates, dict) else {"symbol": symbol, "dates": dates}
+    calendar = build_calendar(payload)
+    return protocol_split_manifest(
+        calendar, horizon_ns=horizon_ns, embargo_ns=embargo_ns, latency_ns=latency_ns
+    )
+
+
+def protocol_manifest(dates: list[str] | dict, symbol: str = "BTC", **kwargs) -> dict:
+    """Freeze the preregistration manifest for a supplied daily calendar."""
+    payload = dates if isinstance(dates, dict) else {"symbol": symbol, "dates": dates}
+    calendar = build_calendar(payload)
+    split = protocol_split_manifest(calendar, **kwargs)
+    return preregistration_manifest(calendar, split)
 
 
 def control_spec(family_id: str, seed: int, variants: int = 12) -> dict:
@@ -29,15 +51,19 @@ def control_spec(family_id: str, seed: int, variants: int = 12) -> dict:
         "schema_version": "1.1.0",
         "family_id": family_id,
         "seed": seed,
-        "draw_mapping": "NUMPY_PCG64_DETERMINISTIC",
-        "seed_protocol_note": "development controls use NumPy PCG64; this is not the execution HMAC seed protocol",
-        "matched_on": ["calendar", "trade_count"],
+        "draw_mapping": "HMAC_SHA256_COUNTER_V1",
+        "seed_protocol_note": (
+            "matched controls use the HMAC-SHA256 counter mapping in research/control.py; "
+            "NumPy PCG64 is never the control engine"
+        ),
+        "matched_on": ["calendar", "trade_count", "holding_time"],
         "holding_time_note": "holding time is reported, not selected; use a holding-time target before claiming that match",
         "controls": [
             {"control_id": f"CTRL-{i}", "seed": hash_jcs({"seed": seed, "i": i})}
             for i in range(2)
         ],
         "variants": variants,
+        "family_size": variants,
         "control_hash": hash_jcs({"seed": seed, "variants": variants}),
     }
 

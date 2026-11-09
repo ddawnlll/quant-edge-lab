@@ -1,0 +1,14 @@
+{
+  "error": {
+    "code": "CALENDAR_GAP",
+    "detail": {
+      "missing_count": 1,
+      "missing_days": [
+        "2026-06-29"
+      ]
+    },
+    "status": "CALENDAR_GAP"
+  },
+  "schema_version": "1.1.0",
+  "status": "CALENDAR_GAP"
+}
