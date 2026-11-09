@@ -147,13 +147,15 @@
     "TASK-13": {
       "status": "PARTIAL",
       "evidence": [
-        "evidence/labd/SCREEN.json",
-        "evidence/labd/SCREEN_DAY.json",
-        "evidence/labd/CONTROLS_DAY.json",
-        "evidence/labd/FAMILY_REPORT_DAY.json",
-        "evidence/labd/CONTROL_RECHECK.txt",
-        "evidence/labd/CONTROL_TEST.txt"
-      ]
+        "tests/test_controls.py",
+        "evidence/labd/CONTROLS_HMAC_240S.json",
+        "evidence/labd/CONTROLS_HMAC_SEED_VECTORS.json",
+        "evidence/labd/CONTROL_HMAC_BATCH_SEQ.txt",
+        "evidence/labd/CONTROL_HMAC_SUMMARY.txt",
+        "evidence/labd/RESCUE_HMAC.json",
+        "evidence/labd/INTEGRATION_ISSUE06_VERIFY.json"
+      ],
+      "blocked": "B1 multi-day: only one archive day available"
     },
     "TASK-14": {
       "status": "DONE",

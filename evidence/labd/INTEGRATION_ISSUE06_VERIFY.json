@@ -1,0 +1,73 @@
+{
+  "issue": 6,
+  "task": "TASK-13",
+  "kind": "COORDINATOR_INDEPENDENT_VERIFICATION",
+  "integration_branch": "qel/int-20261109",
+  "base_sha": "f6dbde793e9db6c6124f4826b5bdff7e793502c1",
+  "patch_commit": "bce5928ab5b235994cf7e7c64d7b672dd856cb2b",
+  "integrated_commit": "4edf6a6",
+  "verification": {
+    "pytest": {"command": "PYTHONPATH=python QEL_ROOT=$PWD .venv/bin/python -m pytest -q tests", "result": "150 passed", "exit_code": 0},
+    "focused": {"command": "pytest -q tests/test_controls.py tests/test_research.py", "result": "26 passed", "exit_code": 0},
+    "hmac_protocol": {
+      "protocol": "HMAC_SHA256_COUNTER_V1",
+      "labels": ["GENERATOR_ID", "PROGRAM_REPLICATION", "VARIANT", "COIN", "TIME", "CONTROL_REPLICATION"],
+      "protocol_hash": "30a0ef917ba2484c7966bf13f51cf2973e83235862b5eae408576a0b5d5e8571",
+      "backend_hash": "d8f017c7f6627ca2517094eeab8491df16713074085614d7777bf56c0d5858a5",
+      "self_test": "PASS (3 vectors, SciPy normal/t5 inverse CDF)",
+      "independent_first_uniforms": [0.39115692354392806, 0.139607125292584, 0.5027975628438428, 0.2283457070794469]
+    },
+    "controls": {
+      "replications": 1000,
+      "seeds_completed": 1000,
+      "executed_trades": 22000,
+      "draw_mapping": "HMAC_SHA256_COUNTER_V1",
+      "matched_on": ["calendar", "trade_count", "holding_time"],
+      "batch_sequential_equal": true,
+      "batch_daily_series_hash": "3f5e5dec6f3a84f4d26e70814a1fb4e04078104e56070f7bbecebd9205928a69",
+      "batch_seed_series_hash": "c9d88b90cf28e9bca757cdf2fab75fcc42404ca22a2d3888d564e07663200eb8",
+      "financial_trials_dropped": 0,
+      "cli_peak_rss_bytes": 159387648,
+      "full_evidence_peak_rss_bytes": 105783296,
+      "full_evidence_wall_seconds": 35.78
+    },
+    "lookahead_checks": {
+      "selection_unchanged_under_future_price_mutation": true,
+      "selection_unchanged_under_future_candidate_fill_mutation": true,
+      "selection_hash_recorded": true
+    },
+    "l1_rescue": {
+      "scope": "DEVELOPMENT_VALID_L1_REJECTS",
+      "group_size": 10,
+      "selected_count": 1,
+      "protocol": "HMAC_COUNTER_UNIFORM_RESERVOIR_WITH_FROZEN_FAMILY_SEED",
+      "deterministic_test": true
+    },
+    "diagnostics": {
+      "per_stratum_present": true,
+      "zero_trade_days_retained": true,
+      "missing_marks_not_filled": true,
+      "separate_trend_pullback_control": true
+    }
+  },
+  "acceptance_boundary": {
+    "F27": "PARTIAL_SINGLE_ARCHIVE_DAY",
+    "B1": "OPEN_MULTI_DAY_ONLY_ONE_ARCHIVE_DAY",
+    "T-PROTOCOL": "PARTIAL",
+    "reason": "Only one archive day exists in the available data. The 1000-seed protocol, batch/sequential equality, diagnostics, no-lookahead tests and rescue rule are verified, but multi-day B1 and full F27/T-PROTOCOL acceptance require additional eligible calendar days."
+  },
+  "claims_not_made": [
+    "multi-day walk-forward evidence",
+    "a positive edge or a promoted strategy",
+    "that the control distribution is venue-certified"
+  ],
+  "evidence_hashes": {
+    "evidence/labd/CONTROLS_HMAC_240S.json": "committed with patch",
+    "evidence/labd/CONTROLS_HMAC_SEED_VECTORS.json": "committed with patch",
+    "evidence/labd/CONTROL_HMAC_BATCH_SEQ.txt": "committed with patch",
+    "evidence/labd/CONTROL_HMAC_SUMMARY.txt": "committed with patch",
+    "evidence/labd/RESCUE_HMAC.json": "committed with patch"
+  },
+  "verdict": "PASS_SOFTWARE_PARTIAL_ACCEPTANCE",
+  "acceptance_note": "Engineering and protocol are verified; acceptance is EVIDENCE_PENDING on multi-day data. No promotion is claimed."
+}
