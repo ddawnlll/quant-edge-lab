@@ -1,0 +1,75 @@
+{
+  "anchor_chain": {
+    "errors": [],
+    "generation": 2,
+    "head_hash": "5da9d61c7537cdaff1d8f9e4c0f9eb35978e4d0b6b402fd9d9354eb99ec72f3e",
+    "records": 2,
+    "valid": true
+  },
+  "api_methods": [
+    "close",
+    "db",
+    "decide",
+    "evaluation_allowed",
+    "export_release_manifest",
+    "freeze_cohort",
+    "isolation_report",
+    "lease",
+    "prepare_read_receipt",
+    "public_key_hex",
+    "reconcile_against_anchor",
+    "release_batch",
+    "reserve_trial",
+    "restore_from_old",
+    "spend_consumption",
+    "stale_result",
+    "trust_key",
+    "trusted_keys",
+    "verify",
+    "verify_release_batch"
+  ],
+  "checks": {
+    "anchor_log_mode_0600": true,
+    "anchor_outside_research_artifacts": true,
+    "anchor_outside_sealed_root": true,
+    "anchor_root_mode_0700": true,
+    "db_mode_0600": true,
+    "key_mode_0600": true,
+    "no_path_reading_api": true,
+    "sealed_database_outside_research_artifacts": true,
+    "sealed_root_mode_0700": true,
+    "sibling_outputs_not_exposed": true
+  },
+  "modes": {
+    "anchor_log": "0o600",
+    "anchor_root": "0o700",
+    "db": "0o600",
+    "key": "0o600",
+    "sealed_root": "0o700"
+  },
+  "os_separation": {
+    "blocked_checks": [
+      "actual distinct Linux UIDs for research and evaluator",
+      "socket peer credentials and authorized-socket ownership",
+      "worker with no network access",
+      "mount/namespace separation for sibling research outputs"
+    ],
+    "missing_capability": "administrator-created Unix principals qel-research and qel-eval (useradd/root), privileged socket ownership changes, and a network namespace or firewall for the worker",
+    "not_claimed": [
+      "uid_separation",
+      "socket_isolation",
+      "worker_network_isolation"
+    ],
+    "status": "BLOCKED",
+    "verified": false
+  },
+  "path_reading_api_methods": [],
+  "paths": {
+    "anchor_log": "/home/quant/.jcode/scratch/evidence-registry/sealed.anchor/anchors.log",
+    "anchor_root": "/home/quant/.jcode/scratch/evidence-registry/sealed.anchor",
+    "db": "/home/quant/.jcode/scratch/evidence-registry/sealed/sealed.sqlite",
+    "key": "/home/quant/.jcode/scratch/evidence-registry/sealed/evaluator.key",
+    "sealed_root": "/home/quant/.jcode/scratch/evidence-registry/sealed"
+  },
+  "status": "PASS_SOFTWARE_ONLY"
+}

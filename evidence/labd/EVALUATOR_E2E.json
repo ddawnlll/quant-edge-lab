@@ -2,17 +2,23 @@
   "cohort": {
     "alpha_den": 200,
     "alpha_num": 5,
-    "anchor_hash": "2cead8dcabb090f5d8641db94555b3530f039d253db7682754e9259d22387573",
+    "anchor_generation": 1,
+    "anchor_hash": "4adce2ddf7a6c273020a7f230673bf0aa9882c63ca890da9136e173416f45351",
     "cohort_id": "COHORT-E2E",
     "commitment": "7ad2f1cb67a6bf31bb0c886fd236fded0eb290e070397911aa4268f357fe6fdd",
+    "receipt_hash": "4d499ab8f761baa62894bbbfe3a395ee883a0cb3ad0af02a6ee6e780b0a418cf",
     "state": "FROZEN"
   },
   "consumption": {
     "alpha_spent_den": 200,
     "alpha_spent_num": 5,
-    "anchor_hash": "7dcf32b5b8b99c51e6cf94f875424ed0d08d45766ae9eaa1d94a6190c8ecaec0",
+    "anchor_generation": 2,
+    "anchor_hash": "aa56f36c548ccaa1c2d16907b081156be4fbcc4fec074b0cae49a117d787a379",
     "cohort_id": "COHORT-E2E",
-    "receipt_hash": "c41c929d2d90748a6714e9187a8987eb3241512e4e69e975e53889973ff06bd1",
+    "commitment": "7ad2f1cb67a6bf31bb0c886fd236fded0eb290e070397911aa4268f357fe6fdd",
+    "receipt_hash": "4d499ab8f761baa62894bbbfe3a395ee883a0cb3ad0af02a6ee6e780b0a418cf",
+    "recovered": false,
+    "request_id": null,
     "reused": false
   },
   "data_boundary": "synthetic evaluator calibration vector, not a market result",
@@ -21,8 +27,8 @@
     "p_control": 0.7509576926093006,
     "p_iut": 0.7509576926093006,
     "p_profit": 0.08339782252059952,
-    "public_key": "a13ffd7335e5e717729ff423153f65a9441ac646576dd830adca7ffe4d984e95",
-    "signature": "79077fb277f13339fcd180c96c259c031651e7a15eed30118335be1d49149d123418d8a9584fe0997c087b48f70a9a20be6d21184fbc144559177501bef23307",
+    "public_key": "d75062e88ff36ee5723d5423e2f67a3bcaed61f34f82b38fc69cecc351defa26",
+    "signature": "0a4585f6cfdee7088d199c3c2634c75b045734ab5d7808ae032a4dd8714a7296604779d3e07accfd0b7f49d34207c0b7da4873687cf2c0ade9d6490ef275540f",
     "verdict": "INSUFFICIENT_EVIDENCE"
   },
   "key_mode": "0o600",

@@ -1,0 +1,57 @@
+{
+  "consumption": {
+    "alpha_spent_den": 200,
+    "alpha_spent_num": 5,
+    "anchor_generation": 2,
+    "anchor_hash": "5da9d61c7537cdaff1d8f9e4c0f9eb35978e4d0b6b402fd9d9354eb99ec72f3e",
+    "cohort_id": "COHORT-T15-EVIDENCE",
+    "commitment": "4a6bc3a3fa49a40fdf15ddeac9e9896009aafd553fee74587147e7265a6c4f38",
+    "receipt_hash": "1f03ef9d3734986e49792d79bd4558aa3a356fe02da62b1348b722f8d8240c21",
+    "recovered": false,
+    "request_id": null,
+    "reused": false
+  },
+  "evaluation_after_spend": {
+    "allowed": true,
+    "anchor_generation": 2,
+    "anchor_hash": "5da9d61c7537cdaff1d8f9e4c0f9eb35978e4d0b6b402fd9d9354eb99ec72f3e",
+    "cohort_id": "COHORT-T15-EVIDENCE",
+    "consumption_receipt": "1f03ef9d3734986e49792d79bd4558aa3a356fe02da62b1348b722f8d8240c21",
+    "reason": null,
+    "receipt_hash": "1f03ef9d3734986e49792d79bd4558aa3a356fe02da62b1348b722f8d8240c21",
+    "window_commitment": "4a6bc3a3fa49a40fdf15ddeac9e9896009aafd553fee74587147e7265a6c4f38"
+  },
+  "evaluation_before_spend": {
+    "allowed": false,
+    "cohort_id": "COHORT-T15-EVIDENCE",
+    "reason": "WAITING_AUTHORIZED_COHORT",
+    "receipt_hash": "1f03ef9d3734986e49792d79bd4558aa3a356fe02da62b1348b722f8d8240c21"
+  },
+  "freeze": {
+    "alpha_den": 200,
+    "alpha_num": 5,
+    "anchor_generation": 1,
+    "anchor_hash": "e203f40c1d5620d660676fcec7a426cc00f24bfb81c967494b62978ebe1d2966",
+    "cohort_id": "COHORT-T15-EVIDENCE",
+    "commitment": "4a6bc3a3fa49a40fdf15ddeac9e9896009aafd553fee74587147e7265a6c4f38",
+    "receipt_hash": "1f03ef9d3734986e49792d79bd4558aa3a356fe02da62b1348b722f8d8240c21",
+    "state": "FROZEN"
+  },
+  "receipt": {
+    "alpha_den": 200,
+    "alpha_num": 5,
+    "candidate_run_keys_hash": "2ba3056e95d23c0c154eca683e330401c46e441d5074523e16349e29d7597a64",
+    "certificate_hashes_hash": "fb2a1dc57aacb26b3557e96371a4d4562f8663205ad15d12d5df89870d6b0632",
+    "cohort_id": "COHORT-T15-EVIDENCE",
+    "cohort_index": 0,
+    "data_hash": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "prepared_ns": "1794221242620705140",
+    "program_id": "PROG-T15-EVIDENCE",
+    "protocol_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+    "public_key": "e66e462bf2aa5973ddbfc1516c1111de00b820de58f2500fe6a469cfba744de1",
+    "receipt_hash": "1f03ef9d3734986e49792d79bd4558aa3a356fe02da62b1348b722f8d8240c21",
+    "signature": "b6374fe6a6caa1f436c8ddb6e75c69ed2e788f2c4ca4c762e714f1ff83dd36138dd6ff1b24c37042e2ba5625f98b98611a4fac76400d53e28a7ce347a6653909",
+    "verifier_binary_hash": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    "window_commitment": "4a6bc3a3fa49a40fdf15ddeac9e9896009aafd553fee74587147e7265a6c4f38"
+  }
+}

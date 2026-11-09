@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from .core import SealedError, SealedRegistry
+from .core import SealedError, SealedRegistry, verify_release_batch
 
 
 def request_confirmation(registry: SealedRegistry, fresh_oos_available: bool, authorized: bool) -> dict:
@@ -37,3 +37,36 @@ def build_export(decision: dict, capital_authorization: bool, signature_valid: b
     if not capital_authorization:
         return {"status": "REFUSED", "reason": "CAPITAL_UNAUTHORIZED", "orders": []}
     return {"status": "READY", "reason": None, "orders": [], "note": "scoped capital authorization still required for live"}
+
+
+def release_batch_gate(
+    registry: SealedRegistry,
+    batch: dict,
+    trusted_keys: set[str] | list[str] | dict | None = None,
+    *,
+    seen_batch_ids: set[str] | list[str] | None = None,
+    expected_input_hash: str | None = None,
+    raw_candidates: list[dict] | None = None,
+) -> dict:
+    """Verify a signed batch before release. Unknown keys and tampering fail closed."""
+    result = verify_release_batch(
+        batch,
+        registry,
+        trusted_keys,
+        seen_batch_ids=seen_batch_ids,
+        expected_input_hash=expected_input_hash,
+        raw_candidates=raw_candidates,
+    )
+    if not result["valid"]:
+        return {"status": "REFUSED", "reason": result["reason"], "batch_id": result["batch_id"]}
+    return {
+        "status": "READY",
+        "reason": None,
+        "batch_id": result["batch_id"],
+        "manifest": result["manifest"],
+    }
+
+
+def redacted_release_manifest(registry: SealedRegistry, cohort_id: str) -> dict:
+    """Return the stored redacted manifest. This never reads research artifacts."""
+    return registry.export_release_manifest(cohort_id)

@@ -1,0 +1,82 @@
+TASK-15 / issue #8 isolation and anchor test report
+Base SHA: 3e76c2802e365d6b2fc6adb189d839ef33fc8c85
+Branch: qel/issue-08-isolation
+Python: /home/quant/quant/quant-edge-lab/.venv/bin/python (3.13.5)
+Environment for every command: PYTHONPATH=python QEL_ROOT=$PWD
+
+1) Targeted evaluator and isolation tests
+Command:
+  PYTHONPATH=python QEL_ROOT=$PWD /home/quant/quant/quant-edge-lab/.venv/bin/python -m pytest -q tests/test_evaluator.py tests/test_isolation_anchor.py
+Exit code: 0
+Result: 19 passed in 8.16s
+
+Collected tests:
+  tests/test_evaluator.py::test_f25_burn_before_read
+  tests/test_evaluator.py::test_f26_fencing_and_restore
+  tests/test_evaluator.py::test_signed_decision_verifies
+  tests/test_evaluator.py::test_no_consumption_no_decision
+  tests/test_evaluator.py::test_gates_fail_closed
+  tests/test_isolation_anchor.py::test_isolation_modes_and_independent_anchor
+  tests/test_isolation_anchor.py::test_anchor_root_env_is_honoured
+  tests/test_isolation_anchor.py::test_anchor_rejects_being_inside_sealed_root
+  tests/test_isolation_anchor.py::test_anchor_chain_is_hash_chained_and_monotonic
+  tests/test_isolation_anchor.py::test_anchor_chain_detects_tampering
+  tests/test_isolation_anchor.py::test_pre_access_receipt_commits_before_read
+  tests/test_isolation_anchor.py::test_missing_anchor_ack_blocks_read_and_retry_spends_once
+  tests/test_isolation_anchor.py::test_concurrent_consumption_has_one_winner
+  tests/test_isolation_anchor.py::test_old_backup_requires_reconcile_and_keeps_alpha
+  tests/test_isolation_anchor.py::test_copied_registry_root_requires_reconcile
+  tests/test_isolation_anchor.py::test_copied_consumed_registry_stays_consumed
+  tests/test_isolation_anchor.py::test_renamed_cohort_with_same_commitment_is_refused
+  tests/test_isolation_anchor.py::test_signed_batch_rejects_unknown_tampered_duplicate_and_changed
+  tests/test_isolation_anchor.py::test_sibling_output_is_not_readable_through_evaluator_api
+
+2) Full Python test suite
+Command:
+  PYTHONPATH=python QEL_ROOT=$PWD /home/quant/quant/quant-edge-lab/.venv/bin/python -m pytest -q tests
+Exit code: 0
+Result: 67 passed in 19.49s
+
+3) Real evaluator entry point
+Command:
+  PYTHONPATH=python QEL_ROOT=$PWD /home/quant/quant/quant-edge-lab/.venv/bin/python -m qel.cli evaluator-demo --root "$JCODE_SCRATCH_DIR/qel-eval-demo" --out "$JCODE_SCRATCH_DIR/evaluator-demo.json"
+Exit code: 0
+Result payload status: PASS
+  pre_consumption_refusal: WAITING_AUTHORIZED_COHORT
+  unacknowledged_refusal: WAITING_AUTHORIZED_COHORT
+  second_decision_refusal: PROTOCOL_VIOLATION
+  signature_verified: true
+  db_mode: 0o600, key_mode: 0o600
+  freeze anchor generation: 1
+  consumption anchor generation: 2
+
+Covered acceptance behavior
+- F25: consumption count 1, alpha 0.025, retry alpha spend 0, new candidate denied,
+  receipt anchored before read.
+- F26: stale result not committed, duplicate trial refused, sealed state
+  WAITING_FRESH_OOS, alpha counter not decreased.
+- Pre-access receipt: cohort/candidate/protocol/data/verifier/certificate hashes and
+  exact alpha numerator/denominator are committed and signed before consumption.
+- Anchor acknowledgement loss: ANCHOR_UNAVAILABLE, zero local consumption rows and
+  no decision; retry recovers the original receipt and spends alpha once.
+- Race: two concurrent spend_consumption calls with distinct request ids yield one
+  success and one ALREADY_CONSUMED refusal; exactly one anchor OOSConsumed record.
+- Restore/copy: older local DB and copied registry root raise RECONCILE_REQUIRED
+  until reconcile_against_anchor(); reconciliation restores one consumption and
+  alpha remains 5/200. A copied registry that already contains the consumption is
+  still refused until reconciliation and then returns the same receipt.
+- Renamed cohort with the same window commitment is refused; the anchor binds the
+  window identity to the commitment, not only to the cohort name.
+- Signed batch: trusted key registry accepts the genuine batch and rejects an
+  unregistered key, tampered batch, duplicate release and changed inputs. The
+  invalid candidate stays in the Holm family with p=1.0.
+- Software isolation: sealed root 0700, DB/key/anchor log 0600, anchor outside the
+  sealed root, sealed registry and anchor outside research artifact directories,
+  and no path-reading method on the evaluator API.
+
+Blocked acceptance
+- T-ISOLATION remains BLOCKED. Actual distinct qel-research/qel-eval UIDs, socket
+  peer credentials/ownership and worker network isolation cannot be demonstrated
+  without administrator-created principals. No UID, socket or network isolation is
+  claimed. See evidence/labd/ISOLATION_LIMITATIONS.json and
+  evidence/labd/EVALUATOR_ISOLATION_REPORT.json.

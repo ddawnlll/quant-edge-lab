@@ -1,0 +1,59 @@
+{
+  "chain": {
+    "errors": [],
+    "generation": 2,
+    "head_hash": "5da9d61c7537cdaff1d8f9e4c0f9eb35978e4d0b6b402fd9d9354eb99ec72f3e",
+    "records": 2,
+    "valid": true
+  },
+  "records": [
+    {
+      "alpha_den": 200,
+      "alpha_num": 5,
+      "anchor_hash": "e203f40c1d5620d660676fcec7a426cc00f24bfb81c967494b62978ebe1d2966",
+      "cohort_id": "COHORT-T15-EVIDENCE",
+      "generation": 1,
+      "payload": {
+        "alpha_den": 200,
+        "alpha_num": 5,
+        "candidate_run_keys": [
+          "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+        ],
+        "certificate_hashes": [
+          "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+        ],
+        "cohort_id": "COHORT-T15-EVIDENCE",
+        "cohort_index": 0,
+        "program_id": "PROG-T15-EVIDENCE",
+        "protocol_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "split_hash": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        "type": "CohortFrozen",
+        "verifier_binary_hash": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "window_commitment": "4a6bc3a3fa49a40fdf15ddeac9e9896009aafd553fee74587147e7265a6c4f38"
+      },
+      "payload_hash": "92a162bc3d5fe101bbef300413de6e364d506eb649975288b140fa854100638c",
+      "prev_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+      "window_commitment": "4a6bc3a3fa49a40fdf15ddeac9e9896009aafd553fee74587147e7265a6c4f38"
+    },
+    {
+      "alpha_den": 200,
+      "alpha_num": 5,
+      "anchor_hash": "5da9d61c7537cdaff1d8f9e4c0f9eb35978e4d0b6b402fd9d9354eb99ec72f3e",
+      "cohort_id": "COHORT-T15-EVIDENCE",
+      "generation": 2,
+      "payload": {
+        "alpha_den": 200,
+        "alpha_num": 5,
+        "cohort_id": "COHORT-T15-EVIDENCE",
+        "receipt_hash": "1f03ef9d3734986e49792d79bd4558aa3a356fe02da62b1348b722f8d8240c21",
+        "request_id": null,
+        "type": "OOSConsumed",
+        "window_commitment": "4a6bc3a3fa49a40fdf15ddeac9e9896009aafd553fee74587147e7265a6c4f38"
+      },
+      "payload_hash": "b4b0199f5ae95fa934ece4258d57aede15cfbb1a294341de4e72a1e539f7455c",
+      "prev_hash": "e203f40c1d5620d660676fcec7a426cc00f24bfb81c967494b62978ebe1d2966",
+      "window_commitment": "4a6bc3a3fa49a40fdf15ddeac9e9896009aafd553fee74587147e7265a6c4f38"
+    }
+  ]
+}
