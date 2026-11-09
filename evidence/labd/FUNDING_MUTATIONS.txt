@@ -1,0 +1,81 @@
+FUNDING MUTATION EVIDENCE (TASK-11 / issue #4)
+================================================
+Native tape: evidence/labd/NATIVE_FUNDING_RUN.json (archive day, strategy policy/examples/taker_1m.json)
+Independent oracle: python/qel/accounting/core.py::reconstruct
+Command: PYTHONPATH=python QEL_ROOT=$PWD /home/quant/quant/quant-edge-lab/.venv/bin/python -m pytest -q tests/test_accounting.py tests/test_native_funding.py
+Exit code: 0 (20 passed)
+
+Baseline (funding present, primary tape)
+  funding_count            = 2
+  funding_total (USDT)     = -0.00300075
+  funding_by_epoch         = {'94': '0.00098598', '154': '-0.00398673'}
+  reconstructed cash       = 991.11310345
+  native cash              = 991.11310345
+  reconstructed equity     = 991.10431345
+  native equity            = 991.10431345
+  position qty             = 0.001 (native 0.001)
+  unexplained_residual     = 0
+  cash/equity/position diff= 0 / 0 / 0
+
+MUTATION 1: remove funding posting
+  expected: native cash/equity mismatch equals removed funding total
+  observed: funding_cash=0, cash_diff=0.00300075, equity_diff=0.00300075
+  test: test_removed_funding_is_visible_as_native_mismatch -> PASS
+  result: VISIBLE (the internal residual remains 0; the native comparison is the signal)
+
+MUTATION 2: repeat the same settlement
+  expected: AccountingError duplicate funding settlement
+  observed: AccountingError("PROTOCOL_VIOLATION: duplicate funding settlement")
+  test: test_repeated_settlement_is_rejected -> PASS
+  result: REJECTED
+
+MUTATION 3: late-post the first funding after MARK with its original ts_event
+  expected (F09): accepted once, attributed to the referenced epoch, native order authoritative
+  observed: reconstruct succeeds, funding_by_epoch retains the original epoch amount, residual 0
+  test: test_late_funding_after_mark_is_accepted_and_attributed_to_original_epoch -> PASS
+  result: ACCEPTED AS LATE RECEIPT (not a reorder error)
+
+MUTATION 4: late-post funding after END_FOLD
+  expected: explicit terminal-ordering error
+  observed: AccountingError("PROTOCOL_VIOLATION: funding posting after END_FOLD")
+  test: test_funding_after_end_fold_is_rejected -> PASS
+  result: REJECTED
+
+MUTATION 5: funding references a future epoch / no position history
+  expected: explicit ownership error
+  observed: AccountingError("PROTOCOL_VIOLATION: funding references epoch ... with no open position history")
+  test: test_funding_referencing_a_future_epoch_is_rejected, test_funding_without_an_open_position_is_rejected -> PASS
+  result: REJECTED
+
+MUTATION 6: funding ts_event outside the referenced epoch window
+  expected: explicit ordering error
+  observed: AccountingError("OUT_OF_ORDER: funding ts_ns ... is outside epoch ... window ...")
+  test: test_funding_ts_outside_referenced_epoch_window_is_rejected -> PASS
+  result: REJECTED
+
+MUTATION 7: two equal amounts in distinct settlements
+  expected: both survive
+  observed: funding_cash = -2 (two -1 settlements)
+  test: test_equal_amounts_across_distinct_settlements_both_survive -> PASS
+  result: BOTH SURVIVE
+
+MUTATION 8: F09 synthetic late receipt while current epoch is 2
+  setup: SET_POSITION epoch 1 at ts=90, close-and-reopen to epoch 2 at ts=110,
+         FUNDING epoch 1 with settlement ts=100 applied after the roll
+  expected: funding_cash=-2, funding_by_epoch[1]=-2, epoch 2 funding 0, one application
+  observed: funding_by_epoch={'1': '-2'}, funding_settlement_count=1, residual 0
+  duplicate receipt: AccountingError duplicate funding settlement
+  test: test_f09_late_funding_receipt_is_attributed_to_original_epoch -> PASS
+  result: CORRECT ATTRIBUTION, DUPLICATE REJECTED
+
+Scoped limitations
+  - Maintenance-margin crossing: the independent oracle models exact cash,
+    position and equity only. Native liquidation/margin-call behavior is not
+    modelled, so a funding payment that crosses maintenance margin is not
+    certified. Recorded by test_maintenance_margin_crossing_is_a_recorded_limitation.
+  - F22 LocalView: remains BLOCKED_BACKEND. No L2/queue/passive claims are made.
+  - Native free/locked split reflects initial-margin locking; the oracle compares
+    total cash, position and equity.
+  - The 240s live capture contains no funding settlement at an exact 8h boundary
+    while a position is open, so its funding_count is 0; accounting still
+    reconciles exactly (residual 0, native diffs 0).

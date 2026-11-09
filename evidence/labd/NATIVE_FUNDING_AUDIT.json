@@ -1,0 +1,167 @@
+{
+  "task": "TASK-11",
+  "issue": "https://github.com/ddawnlll/quant-edge-lab/issues/4",
+  "native": {
+    "engine": "nautilus_trader 1.231.0 pinned 27a8e54e7ac3c57d6cbf8891f0283dfbaee97317",
+    "strategy": "policy/examples/taker_1m.json",
+    "profile": "TAKER_L1_FUNDING_STREAMING",
+    "events_path": "data/native/DS-ARCHIVE-BTCUSDT-2026-11-07/events.jsonl",
+    "events": 358200,
+    "iterations": 358200,
+    "total_orders": 307,
+    "total_positions": 154,
+    "elapsed_ms": 6990,
+    "peak_rss_kb": 120500
+  },
+  "archive_run": {
+    "evidence": "evidence/labd/NATIVE_FUNDING_RUN.json",
+    "evidence_sha256": "348f803a0827947859a9bbbc775831dd26a5e6affe7d140494870744ddffb337",
+    "tape_len": 312,
+    "tape_sha256": "82a3363945ea95fde11624d332e61396c6af1bad60c46cab840ff548de951440",
+    "funding_count": 2,
+    "funding_total": "-0.00300075",
+    "funding_entries": [
+      {
+        "account_id": "BINANCE-001",
+        "amount": "0.00098598",
+        "currency": "USDT",
+        "epoch": "94",
+        "position_id": "BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001",
+        "settlement_id": "FUND:1794067200000000000:BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001:94",
+        "ts_ns": "1794067200000000000",
+        "type": "FUNDING"
+      },
+      {
+        "account_id": "BINANCE-001",
+        "amount": "-0.00398673",
+        "currency": "USDT",
+        "epoch": "154",
+        "position_id": "BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001",
+        "settlement_id": "FUND:1794096000000000000:BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001:154",
+        "ts_ns": "1794096000000000000",
+        "type": "FUNDING"
+      }
+    ],
+    "native_account": {
+      "currency": "USDT",
+      "equity": "991.10431345",
+      "free": "988.45851410",
+      "locked": "2.65458935",
+      "mark": "75836.62",
+      "position_qty": "0.001",
+      "total": "991.11310345",
+      "unrealized": "-0.00879000"
+    },
+    "reconstructed": {
+      "funding_cash": "-0.00300075",
+      "funding_by_epoch": {
+        "94": "0.00098598",
+        "154": "-0.00398673"
+      },
+      "funding_settlement_count": 2,
+      "price_realized": "0.43164",
+      "fee_total": "9.3155358",
+      "unrealized": "-0.00879",
+      "position_qty": "0.001",
+      "total_cash": "991.11310345",
+      "equity": "991.10431345",
+      "unexplained_residual": "0",
+      "native_total": "991.11310345",
+      "native_equity": "991.10431345",
+      "native_position_qty": "0.001",
+      "cash_diff": "0",
+      "equity_diff": "0",
+      "position_diff": "0",
+      "postings_balanced": true
+    },
+    "tape_extra_present": false
+  },
+  "live_240s_run": {
+    "evidence": "evidence/labd/NATIVE_FUNDING_RUN_240S.json",
+    "evidence_sha256": "b69f6a31e2a14e247cf484df75eabf368dcbc90565eebcecc0ed9b95b12b48f2",
+    "strategy": "policy/examples/taker_1s.json",
+    "events": 12418,
+    "total_orders": 15,
+    "elapsed_ms": 129,
+    "peak_rss_kb": 20092,
+    "funding_count": 0,
+    "native_account": {
+      "currency": "USDT",
+      "equity": "999.45238652",
+      "free": "996.81812202",
+      "locked": "2.63426450",
+      "mark": "75264.70",
+      "position_qty": "0.001",
+      "total": "999.45238652",
+      "unrealized": "0.00000000"
+    },
+    "reconstructed": {
+      "funding_cash": "0",
+      "funding_by_epoch": {},
+      "funding_settlement_count": 0,
+      "price_realized": "-0.0952",
+      "fee_total": "0.45241348",
+      "unrealized": "0",
+      "position_qty": "0.001",
+      "total_cash": "999.45238652",
+      "equity": "999.45238652",
+      "unexplained_residual": "0",
+      "native_total": "999.45238652",
+      "native_equity": "999.45238652",
+      "native_position_qty": "0.001",
+      "cash_diff": "0",
+      "equity_diff": "0",
+      "position_diff": "0",
+      "postings_balanced": true
+    }
+  },
+  "before": {
+    "evidence": "evidence/labd/NATIVE_ARCHIVE_DAY.json",
+    "evidence_sha256": "81df9ec777bd5b5563909c101d13998d4670279ae30045ead19c4e0af09a3feb",
+    "tape_len": 310,
+    "tape_extra": [
+      {
+        "amount": "-0.00398673",
+        "epoch": "1",
+        "type": "FUNDING"
+      }
+    ],
+    "funding_in_primary_tape": false,
+    "funding_cash": "0",
+    "note": "side-channel scrape captured only the last surviving position adjustment (-0.00398673) and omitted the +0.00098598 settlement"
+  },
+  "after_missing_funding_mutation": {
+    "funding_cash": "0",
+    "funding_by_epoch": {},
+    "funding_settlement_count": 0,
+    "price_realized": "0.43164",
+    "fee_total": "9.3155358",
+    "unrealized": "-0.00879",
+    "position_qty": "0.001",
+    "total_cash": "991.1161042",
+    "equity": "991.1073142",
+    "unexplained_residual": "0",
+    "native_total": "991.11310345",
+    "native_equity": "991.10431345",
+    "native_position_qty": "0.001",
+    "cash_diff": "0.00300075",
+    "equity_diff": "0.00300075",
+    "position_diff": "0",
+    "postings_balanced": true
+  },
+  "residual_before": "0 (internal identity) with native cash mismatch",
+  "residual_after": "0",
+  "late_funding_semantics": {
+    "fixture": "F09 Late funding epoch",
+    "rule": "receipt may reference an older epoch; cash is attributed to the referenced epoch window; duplicate (settlement_id, epoch) is rejected",
+    "native_order_authoritative": true
+  },
+  "limitations": [
+    "F22 LocalView/L2 queue/passive fidelity remains BLOCKED_BACKEND; this is a taker-only L1 slice.",
+    "The independent reconstructor does not model margin calls or liquidation cascades; a funding payment crossing maintenance margin is not certified (recorded as a scoped limitation).",
+    "The pinned Nautilus Strategy::handle_position_event short-circuits PositionAdjusted before on_position_event; the runner subscribes directly to the strategy position-event topic via the native msgbus.",
+    "Settlement identity uses native ts_event + position id + strategy epoch because Nautilus adjustment event_id is a random UUID4 and would break semantic replay comparison.",
+    "The native free/locked split reflects initial-margin locking; the oracle compares total cash, position and equity, not the native free/locked split.",
+    "Posting journal integer coefficients use CURRENCY_EXPONENT=2; exact funding amounts live in funding_cash/funding_by_epoch and the tape at USDT exponent 8."
+  ]
+}
