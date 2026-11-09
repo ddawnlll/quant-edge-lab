@@ -1,0 +1,24 @@
+TASK-13 / issue #6 batch-vs-sequential control equality
+events: /home/quant/quant/quant-edge-lab/data/native/DS-BTCUSDT-LIVE-240S/events.jsonl
+events_sha256: 717460fad059b70ca10f8ddaad69dd97fef44f1ba17c988178d8449c018c5b8a
+seed_protocol_hash: 30a0ef917ba2484c7966bf13f51cf2973e83235862b5eae408576a0b5d5e8571
+family_hash: 13ecb70576398a6b4bbf51d35cd7ed365e18df5b9307200fd3a4c39fb5c545fe
+plan_hash: 894c7c6e838020d4731ddd49e37c297046eb6ccf1fddf4ff01aa8f161ab35b74
+selection_plan_hash: 2e4823fe463fbdd01109f3708a94f3106a4cd045cb3765ab1b34c0d6425657e4
+frozen_seed_labels_hash: afed502909291321c4669edaf548aa625edb75be1df195d441070a29111268aa
+replications: 1000
+seeds_completed: 1000
+trade_count_target_per_day: {"2026-11-08": 22}
+executed_trades: 22000
+batch_daily_series_hash: 3f5e5dec6f3a84f4d26e70814a1fb4e04078104e56070f7bbecebd9205928a69
+sequential_daily_series_hash: 3f5e5dec6f3a84f4d26e70814a1fb4e04078104e56070f7bbecebd9205928a69
+daily_series_equal: True
+batch_seed_series_hash: c9d88b90cf28e9bca757cdf2fab75fcc42404ca22a2d3888d564e07663200eb8
+sequential_seed_series_hash: c9d88b90cf28e9bca757cdf2fab75fcc42404ca22a2d3888d564e07663200eb8
+seed_series_equal: True
+equal: True
+batch_completed: 1000
+sequential_completed: 1000
+sequential_budget_exhausted: False
+sequential_elapsed_seconds: 26.092773
+status: PASS

@@ -23,9 +23,8 @@ def test_controls_are_deterministic_and_trade_matched(tmp_path):
     assert first == second
     assert first["trade_count_matched"] == 5
     assert [c["trades"] for c in first["controls"]] == [5, 5, 5]
-    assert first["matched_on"] == ["calendar", "trade_count"]
-    assert "holding_time" not in first["matched_on"]
-    assert first["draw_mapping"] == "NUMPY_PCG64_DETERMINISTIC"
+    assert first["matched_on"] == ["calendar", "trade_count", "holding_time"]
+    assert first["draw_mapping"] == "HMAC_SHA256_COUNTER_V1"
 
 
 import datetime
