@@ -1,0 +1,27 @@
+{
+  "calendar": {
+    "calendar_hash": "142080f3aced68379107312d6542c24b898033e2d9352c6eab520a24eefc4bc4",
+    "calendar_span_days": 19,
+    "day_count": 19,
+    "discovery_days": 13,
+    "first_date": "2026-10-09",
+    "last_date": "2026-10-27",
+    "missing_dates": [],
+    "reserved_days": 6
+  },
+  "error": {
+    "code": "INSUFFICIENT_HISTORY",
+    "detail": {
+      "available_discovery_days": 13,
+      "available_total_days": 19,
+      "folds_possible": 0,
+      "folds_required": 2,
+      "required_discovery_days": 548,
+      "required_total_days": 783,
+      "shortfall_days": 535
+    },
+    "status": "INSUFFICIENT_HISTORY"
+  },
+  "schema_version": "1.1.0",
+  "status": "INSUFFICIENT_HISTORY"
+}

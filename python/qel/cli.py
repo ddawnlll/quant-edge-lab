@@ -19,6 +19,7 @@ from .prepare.archive import build as build_archive
 from .prepare.native_input import to_native_input
 from .prepare.normalize import normalize_capture
 from .research.control import matched_controls
+from .research.protocol import DAY_NS, protocol_report
 from .research.screen import run_variants
 from .stats.calibration import render_summary_text, run_calibration
 from .stats.core import power_grid
@@ -211,6 +212,26 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--strategy", required=True)
     p.add_argument("--out", required=True)
 
+    p = sub.add_parser(
+        "protocol",
+        help="emit the frozen TASK-12 preregistration and walk-forward split manifest",
+    )
+    p.add_argument(
+        "--calendar",
+        required=True,
+        help="JSON daily calendar: date list, symbol->dates map or observation rows",
+    )
+    p.add_argument("--symbol", default=None, help="symbol used for fit-scope checks")
+    p.add_argument("--horizon-ns", type=int, default=DAY_NS, help="declared label horizon")
+    p.add_argument("--embargo-ns", type=int, default=0)
+    p.add_argument("--latency-ns", type=int, default=0)
+    p.add_argument(
+        "--allow-gaps",
+        action="store_true",
+        help="declare absent archive dates as recorded gaps instead of rejecting",
+    )
+    p.add_argument("--out")
+
     args = parser.parse_args(argv)
     if args.command == "fixtures":
         harness = Harness()
@@ -316,6 +337,20 @@ def main(argv: list[str] | None = None) -> int:
         payload = run_variants(args.binary, args.events, base, args.out, 12)
         _write(None, payload)
         return 0
+    if args.command == "protocol":
+        calendar_payload = json.loads(Path(args.calendar).read_text())
+        payload = protocol_report(
+            calendar_payload,
+            symbol=args.symbol,
+            horizon_ns=args.horizon_ns,
+            embargo_ns=args.embargo_ns,
+            latency_ns=args.latency_ns,
+            allow_gaps=args.allow_gaps,
+        )
+        _write(args.out, payload)
+        if payload["status"] == "PASS":
+            return 0
+        return 3 if payload["status"] == "INSUFFICIENT_HISTORY" else 2
     return 2
 
 

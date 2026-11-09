@@ -1,0 +1,178 @@
+{
+  "schema_version": "1.1.0",
+  "task": "TASK-12",
+  "issue": 5,
+  "branch": "qel/issue-05-protocol",
+  "base_sha": "aea72f0ddf877ca9d2ef890c2ede05fa09a9869f",
+  "implementation": {
+    "module": "python/qel/research/protocol.py",
+    "entry_point": "python -m qel.cli protocol --calendar <json> [--allow-gaps] [--symbol SYMBOL]",
+    "calendar": "UTC complete daily observations across symbols",
+    "folds": {
+      "initial_train_months": 12,
+      "validation_months": 3,
+      "stride_months": 3,
+      "expanding": true,
+      "folds_required": 2,
+      "reserve_fraction": "3/10",
+      "reserve_rule": "ceil(0.30 * accepted_complete_days)"
+    },
+    "purge": "label_end >= validation_start is purged",
+    "embargo": "label_end > validation_start - (embargo + latency) is purged; equality at the embargo boundary is kept",
+    "fit_scope": "one fold and one symbol only; whole-dataset fit/cache, cross-symbol samples, validation dates and sealed reserve dates fail closed",
+    "manifest": "frozen before execution with hypothesis, economic thresholds, selection rules, costs, fidelity, input hashes, family size 12, per-variant trial reservation and split/cutoff hashes"
+  },
+  "required_checks": [
+    {
+      "command": "cd /home/quant/quant/qel-w05 && PYTHONPATH=python QEL_ROOT=$PWD /home/quant/quant/quant-edge-lab/.venv/bin/python -m pytest -q tests/test_protocol.py",
+      "exit_code": 0,
+      "result": "13 passed"
+    },
+    {
+      "command": "cd /home/quant/quant/qel-w05 && PYTHONPATH=python QEL_ROOT=$PWD /home/quant/quant/quant-edge-lab/.venv/bin/python -m pytest -q tests",
+      "exit_code": 0,
+      "result": "255 passed, 6 skipped in 103.89s"
+    },
+    {
+      "command": "cd /home/quant/quant/qel-w05 && PYTHONPATH=python QEL_ROOT=$PWD /home/quant/quant/quant-edge-lab/.venv/bin/python -m qel.cli fixtures --fixture F18 --fixture F19",
+      "exit_code": 0,
+      "result": "PASS; F18 PASS, F19 PASS, 0 failed"
+    },
+    {
+      "command": "python -m qel.cli protocol --calendar <synthetic-791-day-UTC-calendar> --symbol SYNTH --out evidence/labd/PROTOCOL_SYNTHETIC_26M.json",
+      "exit_code": 0,
+      "result": "PASS; 2 folds; 238 reserved days; split SPLIT-D7A9D26276427A07"
+    },
+    {
+      "command": "python -m qel.cli protocol --calendar <monthly-26-month-real-calendar> --symbol BTCUSDT --out evidence/labd/PROTOCOL_MONTHLY_STRICT.json",
+      "exit_code": 2,
+      "result": "CALENDAR_GAP; exact missing day 2026-06-29"
+    },
+    {
+      "command": "python -m qel.cli protocol --calendar <monthly-26-month-real-calendar> --symbol BTCUSDT --allow-gaps --out evidence/labd/PROTOCOL_MONTHLY_26M.json",
+      "exit_code": 0,
+      "result": "PASS; declared gap 2026-06-29; 2 folds; 237 reserved accepted days; split SPLIT-3DF11926556CD465"
+    },
+    {
+      "command": "python -m qel.cli protocol --calendar <30-day-daily-archive-calendar> --symbol BTCUSDT --out evidence/labd/PROTOCOL_ARCHIVE_30D.json",
+      "exit_code": 2,
+      "result": "INCOMPLETE_DAY; first rejected date 2026-10-28"
+    },
+    {
+      "command": "python -m qel.cli protocol --calendar <19-day-contiguous-complete-prefix> --symbol BTCUSDT --out evidence/labd/PROTOCOL_ARCHIVE_19D.json",
+      "exit_code": 3,
+      "result": "INSUFFICIENT_HISTORY; 13 discovery days, 548 required, shortfall 535"
+    }
+  ],
+  "real_monthly_run": {
+    "symbol": "BTCUSDT",
+    "source": "26 monthly markPriceKlines archives, 2024-09..2026-10",
+    "first_date": "2024-09-01",
+    "last_date": "2026-10-31",
+    "calendar_span_days": 791,
+    "accepted_complete_days": 790,
+    "missing_dates": ["2026-06-29"],
+    "missing_reason": "the 2026-06 monthly 1m markPriceKlines archive jumps from 2026-06-28 23:59 to 2026-06-30 00:00 (1441-minute gap); all other 790 days have 1440 unique minutes",
+    "discovery_days": 553,
+    "reserved_days": 237,
+    "reserved_calendar_dates": 238,
+    "folds": [
+      {
+        "train_start": "2024-09-01",
+        "train_end": "2025-08-31",
+        "validation_start": "2025-09-01",
+        "validation_end": "2025-11-30"
+      },
+      {
+        "train_start": "2024-09-01",
+        "train_end": "2025-11-30",
+        "validation_start": "2025-12-01",
+        "validation_end": "2026-02-28"
+      }
+    ],
+    "scope_checks": "PASS, 14 checks, 0 failed",
+    "hashes": {
+      "calendar_hash": "1f0802a86426dcfc0729eb45351d28fabc66aac590c0ce3fc949d28573847b9d",
+      "split_id": "SPLIT-3DF11926556CD465",
+      "split_hash": "3df11926556cd465a69901a2ee92acffc68c05d6d27d4a16b914c44769fa7a50",
+      "prereg_manifest_id": "PREREG-517533EE6825F83A",
+      "prereg_manifest_hash": "517533ee6825f83a2cbdbed3e0e8f04925004ce1c3d17ed00380dfeed499730c"
+    },
+    "determinism": "two CLI reruns produced identical calendar, split and preregistration hashes"
+  },
+  "synthetic_run": {
+    "first_date": "2024-01-01",
+    "last_date": "2026-03-01",
+    "accepted_complete_days": 791,
+    "discovery_days": 553,
+    "reserved_days": 238,
+    "folds": 2,
+    "scope_checks": "PASS, 14 checks, 0 failed",
+    "hashes": {
+      "calendar_hash": "4b071881eeb382583a6a4a6b054b59235ef62572282a2e0f3942984592fae767",
+      "split_id": "SPLIT-D7A9D26276427A07",
+      "split_hash": "d7a9d26276427a07b910b6003b8b27dae5776d53d2974237b979f472c4e4d104",
+      "prereg_manifest_id": "PREREG-95922EC887332742",
+      "prereg_manifest_hash": "95922ec8873327426dad601e3e79a6138afde8f99c9980b61b58d218262892de"
+    }
+  },
+  "negative_cases": {
+    "20_day_calendar": "INSUFFICIENT_HISTORY with folds_possible=0, required_discovery_days=547, shortfall_days=533",
+    "25_month_calendar": "INSUFFICIENT_HISTORY with folds_possible=1, available_discovery_days=533, required_discovery_days=547, shortfall_days=14",
+    "incomplete_day": "INCOMPLETE_DAY",
+    "duplicate_date": "DUPLICATE_DATE",
+    "misaligned_symbols": "MISALIGNED_CALENDAR",
+    "undeclared_gap": "CALENDAR_GAP",
+    "purge_equality": "label_end == validation_start -> LABEL_OVERLAP; one nanosecond before kept",
+    "embargo_equality": "label_end == validation_start - embargo -> kept; one nanosecond after -> EMBARGO",
+    "cross_symbol": "CROSS_SYMBOL_LEAKAGE",
+    "validation_in_fit": "FIT_SCOPE_VIOLATION",
+    "sealed_reserve_read": "SEALED_RESERVE_ACCESS",
+    "whole_dataset_fit": "WHOLE_DATASET_FIT",
+    "whole_dataset_cache": "WHOLE_DATASET_CACHE"
+  },
+  "data_coverage": {
+    "monthly_mark_klines": {
+      "files": 26,
+      "bytes": 26886038,
+      "sha256_verified_against_coordinator_manifest": true,
+      "complete_days": 790,
+      "missing_days": ["2026-06-29"]
+    },
+    "monthly_agg_trades": {
+      "months": ["2026-08", "2026-09", "2026-10"],
+      "bytes": 1260748860,
+      "missing_range_for_26_month_workload": ["2024-09-01", "2026-07-31"],
+      "missing_months": 23,
+      "bounded_download_command": "for m in 2024-09 2024-10 2024-11 2024-12 2025-01 2025-02 2025-03 2025-04 2025-05 2025-06 2025-07 2025-08 2025-09 2025-10 2025-11 2025-12 2026-01 2026-02 2026-03 2026-04 2026-05 2026-06 2026-07; do curl -fL --retry 3 -o /home/quant/quant/quant-edge-lab/data/raw/ARCHIVE_MONTHLY/BTCUSDT/aggTrades/BTCUSDT-aggTrades-$m.zip https://data.binance.vision/data/futures/um/monthly/aggTrades/BTCUSDT/BTCUSDT-aggTrades-$m.zip || exit 1; done",
+      "estimated_bytes": "about 9.3 GB; not run in this worktree"
+    },
+    "missing_mark_day_backfill_command": "curl -fL --retry 3 -o /home/quant/quant/quant-edge-lab/data/raw/ARCHIVE_MONTHLY/BTCUSDT/markPriceKlines/BTCUSDT-1m-2026-06-29.zip https://data.binance.vision/data/futures/um/daily/markPriceKlines/BTCUSDT/BTCUSDT-1m-2026-06-29.zip && sha256sum /home/quant/quant/quant-edge-lab/data/raw/ARCHIVE_MONTHLY/BTCUSDT/markPriceKlines/BTCUSDT-1m-2026-06-29.zip",
+    "daily_archive": {
+      "range": ["2026-10-09", "2026-11-07"],
+      "calendar_days": 30,
+      "complete_days": 28,
+      "incomplete_days": ["2026-10-28", "2026-10-29"],
+      "evidence": "evidence/labd/DATA_COVERAGE_DAILY_30D.json"
+    },
+    "disk_use_bytes": {
+      "monthly_root": 1288696116,
+      "monthly_mark_klines": 26886038,
+      "monthly_agg_trades": 1260748860,
+      "daily_raw_archive": 381549389,
+      "quant_edge_lab_data_root": 4497622363
+    }
+  },
+  "resource_usage": {
+    "protocol_cli_monthly_seconds": 3.0,
+    "protocol_cli_strict_seconds": 3.6,
+    "monthly_calendar_build_seconds": 41.0,
+    "test_protocol_seconds": 7.3,
+    "full_suite_seconds": 103.89,
+    "no_multihour_download_run": true
+  },
+  "blockers": [
+    "The real 26-month markPriceKlines calendar has one absent UTC day, 2026-06-29. Strict mode rejects it with CALENDAR_GAP; the declared-gap run records it and still proves two-fold 12/3/3 eligibility because the gap is inside the sealed reserve. A one-file bounded backfill command is recorded and was intentionally not executed in this worktree.",
+    "Monthly aggTrades coverage is only 2026-08..2026-10 (three months, 1.26 GB). Full research-control and native replay workload remains data-limited; the 23-month bounded download is recorded but not run."
+  ]
+}

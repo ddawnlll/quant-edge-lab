@@ -1,0 +1,12 @@
+{
+  "error": {
+    "code": "INCOMPLETE_DAY",
+    "detail": {
+      "date": "2026-10-28",
+      "symbol": "BTCUSDT"
+    },
+    "status": "INCOMPLETE_DAY"
+  },
+  "schema_version": "1.1.0",
+  "status": "INCOMPLETE_DAY"
+}

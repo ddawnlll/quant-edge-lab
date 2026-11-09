@@ -1,0 +1,252 @@
+{
+  "schema_version": "1.1.0",
+  "source": "BINANCE_USDM_PUBLIC_ARCHIVE",
+  "symbol": "BTCUSDT",
+  "data_root": "/home/quant/quant/quant-edge-lab/data/raw/ARCHIVE_MONTHLY/BTCUSDT",
+  "monthly_mark_klines": [
+    {
+      "month": "2024-09",
+      "file": "ARCHIVE_MONTHLY/BTCUSDT/markPriceKlines/BTCUSDT-1m-2024-09.zip",
+      "bytes": 1011306,
+      "sha256": "ce04d1a5f85a15a2bbef83236816d394ada0c4de8fe826b6b23cbc209c515f1a",
+      "days": 30,
+      "complete_days": 30
+    },
+    {
+      "month": "2024-10",
+      "file": "ARCHIVE_MONTHLY/BTCUSDT/markPriceKlines/BTCUSDT-1m-2024-10.zip",
+      "bytes": 1052266,
+      "sha256": "90aad4b8ab9fa46454d11ca5825e6688c57fa8813c93d6df3a7e49e7e92cc11a",
+      "days": 31,
+      "complete_days": 31
+    },
+    {
+      "month": "2024-11",
+      "file": "ARCHIVE_MONTHLY/BTCUSDT/markPriceKlines/BTCUSDT-1m-2024-11.zip",
+      "bytes": 1062869,
+      "sha256": "e7087d29fee5643844a9fafb77c263a28b7f5dcca788d891081a8d73c76c6b82",
+      "days": 30,
+      "complete_days": 30
+    },
+    {
+      "month": "2024-12",
+      "file": "ARCHIVE_MONTHLY/BTCUSDT/markPriceKlines/BTCUSDT-1m-2024-12.zip",
+      "bytes": 1094627,
+      "sha256": "e130a234850304431c747c6f832aae250586f953f015b92dbe4a51c4604d6a59",
+      "days": 31,
+      "complete_days": 31
+    },
+    {
+      "month": "2025-01",
+      "file": "ARCHIVE_MONTHLY/BTCUSDT/markPriceKlines/BTCUSDT-1m-2025-01.zip",
+      "bytes": 1077312,
+      "sha256": "c061f32b85c72aa8e588882bfd2b884968cfdea45308b3b74f8fb3ff44d9fdc6",
+      "days": 31,
+      "complete_days": 31
+    },
+    {
+      "month": "2025-02",
+      "file": "ARCHIVE_MONTHLY/BTCUSDT/markPriceKlines/BTCUSDT-1m-2025-02.zip",
+      "bytes": 947944,
+      "sha256": "f541de26d9c2c0dbf259f3583bc505916c9cd993da0d62a26d556f79bfc91a94",
+      "days": 28,
+      "complete_days": 28
+    },
+    {
+      "month": "2025-03",
+      "file": "ARCHIVE_MONTHLY/BTCUSDT/markPriceKlines/BTCUSDT-1m-2025-03.zip",
+      "bytes": 1064286,
+      "sha256": "5c5ee421ba6e062102de1860c89a52d9518633ec5e0c2a49e832744d6fae286d",
+      "days": 31,
+      "complete_days": 31
+    },
+    {
+      "month": "2025-04",
+      "file": "ARCHIVE_MONTHLY/BTCUSDT/markPriceKlines/BTCUSDT-1m-2025-04.zip",
+      "bytes": 1018081,
+      "sha256": "67ccab1f1585d297ec6985a197b47ddb45d325ed094525dbe432d19ea10f9e0a",
+      "days": 30,
+      "complete_days": 30
+    },
+    {
+      "month": "2025-05",
+      "file": "ARCHIVE_MONTHLY/BTCUSDT/markPriceKlines/BTCUSDT-1m-2025-05.zip",
+      "bytes": 1068933,
+      "sha256": "33f9130e9d92c6774b8438d857e838df5db26e7308fcbb2a178722a021be6d0f",
+      "days": 31,
+      "complete_days": 31
+    },
+    {
+      "month": "2025-06",
+      "file": "ARCHIVE_MONTHLY/BTCUSDT/markPriceKlines/BTCUSDT-1m-2025-06.zip",
+      "bytes": 1017240,
+      "sha256": "ffae55c885010290cc9aa8faabfdc3b204f7a0671c59b77cb77844da11844501",
+      "days": 30,
+      "complete_days": 30
+    },
+    {
+      "month": "2025-07",
+      "file": "ARCHIVE_MONTHLY/BTCUSDT/markPriceKlines/BTCUSDT-1m-2025-07.zip",
+      "bytes": 1061464,
+      "sha256": "33eaa2e5fe002aacdd2656af3457186965325fde98a014d2cef754eb3ce849ad",
+      "days": 31,
+      "complete_days": 31
+    },
+    {
+      "month": "2025-08",
+      "file": "ARCHIVE_MONTHLY/BTCUSDT/markPriceKlines/BTCUSDT-1m-2025-08.zip",
+      "bytes": 1046935,
+      "sha256": "b52004debc432af8cc44cd98884cc7c94458346be8adb13950b44edf8b646f9b",
+      "days": 31,
+      "complete_days": 31
+    },
+    {
+      "month": "2025-09",
+      "file": "ARCHIVE_MONTHLY/BTCUSDT/markPriceKlines/BTCUSDT-1m-2025-09.zip",
+      "bytes": 988213,
+      "sha256": "25b00a0726920d6a00b05fa6fe26966969964905f05ab917539b77a9066db5f1",
+      "days": 30,
+      "complete_days": 30
+    },
+    {
+      "month": "2025-10",
+      "file": "ARCHIVE_MONTHLY/BTCUSDT/markPriceKlines/BTCUSDT-1m-2025-10.zip",
+      "bytes": 1066369,
+      "sha256": "628766a37dca06405268f2d4269598198d5c822aa4477a6804a192212ffa1f6e",
+      "days": 31,
+      "complete_days": 31
+    },
+    {
+      "month": "2025-11",
+      "file": "ARCHIVE_MONTHLY/BTCUSDT/markPriceKlines/BTCUSDT-1m-2025-11.zip",
+      "bytes": 1042753,
+      "sha256": "1915d3d64c34b3b1e7309740091f39f525ff68ff543e7685518c0a0970636d66",
+      "days": 30,
+      "complete_days": 30
+    },
+    {
+      "month": "2025-12",
+      "file": "ARCHIVE_MONTHLY/BTCUSDT/markPriceKlines/BTCUSDT-1m-2025-12.zip",
+      "bytes": 1047037,
+      "sha256": "e1ed1dcd4ed9e7cf174a1c2e04f50f04e4fe52c787836cde8f6fadd32f3aef30",
+      "days": 31,
+      "complete_days": 31
+    },
+    {
+      "month": "2026-01",
+      "file": "ARCHIVE_MONTHLY/BTCUSDT/markPriceKlines/BTCUSDT-1m-2026-01.zip",
+      "bytes": 1034512,
+      "sha256": "aa48fc9892158909320230708e8d04d8750b1b7b97c936bc926144ad28ec9021",
+      "days": 31,
+      "complete_days": 31
+    },
+    {
+      "month": "2026-02",
+      "file": "ARCHIVE_MONTHLY/BTCUSDT/markPriceKlines/BTCUSDT-1m-2026-02.zip",
+      "bytes": 979761,
+      "sha256": "2205f17c1d774577a2aeeb1015787d9f966437eaf27090d477f16ae1bdddc4d1",
+      "days": 28,
+      "complete_days": 28
+    },
+    {
+      "month": "2026-03",
+      "file": "ARCHIVE_MONTHLY/BTCUSDT/markPriceKlines/BTCUSDT-1m-2026-03.zip",
+      "bytes": 1085521,
+      "sha256": "7731b4b15be1e59eb80422e7eee0067af124c42804c5e575e4cf5ed508d94687",
+      "days": 31,
+      "complete_days": 31
+    },
+    {
+      "month": "2026-04",
+      "file": "ARCHIVE_MONTHLY/BTCUSDT/markPriceKlines/BTCUSDT-1m-2026-04.zip",
+      "bytes": 1020190,
+      "sha256": "a1655f959e24c73a010b949649d45fcb2854bb9e2f5fe8e998269eb6ad4585e4",
+      "days": 30,
+      "complete_days": 30
+    },
+    {
+      "month": "2026-05",
+      "file": "ARCHIVE_MONTHLY/BTCUSDT/markPriceKlines/BTCUSDT-1m-2026-05.zip",
+      "bytes": 1036489,
+      "sha256": "c9e4475e8762b4e52b899785deca52bceb0efb9bf08bd411b3147cd5e1da5e25",
+      "days": 31,
+      "complete_days": 31
+    },
+    {
+      "month": "2026-06",
+      "file": "ARCHIVE_MONTHLY/BTCUSDT/markPriceKlines/BTCUSDT-1m-2026-06.zip",
+      "bytes": 999777,
+      "sha256": "5d5d8b86efbe709e034409634347a161183e7c0df3854f8d96c9778dc1c923ba",
+      "days": 29,
+      "complete_days": 29
+    },
+    {
+      "month": "2026-07",
+      "file": "ARCHIVE_MONTHLY/BTCUSDT/markPriceKlines/BTCUSDT-1m-2026-07.zip",
+      "bytes": 1022569,
+      "sha256": "5bb16a0707eef96d648480ab45943f25b27425154b2ccb881c200cfd51e594ed",
+      "days": 31,
+      "complete_days": 31
+    },
+    {
+      "month": "2026-08",
+      "file": "ARCHIVE_MONTHLY/BTCUSDT/markPriceKlines/BTCUSDT-1m-2026-08.zip",
+      "bytes": 1011901,
+      "sha256": "3bd0556d903ce14f833ed58c78fd8d3309bc1a3804bb401c9fa2dd9d902f2c37",
+      "days": 31,
+      "complete_days": 31
+    },
+    {
+      "month": "2026-09",
+      "file": "ARCHIVE_MONTHLY/BTCUSDT/markPriceKlines/BTCUSDT-1m-2026-09.zip",
+      "bytes": 1003436,
+      "sha256": "68dfd75f32b99bd8019e914395d2a7d60d5c1a74a700fde9991bf19b0c39322e",
+      "days": 30,
+      "complete_days": 30
+    },
+    {
+      "month": "2026-10",
+      "file": "ARCHIVE_MONTHLY/BTCUSDT/markPriceKlines/BTCUSDT-1m-2026-10.zip",
+      "bytes": 1024247,
+      "sha256": "2c8f71e53dcb28d94deb310cff7544d4cebc033f2e4e6db77258ecd445acc31b",
+      "days": 31,
+      "complete_days": 31
+    }
+  ],
+  "calendar": {
+    "first_date": "2024-09-01",
+    "last_date": "2026-10-31",
+    "accepted_complete_days": 790,
+    "calendar_span_days": 791,
+    "missing_dates": [
+      "2026-06-29"
+    ],
+    "incomplete_days": [],
+    "coverage_fraction": "0.998736"
+  },
+  "daily_close_returns": {
+    "count": 789,
+    "first_date": "2024-09-01",
+    "last_date": "2026-10-31",
+    "first_close": "57283.38226241",
+    "last_close": "77531.36618333",
+    "mean": "0.000644887046811",
+    "stdev": "0.0228985362829",
+    "annualized_stdev": "0.437475921421",
+    "min": "-0.140234507969",
+    "max": "0.121664660547"
+  },
+  "agg_trades": {
+    "months": [
+      "2026-08",
+      "2026-09",
+      "2026-10"
+    ],
+    "bytes": 1261810078,
+    "coverage_note": "only three monthly aggTrades archives; full research-control workload remains data-limited"
+  },
+  "disk_use_bytes": {
+    "mark_klines": 26886038,
+    "monthly_root": 1288696116
+  }
+}
