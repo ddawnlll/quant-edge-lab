@@ -1,0 +1,89 @@
+{
+  "issue": 13,
+  "task": "TASK-25",
+  "kind": "COORDINATOR_INDEPENDENT_VERIFICATION",
+  "integration_branch": "qel/followup4-20261109",
+  "base_sha": "9329a87",
+  "patch_commit": "2c839f34daeef2b988e831babfd0398bc857eff8",
+  "integrated_commit": "32bbb61",
+  "verification": {
+    "pytest": {"command": "QEL_DATA_ROOT=/home/quant/quant/quant-edge-lab/data PYTHONPATH=python QEL_ROOT=$PWD .venv/bin/python -m pytest -q tests", "result": "248 passed", "exit_code": 0},
+    "profiles": {
+      "RP-4G": {"enforcement": "CGROUP_V2_MEMORY_MAX", "memory_max_bytes": 4294967296, "swap_max_bytes": 0, "enforced": true},
+      "RP-8G": {"enforcement": "CGROUP_V2_MEMORY_MAX", "memory_max_bytes": 8589934592, "swap_max_bytes": 0, "enforced": true}
+    },
+    "B0": {
+      "status": "PASS",
+      "mode": "schema-only and native separated",
+      "dag_nodes": 256,
+      "p90_ms": 2.295577,
+      "target_ms": 100,
+      "native_jit_compilations": 0,
+      "timed_repeats": 12,
+      "warmups": 2
+    },
+    "B1": {
+      "status": "PASS",
+      "rows": 1000000,
+      "variants": 8,
+      "warm_p90_seconds": 2.663590709,
+      "target_seconds": 10,
+      "timed_repeats": 12,
+      "warmups": 2,
+      "include": ["READ", "FEATURES", "VARIANTS", "OUTPUT_HASH_FSYNC"],
+      "peak_mib": {"RP-4G": 200.67, "RP-8G": 197.07}
+    },
+    "B5": {
+      "status": "PASS",
+      "ledger_events": 100000,
+      "artifact_pointers": 1000,
+      "lost_committed_decisions": 0,
+      "torn_pass": 0,
+      "read_transaction_ms": 810.43,
+      "read_transaction_target_ms": 2000,
+      "metadata_restore_minutes": 0.4656,
+      "metadata_restore_target_minutes": 60,
+      "crash_matrix": "F17",
+      "peak_mib": {"RP-4G": 428.64}
+    },
+    "T_RELEASE": {"status": "PASS", "go_tests": "PASS", "rust_tests": "PASS", "evidence": "evidence/labd/T_RELEASE_BUILD.json"},
+    "T25_ACCEPTANCE": {
+      "status": "PARTIAL/EVIDENCE_PENDING",
+      "full_acceptance_claimed": false,
+      "check_status": {
+        "B0": "PASS",
+        "B1": "PASS",
+        "B2": "EVIDENCE_PENDING_PROFILE_ENFORCEMENT",
+        "B3": "EVIDENCE_PENDING_PROFILE_ENFORCEMENT",
+        "B4": "EVIDENCE_PENDING_100M_AND_PROFILE_ENFORCEMENT",
+        "B5": "PASS",
+        "T-RELEASE": "SEE_T_RELEASE_BUILD"
+      }
+    }
+  },
+  "acceptance_boundary": {
+    "status": "PARTIAL/EVIDENCE_PENDING",
+    "verified": ["B0", "B1", "B5", "T-RELEASE", "RP-4G and RP-8G cgroup enforcement"],
+    "missing": [
+      "B2 re-run under the enforced RP-4G/RP-8G profiles",
+      "B3 re-run under the enforced RP-4G/RP-8G profiles",
+      "B4 re-run under the enforced RP-4G/RP-8G profiles",
+      "B4 100M-event plateau"
+    ],
+    "note": "B0/B1/B5 pass their targets under enforced profiles. Full TASK-25 acceptance is not claimed."
+  },
+  "claims_not_made": [
+    "full TASK-25 acceptance",
+    "B4 100M certified",
+    "B2/B3/B4 profile-specific acceptance"
+  ],
+  "evidence_hashes": {
+    "evidence/labd/B0_TYPED_SPECIFICATION.json": "committed with patch",
+    "evidence/labd/B1_BATCH_SCREEN.json": "committed with patch",
+    "evidence/labd/B5_LEDGER_RESTORE.json": "committed with patch",
+    "evidence/labd/T25_ACCEPTANCE.json": "committed with patch",
+    "evidence/labd/T_RELEASE_BUILD.json": "committed with patch"
+  },
+  "verdict": "PASS_B0_B1_B5_AND_T_RELEASE",
+  "acceptance_note": "Benchmark harnesses, frozen corpora and cgroup-enforced B0/B1/B5 results are integrated. #13 remains PARTIAL on B2/B3/B4 profile re-runs and the B4 100M plateau."
+}
