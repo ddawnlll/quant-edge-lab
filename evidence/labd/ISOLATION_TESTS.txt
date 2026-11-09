@@ -50,6 +50,12 @@ Result payload status: PASS
   freeze anchor generation: 1
   consumption anchor generation: 2
 
+4) Required conformance fixtures
+Command:
+  PYTHONPATH=python QEL_ROOT=$PWD /home/quant/quant/quant-edge-lab/.venv/bin/python -m qel.cli fixtures --fixture F20 --fixture F25 --fixture F26 --out "$JCODE_SCRATCH_DIR/f20f25f26.json"
+Exit code: 0
+Result: F20 PASS, F25 PASS, F26 PASS (every declared check passed)
+
 Covered acceptance behavior
 - F25: consumption count 1, alpha 0.025, retry alpha spend 0, new candidate denied,
   receipt anchored before read.

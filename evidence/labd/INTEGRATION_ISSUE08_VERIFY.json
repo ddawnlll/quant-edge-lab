@@ -4,11 +4,19 @@
   "kind": "COORDINATOR_INDEPENDENT_VERIFICATION",
   "integration_branch": "qel/int-20261109",
   "base_sha": "f6dbde793e9db6c6124f4826b5bdff7e793502c1",
-  "patch_commit": "5e6525c513100abf76ad0653f7c098e837d693a1",
+  "patch_commit": "5e6525c (amended to fa812b4320a600da45b8178be93b6c7255da92df; evidence-only addition)",
   "integrated_commit": "7195597",
   "verification": {
-    "pytest": {"command": "PYTHONPATH=python QEL_ROOT=$PWD .venv/bin/python -m pytest -q tests", "result": "105 passed", "exit_code": 0},
-    "focused": {"command": "pytest -q tests/test_evaluator.py tests/test_isolation_anchor.py", "result": "18 passed", "exit_code": 0},
+    "pytest": {
+      "command": "PYTHONPATH=python QEL_ROOT=$PWD .venv/bin/python -m pytest -q tests",
+      "result": "105 passed",
+      "exit_code": 0
+    },
+    "focused": {
+      "command": "pytest -q tests/test_evaluator.py tests/test_isolation_anchor.py",
+      "result": "18 passed",
+      "exit_code": 0
+    },
     "evaluator_demo": {
       "command": "python -m qel.cli evaluator-demo",
       "status": "PASS",
@@ -48,7 +56,11 @@
       "worker with no network access",
       "mount/namespace separation for sibling research outputs"
     ],
-    "environment": {"uid": 1000, "gid": 1000, "single_uid": true}
+    "environment": {
+      "uid": 1000,
+      "gid": 1000,
+      "single_uid": true
+    }
   },
   "claims_not_made": [
     "UID separation",
@@ -65,5 +77,6 @@
     "evidence/labd/ISOLATION_TESTS.txt": "committed with patch"
   },
   "verdict": "PASS_SOFTWARE_BLOCKED_T_ISOLATION",
-  "acceptance_note": "Software behavior is verified, including irreversible consumption and restore/rename refusal. Acceptance cannot be claimed until an administrator creates separate Linux principals and the real UID/socket/network negatives are executed."
+  "acceptance_note": "Software behavior is verified, including irreversible consumption and restore/rename refusal. Acceptance cannot be claimed until an administrator creates separate Linux principals and the real UID/socket/network negatives are executed.",
+  "patch_commit_final": "fa812b4320a600da45b8178be93b6c7255da92df"
 }
