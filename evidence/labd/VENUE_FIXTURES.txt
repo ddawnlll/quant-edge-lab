@@ -1,0 +1,54 @@
+TASK-10 venue fixture evidence
+base_sha: 48bfaafd4846f12c34f9401d17110651a3c4bc92
+command: PYTHONPATH=python QEL_ROOT=$PWD python -m qel.cli fixtures \
+  --fixture F08 --fixture F09 --fixture F10 --fixture F11 \
+  --fixture F12 --fixture F13 --fixture F16 \
+  --out <scratch>/venue_fixtures.json
+exit_code: 0
+status: PASS
+summary: total_scenarios=10 passed=10 failed=0
+
+F08 BASE PASS
+  funding_cash = -2 (exp -2)
+  funding_epoch = 1 (exp 1)
+  equity_end = 998 (exp 998)
+F09 BASE PASS
+  funding_cash = -2 (exp -2)
+  funding_attributed_epoch = 1 (exp 1)
+  epoch_2_funding_cash = 0 (exp 0)
+  payment_application_count = 1 (exp 1)
+F10 BASE PASS
+  error = MISSING_SETTLEMENT_MARK (exp MISSING_SETTLEMENT_MARK)
+  future_mark_join_count = 0 (exp 0)
+  certified = False (exp False)
+F11 MARK PASS
+  isolated_equity = 4 (exp 4)
+  maintenance = 4.7 (exp 4.7)
+  liquidation_triggered = True (exp True)
+F11 QUOTE_IS_NOT_MARK PASS
+  mark_trigger_inferred_from_quote = False (exp False)
+  mark_path_certificate = missing (exp missing)
+F12 BASE PASS
+  funding_cash = -0.2 (exp -0.2)
+  isolated_equity = 4.9 (exp 4.9)
+  maintenance = 5 (exp 5)
+  liquidation_triggered = True (exp True)
+F13 REBATE PASS
+  fee = -0.01 (exp -0.01)
+  cash_delta = 0.01 (exp 0.01)
+F13 I128_OVERFLOW PASS
+  error = NUMERIC_OVERFLOW (exp NUMERIC_OVERFLOW)
+F13 RULE_ROUND PASS
+  qty = 1.23 (exp 1.23)
+F16 BASE PASS
+  O-A.accepted = True (exp True)
+  O-B.accepted = False (exp False)
+  free_after_reservations = 8 (exp 8)
+  negative_free_cash = False (exp False)
+
+Venue/account path agreement:
+  tests/test_venue.py::test_venue_path_reproduces_fixture_expected_values PASS
+    F08 F09 F10 F12 F13 F16
+  tests/test_venue.py::test_f11_venue_metrics_match_conformance_oracle PASS
+    F11 MARK and F11 QUOTE_IS_NOT_MARK metrics equal the conformance oracle
+  tests/test_venue.py::test_conformance_oracle_agrees PASS (all 7 fixtures)

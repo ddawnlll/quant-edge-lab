@@ -1,0 +1,182 @@
+{
+  "task": "TASK-10",
+  "issue": 3,
+  "milestone": "M4",
+  "base_sha": "48bfaafd4846f12c34f9401d17110651a3c4bc92",
+  "generated_at": "2026-11-09T11:56:00Z",
+  "implementation": {
+    "module": "python/qel/accounting/venue.py",
+    "tests": "tests/test_venue.py",
+    "core_hooks": []
+  },
+  "cli": {
+    "command": "PYTHONPATH=python QEL_ROOT=$PWD python -m qel.cli fixtures --fixture F08 --fixture F09 --fixture F10 --fixture F11 --fixture F12 --fixture F13 --fixture F16 --out <scratch>/venue_fixtures.json",
+    "exit_code": 0,
+    "status": "PASS",
+    "summary": {
+      "total_scenarios": 10,
+      "passed": 10,
+      "failed": 0,
+      "fixtures": {
+        "F08": "PASS",
+        "F09": "PASS",
+        "F10": "PASS",
+        "F11": "PASS",
+        "F12": "PASS",
+        "F13": "PASS",
+        "F16": "PASS"
+      }
+    }
+  },
+  "fixture_results": [
+    {
+      "fixture_id": "F08",
+      "scenario": "BASE",
+      "status": "PASS",
+      "checks": [
+        {"path": "funding_cash", "expected": "-2", "actual": "-2", "passed": true},
+        {"path": "funding_epoch", "expected": "1", "actual": 1, "passed": true},
+        {"path": "equity_end", "expected": "998", "actual": "998", "passed": true}
+      ],
+      "venue_path_agrees": true
+    },
+    {
+      "fixture_id": "F09",
+      "scenario": "BASE",
+      "status": "PASS",
+      "checks": [
+        {"path": "funding_cash", "expected": "-2", "actual": "-2", "passed": true},
+        {"path": "funding_attributed_epoch", "expected": "1", "actual": 1, "passed": true},
+        {"path": "epoch_2_funding_cash", "expected": "0", "actual": "0", "passed": true},
+        {"path": "payment_application_count", "expected": 1, "actual": 1, "passed": true}
+      ],
+      "venue_path_agrees": true
+    },
+    {
+      "fixture_id": "F10",
+      "scenario": "BASE",
+      "status": "PASS",
+      "checks": [
+        {"path": "error", "expected": "MISSING_SETTLEMENT_MARK", "actual": "MISSING_SETTLEMENT_MARK", "passed": true},
+        {"path": "future_mark_join_count", "expected": 0, "actual": 0, "passed": true},
+        {"path": "certified", "expected": false, "actual": false, "passed": true}
+      ],
+      "venue_path_agrees": true
+    },
+    {
+      "fixture_id": "F11",
+      "scenario": "MARK",
+      "status": "PASS",
+      "checks": [
+        {"path": "isolated_equity", "expected": "4", "actual": "4", "passed": true},
+        {"path": "maintenance", "expected": "4.7", "actual": "4.7", "passed": true},
+        {"path": "liquidation_triggered", "expected": true, "actual": true, "passed": true}
+      ],
+      "venue_path_agrees": true
+    },
+    {
+      "fixture_id": "F11",
+      "scenario": "QUOTE_IS_NOT_MARK",
+      "status": "PASS",
+      "checks": [
+        {"path": "mark_trigger_inferred_from_quote", "expected": false, "actual": false, "passed": true},
+        {"path": "mark_path_certificate", "expected": "missing", "actual": "missing", "passed": true}
+      ],
+      "venue_path_agrees": true
+    },
+    {
+      "fixture_id": "F12",
+      "scenario": "BASE",
+      "status": "PASS",
+      "checks": [
+        {"path": "funding_cash", "expected": "-0.2", "actual": "-0.2", "passed": true},
+        {"path": "isolated_equity", "expected": "4.9", "actual": "4.9", "passed": true},
+        {"path": "maintenance", "expected": "5", "actual": "5", "passed": true},
+        {"path": "liquidation_triggered", "expected": true, "actual": true, "passed": true}
+      ],
+      "venue_path_agrees": true
+    },
+    {
+      "fixture_id": "F13",
+      "scenario": "REBATE",
+      "status": "PASS",
+      "checks": [
+        {"path": "fee", "expected": "-0.01", "actual": "-0.01", "passed": true},
+        {"path": "cash_delta", "expected": "0.01", "actual": "0.01", "passed": true}
+      ],
+      "venue_path_agrees": true
+    },
+    {
+      "fixture_id": "F13",
+      "scenario": "I128_OVERFLOW",
+      "status": "PASS",
+      "checks": [
+        {"path": "error", "expected": "NUMERIC_OVERFLOW", "actual": "NUMERIC_OVERFLOW", "passed": true}
+      ],
+      "venue_path_agrees": true
+    },
+    {
+      "fixture_id": "F13",
+      "scenario": "RULE_ROUND",
+      "status": "PASS",
+      "checks": [
+        {"path": "qty", "expected": "1.23", "actual": "1.23", "passed": true}
+      ],
+      "venue_path_agrees": true
+    },
+    {
+      "fixture_id": "F16",
+      "scenario": "BASE",
+      "status": "PASS",
+      "checks": [
+        {"path": "O-A.accepted", "expected": true, "actual": true, "passed": true},
+        {"path": "O-B.accepted", "expected": false, "actual": false, "passed": true},
+        {"path": "free_after_reservations", "expected": "8", "actual": "8", "passed": true},
+        {"path": "negative_free_cash", "expected": false, "actual": false, "passed": true}
+      ],
+      "venue_path_agrees": true
+    }
+  ],
+  "venue_path_reproduction": {
+    "test": "tests/test_venue.py::test_venue_path_reproduces_fixture_expected_values",
+    "status": "PASS",
+    "fixtures": ["F08", "F09", "F10", "F12", "F13", "F16"],
+    "note": "F11 MARK/QUOTE_IS_NOT_MARK values are asserted in test_f11_venue_metrics_match_conformance_oracle against the conformance oracle metrics."
+  },
+  "test_counts": {
+    "venue_tests": {"passed": 40, "failed": 0},
+    "full_suite": {"passed": 204, "failed": 0}
+  },
+  "negative_cases_exercised": [
+    "MISSING_SETTLEMENT_MARK (F10, no invented funding payment)",
+    "FUTURE_ONLY_MARK (future-only mark rule)",
+    "UNKNOWN_RULE (missing/unsupported rule kind)",
+    "LOOKAHEAD_RULE (rule known after decision time)",
+    "CONFLICTING_RULE (same valid+known window, different value)",
+    "UNKNOWN_MARK_SOURCE (quote-derived mark rejected)",
+    "DUPLICATE_SETTLEMENT (exact duplicate rejected)",
+    "FUNDING_NOT_AVAILABLE (receipt before availability)",
+    "TIER_NOT_FOUND (notional outside all tiers)",
+    "LEVERAGE_EXCEEDED (notional above tier leverage)",
+    "TRADING_HALTED (halted venue rejects orders)",
+    "NUMERIC_OVERFLOW (I128 checked multiply)",
+    "RECONCILIATION_FAILURE (fee sign, funding sign, reservation mutation)"
+  ],
+  "funding_to_liquidation": {
+    "fixture": "F12",
+    "funding_signed_cash": "-0.2",
+    "mark_unchanged": "100",
+    "isolated_equity_at_trigger": "4.9",
+    "maintenance_at_trigger": "5",
+    "liquidation_triggered": true,
+    "liquidation_cost": "0.1"
+  },
+  "late_funding": {
+    "fixture": "F09",
+    "settlement_ts": 100,
+    "available_ns": 200,
+    "attributed_epoch": 1,
+    "epoch_2_funding_cash": "0",
+    "payment_application_count": 1
+  }
+}

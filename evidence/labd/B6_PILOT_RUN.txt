@@ -1,0 +1,2 @@
+exit=1 wall=585s
+command: PYTHONPATH=python QEL_ROOT=$PWD .venv/bin/python -m qel.cli calibrate --programs 1 --workers 4 --cohorts 3 --dev-days 1500 --fresh-days 500 --control-replications 1000 --family-size 16 --effects 0,0.0005,0.001,0.002 --power-programs 1 --power-cohorts 1 --label PILOT_NOT_ACCEPTANCE

@@ -1,0 +1,108 @@
+{
+  "task": "TASK-10",
+  "issue": 3,
+  "milestone": "M4",
+  "base_sha": "48bfaafd4846f12c34f9401d17110651a3c4bc92",
+  "generated_at": "2026-11-09T11:56:30Z",
+  "acceptance": "PARTIAL/EVIDENCE_PENDING",
+  "acceptance_reason": "Fixture scope is implemented and verified through the Python venue/account path. Venue-certified historical rules and native liquidation remain unavailable, so full TASK-10 closure evidence cannot be claimed.",
+  "scope": "Point-in-time venue rules, funding settlement, isolated margin tiers, mark-based liquidation and reconciliation implemented in Python only, bound to the independent exact Account oracle.",
+  "supported": {
+    "bitemporal_rules": true,
+    "fee_schedule": true,
+    "funding_rate_and_interval": true,
+    "margin_tiers_and_leverage": true,
+    "mark_source": true,
+    "trading_status": true,
+    "settlement_order": true,
+    "funding_epoch_attribution": true,
+    "duplicate_settlement_rejection": true,
+    "late_funding_receipt": true,
+    "shared_wallet_reservations": true,
+    "isolated_maintenance_margin": true,
+    "mark_triggered_forced_close": true,
+    "exact_liquidation_cost": true,
+    "settlement_boundary_ordering": true,
+    "exact_postings_reconciliation": true
+  },
+  "limitations": [
+    {
+      "id": "NO_HISTORICAL_VENUE_RULE_FILES",
+      "claim": "No historical venue rule files are available in this repository. The loader accepts bitemporal rules but the rules used by tests and evidence are test fixtures with source=TEST_FIXTURE, not venue-published schedules.",
+      "evidence": "venue_profiles/ and native/venue/ do not exist; all rules carry source=TEST_FIXTURE.",
+      "impact": "Cannot claim venue-certified historical fee, funding, tier or mark schedules."
+    },
+    {
+      "id": "NO_VENUE_CERTIFIED_HISTORICAL_TIERS",
+      "claim": "Margin tiers, maintenance rates and liquidation fee rates are fixture-declared values, not certified exchange tier tables.",
+      "evidence": "SCOPED_SUPPORT['venue_certified_historical_tiers'] is false.",
+      "impact": "Liquidation thresholds are reproducible for fixtures but not certified for historical venue replay."
+    },
+    {
+      "id": "NO_NATIVE_LIQUIDATION_PATH",
+      "claim": "The pinned native engine has no liquidation or maintenance-margin path. Native code only processes funding position adjustments; it does not force-close positions.",
+      "evidence": "grep -rin 'liquidat|maintenance|adl' native/ returns no matches; native/runner/src/main.rs handles Funding adjustments only.",
+      "impact": "Liquidation is Python-oracle only. No native liquidation parity is claimed."
+    },
+    {
+      "id": "NO_ADL_OR_AUTO_DELEVERAGING",
+      "claim": "ADL and auto-deleveraging are not implemented or modelled.",
+      "evidence": "UNSUPPORTED_VENUE_BEHAVIOR contains ADL; SCOPED_SUPPORT['adl'] and ['auto_deleveraging'] are false.",
+      "impact": "Venue behavior outside isolated maintenance-margin liquidation is explicitly out of scope."
+    },
+    {
+      "id": "NO_CROSS_MARGIN_OR_PARTIAL_LIQUIDATION",
+      "claim": "Only isolated, full-position liquidation at the declared mark is supported. Cross-margin liquidation and partial liquidation are not implemented.",
+      "evidence": "SCOPED_SUPPORT['cross_margin_liquidation'] and ['partial_liquidation'] are false.",
+      "impact": "Mixed-margin accounts and partial forced closes are not certified."
+    },
+    {
+      "id": "NO_FUTURE_OR_QUOTE_MARK_INFERENCE",
+      "claim": "A mark is never inferred from a quote/book or from a future-only rule. Missing marks fail closed with MISSING_SETTLEMENT_MARK or FUTURE_ONLY_MARK.",
+      "evidence": "tests/test_venue.py::test_f10_missing_settlement_mark_never_infers_a_payment_or_mark and test_f11_quote_is_not_a_mark.",
+      "impact": "Correct fail-closed behavior, but venues whose marks are only observable later cannot be settled by this profile."
+    },
+    {
+      "id": "FIXTURE_DERIVED_MARGIN_MODE",
+      "claim": "The F11/F12 maintenance profile is supplied by fixture setup (maintenance_rate) and mapped to an explicit MARGIN_TIER rule or profile default.",
+      "evidence": "tests/test_venue.py ruleset() constructs the tier explicitly; no venue tier document is loaded.",
+      "impact": "No hidden defaults: maintenance is only enabled when the profile or rule explicitly declares it."
+    }
+  ],
+  "non_claims": [
+    "No venue-certified historical rule replay.",
+    "No native liquidation execution or parity.",
+    "No ADL, auto-deleveraging, cross-margin or partial liquidation.",
+    "No mark inference from quotes or future-only rules.",
+    "No claim that fixture-derived maintenance/tier values are exchange-published.",
+    "No production matching-engine fidelity claim."
+  ],
+  "negative_cases_verified": {
+    "MISSING_SETTLEMENT_MARK": "F10 and unit negative case; no funding posted and no mark inferred.",
+    "FUTURE_ONLY_MARK": "Future-only mark rule fails closed.",
+    "UNKNOWN_RULE": "Missing rule or unsupported rule kind fails closed.",
+    "LOOKAHEAD_RULE": "Rule known after decision time is rejected.",
+    "CONFLICTING_RULE": "Same valid+known window with different value is rejected.",
+    "UNKNOWN_MARK_SOURCE": "Quote/book-sourced mark is rejected.",
+    "DUPLICATE_SETTLEMENT": "Exact duplicate settlement is rejected; equal amounts in distinct settlements survive.",
+    "FUNDING_NOT_AVAILABLE": "Receipt before available_ns is rejected.",
+    "TIER_NOT_FOUND": "Notional outside all tiers fails closed.",
+    "LEVERAGE_EXCEEDED": "Notional above tier leverage fails closed.",
+    "TRADING_HALTED": "Halted venue rejects orders.",
+    "NUMERIC_OVERFLOW": "I128 checked multiply rejects overflow (F13).",
+    "RECONCILIATION_FAILURE": "Fee sign, funding sign and reservation mutations each break exact reconciliation."
+  },
+  "scope_declarations": {
+    "isolated_liquidation": true,
+    "shared_wallet_reservations": true,
+    "funding_epoch_attribution": true,
+    "settlement_boundary_ordering": true,
+    "historical_venue_rule_files": false,
+    "venue_certified_historical_tiers": false,
+    "native_liquidation_path": false,
+    "adl": false,
+    "auto_deleveraging": false,
+    "partial_liquidation": false,
+    "cross_margin_liquidation": false
+  }
+}

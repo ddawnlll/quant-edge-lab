@@ -1,0 +1,22 @@
+B6 / TASK-26 - PILOT_NOT_ACCEPTANCE
+label: PILOT_NOT_ACCEPTANCE
+seed protocol hash: 30a0ef917ba2484c7966bf13f51cf2973e83235862b5eae408576a0b5d5e8571
+decision method: SB_HAC_STUDENTIZED_SHARED_INDEX_IUT_HOLM_V1
+
+per generator:
+  GAUSSIAN_AR1_RHO_0_3: programs=1 promotions=0 rate=0.000000 cp95_upper=0.950000 target_pass=False coverage=PASS coverage_rate=1.0 blocked_endpoints=0 certified_stationary=False
+  STUDENT_T_DF5_AR1: programs=1 promotions=0 rate=0.000000 cp95_upper=0.950000 target_pass=False coverage=PASS coverage_rate=1.0 blocked_endpoints=0 certified_stationary=False
+  FIVE_COIN_COMMON_FACTOR_LOADING_0_6: programs=1 promotions=0 rate=0.000000 cp95_upper=0.950000 target_pass=False coverage=PASS coverage_rate=1.0 blocked_endpoints=0 certified_stationary=False
+  FROZEN_REGIME_SHIFT_NEGATIVE_CONTROL: programs=1 promotions=0 rate=0.000000 cp95_upper=0.950000 target_pass=None coverage=FAILED_OR_BLOCKED_NONSTATIONARY coverage_rate=None blocked_endpoints=4 certified_stationary=False
+
+power curve (injected variant 0):
+  effect=0.0 programs=1 detections=0 power=0.0 mde_daily_median=None
+  effect=0.0005 programs=1 detections=0 power=0.0 mde_daily_median=0.0015443227611493132
+  effect=0.001 programs=1 detections=0 power=0.0 mde_daily_median=0.0015443227611493132
+  effect=0.002 programs=1 detections=0 power=0.0 mde_daily_median=0.0015443227611493132
+
+targets: {"coverage_report_present": {"expected": true, "operator": "EQ", "pass": true, "value": true}, "null_fwer_95cp_upper_per_generator": {"metric": "null_fwer_95cp_upper_per_generator", "operator": "LE", "pass": false, "per_generator": {"FIVE_COIN_COMMON_FACTOR_LOADING_0_6": 0.95, "GAUSSIAN_AR1_RHO_0_3": 0.95, "STUDENT_T_DF5_AR1": 0.95}, "threshold": 0.075, "value": 0.95}, "power_curve_report_present": {"expected": true, "operator": "EQ", "pass": true, "value": true}}
+blockers: ['COMPUTE_BUDGET_INSUFFICIENT', 'NULL_FWER_UPPER_ABOVE_TARGET', 'INCOMPLETE_PROGRAM_SELECTION']
+resources: wall=580.215s peak_rss=155398144 B workers=4
+compute budget: est_s_per_program=488.537 est_full_core_hours=1085.64
+artifact report_sha256: 70e4e8c46dcb7c07f9ffe29fec93e54e77cbba61d665eb9b77fd9dc8ba38e5ce

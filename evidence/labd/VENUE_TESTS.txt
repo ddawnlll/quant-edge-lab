@@ -1,0 +1,10 @@
+# TASK-10 venue tests
+command: PYTHONPATH=python QEL_ROOT=$PWD python -m pytest -q tests/test_venue.py
+........................................                                 [100%]
+40 passed in 38.72s
+
+# full suite
+command: PYTHONPATH=python QEL_ROOT=$PWD python -m pytest -q tests
+........................................................................ [ 70%]
+............................................................             [100%]
+204 passed in 96.43s (0:01:36)
