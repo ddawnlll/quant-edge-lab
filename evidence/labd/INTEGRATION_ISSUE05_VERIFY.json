@@ -1,0 +1,68 @@
+{
+  "issue": 5,
+  "task": "TASK-12",
+  "kind": "COORDINATOR_INDEPENDENT_VERIFICATION",
+  "integration_branch": "qel/followup5-20261109",
+  "base_sha": "aea72f0ddf877ca9d2ef890c2ede05fa09a9869f",
+  "patch_commits": ["4a3cb05ba55302120b232d0233fae9089f7ac453", "2f21691877960f8601fd6f6ea9cf55272b48c4a2"],
+  "integrated_commits": ["55cea1e", "bef9388"],
+  "verification": {
+    "pytest": {"command": "QEL_DATA_ROOT=... PYTHONPATH=python QEL_ROOT=$PWD pytest -q tests", "result": "261 passed", "exit_code": 0},
+    "focused": {"command": "pytest -q tests/test_protocol.py", "result": "13 passed", "exit_code": 0},
+    "fixtures": {"command": "python -m qel.cli fixtures --fixture F18 --fixture F19", "result": "F18 PASS, F19 PASS", "exit_code": 0},
+    "real_shared_calendar": {
+      "command": "python -m qel.cli protocol --calendar calendar_shared_26m.json --symbol BTCUSDT --allow-gaps",
+      "exit_code": 0,
+      "status": "PASS",
+      "symbols": ["BTCUSDT", "ETHUSDT"],
+      "first_date": "2024-09-01",
+      "last_date": "2026-10-31",
+      "calendar_span_days": 791,
+      "accepted_complete_days": 790,
+      "missing_dates": ["2026-06-29"],
+      "reserved_calendar_dates": 238,
+      "reserved_accepted_days": 237,
+      "folds": [
+        {"train_start": "2024-09-01", "train_end": "2025-08-31", "validation_start": "2025-09-01", "validation_end": "2025-11-30"},
+        {"train_start": "2024-09-01", "train_end": "2025-11-30", "validation_start": "2025-12-01", "validation_end": "2026-02-28"}
+      ],
+      "split_id": "SPLIT-29F071EFE8938CB1",
+      "split_hash": "29f071efe8938cb15aabb360a86cf6f60b11534016e3ceb6c2abc58959f0b538",
+      "preregistration_id": "PREREG-7DEA9EABF88EA02C",
+      "scope_checks": "18/18 PASS, including validation_sample_rejected, reserved_sample_rejected and cross_symbol_rejected"
+    },
+    "coverage": {
+      "monthly_mark_klines": {"months": 26, "files": 52, "btc_complete_days": 790, "eth_checksums_verified": true},
+      "monthly_agg_trades": {"months": 3, "missing_months": 23, "estimated_bytes": "about 9.3 GB", "note": "intraday research-control workload remains data-limited"}
+    },
+    "negative_cases": {
+      "20_day_calendar": "INSUFFICIENT_HISTORY, shortfall 533 days",
+      "25_month_calendar": "INSUFFICIENT_HISTORY, shortfall 14 days",
+      "incomplete_day": "INCOMPLETE_DAY",
+      "duplicate_date": "DUPLICATE_DATE",
+      "misaligned_symbols": "MISALIGNED_CALENDAR",
+      "undeclared_gap": "CALENDAR_GAP"
+    }
+  },
+  "acceptance_boundary": {
+    "status": "ACCEPTED",
+    "scope": "TASK-12 protocol and datasets on real two-symbol 26-month markPriceKlines coverage",
+    "notes": [
+      "The single missing UTC day 2026-06-29 is inside the sealed reserve and does not affect the discovery folds; the gap and a bounded backfill command are recorded.",
+      "The intraday aggTrades corpus is 3 months, which limits TASK-13 research-control work, not the TASK-12 split protocol."
+    ]
+  },
+  "claims_not_made": [
+    "cross-sectional universe completeness",
+    "intraday research-control acceptance",
+    "any strategy edge or promotion"
+  ],
+  "evidence_hashes": {
+    "evidence/labd/PROTOCOL_ACCEPTANCE.json": "committed with patch",
+    "evidence/labd/PROTOCOL_MONTHLY_26M.json": "committed with patch",
+    "evidence/labd/DATA_COVERAGE_MONTHLY.json": "committed with patch",
+    "evidence/labd/DATA_COVERAGE_DAILY_30D.json": "committed with patch"
+  },
+  "verdict": "PASS",
+  "acceptance_note": "Canonical month-based 12/3/3 expanding folds, sealed ceil(30%) reserve, purge/embargo, fit/cache scoping, cross-symbol isolation, deterministic manifests and real two-symbol 26-month coverage are verified. TASK-12 acceptance is supported at this scope."
+}
