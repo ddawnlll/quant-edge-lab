@@ -1,0 +1,74 @@
+{
+  "issue": 15,
+  "task": "TASK-27",
+  "kind": "SOAK_24H_VERIFICATION",
+  "verified_utc": "2026-11-09T22:33:00Z",
+  "repo": "https://github.com/ddawnlll/quant-edge-lab",
+  "base_sha": "f6a850b2026d2910cc0673be5e1a88d9cf7d3a63",
+  "stage": "24H",
+  "status": "PASS_24H",
+  "service": {
+    "name": "qel-soak",
+    "started_utc": "2026-11-08T22:21:50Z",
+    "systemd_active": true,
+    "qeld_active": true,
+    "worker_active": true
+  },
+  "samples": {
+    "path": "runtime/soak/soak.jsonl",
+    "count": 1448,
+    "first_ts": "2026-11-08T22:21:50Z",
+    "last_ts": "2026-11-09T22:32:01Z",
+    "last_elapsed_s": 86599,
+    "required_elapsed_s": 86400,
+    "max_gap_seconds": 70,
+    "gaps_over_120_seconds": 0,
+    "health_status_bad_samples": 0,
+    "sqlite_health": "OK",
+    "sqlite_version": "3.54.1",
+    "sqlite_source_id": "2026-10-16 14:45:20 555e07ef33f69a0957d24d8e555b702464a131d6f1607f4c3c1e4551e8e6ca76"
+  },
+  "dashboard": {
+    "ledger_cursor": "154",
+    "queue_counts": {"blocked": 0, "queued": 0, "running": 0},
+    "artifact_refs": [],
+    "lab_cost": "0",
+    "risk_state": "RUNNING",
+    "oos_state": "WAITING_FRESH_OOS",
+    "alpha_next": {"num": "1", "den": "40"},
+    "resource_profile_id": "RP-8G"
+  },
+  "reconciliation": {
+    "ledger_events": 154,
+    "jobs": 25,
+    "job_events": 112,
+    "artifacts": 28,
+    "artifact_files": 43,
+    "trials": 0,
+    "seal_failures_recorded": 5,
+    "job_states": {"OUTPUT_SEALED": 15, "FAILED": 10},
+    "orphan_pass_records": 0,
+    "note": "The five seal failures are recorded fault events, not torn PASS records. All sealed outputs are accounted for; no orphan PASS exists."
+  },
+  "fault_drills": {
+    "worker_crash_and_lease_recovery": "recorded in evidence/labd/RECOVERY_REPORT.txt",
+    "cgroup_oom_and_limits": "recorded in evidence/labd/RECOVERY_MEMORY_CGROUP.txt",
+    "provider_outage": "not run in this stage",
+    "disk_pressure": "not run in this stage"
+  },
+  "seven_day_stage": {
+    "status": "RUNNING",
+    "started_at_24h_boundary": "2026-11-09T22:21:50Z",
+    "verification_wake_utc": "2026-11-16T22:26:00Z",
+    "schedule_id": "sched_d9b2017c",
+    "note": "The continuous sampler continues into the 7-day stage. B8 is not run and is not claimed."
+  },
+  "claims_not_made": [
+    "7-day soak completion",
+    "B8 agent benchmark",
+    "M5 or M6 acceptance",
+    "scientific edge"
+  ],
+  "verdict": "PASS_24H_STAGE; 7D_RUNNING",
+  "next_check": "At 2026-11-16T22:26Z verify 7-day continuity, fault drills, ledger/job/artifact reconciliation and B8 prerequisites."
+}

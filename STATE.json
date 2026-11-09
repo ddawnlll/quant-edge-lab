@@ -3,7 +3,7 @@
   "spec_version": "1.1.0",
   "spec_package_sha256": "db18e7a6e94b8c9b233a48097040d1a3a6c655ea126d5e6805d67d4f6e91fd30",
   "baseline_sha256": "71628e4b4ceceac3447759cdabab131e16237aff9fd7569a09f1bc61e4d70d06",
-  "updated_utc": "2026-11-09T22:30:22Z",
+  "updated_utc": "2026-11-09T22:33:40Z",
   "host": {
     "os": "Debian GNU/Linux 13 (trixie)",
     "kernel": "6.12.115+deb13.1-amd64",
@@ -295,15 +295,15 @@
       "blocked": "COMPUTE_BUDGET_INSUFFICIENT: full B6 estimated 1085.64 core-hours; pilot only (1 program per generator) is PILOT_NOT_ACCEPTANCE"
     },
     "TASK-27": {
-      "status": "DONE",
+      "status": "PARTIAL",
       "evidence": [
         "runtime/soak/soak.jsonl",
-        "evidence/labd/SOAK_24H_VERIFICATION.txt"
+        "evidence/labd/SOAK_24H_VERIFY.json",
+        "evidence/labd/SOAK_24H_VERIFICATION.txt",
+        "evidence/labd/RECOVERY_REPORT.txt",
+        "evidence/labd/RECOVERY_MEMORY_CGROUP.txt"
       ],
-      "elapsed_s": 86479,
-      "samples": 1446,
-      "health": "OK",
-      "max_sample_gap_s": 70
+      "progress": "24h stage PASS at 2026-11-09T22:32:01Z (86,599s, 1,448 samples, max gap 70s, health OK, ledger/jobs/artifacts reconciled); 7-day stage running; B8 not run"
     },
     "TASK-28": {
       "status": "BLOCKED",
