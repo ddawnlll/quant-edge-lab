@@ -1,0 +1,110 @@
+{
+  "corpus": "/home/quant/quant/qel-w13/benchmarks/corpus/b1_bars.csv",
+  "corpus_sha256": "39c0e50c98293242af0de6a585eb45091ca2ae068ab128764cae764f31af8d54",
+  "failed_attempts": null,
+  "include": [
+    "READ",
+    "FEATURES",
+    "VARIANTS",
+    "OUTPUT_HASH_FSYNC"
+  ],
+  "kind": "TASK25_B1_BATCH_SCREEN",
+  "metric": {
+    "name": "warm_p90_seconds",
+    "operator": "LE",
+    "passed": true,
+    "target": 10,
+    "value": 1.6218456570000002
+  },
+  "operators_implemented": [
+    "OP-INPUT",
+    "OP-LOG",
+    "OP-EMA",
+    "OP-SUB",
+    "OP-STD",
+    "OP-LAG",
+    "OP-DIV",
+    "OP-ER"
+  ],
+  "output_hash_frozen": true,
+  "phase_p50_ms": {
+    "features": 145.643887,
+    "output_hash_fsync": 6.946828,
+    "read": 971.0977939999999,
+    "variants": 198.59896799999999
+  },
+  "reference_verification": {
+    "decision_mismatches": 0,
+    "max_relative_feature_difference": 5.835212193886901e-13,
+    "rows_checked": 4000,
+    "status": "PASS",
+    "tolerance": 1e-9
+  },
+  "required_check": "B1",
+  "timed": {
+    "max_seconds": 1.731053467,
+    "median_ms": 1343.5897285,
+    "median_seconds": 1.3435897285,
+    "min_seconds": 1.188379103,
+    "p90_ms": 1621.845657,
+    "p90_seconds": 1.6218456570000002,
+    "repeats": 12,
+    "samples_seconds": [
+      1.188379103,
+      1.211362711,
+      1.242284546,
+      1.2564663249999999,
+      1.260266753,
+      1.334465889,
+      1.352713568,
+      1.3598954779999999,
+      1.382162913,
+      1.448319485,
+      1.6218456570000002,
+      1.731053467
+    ]
+  },
+  "timed_repeats": 12,
+  "variant_thresholds": [
+    1,
+    1.25,
+    1.5,
+    1.75,
+    2,
+    2.25,
+    2.5,
+    2.75
+  ],
+  "verdict": "PASS",
+  "warm_wall_ms": [
+    1712.370268,
+    1633.928241
+  ],
+  "warmups": 2,
+  "workload": {
+    "rows": 1000000,
+    "variants": 8,
+    "variant_thresholds": [
+      "1",
+      "1.25",
+      "1.5",
+      "1.75",
+      "2",
+      "2.25",
+      "2.5",
+      "2.75"
+    ],
+    "common_operators": [
+      "OP-INPUT",
+      "OP-LOG",
+      "OP-EMA",
+      "OP-SUB",
+      "OP-STD",
+      "OP-LAG",
+      "OP-DIV",
+      "OP-ER"
+    ],
+    "bar_interval_ns": "60000000000"
+  },
+  "workload_sha256": "f2cbbab073c4427e9dd36ec515e7effb69b9fffc7c084ff9de36767a1c82bf3f"
+}

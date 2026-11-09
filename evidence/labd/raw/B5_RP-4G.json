@@ -1,0 +1,178 @@
+{
+  "append_batch_events": 500,
+  "append_events_per_second": 1332.6775680131516,
+  "append_transactions": 200,
+  "append_wall_ms": 75036.90495,
+  "artifact_declaration_sha256": "146be12409490352503c4b689002b3600551f12976775afddb36876bc8253d22",
+  "artifact_pointers_referenced": 1000,
+  "artifact_pointers_sealed": 1000,
+  "artifact_scan_after_append": {
+    "orphan_final_count": 0,
+    "partial_package_pass_count": 0,
+    "acked_commit_lost_count": 0,
+    "failure_usage_retained_count": 0,
+    "temporary_file_count": 0,
+    "orphan_final_detected": false,
+    "failure_usage_retained": false
+  },
+  "crash_matrix": {
+    "fixture": "F17",
+    "report": {
+      "lost_committed_decisions": 0,
+      "status": "PASS",
+      "torn_pass": 0,
+      "trials": [
+        {
+          "acked_events": 0,
+          "delay_ms": 60,
+          "events_on_disk": 0,
+          "kill_signal": "SIGKILL",
+          "lost_committed_decisions": 0,
+          "status": "PASS",
+          "torn_pass": 0,
+          "trial": 0
+        },
+        {
+          "acked_events": 0,
+          "delay_ms": 120,
+          "events_on_disk": 0,
+          "kill_signal": "SIGKILL",
+          "lost_committed_decisions": 0,
+          "status": "PASS",
+          "torn_pass": 0,
+          "trial": 1
+        },
+        {
+          "acked_events": 0,
+          "delay_ms": 200,
+          "events_on_disk": 0,
+          "kill_signal": "SIGKILL",
+          "lost_committed_decisions": 0,
+          "status": "PASS",
+          "torn_pass": 0,
+          "trial": 2
+        },
+        {
+          "acked_events": 0,
+          "delay_ms": 300,
+          "events_on_disk": 0,
+          "kill_signal": "SIGKILL",
+          "lost_committed_decisions": 0,
+          "status": "PASS",
+          "torn_pass": 0,
+          "trial": 3
+        },
+        {
+          "acked_events": 0,
+          "delay_ms": 420,
+          "events_on_disk": 0,
+          "kill_signal": "SIGKILL",
+          "lost_committed_decisions": 0,
+          "status": "PASS",
+          "torn_pass": 0,
+          "trial": 4
+        },
+        {
+          "acked_events": 0,
+          "delay_ms": 560,
+          "events_on_disk": 0,
+          "kill_signal": "SIGKILL",
+          "lost_committed_decisions": 0,
+          "status": "PASS",
+          "torn_pass": 0,
+          "trial": 5
+        }
+      ]
+    },
+    "trials": 6
+  },
+  "event_type_counts": {
+    "ArtifactPointer": 20000,
+    "DecisionRecorded": 40000,
+    "JobStateChanged": 20000,
+    "PassRecorded": 20000
+  },
+  "events_corpus": "/home/quant/quant/qel-w13/benchmarks/corpus/b5_events.jsonl",
+  "events_corpus_sha256": "a0649d5131d0cbc6550fd94a659c57b2fbdb0feb2b70db280ed9f2f096f8abaa",
+  "failed_attempts": null,
+  "journal_mode": "WAL",
+  "kind": "TASK25_B5_LEDGER_RESTORE",
+  "ledger_events_appended": 100000,
+  "ledger_events_target": 100000,
+  "ledger_events_total": 101000,
+  "read_transaction": {
+    "max_ms": null,
+    "median_ms": 571.30369,
+    "min_ms": null,
+    "p90_ms": 605.100118,
+    "repeats": 12,
+    "rows_per_transaction": [
+      101000,
+      101000,
+      101000,
+      101000,
+      101000,
+      101000,
+      101000,
+      101000,
+      101000,
+      101000,
+      101000,
+      101000,
+      101000,
+      101000
+    ],
+    "samples_ms": null,
+    "warm_ms": [
+      508.58464299999997,
+      666.36288
+    ],
+    "warmups": 2
+  },
+  "required_check": "B5",
+  "restore": {
+    "artifact_scan": {
+      "orphan_final_count": 0,
+      "partial_package_pass_count": 0,
+      "acked_commit_lost_count": 0,
+      "failure_usage_retained_count": 0,
+      "temporary_file_count": 0,
+      "orphan_final_detected": false,
+      "failure_usage_retained": false
+    },
+    "chain_valid": true,
+    "events": 101000,
+    "mechanism": "SQLITE_VACUUM_INTO_BACKUP_THEN_OPEN_AND_FULL_HASH_CHAIN",
+    "minutes": 0.45466587211666665,
+    "wall_seconds": 27.279952327
+  },
+  "seal_wall_ms": 23805.337726,
+  "sqlite_synchronous": "FULL",
+  "targets": {
+    "lost_committed_decisions": {
+      "operator": "EQ",
+      "passed": true,
+      "target": 0,
+      "value": 0
+    },
+    "metadata_restore_minutes": {
+      "operator": "LE",
+      "passed": true,
+      "target": 60,
+      "value": 0.45466587211666665
+    },
+    "read_transaction_ms": {
+      "operator": "LE",
+      "passed": true,
+      "target": 2000,
+      "value": 605.100118
+    },
+    "torn_pass": {
+      "operator": "EQ",
+      "passed": true,
+      "target": 0,
+      "value": 0
+    }
+  },
+  "verdict": "PASS"
+}

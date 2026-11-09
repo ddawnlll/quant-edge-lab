@@ -1,0 +1,39 @@
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 4 tests
+test boolean_operators_exact ... ok
+test arithmetic_and_unary_operators ... ok
+test window_operators_exact ... ok
+test lag_ema_er_pivot_exact ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 3 tests
+test validates_example_and_warmup ... ok
+test leakage_and_type_attacks_rejected ... ok
+test reference_features_and_no_early_decision ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Compiling qel-policy v0.1.0 (/home/quant/quant/qel-w13/policy/rust)
+    Finished `release` profile [optimized] target(s) in 2.21s
+     Running unittests src/lib.rs (/home/quant/quant/.build-cache/qel-policy-target/release/deps/qel_policy-460c34f9f6d51216)
+     Running unittests src/bin/bench_b0.rs (/home/quant/quant/.build-cache/qel-policy-target/release/deps/bench_b0-9b049d5c1c1d5fbb)
+     Running tests/operators.rs (/home/quant/quant/.build-cache/qel-policy-target/release/deps/operators-c63425fb270e8c55)
+     Running tests/policy.rs (/home/quant/quant/.build-cache/qel-policy-target/release/deps/policy-c8f5589957abb3dd)
+   Doc-tests qel_policy

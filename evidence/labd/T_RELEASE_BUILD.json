@@ -1,0 +1,128 @@
+{
+  "build": {
+    "BUILD-GO-EDIT": {
+      "measure": "warm edit + rebuild of cmd/qel-bench (small supervisor file)",
+      "p90_seconds": 3.458481788635254,
+      "passed": true,
+      "samples_seconds": [
+        3.458481788635254,
+        0.7875642776489258,
+        0.9456150531768799,
+        0.8106808662414551,
+        0.787827730178833
+      ],
+      "target_seconds": 5
+    },
+    "BUILD-RELEASE": {
+      "binary_bytes": 814152,
+      "binary_sha256": "b6ac4a333817142c4d34a78c3bfc95117a11767a1046d4e3d2705d438ff62128",
+      "byte_reproducible_demonstrated": true,
+      "lto": "default (thin-local)",
+      "parity_runs": [
+        {
+          "corpus_sha256": "83ed0c8257661adcae5cd7efbdee4793f50c3f2a6075008eb8149bb64b197283",
+          "dag_nodes_measured": 256,
+          "dag_sha256_canonical": "43614dd41e09d77718e5ccee6e7a082d783facc37a110571de402f58e4aec819",
+          "native_jit_compilations": 0
+        },
+        {
+          "corpus_sha256": "83ed0c8257661adcae5cd7efbdee4793f50c3f2a6075008eb8149bb64b197283",
+          "dag_nodes_measured": 256,
+          "dag_sha256_canonical": "43614dd41e09d77718e5ccee6e7a082d783facc37a110571de402f58e4aec819",
+          "native_jit_compilations": 0
+        }
+      ],
+      "profile": "release",
+      "rebuild_seconds": 0.10524201393127441,
+      "semantic_parity": true
+    },
+    "BUILD-RUST-OP": {
+      "measure": "warm incremental build after touching the operator module",
+      "p90_seconds": 8.716620445251465,
+      "passed": true,
+      "samples_seconds": [
+        7.233558893203735,
+        5.459761619567871,
+        7.382901430130005,
+        7.832737445831299,
+        8.716620445251465
+      ],
+      "target_seconds": 60
+    },
+    "cold_build": {
+      "note": "Initial cold release build observed at 13:14 UTC before any warm edits; not re-run inside this evidence script.",
+      "observed_initial_release_build_seconds": 18.96
+    }
+  },
+  "cold_warm_boundary": {
+    "bench": "2 warmups discarded, 12 timed repeats, corpus hashes frozen before timing",
+    "build": "binary built before timing; warm incremental builds measured"
+  },
+  "correctness": {
+    "all_passed": true,
+    "conformance": {
+      "exit": 0,
+      "passed": true,
+      "tail": [
+        "....                                                                     [100%]",
+        "4 passed in 23.17s"
+      ]
+    },
+    "go_ledger_artifact_tests": {
+      "exit": 0,
+      "passed": true
+    },
+    "rust_policy_tests": {
+      "exit": 0,
+      "passed": true,
+      "passed_tests": 7
+    }
+  },
+  "kind": "TASK25_T_RELEASE",
+  "locks": {
+    "cited_not_rerun": "The Nautilus source-pin manifest was verified by TASK-08/TASK-11; TASK-25 re-hashes the lock files and cites that verification instead of re-cloning the dependency.",
+    "hashes": {
+      "cargo_lock_sha256": "f75f921864bb5b729914e3ac39fd336e616982b4ba60f47509bab1452932738f",
+      "go_mod_sha256": "27644be248e186bbcde09f038f360d54d207451fee664b94601fe5003b983ac7",
+      "go_sum_sha256": "b5c028393bb84db3b08a2e34fd887bf2b9bff835b06ae877f6c55bcc6bf61bc1",
+      "pin_verification_sha256": "81d44fcad0ca5d9513745b808c5cdad75952a0657f8e91547599c7db82104196",
+      "runtime_lock_sha256": "a20c2b4d16b7be5fcc1e3fef0b48ed78dc23398bdd78ac8fe074b9a4a64156ae",
+      "source_pin_sha256": "91df291a5b9a7ff7b87f71e0e314e7544bfc2a95acda65bfec42e2403a0f3d29",
+      "third_party_sha256": "56c68022b6267fd7cca343a15096ca31c2ccf87a9bbc366544a97bb5d891c545"
+    },
+    "nautilus_revision": "27a8e54e7ac3c57d6cbf8891f0283dfbaee97317",
+    "nautilus_tag": "v1.231.0",
+    "pin_verification_checks": {
+      "binary_hash_matches": true,
+      "binary_size_matches": true,
+      "cargo_lock_hash_matches": true,
+      "fixture_corpus_hash_matches": true,
+      "head_matches_pin": true,
+      "remote_tag_dereferences_to_pin": true,
+      "runtime_lock_unresolved": true,
+      "spike_report_hash_matches": true,
+      "spike_source_hash_matches": true,
+      "tag_points_at_head": true,
+      "verified_profile_present": true,
+      "worktree_clean": true
+    },
+    "pin_verification_status": "PASS"
+  },
+  "negative_cases": {
+    "cache_mislabel": "B1 output hash is recomputed from the timed pipeline; the corpus hash is read from the frozen manifest and re-hashed inside the harness.",
+    "disabled_features": "B0/B1/B5 evidence records the exact include list; no unmeasured feature is claimed.",
+    "failed_run_exclusion": "failed_attempts is retained in every report; a run with failures cannot pass.",
+    "partial_output_timing": "B1 hash+fsync is inside the timed region and its median is reported as output_hash_fsync."
+  },
+  "parameter_only_change": {
+    "binary_unchanged": true,
+    "change": "OP-EMA window 5 -> 6 on one node",
+    "dag_hash_changed": true,
+    "exit": 0,
+    "native_jit_compilations": 0,
+    "passed": true
+  },
+  "required_check": "T-RELEASE",
+  "status": "PASS",
+  "task": "TASK-25"
+}
