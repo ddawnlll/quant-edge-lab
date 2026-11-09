@@ -1,0 +1,938 @@
+{
+  "artifact_hashes": {
+    "backend_hash": "d8f017c7f6627ca2517094eeab8491df16713074085614d7777bf56c0d5858a5",
+    "method_hashes": [
+      "1bb3fc1813517a4d23f503c82fc4102bc355048d55d6903dc878a35a6c261b21",
+      "31458c62fcdfdf6ed5e064c35bbe0658916eb2a414eca8bae543d8b9757246cf",
+      "3928080fe47c5212be15f7697f3e50439b736ca446135d78c32a88e1a826b6c5",
+      "3a309706d2678a9d21c4212337ce1b46dc226109e06c43dfbf5cfb06bbce3c4e",
+      "5374650f6940f5b67a726c902ae07d0594c2825b2fff36dfe6ebeaa65da99e32",
+      "57919241a1adedc7aeca3da8474e12d6f46d1a52291efb3e2f061fb6a29c0f7c",
+      "9e6bc8040dfcf5fde512c127ef4150bd79dd67517f2686490e455e4853690679",
+      "ac0e516694e132be5d17ca41aa8584701e647523921e34564e6a1b7f0b2355f6",
+      "aeb84abe7a8030701fff68074a5d782ea7cab36febc6f4c93127bc102bc4734a",
+      "d18811e6363d79378879be305ce8ddc4344f4b793744041cc868b96a53e30beb",
+      "f71c895976d265c0b618146c6ee9e0fe9f4ea02fa387643d4e203bad8387fb90"
+    ],
+    "report_sha256": "1ddc45182c32d05c2079b2e12d3919c059a7dd762e50613bb51bc726ac2f4bbc",
+    "seed_protocol_hash": "30a0ef917ba2484c7966bf13f51cf2973e83235862b5eae408576a0b5d5e8571",
+    "workload_sha256": "aaef4b6c187e8da043b3ed1360098b3bfbbfad4d1080962abf89419b11d6a511"
+  },
+  "benchmark": "B6",
+  "blockers": [
+    "COMPUTE_BUDGET_INSUFFICIENT",
+    "NULL_FWER_UPPER_ABOVE_TARGET"
+  ],
+  "compute_budget": {
+    "basis": "measured per-generator CPU seconds x required programs / workers",
+    "budget_seconds": 2700.0,
+    "estimated_full_program_core_hours": 1186.6097916666668,
+    "estimated_full_program_core_seconds": 4271795.25,
+    "estimated_full_program_wall_hours": 296.6524479166667,
+    "estimated_full_program_wall_seconds": 1067948.8125,
+    "estimated_seconds_per_program": 198.2942193300114,
+    "fits_budget": false,
+    "full_workload_required": {
+      "cohorts": 3,
+      "control_replications": 1000,
+      "effects": [
+        0.0,
+        0.0005,
+        0.001,
+        0.002
+      ],
+      "fresh_days_per_cohort": 500,
+      "generators": 4,
+      "history_days_development": 1500,
+      "programs_per_generator": 1000
+    },
+    "measured_per_generator_cpu_seconds": {
+      "FIVE_COIN_COMMON_FACTOR_LOADING_0_6": 360.081086,
+      "FROZEN_REGIME_SHIFT_NEGATIVE_CONTROL": 295.381925,
+      "GAUSSIAN_AR1_RHO_0_3": 98.25292400000001,
+      "STUDENT_T_DF5_AR1": 100.643115
+    },
+    "measured_per_generator_elapsed_seconds": {
+      "FIVE_COIN_COMMON_FACTOR_LOADING_0_6": 361.00471744901733,
+      "FROZEN_REGIME_SHIFT_NEGATIVE_CONTROL": 295.8975157040113,
+      "GAUSSIAN_AR1_RHO_0_3": 98.36162885898375,
+      "STUDENT_T_DF5_AR1": 100.69092295601149
+    },
+    "measured_program_cpu_seconds_median": 198.01252,
+    "measured_program_elapsed_seconds_median": 198.2942193300114,
+    "pilot_wall_seconds": 896.0406390840071,
+    "programs_completed": 4,
+    "programs_required": {
+      "null": 4000,
+      "power": 16000,
+      "total": 20000
+    }
+  },
+  "coverage_matrix": {
+    "complete": true,
+    "coverage_status_by_generator": {
+      "FIVE_COIN_COMMON_FACTOR_LOADING_0_6": "PASS",
+      "FROZEN_REGIME_SHIFT_NEGATIVE_CONTROL": "FAILED_OR_BLOCKED_NONSTATIONARY",
+      "GAUSSIAN_AR1_RHO_0_3": "PASS",
+      "STUDENT_T_DF5_AR1": "PASS"
+    },
+    "covered_effects": [
+      0.0,
+      0.0005,
+      0.001,
+      0.002
+    ],
+    "covered_generators": [
+      "GAUSSIAN_AR1_RHO_0_3",
+      "STUDENT_T_DF5_AR1",
+      "FIVE_COIN_COMMON_FACTOR_LOADING_0_6",
+      "FROZEN_REGIME_SHIFT_NEGATIVE_CONTROL"
+    ],
+    "power_cells_present": 16,
+    "power_cells_required": 12,
+    "problems": [],
+    "required_effects": [
+      0.0,
+      0.0005,
+      0.001,
+      0.002
+    ],
+    "required_generators": [
+      "GAUSSIAN_AR1_RHO_0_3",
+      "STUDENT_T_DF5_AR1",
+      "FIVE_COIN_COMMON_FACTOR_LOADING_0_6",
+      "FROZEN_REGIME_SHIFT_NEGATIVE_CONTROL"
+    ],
+    "required_stationary_power_generators": [
+      "GAUSSIAN_AR1_RHO_0_3",
+      "STUDENT_T_DF5_AR1",
+      "FIVE_COIN_COMMON_FACTOR_LOADING_0_6"
+    ]
+  },
+  "executed": {
+    "base_seed": 0,
+    "checkpoint_path": null,
+    "cohorts": 3,
+    "control_replications": 1000,
+    "effects": [
+      0.0,
+      0.0005,
+      0.001,
+      0.002
+    ],
+    "family_variants": 16,
+    "fresh_days_per_cohort": 500,
+    "generators": [
+      "GAUSSIAN_AR1_RHO_0_3",
+      "STUDENT_T_DF5_AR1",
+      "FIVE_COIN_COMMON_FACTOR_LOADING_0_6",
+      "FROZEN_REGIME_SHIFT_NEGATIVE_CONTROL"
+    ],
+    "history_days_development": 1500,
+    "power_cohorts": 1,
+    "power_programs_per_effect": 1,
+    "programs_per_generator": 1,
+    "workers": 4
+  },
+  "generators": [
+    {
+      "blocked_cohorts": 0,
+      "certified_stationary": false,
+      "clopper_pearson_upper_95": 0.95,
+      "cohort_alpha_spending": [
+        {
+          "alpha_frozen": 0.025,
+          "b_required_by_family_size": {
+            "2": 9999
+          },
+          "cohort": 1,
+          "cohorts": 1,
+          "family_sizes": {
+            "2": 1
+          },
+          "insufficient_eligible": 0,
+          "j": 0,
+          "max_resamples": 51199,
+          "schedule": "0.05 / 2^(j+1)",
+          "unresolvable": 0,
+          "unresolved": 0
+        },
+        {
+          "alpha_frozen": 0.0125,
+          "b_required_by_family_size": {
+            "2": 9999
+          },
+          "cohort": 2,
+          "cohorts": 1,
+          "family_sizes": {
+            "2": 1
+          },
+          "insufficient_eligible": 0,
+          "j": 1,
+          "max_resamples": 51199,
+          "schedule": "0.05 / 2^(j+1)",
+          "unresolvable": 0,
+          "unresolved": 0
+        },
+        {
+          "alpha_frozen": 0.00625,
+          "b_required_by_family_size": {
+            "2": 9999
+          },
+          "cohort": 3,
+          "cohorts": 1,
+          "family_sizes": {
+            "2": 1
+          },
+          "insufficient_eligible": 0,
+          "j": 2,
+          "max_resamples": 51199,
+          "schedule": "0.05 / 2^(j+1)",
+          "unresolvable": 0,
+          "unresolved": 0
+        }
+      ],
+      "cohort_alpha_spending_records": 3,
+      "coverage": {
+        "blocked_endpoints": 0,
+        "blocked_reasons": {},
+        "coverage_rate": 1.0,
+        "covered_endpoints": 6,
+        "evaluated_endpoints": 6,
+        "report_present": true,
+        "status": "PASS",
+        "waiting_endpoints": 0
+      },
+      "design": {
+        "coins": 1,
+        "generator": "GAUSSIAN_AR1_RHO_0_3",
+        "generator_id": 1,
+        "innovation": "NORMAL",
+        "regime_shift": false,
+        "stationary_design": true
+      },
+      "false_promotion_rate": 0.0,
+      "generator": "GAUSSIAN_AR1_RHO_0_3",
+      "insufficient_eligible_cohorts": 0,
+      "method_hashes": [
+        "1bb3fc1813517a4d23f503c82fc4102bc355048d55d6903dc878a35a6c261b21",
+        "3928080fe47c5212be15f7697f3e50439b736ca446135d78c32a88e1a826b6c5",
+        "ac0e516694e132be5d17ca41aa8584701e647523921e34564e6a1b7f0b2355f6"
+      ],
+      "programs": 1,
+      "programs_with_promotion": 0,
+      "promotions": 0,
+      "resources": {
+        "cpu_seconds": 98.25292400000001,
+        "elapsed_seconds": 98.36162885898375,
+        "max_program_elapsed_seconds": 98.36162885898375,
+        "max_program_peak_rss_bytes": 99729408,
+        "median_program_elapsed_seconds": 98.36162885898375
+      },
+      "selection": {
+        "candidates_max_per_cohort": 2,
+        "family_size_histogram": {
+          "2": 3
+        },
+        "incomplete": false,
+        "programs_with_selection": 1,
+        "selected_total": 6,
+        "variants_screened": 16,
+        "zero_eligible_policy": "NO_CANDIDATE_NO_TEST"
+      },
+      "target_applicable": true,
+      "target_pass": false,
+      "threshold": 0.075,
+      "verdict_counts": {
+        "INSUFFICIENT_EVIDENCE": 5,
+        "NO_PROMOTION": 1
+      },
+      "waiting_cohorts": 0
+    },
+    {
+      "blocked_cohorts": 0,
+      "certified_stationary": false,
+      "clopper_pearson_upper_95": 0.95,
+      "cohort_alpha_spending": [
+        {
+          "alpha_frozen": 0.025,
+          "b_required_by_family_size": {
+            "2": 9999
+          },
+          "cohort": 1,
+          "cohorts": 1,
+          "family_sizes": {
+            "2": 1
+          },
+          "insufficient_eligible": 0,
+          "j": 0,
+          "max_resamples": 51199,
+          "schedule": "0.05 / 2^(j+1)",
+          "unresolvable": 0,
+          "unresolved": 0
+        },
+        {
+          "alpha_frozen": 0.0125,
+          "b_required_by_family_size": {
+            "2": 9999
+          },
+          "cohort": 2,
+          "cohorts": 1,
+          "family_sizes": {
+            "2": 1
+          },
+          "insufficient_eligible": 0,
+          "j": 1,
+          "max_resamples": 51199,
+          "schedule": "0.05 / 2^(j+1)",
+          "unresolvable": 0,
+          "unresolved": 0
+        },
+        {
+          "alpha_frozen": 0.00625,
+          "b_required_by_family_size": {
+            "2": 9999
+          },
+          "cohort": 3,
+          "cohorts": 1,
+          "family_sizes": {
+            "2": 1
+          },
+          "insufficient_eligible": 0,
+          "j": 2,
+          "max_resamples": 51199,
+          "schedule": "0.05 / 2^(j+1)",
+          "unresolvable": 0,
+          "unresolved": 0
+        }
+      ],
+      "cohort_alpha_spending_records": 3,
+      "coverage": {
+        "blocked_endpoints": 0,
+        "blocked_reasons": {},
+        "coverage_rate": 1.0,
+        "covered_endpoints": 6,
+        "evaluated_endpoints": 6,
+        "report_present": true,
+        "status": "PASS",
+        "waiting_endpoints": 0
+      },
+      "design": {
+        "coins": 1,
+        "generator": "STUDENT_T_DF5_AR1",
+        "generator_id": 2,
+        "innovation": "T5",
+        "regime_shift": false,
+        "stationary_design": true
+      },
+      "false_promotion_rate": 0.0,
+      "generator": "STUDENT_T_DF5_AR1",
+      "insufficient_eligible_cohorts": 0,
+      "method_hashes": [
+        "3a309706d2678a9d21c4212337ce1b46dc226109e06c43dfbf5cfb06bbce3c4e",
+        "57919241a1adedc7aeca3da8474e12d6f46d1a52291efb3e2f061fb6a29c0f7c",
+        "aeb84abe7a8030701fff68074a5d782ea7cab36febc6f4c93127bc102bc4734a"
+      ],
+      "programs": 1,
+      "programs_with_promotion": 0,
+      "promotions": 0,
+      "resources": {
+        "cpu_seconds": 100.643115,
+        "elapsed_seconds": 100.69092295601149,
+        "max_program_elapsed_seconds": 100.69092295601149,
+        "max_program_peak_rss_bytes": 99954688,
+        "median_program_elapsed_seconds": 100.69092295601149
+      },
+      "selection": {
+        "candidates_max_per_cohort": 2,
+        "family_size_histogram": {
+          "2": 3
+        },
+        "incomplete": false,
+        "programs_with_selection": 1,
+        "selected_total": 6,
+        "variants_screened": 16,
+        "zero_eligible_policy": "NO_CANDIDATE_NO_TEST"
+      },
+      "target_applicable": true,
+      "target_pass": false,
+      "threshold": 0.075,
+      "verdict_counts": {
+        "INSUFFICIENT_EVIDENCE": 6
+      },
+      "waiting_cohorts": 0
+    },
+    {
+      "blocked_cohorts": 0,
+      "certified_stationary": false,
+      "clopper_pearson_upper_95": 0.95,
+      "cohort_alpha_spending": [
+        {
+          "alpha_frozen": 0.025,
+          "b_required_by_family_size": {
+            "2": 9999
+          },
+          "cohort": 1,
+          "cohorts": 1,
+          "family_sizes": {
+            "2": 1
+          },
+          "insufficient_eligible": 0,
+          "j": 0,
+          "max_resamples": 51199,
+          "schedule": "0.05 / 2^(j+1)",
+          "unresolvable": 0,
+          "unresolved": 0
+        },
+        {
+          "alpha_frozen": 0.0125,
+          "b_required_by_family_size": {
+            "2": 9999
+          },
+          "cohort": 2,
+          "cohorts": 1,
+          "family_sizes": {
+            "2": 1
+          },
+          "insufficient_eligible": 0,
+          "j": 1,
+          "max_resamples": 51199,
+          "schedule": "0.05 / 2^(j+1)",
+          "unresolvable": 0,
+          "unresolved": 0
+        },
+        {
+          "alpha_frozen": 0.00625,
+          "b_required_by_family_size": {
+            "2": 9999
+          },
+          "cohort": 3,
+          "cohorts": 1,
+          "family_sizes": {
+            "2": 1
+          },
+          "insufficient_eligible": 0,
+          "j": 2,
+          "max_resamples": 51199,
+          "schedule": "0.05 / 2^(j+1)",
+          "unresolvable": 0,
+          "unresolved": 0
+        }
+      ],
+      "cohort_alpha_spending_records": 3,
+      "coverage": {
+        "blocked_endpoints": 0,
+        "blocked_reasons": {},
+        "coverage_rate": 1.0,
+        "covered_endpoints": 6,
+        "evaluated_endpoints": 6,
+        "report_present": true,
+        "status": "PASS",
+        "waiting_endpoints": 0
+      },
+      "design": {
+        "coins": 5,
+        "generator": "FIVE_COIN_COMMON_FACTOR_LOADING_0_6",
+        "generator_id": 3,
+        "innovation": "NORMAL",
+        "regime_shift": false,
+        "stationary_design": true
+      },
+      "false_promotion_rate": 0.0,
+      "generator": "FIVE_COIN_COMMON_FACTOR_LOADING_0_6",
+      "insufficient_eligible_cohorts": 0,
+      "method_hashes": [
+        "31458c62fcdfdf6ed5e064c35bbe0658916eb2a414eca8bae543d8b9757246cf",
+        "5374650f6940f5b67a726c902ae07d0594c2825b2fff36dfe6ebeaa65da99e32",
+        "f71c895976d265c0b618146c6ee9e0fe9f4ea02fa387643d4e203bad8387fb90"
+      ],
+      "programs": 1,
+      "programs_with_promotion": 0,
+      "promotions": 0,
+      "resources": {
+        "cpu_seconds": 360.081086,
+        "elapsed_seconds": 361.00471744901733,
+        "max_program_elapsed_seconds": 361.00471744901733,
+        "max_program_peak_rss_bytes": 99225600,
+        "median_program_elapsed_seconds": 361.00471744901733
+      },
+      "selection": {
+        "candidates_max_per_cohort": 2,
+        "family_size_histogram": {
+          "2": 3
+        },
+        "incomplete": false,
+        "programs_with_selection": 1,
+        "selected_total": 6,
+        "variants_screened": 16,
+        "zero_eligible_policy": "NO_CANDIDATE_NO_TEST"
+      },
+      "target_applicable": true,
+      "target_pass": false,
+      "threshold": 0.075,
+      "verdict_counts": {
+        "INSUFFICIENT_EVIDENCE": 6
+      },
+      "waiting_cohorts": 0
+    },
+    {
+      "blocked_cohorts": 2,
+      "certified_stationary": false,
+      "clopper_pearson_upper_95": 0.95,
+      "cohort_alpha_spending": [
+        {
+          "alpha_frozen": 0.025,
+          "b_required_by_family_size": {
+            "0": 0
+          },
+          "cohort": 1,
+          "cohorts": 1,
+          "family_sizes": {
+            "0": 1
+          },
+          "insufficient_eligible": 1,
+          "j": 0,
+          "max_resamples": 51199,
+          "schedule": "0.05 / 2^(j+1)",
+          "unresolvable": 0,
+          "unresolved": 0
+        },
+        {
+          "alpha_frozen": 0.0125,
+          "b_required_by_family_size": {
+            "1": 9999
+          },
+          "cohort": 2,
+          "cohorts": 1,
+          "family_sizes": {
+            "1": 1
+          },
+          "insufficient_eligible": 0,
+          "j": 1,
+          "max_resamples": 51199,
+          "schedule": "0.05 / 2^(j+1)",
+          "unresolvable": 0,
+          "unresolved": 0
+        },
+        {
+          "alpha_frozen": 0.00625,
+          "b_required_by_family_size": {
+            "1": 9999
+          },
+          "cohort": 3,
+          "cohorts": 1,
+          "family_sizes": {
+            "1": 1
+          },
+          "insufficient_eligible": 0,
+          "j": 2,
+          "max_resamples": 51199,
+          "schedule": "0.05 / 2^(j+1)",
+          "unresolvable": 0,
+          "unresolved": 0
+        }
+      ],
+      "cohort_alpha_spending_records": 3,
+      "coverage": {
+        "blocked_endpoints": 2,
+        "blocked_reasons": {
+          "NONSTATIONARY": 2
+        },
+        "coverage_rate": null,
+        "covered_endpoints": 0,
+        "evaluated_endpoints": 0,
+        "report_present": true,
+        "status": "FAILED_OR_BLOCKED_NONSTATIONARY",
+        "waiting_endpoints": 0
+      },
+      "design": {
+        "coins": 5,
+        "generator": "FROZEN_REGIME_SHIFT_NEGATIVE_CONTROL",
+        "generator_id": 4,
+        "innovation": "NORMAL",
+        "regime_shift": true,
+        "stationary_design": false
+      },
+      "false_promotion_rate": 0.0,
+      "generator": "FROZEN_REGIME_SHIFT_NEGATIVE_CONTROL",
+      "insufficient_eligible_cohorts": 1,
+      "method_hashes": [
+        "9e6bc8040dfcf5fde512c127ef4150bd79dd67517f2686490e455e4853690679",
+        "d18811e6363d79378879be305ce8ddc4344f4b793744041cc868b96a53e30beb"
+      ],
+      "programs": 1,
+      "programs_with_promotion": 0,
+      "promotions": 0,
+      "resources": {
+        "cpu_seconds": 295.381925,
+        "elapsed_seconds": 295.8975157040113,
+        "max_program_elapsed_seconds": 295.8975157040113,
+        "max_program_peak_rss_bytes": 97202176,
+        "median_program_elapsed_seconds": 295.8975157040113
+      },
+      "selection": {
+        "candidates_max_per_cohort": 2,
+        "family_size_histogram": {
+          "0": 1,
+          "1": 2
+        },
+        "incomplete": false,
+        "programs_with_selection": 0,
+        "selected_total": 2,
+        "variants_screened": 16,
+        "zero_eligible_policy": "NO_CANDIDATE_NO_TEST"
+      },
+      "target_applicable": false,
+      "target_pass": null,
+      "threshold": 0.075,
+      "verdict_counts": {
+        "INSUFFICIENT_EVIDENCE": 2
+      },
+      "waiting_cohorts": 0
+    }
+  ],
+  "identity": {
+    "checkpoint": {
+      "computed": 4,
+      "path": null,
+      "records": 4,
+      "reused": 0
+    },
+    "records": 4,
+    "records_signature": "94ab1c3c54116a6ad559df0111dd1b098c6ca4b6818f30c8aab784e8e7f9c6ce",
+    "unique_identities": 4
+  },
+  "label": "PILOT_NOT_ACCEPTANCE",
+  "nonstationary_control": {
+    "blocked_or_failed_coverage": true,
+    "certified_stationary": false,
+    "generators": [
+      "FROZEN_REGIME_SHIFT_NEGATIVE_CONTROL"
+    ]
+  },
+  "power_curve": {
+    "effects": [
+      0.0,
+      0.0005,
+      0.001,
+      0.002
+    ],
+    "generators": [
+      "GAUSSIAN_AR1_RHO_0_3",
+      "STUDENT_T_DF5_AR1",
+      "FIVE_COIN_COMMON_FACTOR_LOADING_0_6",
+      "FROZEN_REGIME_SHIFT_NEGATIVE_CONTROL"
+    ],
+    "injected_variant": 0,
+    "programs_per_effect": 1,
+    "rows": [
+      {
+        "cohorts": 1,
+        "coverage_rate": null,
+        "detections": 0,
+        "effect_daily": 0.0,
+        "evaluated_injected_endpoints": 0,
+        "generator": "GAUSSIAN_AR1_RHO_0_3",
+        "mde_daily_median": null,
+        "power": 0.0,
+        "programs": 1
+      },
+      {
+        "cohorts": 1,
+        "coverage_rate": 1.0,
+        "detections": 0,
+        "effect_daily": 0.0005,
+        "evaluated_injected_endpoints": 1,
+        "generator": "GAUSSIAN_AR1_RHO_0_3",
+        "mde_daily_median": 0.0015443227611493132,
+        "power": 0.0,
+        "programs": 1
+      },
+      {
+        "cohorts": 1,
+        "coverage_rate": 1.0,
+        "detections": 0,
+        "effect_daily": 0.001,
+        "evaluated_injected_endpoints": 1,
+        "generator": "GAUSSIAN_AR1_RHO_0_3",
+        "mde_daily_median": 0.0015443227611493132,
+        "power": 0.0,
+        "programs": 1
+      },
+      {
+        "cohorts": 1,
+        "coverage_rate": 1.0,
+        "detections": 0,
+        "effect_daily": 0.002,
+        "evaluated_injected_endpoints": 1,
+        "generator": "GAUSSIAN_AR1_RHO_0_3",
+        "mde_daily_median": 0.0015443227611493132,
+        "power": 0.0,
+        "programs": 1
+      },
+      {
+        "cohorts": 1,
+        "coverage_rate": null,
+        "detections": 0,
+        "effect_daily": 0.0,
+        "evaluated_injected_endpoints": 0,
+        "generator": "STUDENT_T_DF5_AR1",
+        "mde_daily_median": null,
+        "power": 0.0,
+        "programs": 1
+      },
+      {
+        "cohorts": 1,
+        "coverage_rate": 1.0,
+        "detections": 0,
+        "effect_daily": 0.0005,
+        "evaluated_injected_endpoints": 1,
+        "generator": "STUDENT_T_DF5_AR1",
+        "mde_daily_median": 0.0013893971418800783,
+        "power": 0.0,
+        "programs": 1
+      },
+      {
+        "cohorts": 1,
+        "coverage_rate": 1.0,
+        "detections": 0,
+        "effect_daily": 0.001,
+        "evaluated_injected_endpoints": 1,
+        "generator": "STUDENT_T_DF5_AR1",
+        "mde_daily_median": 0.0013893971418800783,
+        "power": 0.0,
+        "programs": 1
+      },
+      {
+        "cohorts": 1,
+        "coverage_rate": 1.0,
+        "detections": 1,
+        "effect_daily": 0.002,
+        "evaluated_injected_endpoints": 1,
+        "generator": "STUDENT_T_DF5_AR1",
+        "mde_daily_median": 0.0013893971418800783,
+        "power": 1.0,
+        "programs": 1
+      },
+      {
+        "cohorts": 1,
+        "coverage_rate": null,
+        "detections": 0,
+        "effect_daily": 0.0,
+        "evaluated_injected_endpoints": 0,
+        "generator": "FIVE_COIN_COMMON_FACTOR_LOADING_0_6",
+        "mde_daily_median": null,
+        "power": 0.0,
+        "programs": 1
+      },
+      {
+        "cohorts": 1,
+        "coverage_rate": 1.0,
+        "detections": 0,
+        "effect_daily": 0.0005,
+        "evaluated_injected_endpoints": 1,
+        "generator": "FIVE_COIN_COMMON_FACTOR_LOADING_0_6",
+        "mde_daily_median": 0.001254239081885383,
+        "power": 0.0,
+        "programs": 1
+      },
+      {
+        "cohorts": 1,
+        "coverage_rate": 1.0,
+        "detections": 0,
+        "effect_daily": 0.001,
+        "evaluated_injected_endpoints": 1,
+        "generator": "FIVE_COIN_COMMON_FACTOR_LOADING_0_6",
+        "mde_daily_median": 0.001254239081885383,
+        "power": 0.0,
+        "programs": 1
+      },
+      {
+        "cohorts": 1,
+        "coverage_rate": 1.0,
+        "detections": 1,
+        "effect_daily": 0.002,
+        "evaluated_injected_endpoints": 1,
+        "generator": "FIVE_COIN_COMMON_FACTOR_LOADING_0_6",
+        "mde_daily_median": 0.001254239081885383,
+        "power": 1.0,
+        "programs": 1
+      },
+      {
+        "cohorts": 1,
+        "coverage_rate": null,
+        "detections": 0,
+        "effect_daily": 0.0,
+        "evaluated_injected_endpoints": 0,
+        "generator": "FROZEN_REGIME_SHIFT_NEGATIVE_CONTROL",
+        "mde_daily_median": null,
+        "power": 0.0,
+        "programs": 1
+      },
+      {
+        "cohorts": 1,
+        "coverage_rate": null,
+        "detections": 0,
+        "effect_daily": 0.0005,
+        "evaluated_injected_endpoints": 0,
+        "generator": "FROZEN_REGIME_SHIFT_NEGATIVE_CONTROL",
+        "mde_daily_median": null,
+        "power": 0.0,
+        "programs": 1
+      },
+      {
+        "cohorts": 1,
+        "coverage_rate": null,
+        "detections": 0,
+        "effect_daily": 0.001,
+        "evaluated_injected_endpoints": 0,
+        "generator": "FROZEN_REGIME_SHIFT_NEGATIVE_CONTROL",
+        "mde_daily_median": null,
+        "power": 0.0,
+        "programs": 1
+      },
+      {
+        "cohorts": 1,
+        "coverage_rate": null,
+        "detections": 0,
+        "effect_daily": 0.002,
+        "evaluated_injected_endpoints": 0,
+        "generator": "FROZEN_REGIME_SHIFT_NEGATIVE_CONTROL",
+        "mde_daily_median": null,
+        "power": 0.0,
+        "programs": 1
+      }
+    ]
+  },
+  "protocol": {
+    "alpha_schedule": "0.05 / 2^(j+1)",
+    "backend": {
+      "backend_hash": "d8f017c7f6627ca2517094eeab8491df16713074085614d7777bf56c0d5858a5",
+      "normal_backend": "SCIPY_NORM_PPF",
+      "protocol": "HMAC_SHA256_COUNTER_V1",
+      "python": "3.13.5",
+      "scipy_available": true,
+      "t5_backend": "SCIPY_T_PPF_DF5"
+    },
+    "decision_family": "ACTUAL_SELECTED_COHORT_NO_PADDING",
+    "decision_family_sizes_max": 2,
+    "decision_method": "SB_HAC_STUDENTIZED_SHARED_INDEX_IUT_HOLM_V1",
+    "required_resamples_by_family_size": {
+      "m1": {
+        "j0": 9999,
+        "j1": 9999,
+        "j2": 9999
+      },
+      "m2": {
+        "j0": 9999,
+        "j1": 9999,
+        "j2": 9999
+      }
+    },
+    "screening_family_variants": 16,
+    "seed_protocol": "HMAC_SHA256_COUNTER_V1",
+    "seed_protocol_hash": "30a0ef917ba2484c7966bf13f51cf2973e83235862b5eae408576a0b5d5e8571"
+  },
+  "resolution": {
+    "monte_carlo_resolved": true,
+    "program_selection_complete": true,
+    "programs_resolved_with_actual_family_size": true
+  },
+  "resources": {
+    "cpu_seconds": 0.18955900000000003,
+    "max_program_peak_rss_bytes": 99954688,
+    "peak_rss_bytes": 152485888,
+    "wall_seconds": 896.0406390840071,
+    "workers": 4
+  },
+  "status": "PILOT_NOT_ACCEPTANCE",
+  "targets": {
+    "coverage_report_present": {
+      "expected": true,
+      "operator": "EQ",
+      "pass": true,
+      "value": true
+    },
+    "null_fwer_95cp_upper_per_generator": {
+      "metric": "null_fwer_95cp_upper_per_generator",
+      "operator": "LE",
+      "pass": false,
+      "per_generator": {
+        "FIVE_COIN_COMMON_FACTOR_LOADING_0_6": 0.95,
+        "GAUSSIAN_AR1_RHO_0_3": 0.95,
+        "STUDENT_T_DF5_AR1": 0.95
+      },
+      "threshold": 0.075,
+      "value": 0.95
+    },
+    "power_curve_report_present": {
+      "expected": true,
+      "operator": "EQ",
+      "pass": true,
+      "value": true
+    }
+  },
+  "task": "TASK-26",
+  "workload": {
+    "batch_resamples_max": 64,
+    "benchmark": "B6",
+    "block_length_primary": 5,
+    "block_length_sensitivity": 10,
+    "candidates_max_per_cohort": 2,
+    "cohorts": 3,
+    "control_replications": 1000,
+    "family_variants": 16,
+    "fresh_days_per_cohort": 500,
+    "generator_law": {
+      "loading_common": 0.6,
+      "loading_idiosyncratic": 0.8,
+      "rho": 0.3,
+      "seed_labels": [
+        "GENERATOR_ID",
+        "PROGRAM_REPLICATION",
+        "VARIANT",
+        "COIN",
+        "TIME",
+        "CONTROL_REPLICATION"
+      ],
+      "standardized_t5": "t5_inverseCDF(U)*sqrt(3/5)"
+    },
+    "generator_sd": 0.01,
+    "hac_lag": 5,
+    "history_days_development": 1500,
+    "independent_null_programs": 1000,
+    "injected_daily_effects": [
+      0.0,
+      0.0005,
+      0.001,
+      0.002
+    ],
+    "law_interpretation": {
+      "candidate_control_replication_label": 0,
+      "control_replication_labels": "1..CONTROL_REPLICATIONS (never 0)",
+      "factor_labels": {
+        "COIN": 65535,
+        "VARIANT": 65535
+      },
+      "five_coin_generators": [
+        "FIVE_COIN_COMMON_FACTOR_LOADING_0_6",
+        "FROZEN_REGIME_SHIFT_NEGATIVE_CONTROL"
+      ],
+      "regime_shift": "common factor mean +1 first half, -1 second half of every evaluation window",
+      "single_coin_generators": [
+        "GAUSSIAN_AR1_RHO_0_3",
+        "STUDENT_T_DF5_AR1"
+      ]
+    },
+    "nonstationary_expected": "BLOCK_OR_REPORT_FAILED_COVERAGE_NOT_CERTIFY",
+    "null_generators": [
+      "GAUSSIAN_AR1_RHO_0_3",
+      "STUDENT_T_DF5_AR1",
+      "FIVE_COIN_COMMON_FACTOR_LOADING_0_6",
+      "FROZEN_REGIME_SHIFT_NEGATIVE_CONTROL"
+    ],
+    "random_protocol": "HMAC_SHA256_COUNTER_V1;inverseCDFnormal/t5inpinnedSciPy",
+    "selection": "FULL_FROZEN_WALKFORWARD_SELECTION_PLUS_IUT_PLUS_HOLM_PLUS_ALPHA_SPENDING",
+    "task": "TASK-26"
+  }
+}

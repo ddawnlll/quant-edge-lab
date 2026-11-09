@@ -1,0 +1,71 @@
+{
+  "issue": 14,
+  "task": "TASK-26",
+  "kind": "COORDINATOR_VERIFICATION_B6_REPAIR",
+  "integration_branch": "qel/followup6-20261109",
+  "base_sha": "f895fcc",
+  "patch_commit": "447980fb197a4dbccf0b434b354294f6086dcec8",
+  "integrated_commit": "bc51392",
+  "verification": {
+    "pytest": {"command": "QEL_DATA_ROOT=... PYTHONPATH=python QEL_ROOT=$PWD pytest -q tests", "result": "273 passed", "exit_code": 0},
+    "focused": {"command": "pytest -q tests/test_calibration.py", "result": "30 passed", "exit_code": 0},
+    "repairs_verified": {
+      "empty_eligible_no_fallback": true,
+      "zero_eligible_cohort_records_insufficient_eligible": true,
+      "actual_cohort_family_size_no_16_padding": true,
+      "invalid_member_retained_at_p1": true,
+      "joint_family_decision_path": true,
+      "alpha_spending_per_cohort": true,
+      "mc_resolution_waiting_compute_budget": true,
+      "generator_effect_coverage_guard": true,
+      "program_identity_and_checkpoint_retry": true,
+      "nonstationary_control_blocked": true
+    },
+    "pilot": {
+      "status": "PILOT_NOT_ACCEPTANCE",
+      "programs_per_generator": 1,
+      "generators": 4,
+      "cohorts": 3,
+      "development_days": 1500,
+      "fresh_days_per_cohort": 500,
+      "control_replications": 1000,
+      "family_sizes_observed": {"2": 9, "1": 2, "0": 1},
+      "coverage_report_present": true,
+      "power_curve_report_present": true,
+      "nonstationary_coverage": "FAILED_OR_BLOCKED_NONSTATIONARY",
+      "promotions": 0,
+      "cp95_upper": 0.95,
+      "cp95_target": 0.075,
+      "wall_seconds": 896.041,
+      "peak_rss_bytes": 152485888,
+      "workers": 4
+    },
+    "compute_estimate": {
+      "seconds_per_program": 198.294,
+      "full_core_hours": 1186.61,
+      "full_wall_hours_4_workers": 296.65,
+      "fits_existing_budget": false
+    },
+    "blockers": ["COMPUTE_BUDGET_INSUFFICIENT", "NULL_FWER_UPPER_ABOVE_TARGET"]
+  },
+  "acceptance_boundary": {
+    "status": "OPEN_COMPUTE_BUDGET",
+    "reason": "The B6 protocol, actual-cohort Holm, empty-eligible gate, coverage guard and identity/retry behavior are repaired and tested. The full 1000-program-per-generator run is estimated at 1,186.61 core-hours (296.65 wall-hours at 4 workers), which does not fit the existing budget. The pilot is not acceptance."
+  },
+  "impact": {
+    "issue_7": "remains EVIDENCE_PENDING_B6",
+    "issue_9": "remains EVIDENCE_PENDING_B6",
+    "issue_14": "remains OPEN_COMPUTE_BUDGET"
+  },
+  "claims_not_made": [
+    "full B6 acceptance",
+    "false-promotion certificate at 1000 programs",
+    "coverage or power certificate at the required resolution"
+  ],
+  "evidence_hashes": {
+    "evidence/labd/B6_PILOT_REPAIRED.json": "committed with patch",
+    "evidence/labd/B6_PILOT_REPAIRED.txt": "committed with patch"
+  },
+  "verdict": "PASS_REPAIR_PILOT_NOT_ACCEPTANCE",
+  "acceptance_note": "The audited B6 defects are fixed and verified. Full B6 remains compute-blocked; #7, #9 and #14 stay open until the 1000-program run is funded and completed."
+}
