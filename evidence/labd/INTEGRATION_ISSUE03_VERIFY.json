@@ -1,0 +1,69 @@
+{
+  "issue": 3,
+  "task": "TASK-10",
+  "kind": "COORDINATOR_INDEPENDENT_VERIFICATION",
+  "integration_branch": "qel/followup-20261109",
+  "base_sha": "48bfaafd4846f12c34f9401d17110651a3c4bc92",
+  "patch_commit": "4d03f15ea4885b2d6c3d70002b0fcf6c0eafccde",
+  "integrated_commit": "753424d",
+  "verification": {
+    "pytest": {"command": "PYTHONPATH=python QEL_ROOT=$PWD .venv/bin/python -m pytest -q tests", "result": "204 passed", "exit_code": 0},
+    "focused": {"command": "pytest -q tests/test_venue.py", "result": "40 passed", "exit_code": 0},
+    "fixtures": {
+      "command": "python -m qel.cli fixtures --fixture F08 --fixture F09 --fixture F10 --fixture F11 --fixture F12 --fixture F13 --fixture F16",
+      "scenarios": 10,
+      "passed": 10,
+      "failed": 0,
+      "exit_code": 0
+    },
+    "implemented": {
+      "bitemporal_venue_rules": true,
+      "fee_schedule": true,
+      "funding_rate_and_interval": true,
+      "margin_tiers_and_leverage": true,
+      "mark_source": true,
+      "trading_status": true,
+      "settlement_order": true,
+      "funding_epoch_attribution": true,
+      "duplicate_settlement_rejection": true,
+      "late_funding_receipt": true,
+      "shared_wallet_reservations": true,
+      "isolated_maintenance_margin": true,
+      "mark_triggered_forced_close": true,
+      "exact_liquidation_cost": true,
+      "settlement_boundary_ordering": true,
+      "postings_reconciliation": true
+    },
+    "fail_closed": {
+      "future_known_rule_rejected": true,
+      "unknown_rule_rejected": true,
+      "missing_or_future_mark_rejected": true,
+      "quote_not_used_as_liquidation_mark": true,
+      "duplicate_settlement_rejected": true,
+      "fee_sign_mutation_visible": true,
+      "funding_sign_mutation_visible": true,
+      "reservation_mutation_visible": true
+    }
+  },
+  "acceptance_boundary": {
+    "status": "PARTIAL/EVIDENCE_PENDING",
+    "missing": [
+      "venue-certified historical fee, funding and margin-tier rule files",
+      "native forced-close/liquidation account event stream at the pinned backend",
+      "ADL and venue-specific liquidation behavior"
+    ],
+    "note": "The Python venue/account profile is verified against the conformance fixtures and exact reconciliation. It does not claim venue-certified historical tiers or native liquidation."
+  },
+  "claims_not_made": [
+    "venue-certified historical tier or liquidation behavior",
+    "native liquidation parity",
+    "ADL support"
+  ],
+  "evidence_hashes": {
+    "evidence/labd/VENUE_FIXTURES.json": "committed with patch",
+    "evidence/labd/VENUE_LIMITATIONS.json": "committed with patch",
+    "evidence/labd/VENUE_TESTS.txt": "committed with patch"
+  },
+  "verdict": "PASS_FIXTURE_SCOPE_PARTIAL_ACCEPTANCE",
+  "acceptance_note": "Engineering is integrated and independently verified at the fixture/account scope. Full TASK-10 acceptance remains EVIDENCE_PENDING on venue-certified rules and a native liquidation path."
+}
