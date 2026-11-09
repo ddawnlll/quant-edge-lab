@@ -76,3 +76,11 @@ def test_null_generators_and_regime_block():
         assert np.isfinite(series).all()
     regime = null_generator("regime_shift", 80, 3)
     assert not stationarity_screen(regime)
+
+
+def test_f28_required_resamples_matches_minimum_b():
+    from qel.stats.core import required_resamples
+
+    required, ok = minimum_b(8, 8, 1_000_000)
+    assert required_resamples(8, 8) == required == 1_638_399
+    assert ok is False

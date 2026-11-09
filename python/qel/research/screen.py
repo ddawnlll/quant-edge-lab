@@ -8,7 +8,7 @@ from pathlib import Path
 
 from ..accounting.core import dec, fmt, reconstruct
 from ..contract.canonical import hash_jcs
-from ..stats.core import classify, walk_forward_splits
+from ..stats.core import classify, family_decision, walk_forward_splits
 
 
 def split_manifest(dates: list[str], train_days: int = 5, test_days: int = 3, purge: int = 1, embargo: int = 1) -> dict:
@@ -148,3 +148,32 @@ def run_variants(binary: str, events: str, base: dict, out_dir: str, count: int 
         "variant_count": len(results),
         "family_note": "development screen only; no scientific promotion",
     }
+
+
+def family_decision_report(
+    candidates: dict,
+    control: dict,
+    capital: str,
+    economic_floor: str,
+    control_floor: str,
+    **kwargs,
+) -> dict:
+    """Research family report backed by the frozen paired decision procedure.
+
+    The report records both endpoints, the shared bootstrap/alpha inputs and the
+    Holm-adjusted family table. A development-screen report never promotes: a
+    statistical PROMOTE is surfaced as ``statistical_verdict`` while the report
+    verdict stays INSUFFICIENT_EVIDENCE until a sealed cohort decides.
+    """
+    report = family_decision(candidates, control, capital, economic_floor, control_floor, **kwargs)
+    statistical = report["verdict"]
+    report["statistical_verdict"] = statistical
+    report["promotion_boundary"] = "RESEARCH_SCREEN_NEVER_PROMOTES"
+    if statistical == "PROMOTE":
+        report["verdict"] = "INSUFFICIENT_EVIDENCE"
+        report["boundary_reason"] = "RESEARCH_SCREEN_NEVER_PROMOTES"
+    report["family_note"] = (
+        "research family report: both endpoints, shared calendar and Holm inputs recorded; "
+        "only a sealed cohort can promote"
+    )
+    return report

@@ -1,0 +1,74 @@
+TASK-14 / issue #7 dependent statistics and frozen protocols
+base_sha: 835c5dfcf211ff56842a94764f49c40bbf2becf6
+branch: qel/issue-07-stats
+environment: PYTHONPATH=python QEL_ROOT=$PWD (repo .venv python)
+
+=============== COMMAND 1 ===============
+$ cd /home/quant/quant/qel-w07 && PYTHONPATH=python QEL_ROOT=$PWD .venv/bin/python -m pytest -q tests/test_stats.py tests/test_research.py tests/test_decision.py
+...........................                                              [100%]
+27 passed in 18.86s
+EXIT=0
+
+=============== COMMAND 2 ===============
+$ PYTHONPATH=python QEL_ROOT=$PWD .venv/bin/python -m pytest -q tests
+........................................................................ [ 66%]
+....................................                                     [100%]
+108 passed in 37.49s
+EXIT=0
+
+=============== CLI: stats-job (bounded audit fixture) ===============
+$ PYTHONPATH=python QEL_ROOT=$PWD .venv/bin/python -m qel.cli stats-job --returns <scratch>/decision_fixture.json
+{
+  "b": 256,
+  "ci_low": 0.0009743861172566394,
+  "data_boundary": "TASK-14 bounded audit fixture",
+  "mean_daily_return": 0.001,
+  "p_control_upper": 0.04520253738123321,
+  "p_iut": 0.04520253738123321,
+  "p_profit_upper": 0.04520253738123321,
+  "status": "PASS",
+  "verdict": "EDGE"
+}
+EXIT=0
+
+note: the legacy stats-job reports EDGE because it bootstraps candidate and control separately against zero;
+      the paired decision (DECISION_AUDIT.json) blocks the same candidate at endpoint B. python/qel/stats/job.py
+      is outside TASK-14 write scope; wiring it to paired_decision is a follow-up.
+
+=============== CLI: power (bounded, --programs 2) ===============
+$ PYTHONPATH=python QEL_ROOT=$PWD .venv/bin/python -m qel.cli power --programs 2
+{
+  "note": "local injected-effect power grid; not a full MDE/coverage certificate",
+  "rows": [
+    {
+      "effect_daily": 0.0,
+      "power": 0.0,
+      "programs": 2,
+      "promotions": 0
+    },
+    {
+      "effect_daily": 0.2,
+      "power": 0.0,
+      "programs": 2,
+      "promotions": 0
+    },
+    {
+      "effect_daily": 0.4,
+      "power": 0.0,
+      "programs": 2,
+      "promotions": 0
+    },
+    {
+      "effect_daily": 0.6,
+      "power": 0.0,
+      "programs": 2,
+      "promotions": 0
+    }
+  ],
+  "status": "PASS"
+}
+EXIT=0
+
+=============== RESOURCE: larger vector ===============
+paired_endpoints(n_days=1000, b=500, blocks=[5,10])
+elapsed_s=0.872 ru_maxrss_kb=100580 (98.2 MiB); bounded batches; no b x n matrix
