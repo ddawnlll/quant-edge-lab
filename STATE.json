@@ -3,7 +3,7 @@
   "spec_version": "1.1.0",
   "spec_package_sha256": "db18e7a6e94b8c9b233a48097040d1a3a6c655ea126d5e6805d67d4f6e91fd30",
   "baseline_sha256": "71628e4b4ceceac3447759cdabab131e16237aff9fd7569a09f1bc61e4d70d06",
-  "updated_utc": "2026-11-09T00:24:40Z",
+  "updated_utc": "2026-11-09T00:33:34Z",
   "host": {
     "os": "Debian GNU/Linux 13 (trixie)",
     "kernel": "6.12.115+deb13.1-amd64",
@@ -65,7 +65,10 @@
         "labd/queue tests",
         "evidence/labd/FRESH_ROOT.txt",
         "evidence/labd/WORKER_NEGATIVE.txt",
-        "evidence/labd/WORKER_PROTOCOL_NEGATIVE.txt"
+        "evidence/labd/WORKER_PROTOCOL_NEGATIVE.txt",
+        "evidence/labd/PATH_TESTS.txt",
+        "evidence/labd/WORKER_PATH_NEGATIVE.txt",
+        "evidence/labd/WORKER_DATASET_NEGATIVE.txt"
       ]
     },
     "TASK-05": {
@@ -73,7 +76,8 @@
       "evidence": [
         "evidence/labd/LIVE_CAPTURE.json",
         "evidence/labd/LIVE_CAPTURE_240.json",
-        "evidence/labd/ARCHIVE_DOWNLOAD.json"
+        "evidence/labd/ARCHIVE_DOWNLOAD.json",
+        "evidence/labd/PATH_TESTS.txt"
       ]
     },
     "TASK-06": {
@@ -82,7 +86,8 @@
         "evidence/labd/NORMALIZE.json",
         "evidence/labd/NORMALIZE_RECHECK.json",
         "tests/test_normalize.py",
-        "evidence/labd/PROVENANCE_VALIDATION.json"
+        "evidence/labd/PROVENANCE_VALIDATION.json",
+        "evidence/labd/WORKER_DATASET_NEGATIVE.txt"
       ],
       "blocked": "DuckDB illegal instruction"
     },
@@ -237,7 +242,7 @@
       "evidence": [
         "runtime/soak/soak.jsonl"
       ],
-      "elapsed_s": 6918
+      "elapsed_s": 7459
     },
     "TASK-28": {
       "status": "BLOCKED",

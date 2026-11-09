@@ -10,9 +10,9 @@ is a scientific promotion.
 | TASK-01 | Contract SDK and canonical identity | DONE | Python/Go/Rust JCS, decimal domains, schemas, run keys; `evidence/contract/` |
 | TASK-02 | Hand oracle and conformance harness | DONE | 44/44 scenarios, 10/10 mutation catches including mutated inputs; `evidence/conformance/` |
 | TASK-03 | Ledger and atomic artifact store | DONE | crash fault matrix, backup/restore, chain verification including payload content and event-ID recomputation, blob-corruption rejection and reseal repair; `labd/ledger`, `labd/artifacts` tests |
-| TASK-04 | Control protocol and durable queue | DONE | 4-byte framing, peer credentials, leases, idempotency; `labd/control`, `labd/queue` tests |
-| TASK-05 | Raw acquisition and source evidence | DONE | live 20s/240s captures and verified daily archive; `evidence/labd/LIVE_CAPTURE*.json` |
-| TASK-06 | Normalize and PIT datasets | PARTIAL | Arrow/Parquet normalization verifies the raw segment hash/size, rejects tampered raw input, and reports the capture's four loss/gap ranges; DuckDB 2.0.0 aborts with illegal instruction on this CPU (no AVX2), so the DuckDB path is blocked and PyArrow is used |
+| TASK-04 | Control protocol and durable queue | DONE | 4-byte framing, peer credentials, leases, idempotency, worker path containment and fail-closed traversal jobs; `labd/control`, `labd/queue`, `labd/worker` tests |
+| TASK-05 | Raw acquisition and source evidence | DONE | live 20s/240s captures and verified daily archive; collector rejects unsafe symbols/dates; `evidence/labd/LIVE_CAPTURE*.json` |
+| TASK-06 | Normalize and PIT datasets | PARTIAL | Arrow/Parquet normalization verifies the raw segment hash/size, rejects tampered raw input and unsafe dataset IDs, and reports the capture's four loss/gap ranges; DuckDB 2.0.0 aborts with illegal instruction on this CPU (no AVX2), so the DuckDB path is blocked and PyArrow is used |
 | TASK-07 | Typed operators and policy evaluator | DONE | 26 operators, DAG validation, EMA/STD reference, leakage negatives, direct arithmetic/window/stateful/boolean operator tests; `policy/rust` tests |
 | TASK-08 | Native feasibility | DONE_WITH_BLOCKED_CAPABILITY | taker/funding/streaming verified; local clone, remote tag, Cargo.lock, source, binary and spike report hashes re-verified; LocalView/L2 queue/isolation BLOCKED_BACKEND; `locks/`, `evidence/native/PIN_VERIFICATION.json` |
 | TASK-09 | Independent accounting implementation | DONE | exact tape reconstruction, residual 0 on native run; `tests/test_accounting.py` |

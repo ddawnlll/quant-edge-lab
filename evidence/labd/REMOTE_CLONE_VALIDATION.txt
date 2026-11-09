@@ -1,0 +1,22 @@
+clone=https://github.com/ddawnlll/quant-edge-lab
+dir=/home/quant/.jcode/scratch/qel-remote.KzNQMr/repo
+head=ed68517922aa94e9f558fa110404825593992b95
+tracked_files=417
+artifact_sources=2
+.........................................                                [100%]
+41 passed in 21.66s
+pytest_rc=0
+ok  	github.com/ddawnlll/quant-edge-lab/labd/artifacts	0.620s
+ok  	github.com/ddawnlll/quant-edge-lab/labd/cgroup	0.316s
+ok  	github.com/ddawnlll/quant-edge-lab/labd/collect	0.179s
+ok  	github.com/ddawnlll/quant-edge-lab/labd/control	0.545s
+ok  	github.com/ddawnlll/quant-edge-lab/labd/ledger	0.632s
+ok  	github.com/ddawnlll/quant-edge-lab/labd/memory	0.225s
+ok  	github.com/ddawnlll/quant-edge-lab/labd/queue	0.466s
+ok  	github.com/ddawnlll/quant-edge-lab/labd/worker	0.050s
+go_rc=0
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+rust_rc=0

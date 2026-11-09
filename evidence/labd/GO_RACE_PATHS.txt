@@ -1,0 +1,2 @@
+ok  	github.com/ddawnlll/quant-edge-lab/labd/worker	1.181s
+ok  	github.com/ddawnlll/quant-edge-lab/labd/collect	2.454s

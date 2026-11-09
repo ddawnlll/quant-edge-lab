@@ -1,0 +1,2 @@
+{"generation":0,"ledger_event_hash":"9ee18d6a2411b169a74822e5695da6ba7233534757e72bffad484eb53de80cf4","request_id":"REQ-JOB-DSTRAV-1794184302","resource_id":"JOB-DSTRAV-1794184302","reused":false,"state":"QUEUED"}
+{"generation":1,"job_id":"JOB-DSTRAV-1794184302","latest_attempt_id":"ATT-1","outputs":[],"reason_code":"PROTOCOL_VIOLATION","state":"FAILED","usage":null}

@@ -1,6 +1,6 @@
 # Morning Report
 
-Status time: 2026-11-09T00:24Z. This is a development and verification report.
+Status time: 2026-11-09T00:33Z. This is a development and verification report.
 It is not a profitability claim and does not certify a trading edge.
 
 ## Implemented and verified
@@ -159,6 +159,23 @@ Python tests, all Go packages, and 7 Rust tests.
 waited job ends `FAILED`, `RESOURCE_LIMIT`, or `ABORTED`; the invalid-kind and
 failed-parameter paths are recorded in `WORKER_NEGATIVE.txt` and
 `WORKER_PROTOCOL_NEGATIVE.txt`.
+
+## Validation pass 6
+
+`evidence/labd/VALIDATION_PASS_6.txt` validates the actual GitHub remote, not
+only a local clone. A fresh clone of
+<https://github.com/ddawnlll/quant-edge-lab> at `ed68517` contains 417 tracked
+files, builds `qeld`, starts it against an empty root, and passes 41 Python
+tests, all Go packages, and 7 Rust tests.
+
+A path-containment review found that authenticated job parameters could point
+the worker at paths outside the repository, and collector symbol/date values
+could escape the raw-data directory. The worker now rejects empty, absolute
+outside-root, and `..` paths; the collector requires a safe symbol and a strict
+calendar date; normalization rejects unsafe dataset IDs before creating a
+directory. Traversal jobs fail with `UNSUPPORTED_CAPABILITY` or
+`PROTOCOL_VIOLATION`, while legitimate conformance and prepare jobs still
+seal. The Go race detector passes for the worker and collector.
 
 ## Measured resources
 
