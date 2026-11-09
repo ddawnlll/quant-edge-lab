@@ -3,7 +3,7 @@
   "spec_version": "1.1.0",
   "spec_package_sha256": "db18e7a6e94b8c9b233a48097040d1a3a6c655ea126d5e6805d67d4f6e91fd30",
   "baseline_sha256": "71628e4b4ceceac3447759cdabab131e16237aff9fd7569a09f1bc61e4d70d06",
-  "updated_utc": "2026-11-09T12:53:50Z",
+  "updated_utc": "2026-11-09T13:05:20Z",
   "host": {
     "os": "Debian GNU/Linux 13 (trixie)",
     "kernel": "6.12.115+deb13.1-amd64",
@@ -153,14 +153,16 @@
       "status": "PARTIAL",
       "evidence": [
         "tests/test_controls.py",
+        "tests/test_controls_multiday.py",
         "evidence/labd/CONTROLS_HMAC_240S.json",
+        "evidence/labd/CONTROLS_HMAC_MULTIDAY.json",
+        "evidence/labd/CONTROL_HMAC_MULTIDAY.txt",
         "evidence/labd/CONTROLS_HMAC_SEED_VECTORS.json",
         "evidence/labd/CONTROL_HMAC_BATCH_SEQ.txt",
-        "evidence/labd/CONTROL_HMAC_SUMMARY.txt",
         "evidence/labd/RESCUE_HMAC.json",
-        "evidence/labd/INTEGRATION_ISSUE06_VERIFY.json"
+        "evidence/labd/INTEGRATION_ISSUE06_MULTIDAY_VERIFY.json"
       ],
-      "blocked": "B1 multi-day: only one archive day available"
+      "blocked": "B1 warm-p90 1M-row/8-variant driver absent; T-PROTOCOL needs 12-month/3-month history (8 days available)"
     },
     "TASK-14": {
       "status": "DONE",
