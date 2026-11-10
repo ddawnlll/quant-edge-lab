@@ -3,3 +3,7 @@
 - B6 1187 core-h = human gate, never auto-launch.
 - M2 INSUFFICIENT_EVIDENCE stays valid outcome; never invent EDGE.
 - 20 USDT BTC infeasible (58.94 min) — show honestly, separate research-capital scenario.
+- 2026-11-10 night: Binance daily fundingRate zips do not exist (404); monthly fundingRate zips do. Fold tapes use monthly funding with UTC-day filter, no silent gap.
+- 2026-11-10 night: stream tape builder must be byte-identical to canonical archive.build (tie order quotes/trades > marks > funding); proven on 2024-09-01 and in pytest.
+- 2026-11-10 night: native/runner parse fast path REVERTED. Equivalent on 4.5M events but 0% speedup; B3 is nautilus-dispatch bound. No dead weight in the certified path.
+- 2026-11-10 night: A3 full-fold cannot persist 546 tapes on this VM (~90GB > 68GB free). Design is per-day streaming; raw zips + deterministic builder keep tapes reproducible. ControlPlan fold-scale memory is the second blocker.
