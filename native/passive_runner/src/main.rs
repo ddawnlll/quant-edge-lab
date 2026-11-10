@@ -2353,6 +2353,7 @@ fn probe_f05_adapter() -> Result<Value> {
             "adapter_managed": "cancel+new replace when priority must reset; in-place resize otherwise",
             "native_gap": "no public priority_reset_count and no public queue-ahead readback; OrderMatchingEngine::process_modify only re-snapshots the queue on a price change",
         },
+        "native_limitation": "no public priority_reset_count and no public queue-ahead readback; OrderMatchingEngine::process_modify only re-snapshots the queue on a price change, so a same-price native replace preserves priority",
         "verdict": if pass { "PASS" } else { "FAIL" },
         "verdict_reason": if pass {
             "adapter priority_reset_count=1 with cancel+new on the increase; quantities match the oracle; native same-price replace preserves priority and remains recorded"

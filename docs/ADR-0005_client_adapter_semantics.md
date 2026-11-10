@@ -233,10 +233,11 @@ Not used: `OrderMatchingEngine::snapshot_queue_position`,
   PASS is not a Nautilus PASS.
 - Adapter state is deliberately small and in-process; a production OMS would
   need durable state, replay and reconciliation, which are out of scope here.
-- `evidence/labd/PASSIVE_QUEUE_COMPLETION_2026-11-10.json` is not edited. Two
-  artifact-hash assertions in `tests/test_passive_queue.py`
-  (`test_evidence_records_binary_and_source_hashes` and
-  `test_binary_hash_matches_built_artifact_if_present`) pin that audited source
-  and binary. Both changed with this slice, so those two assertions are stale
-  by construction and need re-pinning in a follow-up; every behavioral
-  assertion in that module still passes with this build.
+- `evidence/labd/PASSIVE_QUEUE_COMPLETION_2026-11-10.json` pinned the audited
+  pre-adapter source and binary, and the two artifact-hash tests in
+  `tests/test_passive_queue.py` compare those hashes against the current tree.
+  The audited file is preserved byte-for-byte as
+  `evidence/labd/PASSIVE_QUEUE_COMPLETION_PRE_ADAPTER_2026-11-10.json`, and the
+  current completion evidence is regenerated against this build with the
+  unchanged native probes. The supersession, both hashes and the reason are
+  recorded in both evidence files; the historical record is not rewritten.

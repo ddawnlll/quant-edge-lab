@@ -22,7 +22,8 @@ from qel.conformance import Harness
 
 ROOT = Path(__file__).resolve().parents[1]
 EVIDENCE = ROOT / "evidence" / "labd" / "PASSIVE_QUEUE_ADAPTER_2026-11-10.json"
-NATIVE_EVIDENCE = ROOT / "evidence" / "labd" / "PASSIVE_QUEUE_COMPLETION_2026-11-10.json"
+NATIVE_EVIDENCE = ROOT / "evidence" / "labd" / "PASSIVE_QUEUE_COMPLETION_PRE_ADAPTER_2026-11-10.json"
+COMPLETION_EVIDENCE = ROOT / "evidence" / "labd" / "PASSIVE_QUEUE_COMPLETION_2026-11-10.json"
 BINARY = Path("/home/quant/quant/.build-cache/qel-native/release/qel-passive-runner")
 PROFILE = "ADAPTER_OVER_NATIVE"
 NAUTILUS_COMMIT = "27a8e54e7ac3c57d6cbf8891f0283dfbaee97317"
@@ -145,11 +146,23 @@ def test_every_adapter_probe_names_the_native_limitation(probes: dict) -> None:
 
 def test_artifact_supersession_is_recorded(evidence: dict) -> None:
     supersession = evidence["artifact_supersession"]
-    assert supersession["prior_artifact_untouched"] is True
-    assert supersession["prior_artifact_path"].endswith("PASSIVE_QUEUE_COMPLETION_2026-11-10.json")
-    stale = " ".join(supersession["stale_checks"])
-    assert "test_evidence_records_binary_and_source_hashes" in stale
-    assert "re-pinned" in stale
+    pre = supersession["pre_adapter_artifact"]
+    regenerated = supersession["regenerated_artifact"]
+    assert pre["path"] == "evidence/labd/PASSIVE_QUEUE_COMPLETION_PRE_ADAPTER_2026-11-10.json"
+    assert sha256(ROOT / pre["path"]) == pre["sha256"]
+    assert regenerated["path"] == "evidence/labd/PASSIVE_QUEUE_COMPLETION_2026-11-10.json"
+    assert sha256(ROOT / regenerated["path"]) == regenerated["sha256"]
+    assert regenerated["superseded_sha256"] == pre["sha256"]
+    assert "regenerated" in supersession["reason"]
+    assert supersession["date"] == "2026-11-10"
+    assert "none" in supersession["behavioral_change"]
+
+    # The regenerated completion evidence carries the new build and points at
+    # the preserved artifact, so the historical record is honest.
+    completion = json.loads(COMPLETION_EVIDENCE.read_text())
+    assert completion["artifact_supersession"]["pre_adapter_artifact"]["sha256"] == pre["sha256"]
+    assert completion["build"]["source"]["sha256"] == evidence["build"]["sources"][0]["sha256"]
+    assert completion["build"]["binary"]["sha256"] == evidence["build"]["binary"]["sha256"]
 
 
 # ---------------------------------------------------------------------------
@@ -414,7 +427,7 @@ def test_existing_native_partial_and_blocked_verdicts_are_unchanged(payload: dic
 
 def test_existing_native_probes_are_byte_identical(probes: dict) -> None:
     if not NATIVE_EVIDENCE.exists():
-        pytest.skip("prior native evidence not present")
+        pytest.skip("pre-adapter native evidence not present")
     prior = json.loads(NATIVE_EVIDENCE.read_text())["probe_payload"]["probes"]
     for name, old in prior.items():
         assert without_elapsed(old) == without_elapsed(probes[name]), name
