@@ -1,0 +1,83 @@
+PASSIVE QUEUE EVIDENCE (TASK-17 / issue #10)
+========================================================
+date:        2026-11-10
+base sha:    34450161570f8092c1945e51c2d569ff916a16df
+branch:      qel/issue-10-passive
+pinned:      nautilus_trader v1.231.0 27a8e54e7ac3c57d6cbf8891f0283dfbaee97317
+crate:       native/passive_runner (new; taker runner untouched)
+binary:      /home/quant/quant/.build-cache/qel-native/release/qel-passive-runner
+binary sha:  6f32c2833e617123062640384f5b728112411b7a81822535d76a135589db4813
+source sha:  f9bcde4cc626f9dfa81ec9604a77836f98a5f9eec14650e5947f6dd7dfbee120
+build exit:  0
+run exit:    0
+wall:        127 ms
+peak rss:    17016 KiB (16.62 MiB)
+
+F02 (ahead 100, trades 80 then 30)
+--------------------------------------------------------
+filled after trade 1: 0.0
+fill on trade 2:      10.0
+leaves:               10.0
+position:             10.0
+ahead after:          0.0 (inferred)
+depth double-consumed:False
+
+PER FIXTURE
+--------------------------------------------------------
+F02                          PASS             passive_maker_queue
+F02+CANCEL_REMAINDER         PASS             partial_fill_then_cancel
+F02+depth-once               PASS             l2_depth_once
+F02+SHARED_LEVEL             PASS             shared_level_two_passive_orders
+F03                          PASS             marketable_ioc_shared_level
+F04                          BLOCKED_BACKEND  cancel_race
+F05                          PARTIAL          replace_priority
+F06                          PASS             native_oco
+F07                          BLOCKED_BACKEND  epoch_safety
+F29                          BLOCKED_BACKEND  book_sequence
+F31                          BLOCKED_BACKEND  duplicate_fill
+F33_FOK                      PASS             fok
+F33_STOP_LIMIT_GAP           PASS             stop_limit_gap
+F34                          PASS             partial_entry_protection
+F06_CLIENT_UNSAFE_OBSERVABLE BLOCKED_BACKEND  client_managed_oco_overfill
+
+ACCEPTANCE BOUNDARY
+--------------------------------------------------------
+CAP-L2-QUEUE remains PARTIAL. Only the F02 queue-ahead slice is claimed: passive maker limit orders at the touch with queue_position(true), liquidity_consumption(true), trade_execution(true); trade-driven queue depletion reproducing ahead 100 with trades 80 then 30 -> exactly 10 filled and 10 leaves; depth-once on L2; partial maker fill with deterministic cancel of the remainder; a single shared level budget across two passive orders and across two marketable IOC orders in the tested setups; native OCO with reduce-only; FOK; stop-limit gap.
+
+not claimed:
+  - queue state readback (ahead is inferred, not observed)
+  - unknown-aggressor handling
+  - resync after book sequence gaps
+  - full L2 depth semantics beyond the tested level
+  - delayed/duplicate fill event injection (F31)
+  - position epochs / stale-stop rejection (F07)
+  - replace priority reset counter and ahead readback (F05)
+  - client-managed OCO overfill (F06 CLIENT_UNSAFE_OBSERVABLE)
+  - mark-based liquidation, LocalView, CAP-ISOLATED
+
+CHECKS (exact commands and exit codes)
+--------------------------------------
+build:
+  cd native/passive_runner && CARGO_TARGET_DIR=/home/quant/quant/.build-cache/qel-native cargo build --release -j 4
+  exit 0 (no warnings)
+run:
+  /home/quant/quant/.build-cache/qel-native/release/qel-passive-runner <out.json>
+  exit 0
+tests:
+  PYTHONPATH=python QEL_ROOT=$PWD .venv/bin/python -m pytest -q tests/test_passive_queue.py
+  exit 0, 23 passed
+conformance:
+  PYTHONPATH=python QEL_ROOT=$PWD .venv/bin/python -m pytest -q tests/test_conformance.py
+  exit 0, 4 passed
+claimed fixture harness:
+  F02 BASE PASS; F03 BASE PASS; F05 BASE PASS;
+  F06 NATIVE_ATOMIC PASS, CLIENT_UNSAFE_OBSERVABLE PASS, CLIENT_REDUCE_ONLY PASS;
+  F33 FOK PASS, STOP_LIMIT_GAP PASS; F34 BASE PASS
+
+SCOPE NOTE
+----------
+The lock file still reads "shared-level budget across orders ... unproven".
+This run observes a single shared level budget in two tested setups
+(two passive orders at one price; two marketable IOC orders against one
+10-lot level), but locks were not edited. CAP-L2-QUEUE stays PARTIAL and the
+claim is limited to this evidence file.
