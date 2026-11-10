@@ -19,25 +19,25 @@
   "binding": {
     "binary": {
       "path": "/home/quant/quant/.build-cache/qel-native/release/qel-local-view",
-      "sha256": "af79abd879da22082230a42fd84cd86c13b9b2e8d7fc3e0409b1df1f86075801"
+      "sha256": "ad897f9950fcada3ca03e4971c30888f793e4eff397d3667d851a17e160787ee"
     },
     "cargo_toml": {
-      "path": "/home/quant/quant/qel-lv/native/local_view/Cargo.toml",
+      "path": "/home/quant/quant/quant-edge-lab/native/local_view/Cargo.toml",
       "sha256": "e5c52908a6ff5d84355f745cebfd32ef8563dcade65468fabea60aa969557788"
     },
     "corpus": {
-      "path": "/home/quant/quant/quant-edge-lab/data/native/DS-ARCHIVE-BTCUSDT-2026-11-07/events.jsonl",
+      "path": "data/native/DS-ARCHIVE-BTCUSDT-2026-11-07/events.jsonl",
       "sha256": "c7a4c79484a611820c2e314f48397de299294b009d24766ad5c2d03cc5ee22ed"
     },
-    "git_head": "ce91981055125328dae4b59add8e5432892c4f20",
+    "git_head": "166f8c1c06508e29b77477092b2c6a7c6586dfd4",
     "nautilus": {
       "commit": "27a8e54e7ac3c57d6cbf8891f0283dfbaee97317",
       "repository": "https://github.com/nautechsystems/nautilus_trader",
       "tag": "v1.231.0"
     },
     "source": {
-      "path": "/home/quant/quant/qel-lv/native/local_view/src/main.rs",
-      "sha256": "b21c7f19894253a07ce095e014511f61c6adb38511e978fab6343d2acd9e5cc2"
+      "path": "/home/quant/quant/quant-edge-lab/native/local_view/src/main.rs",
+      "sha256": "678260ee46911bbdf073cbaf6809a51f60cf7ade640e0cae688352ee049a7f73"
     },
     "strategy": {
       "path": "policy/examples/taker_1m.json",
@@ -64,25 +64,25 @@
       "binding": {
         "binary": {
           "path": "/home/quant/quant/.build-cache/qel-native/release/qel-local-view",
-          "sha256": "af79abd879da22082230a42fd84cd86c13b9b2e8d7fc3e0409b1df1f86075801"
+          "sha256": "ad897f9950fcada3ca03e4971c30888f793e4eff397d3667d851a17e160787ee"
         },
         "cargo_toml": {
-          "path": "/home/quant/quant/qel-lv/native/local_view/Cargo.toml",
+          "path": "/home/quant/quant/quant-edge-lab/native/local_view/Cargo.toml",
           "sha256": "e5c52908a6ff5d84355f745cebfd32ef8563dcade65468fabea60aa969557788"
         },
         "corpus": {
-          "path": "/home/quant/quant/quant-edge-lab/data/native/DS-ARCHIVE-BTCUSDT-2026-11-07/events.jsonl",
+          "path": "data/native/DS-ARCHIVE-BTCUSDT-2026-11-07/events.jsonl",
           "sha256": "c7a4c79484a611820c2e314f48397de299294b009d24766ad5c2d03cc5ee22ed"
         },
-        "git_head": "ce91981055125328dae4b59add8e5432892c4f20",
+        "git_head": "166f8c1c06508e29b77477092b2c6a7c6586dfd4",
         "nautilus": {
           "commit": "27a8e54e7ac3c57d6cbf8891f0283dfbaee97317",
           "repository": "https://github.com/nautechsystems/nautilus_trader",
           "tag": "v1.231.0"
         },
         "source": {
-          "path": "/home/quant/quant/qel-lv/native/local_view/src/main.rs",
-          "sha256": "b21c7f19894253a07ce095e014511f61c6adb38511e978fab6343d2acd9e5cc2"
+          "path": "/home/quant/quant/quant-edge-lab/native/local_view/src/main.rs",
+          "sha256": "678260ee46911bbdf073cbaf6809a51f60cf7ade640e0cae688352ee049a7f73"
         },
         "strategy": {
           "path": "policy/examples/taker_1m.json",
@@ -90,7 +90,7 @@
         }
       },
       "command": {
-        "events": "/home/quant/quant/quant-edge-lab/data/native/DS-ARCHIVE-BTCUSDT-2026-11-07/events.jsonl",
+        "events": "data/native/DS-ARCHIVE-BTCUSDT-2026-11-07/events.jsonl",
         "feed_delay_ns": "0",
         "notional": "100",
         "response_delay_ns": "0",
@@ -210,9 +210,9 @@
         "pnl_total": null
       },
       "resource": {
-        "elapsed_ms": 7021,
-        "peak_rss_kb": 90292,
-        "events_path": "/home/quant/quant/quant-edge-lab/data/native/DS-ARCHIVE-BTCUSDT-2026-11-07/events.jsonl",
+        "elapsed_ms": 9924,
+        "peak_rss_kb": 94184,
+        "events_path": "data/native/DS-ARCHIVE-BTCUSDT-2026-11-07/events.jsonl",
         "ts_last_ns": "1794096000000000000"
       },
       "funding_deliveries": [
@@ -248,8 +248,8 @@
         }
       ],
       "artifact": "evidence/labd/LOCAL_VIEW_CONTROL_ZERO.json",
-      "artifact_sha256": "4c0c17f1716be429995133fd91ae94a5ee59c97fa679c7e1e839a6932fddc481",
-      "artifact_bytes": 943590,
+      "artifact_sha256": "e92d5738f8d7e965125740990fdf5f77a7e8341b7f90c52473370491bedd72f5",
+      "artifact_bytes": 943507,
       "independent_accounting": {
         "reconstructed_cash": "991.11310345",
         "reconstructed_equity": "991.10431345",
@@ -283,25 +283,25 @@
       "binding": {
         "binary": {
           "path": "/home/quant/quant/.build-cache/qel-native/release/qel-local-view",
-          "sha256": "af79abd879da22082230a42fd84cd86c13b9b2e8d7fc3e0409b1df1f86075801"
+          "sha256": "ad897f9950fcada3ca03e4971c30888f793e4eff397d3667d851a17e160787ee"
         },
         "cargo_toml": {
-          "path": "/home/quant/quant/qel-lv/native/local_view/Cargo.toml",
+          "path": "/home/quant/quant/quant-edge-lab/native/local_view/Cargo.toml",
           "sha256": "e5c52908a6ff5d84355f745cebfd32ef8563dcade65468fabea60aa969557788"
         },
         "corpus": {
-          "path": "/home/quant/quant/quant-edge-lab/data/native/DS-ARCHIVE-BTCUSDT-2026-11-07/events.jsonl",
+          "path": "data/native/DS-ARCHIVE-BTCUSDT-2026-11-07/events.jsonl",
           "sha256": "c7a4c79484a611820c2e314f48397de299294b009d24766ad5c2d03cc5ee22ed"
         },
-        "git_head": "ce91981055125328dae4b59add8e5432892c4f20",
+        "git_head": "166f8c1c06508e29b77477092b2c6a7c6586dfd4",
         "nautilus": {
           "commit": "27a8e54e7ac3c57d6cbf8891f0283dfbaee97317",
           "repository": "https://github.com/nautechsystems/nautilus_trader",
           "tag": "v1.231.0"
         },
         "source": {
-          "path": "/home/quant/quant/qel-lv/native/local_view/src/main.rs",
-          "sha256": "b21c7f19894253a07ce095e014511f61c6adb38511e978fab6343d2acd9e5cc2"
+          "path": "/home/quant/quant/quant-edge-lab/native/local_view/src/main.rs",
+          "sha256": "678260ee46911bbdf073cbaf6809a51f60cf7ade640e0cae688352ee049a7f73"
         },
         "strategy": {
           "path": "policy/examples/taker_1m.json",
@@ -309,7 +309,7 @@
         }
       },
       "command": {
-        "events": "/home/quant/quant/quant-edge-lab/data/native/DS-ARCHIVE-BTCUSDT-2026-11-07/events.jsonl",
+        "events": "data/native/DS-ARCHIVE-BTCUSDT-2026-11-07/events.jsonl",
         "feed_delay_ns": "50000000",
         "notional": "100",
         "response_delay_ns": "25000000",
@@ -429,9 +429,9 @@
         "pnl_total": null
       },
       "resource": {
-        "elapsed_ms": 9246,
-        "peak_rss_kb": 91736,
-        "events_path": "/home/quant/quant/quant-edge-lab/data/native/DS-ARCHIVE-BTCUSDT-2026-11-07/events.jsonl",
+        "elapsed_ms": 8346,
+        "peak_rss_kb": 97208,
+        "events_path": "data/native/DS-ARCHIVE-BTCUSDT-2026-11-07/events.jsonl",
         "ts_last_ns": "1794096000000000000"
       },
       "funding_deliveries": [
@@ -467,8 +467,8 @@
         }
       ],
       "artifact": "evidence/labd/LOCAL_VIEW_F22_RUN.json",
-      "artifact_sha256": "599f1a48b7f15ff44e176027b07a26a8ee373d030a8185eaadfd2905331b22e4",
-      "artifact_bytes": 938680,
+      "artifact_sha256": "63b3f9cc48545a805bc62017c40e5b05139d76d784641d96cf5bcbec7c4a4957",
+      "artifact_bytes": 938597,
       "independent_accounting": {
         "reconstructed_cash": "991.22981277",
         "reconstructed_equity": "991.22103277",
@@ -502,25 +502,25 @@
       "binding": {
         "binary": {
           "path": "/home/quant/quant/.build-cache/qel-native/release/qel-local-view",
-          "sha256": "af79abd879da22082230a42fd84cd86c13b9b2e8d7fc3e0409b1df1f86075801"
+          "sha256": "ad897f9950fcada3ca03e4971c30888f793e4eff397d3667d851a17e160787ee"
         },
         "cargo_toml": {
-          "path": "/home/quant/quant/qel-lv/native/local_view/Cargo.toml",
+          "path": "/home/quant/quant/quant-edge-lab/native/local_view/Cargo.toml",
           "sha256": "e5c52908a6ff5d84355f745cebfd32ef8563dcade65468fabea60aa969557788"
         },
         "corpus": {
-          "path": "/home/quant/quant/quant-edge-lab/data/native/DS-ARCHIVE-BTCUSDT-2026-11-07/events.jsonl",
+          "path": "data/native/DS-ARCHIVE-BTCUSDT-2026-11-07/events.jsonl",
           "sha256": "c7a4c79484a611820c2e314f48397de299294b009d24766ad5c2d03cc5ee22ed"
         },
-        "git_head": "ce91981055125328dae4b59add8e5432892c4f20",
+        "git_head": "166f8c1c06508e29b77477092b2c6a7c6586dfd4",
         "nautilus": {
           "commit": "27a8e54e7ac3c57d6cbf8891f0283dfbaee97317",
           "repository": "https://github.com/nautechsystems/nautilus_trader",
           "tag": "v1.231.0"
         },
         "source": {
-          "path": "/home/quant/quant/qel-lv/native/local_view/src/main.rs",
-          "sha256": "b21c7f19894253a07ce095e014511f61c6adb38511e978fab6343d2acd9e5cc2"
+          "path": "/home/quant/quant/quant-edge-lab/native/local_view/src/main.rs",
+          "sha256": "678260ee46911bbdf073cbaf6809a51f60cf7ade640e0cae688352ee049a7f73"
         },
         "strategy": {
           "path": "policy/examples/taker_1m.json",
@@ -528,7 +528,7 @@
         }
       },
       "command": {
-        "events": "/home/quant/quant/quant-edge-lab/data/native/DS-ARCHIVE-BTCUSDT-2026-11-07/events.jsonl",
+        "events": "data/native/DS-ARCHIVE-BTCUSDT-2026-11-07/events.jsonl",
         "feed_delay_ns": "50000000",
         "notional": "100",
         "response_delay_ns": "30000000000",
@@ -648,9 +648,9 @@
         "pnl_total": null
       },
       "resource": {
-        "elapsed_ms": 8032,
-        "peak_rss_kb": 93200,
-        "events_path": "/home/quant/quant/quant-edge-lab/data/native/DS-ARCHIVE-BTCUSDT-2026-11-07/events.jsonl",
+        "elapsed_ms": 10909,
+        "peak_rss_kb": 96008,
+        "events_path": "data/native/DS-ARCHIVE-BTCUSDT-2026-11-07/events.jsonl",
         "ts_last_ns": "1794096000000000000"
       },
       "funding_deliveries": [
@@ -686,8 +686,8 @@
         }
       ],
       "artifact": "evidence/labd/LOCAL_VIEW_F22_LARGE_RESPONSE_RUN.json",
-      "artifact_sha256": "2619007e0fb1872153de5fc8c6bd9fe0350c91c1b3ade4dbf80afd17c635af53",
-      "artifact_bytes": 938689,
+      "artifact_sha256": "6012c72729e52d3a815fc02ddb3e67960ee487ddde989eabe77f6c92cc71b182",
+      "artifact_bytes": 938607,
       "independent_accounting": {
         "reconstructed_cash": "991.22981277",
         "reconstructed_equity": "991.22103277",
@@ -721,25 +721,25 @@
       "binding": {
         "binary": {
           "path": "/home/quant/quant/.build-cache/qel-native/release/qel-local-view",
-          "sha256": "af79abd879da22082230a42fd84cd86c13b9b2e8d7fc3e0409b1df1f86075801"
+          "sha256": "ad897f9950fcada3ca03e4971c30888f793e4eff397d3667d851a17e160787ee"
         },
         "cargo_toml": {
-          "path": "/home/quant/quant/qel-lv/native/local_view/Cargo.toml",
+          "path": "/home/quant/quant/quant-edge-lab/native/local_view/Cargo.toml",
           "sha256": "e5c52908a6ff5d84355f745cebfd32ef8563dcade65468fabea60aa969557788"
         },
         "corpus": {
-          "path": "/home/quant/quant/quant-edge-lab/data/native/DS-ARCHIVE-BTCUSDT-2026-11-07/events.jsonl",
+          "path": "data/native/DS-ARCHIVE-BTCUSDT-2026-11-07/events.jsonl",
           "sha256": "c7a4c79484a611820c2e314f48397de299294b009d24766ad5c2d03cc5ee22ed"
         },
-        "git_head": "ce91981055125328dae4b59add8e5432892c4f20",
+        "git_head": "166f8c1c06508e29b77477092b2c6a7c6586dfd4",
         "nautilus": {
           "commit": "27a8e54e7ac3c57d6cbf8891f0283dfbaee97317",
           "repository": "https://github.com/nautechsystems/nautilus_trader",
           "tag": "v1.231.0"
         },
         "source": {
-          "path": "/home/quant/quant/qel-lv/native/local_view/src/main.rs",
-          "sha256": "b21c7f19894253a07ce095e014511f61c6adb38511e978fab6343d2acd9e5cc2"
+          "path": "/home/quant/quant/quant-edge-lab/native/local_view/src/main.rs",
+          "sha256": "678260ee46911bbdf073cbaf6809a51f60cf7ade640e0cae688352ee049a7f73"
         },
         "strategy": {
           "path": "policy/examples/taker_1m.json",
@@ -747,7 +747,7 @@
         }
       },
       "command": {
-        "events": "/home/quant/quant/quant-edge-lab/data/native/DS-ARCHIVE-BTCUSDT-2026-11-07/events.jsonl",
+        "events": "data/native/DS-ARCHIVE-BTCUSDT-2026-11-07/events.jsonl",
         "feed_delay_ns": "50000000",
         "notional": "100",
         "response_delay_ns": "90000000000",
@@ -867,9 +867,9 @@
         "pnl_total": null
       },
       "resource": {
-        "elapsed_ms": 5931,
-        "peak_rss_kb": 92956,
-        "events_path": "/home/quant/quant/quant-edge-lab/data/native/DS-ARCHIVE-BTCUSDT-2026-11-07/events.jsonl",
+        "elapsed_ms": 10069,
+        "peak_rss_kb": 97772,
+        "events_path": "data/native/DS-ARCHIVE-BTCUSDT-2026-11-07/events.jsonl",
         "ts_last_ns": "1794096000000000000"
       },
       "funding_deliveries": [
@@ -905,8 +905,8 @@
         }
       ],
       "artifact": "evidence/labd/LOCAL_VIEW_F22_DECISION_IN_GAP_RUN.json",
-      "artifact_sha256": "6d95c7c5e22a5a8658e53507736d8556f5231a67306813a9ce76ab7903eccf97",
-      "artifact_bytes": 929961,
+      "artifact_sha256": "2abf32d4c458836d7ffc34f40f70e732ed7a0927ff5fd9fd78b410f6c5ad1fff",
+      "artifact_bytes": 929879,
       "independent_accounting": {
         "reconstructed_cash": "991.16473661",
         "reconstructed_equity": "991.15595661",
@@ -1322,12 +1322,12 @@
     }
   },
   "resource": {
-    "peak_rss_kb_max": 93200,
+    "peak_rss_kb_max": 97772,
     "elapsed_ms": {
-      "control": 7021,
-      "main": 9246,
-      "large_response": 8032,
-      "decision_in_gap": 5931
+      "control": 9924,
+      "main": 8346,
+      "large_response": 10909,
+      "decision_in_gap": 10069
     },
     "slot": "exclusive Rust build/run; peak RSS < 2 GiB"
   },
@@ -1347,23 +1347,23 @@
   "artifacts": {
     "control": {
       "path": "evidence/labd/LOCAL_VIEW_CONTROL_ZERO.json",
-      "sha256": "4c0c17f1716be429995133fd91ae94a5ee59c97fa679c7e1e839a6932fddc481",
-      "bytes": 943590
+      "sha256": "e92d5738f8d7e965125740990fdf5f77a7e8341b7f90c52473370491bedd72f5",
+      "bytes": 943507
     },
     "main": {
       "path": "evidence/labd/LOCAL_VIEW_F22_RUN.json",
-      "sha256": "599f1a48b7f15ff44e176027b07a26a8ee373d030a8185eaadfd2905331b22e4",
-      "bytes": 938680
+      "sha256": "63b3f9cc48545a805bc62017c40e5b05139d76d784641d96cf5bcbec7c4a4957",
+      "bytes": 938597
     },
     "large_response": {
       "path": "evidence/labd/LOCAL_VIEW_F22_LARGE_RESPONSE_RUN.json",
-      "sha256": "2619007e0fb1872153de5fc8c6bd9fe0350c91c1b3ade4dbf80afd17c635af53",
-      "bytes": 938689
+      "sha256": "6012c72729e52d3a815fc02ddb3e67960ee487ddde989eabe77f6c92cc71b182",
+      "bytes": 938607
     },
     "decision_in_gap": {
       "path": "evidence/labd/LOCAL_VIEW_F22_DECISION_IN_GAP_RUN.json",
-      "sha256": "6d95c7c5e22a5a8658e53507736d8556f5231a67306813a9ce76ab7903eccf97",
-      "bytes": 929961
+      "sha256": "2abf32d4c458836d7ffc34f40f70e732ed7a0927ff5fd9fd78b410f6c5ad1fff",
+      "bytes": 929879
     },
     "native_control": {
       "path": "evidence/labd/LOCAL_VIEW_NATIVE_CONTROL.json",

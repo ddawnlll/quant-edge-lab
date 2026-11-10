@@ -1,27 +1,77 @@
 {
-  "issue": 10,
-  "task": "TASK-17",
-  "kind": "COORDINATOR_VERIFICATION_PASSIVE_QUEUE_SLICE",
-  "integration_branch": "qel/followup8-20261109",
+  "acceptance_boundary": {
+    "missing": [
+      "F04 cancel race",
+      "F05 replace priority",
+      "F07 epoch safety",
+      "F29 book sequence",
+      "F31 duplicate fill",
+      "client-managed OCO"
+    ],
+    "note": "TASK-17 is scoped to the proven passive queue slice. Full acceptance requires the missing fixtures or explicit BLOCKED_BACKEND evidence.",
+    "status": "PARTIAL_EVIDENCE_PENDING",
+    "verified": [
+      "F02",
+      "F03",
+      "F06 native OCO",
+      "F33",
+      "F34"
+    ]
+  },
+  "acceptance_note": "The passive runner and F02/F03/F06/F33/F34 slice are integrated. TASK-17 remains PARTIAL on the missing fixtures and LocalView.",
   "base_sha": "34450161570f8092c1945e51c2d569ff916a16df",
-  "patch_commit": "0c65f9403a69b40a088ec5b49324222e2149f9a6",
+  "claims_not_made": [
+    "full TASK-17 acceptance",
+    "public queue-state readback",
+    "unknown-aggressor or resync fidelity",
+    "full L2 depth",
+    "LocalView or mark-based liquidation"
+  ],
+  "evidence_hashes": {
+    "evidence/labd/PASSIVE_QUEUE_2026-11-10.json": "committed with patch",
+    "evidence/labd/PASSIVE_QUEUE_2026-11-10.txt": "committed with patch"
+  },
   "integrated_commit": "3cb5905",
+  "integration_branch": "qel/followup8-20261109",
+  "issue": 10,
+  "kind": "COORDINATOR_VERIFICATION_PASSIVE_QUEUE_SLICE",
+  "patch_commit": "0c65f9403a69b40a088ec5b49324222e2149f9a6",
+  "post_merge_status": "All required checks PASS at ADAPTER_OVER_NATIVE; native gaps remain recorded; issue #10 closed by PR #36.",
+  "superseded_by": "evidence/labd/PASSIVE_QUEUE_ADAPTER_2026-11-10.json",
+  "task": "TASK-17",
+  "verdict": "PASS_SCOPED_PASSIVE_QUEUE_SLICE",
   "verification": {
-    "pytest": {"command": "QEL_DATA_ROOT=... PYTHONPATH=python QEL_ROOT=$PWD pytest -q tests", "result": "309 passed", "exit_code": 0},
-    "focused": {"command": "pytest -q tests/test_passive_queue.py", "result": "24 passed", "exit_code": 0},
     "build": {
-      "crate": "native/passive_runner",
-      "command": "CARGO_TARGET_DIR=/home/quant/quant/.build-cache/qel-native cargo build --release -j 4",
-      "exit_code": 0,
       "binary_sha256": "6f32c2833e617123062640384f5b728112411b7a81822535d76a135589db4813",
-      "source_sha256": "f9bcde4cc626f9dfa81ec9604a77836f98a5f9eec14650e5947f6dd7dfbee120",
+      "command": "CARGO_TARGET_DIR=/home/quant/quant/.build-cache/qel-native cargo build --release -j 4",
+      "crate": "native/passive_runner",
+      "exit_code": 0,
       "peak_rss_kb": 17084,
+      "source_sha256": "f9bcde4cc626f9dfa81ec9604a77836f98a5f9eec14650e5947f6dd7dfbee120",
       "wall_ms": 170
+    },
+    "capability": {
+      "CAP_L2_QUEUE": "PARTIAL",
+      "local_view": "BLOCKED_BACKEND",
+      "mark_liquidation": "BLOCKED_BACKEND",
+      "supported_slice": "F02 queue-ahead/depth-once/cancel-remainder/shared-level; F03 IOC; F06 native OCO; F33 FOK/stop-limit gap; F34 partial-entry protection",
+      "unproven": [
+        "public queue readback",
+        "unknown aggressor",
+        "resync after gaps",
+        "full L2 depth",
+        "F04 cancel race",
+        "F05 replace priority",
+        "F07 epoch safety",
+        "F29 book sequence",
+        "F31 duplicate fill",
+        "client-managed OCO"
+      ]
     },
     "fixtures": {
       "F02": "PASS: ahead 100, trades 80 then 30 -> exactly 10 filled, leaves 10, ahead inferred 0",
-      "F02_depth_once": "PASS: L2 depth reduction not double-consumed",
       "F02_cancel_remainder": "PASS: partial fill then deterministic cancel, no further fills",
+      "F02_depth_once": "PASS: L2 depth reduction not double-consumed",
       "F02_shared_level": "PASS: one shared level budget across two passive orders",
       "F03": "PASS: marketable IOC shared level (6 + 4, second cancels 2)",
       "F04": "BLOCKED_BACKEND: cancel race",
@@ -34,31 +84,15 @@
       "F33_STOP_LIMIT_GAP": "PASS",
       "F34": "PASS: partial-entry protection sized on filled qty only"
     },
-    "capability": {
-      "CAP_L2_QUEUE": "PARTIAL",
-      "supported_slice": "F02 queue-ahead/depth-once/cancel-remainder/shared-level; F03 IOC; F06 native OCO; F33 FOK/stop-limit gap; F34 partial-entry protection",
-      "unproven": ["public queue readback", "unknown aggressor", "resync after gaps", "full L2 depth", "F04 cancel race", "F05 replace priority", "F07 epoch safety", "F29 book sequence", "F31 duplicate fill", "client-managed OCO"],
-      "local_view": "BLOCKED_BACKEND",
-      "mark_liquidation": "BLOCKED_BACKEND"
+    "focused": {
+      "command": "pytest -q tests/test_passive_queue.py",
+      "exit_code": 0,
+      "result": "24 passed"
+    },
+    "pytest": {
+      "command": "QEL_DATA_ROOT=... PYTHONPATH=python QEL_ROOT=$PWD pytest -q tests",
+      "exit_code": 0,
+      "result": "309 passed"
     }
-  },
-  "acceptance_boundary": {
-    "status": "PARTIAL_EVIDENCE_PENDING",
-    "verified": ["F02", "F03", "F06 native OCO", "F33", "F34"],
-    "missing": ["F04 cancel race", "F05 replace priority", "F07 epoch safety", "F29 book sequence", "F31 duplicate fill", "client-managed OCO"],
-    "note": "TASK-17 is scoped to the proven passive queue slice. Full acceptance requires the missing fixtures or explicit BLOCKED_BACKEND evidence."
-  },
-  "claims_not_made": [
-    "full TASK-17 acceptance",
-    "public queue-state readback",
-    "unknown-aggressor or resync fidelity",
-    "full L2 depth",
-    "LocalView or mark-based liquidation"
-  ],
-  "evidence_hashes": {
-    "evidence/labd/PASSIVE_QUEUE_2026-11-10.json": "committed with patch",
-    "evidence/labd/PASSIVE_QUEUE_2026-11-10.txt": "committed with patch"
-  },
-  "verdict": "PASS_SCOPED_PASSIVE_QUEUE_SLICE",
-  "acceptance_note": "The passive runner and F02/F03/F06/F33/F34 slice are integrated. TASK-17 remains PARTIAL on the missing fixtures and LocalView."
+  }
 }

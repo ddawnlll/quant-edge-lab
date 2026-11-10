@@ -1,0 +1,372 @@
+{
+  "benchmark_corpora": {
+    "B2": {
+      "bytes": 164130300,
+      "sha256": "731b213d82f73313289fa28cf79209cd359f6886af43e56f71000a5c4203dbd3"
+    },
+    "B3": {
+      "bytes": 1484328129,
+      "events": 11247697,
+      "sha256": "38a94cd1023d628a50b2ead719667a3f8ca89f2030d24e5da88ac19849b7005f"
+    }
+  },
+  "benchmarks": {
+    "B2_RP8G": {
+      "median_wall_s": 24.659,
+      "p90_wall_s": 26.967,
+      "target_s": 30,
+      "verdict": "PASS"
+    },
+    "B3_10M_RP8G": {
+      "p90_wall_s": 203.617,
+      "target_s": 120,
+      "verdict": "FAIL_TARGET"
+    }
+  },
+  "checks": [
+    {
+      "id": "V1",
+      "name": "post-merge state",
+      "observed": "main at 166f8c1, PR MERGED, only main remote, #4/#10 CLOSED, other 11 target issues OPEN",
+      "status": "PASS"
+    },
+    {
+      "id": "V2",
+      "name": "evidence hash binding",
+      "observed": "all 7 integration evidence hashes match; F22 source hash b21c7f19... and binary hash af79abd8... reproduce exactly at the recorded worktree path; F22 evidence is fully reproducible",
+      "status": "PASS"
+    },
+    {
+      "id": "V3",
+      "name": "F22 invariant recomputation",
+      "observed": "independent recomputation and full replay reproduce: main/large/gap fills delivered after exchange update, exact response delay, zero local-position mismatches with sequence ordering, exact convergence, feed delay once; zero-delay tape byte-equal to native (307 fills); rebuilt binary rerun tape/f22/counts/exchange byte-equal to committed run",
+      "status": "PASS"
+    },
+    {
+      "id": "V4",
+      "name": "passive oracle recomputation",
+      "observed": "independent harness comparison: F04/F05/F06_CLIENT/F07/F29/F31 paths all match; rerun probe payload equals committed semantics on all 21 probes, only elapsed_ms differs",
+      "status": "PASS"
+    },
+    {
+      "id": "V5",
+      "name": "benchmark statistic recomputation",
+      "observed": "B2 p90 26.452 s and median 24.292 s reproduced from 12 timed reports; B3 p90 209.741 s reproduced from 3 timed 11,247,697-event runs; B3 FAIL_TARGET retained",
+      "status": "PASS"
+    },
+    {
+      "id": "V6",
+      "name": "M2 report recomputation",
+      "observed": "report_hash 980d5d4b... reproduced; 12 train/12 validation variants, 1,000 controls, 174,000 trades, selected STRAT-VAR-10, decision INSUFFICIENT_EVIDENCE with STATIONARITY_DIAGNOSTIC_INSUFFICIENT",
+      "status": "PASS"
+    },
+    {
+      "id": "V7",
+      "name": "fresh clone packaging",
+      "observed": "643 tracked files, no data/runtime/build caches in clone; 70 core tests passed; 63 focused tests passed with 1 skip and 1 non-hermetic data-dependent failure; go build ./... PASS; local_view and passive_runner cargo build PASS",
+      "status": "PASS_WITH_NOTE"
+    },
+    {
+      "id": "V8",
+      "name": "secret/runtime-data scan",
+      "observed": "no secret-like tracked names or token/key patterns; no runtime/, data/, .venv/, sqlite or key files tracked; 151 pre-existing policy/rust/target build-cache files remain tracked",
+      "status": "PASS_WITH_NOTE"
+    },
+    {
+      "id": "V9",
+      "name": "commit and branch audit",
+      "observed": "merge commit parents ce91981 + d773796; all 15 deleted remote tips are ancestors of main; no open PRs; git fsck clean",
+      "status": "PASS"
+    },
+    {
+      "id": "V11",
+      "name": "F22 on 240s live capture",
+      "observed": "taker_1s: 15 fills at 50ms/25ms and 16 fills at 50ms/30s, all delivered after exchange update, 0 policy reads before delivery, feed delay once, position/cash/equity exact for 50ms/25ms and zero-delay control; 30s profile shows 1e-8 local cash/equity drift versus the 8dp exchange account",
+      "status": "PASS_WITH_FINDING"
+    },
+    {
+      "id": "V12",
+      "name": "mini M2 rerun",
+      "observed": "python -m qel.cli m2-run with 2 variants/10 controls completed from merged main in 426.9 s; 2 train and 2 validation variants, selected STRAT-VAR-01, 10 controls / 14,550 trades, report hash 769ece37... reproduced, decision INSUFFICIENT_EVIDENCE with STATIONARITY_DIAGNOSTIC_INSUFFICIENT, venue PASS",
+      "status": "PASS"
+    },
+    {
+      "id": "V13",
+      "name": "tracked JSON parse",
+      "observed": "240 tracked JSON files parsed, 0 invalid",
+      "status": "PASS"
+    },
+    {
+      "id": "V14",
+      "name": "Go race and Python compile",
+      "observed": "go test -race ./labd/... passed all 8 packages; compileall python/tests/scripts passed",
+      "status": "PASS"
+    },
+    {
+      "id": "V14b",
+      "name": "warnings-as-errors suite",
+      "observed": "pytest -W error tests: 367 passed, 4 skipped, 1 failed only because a prior sqlite3.Connection finalizer raised PytestUnraisableExceptionWarning during test_control_zero_delay_equals_native_runner; the test passes in isolation (1 passed). Normal pytest is 368 passed, 4 skipped.",
+      "status": "PASS_WITH_NOTE"
+    },
+    {
+      "id": "V15",
+      "name": "issue-state partition",
+      "observed": "matrix accepted [4,10] + already closed [1,2,5,6,12] + open [3,7,8,9,11,13,14,15,16,17,18] partitions all 18 and matches GitHub",
+      "status": "PASS"
+    },
+    {
+      "id": "V16",
+      "name": "benchmark corpus identity",
+      "observed": "B2 corpus 164,130,300 bytes sha256 731b213d...; B3 corpus 1,484,328,129 bytes sha256 38a94cd1...; both match evidence bytes; all four B3 reports replay 11,247,697 events",
+      "status": "PASS"
+    },
+    {
+      "id": "V17",
+      "name": "M2 reserve isolation",
+      "observed": "actual M2 data dates are only train 2024-09-01..03, purge 2024-09-04, validation 2024-09-05..07; controls use the same six non-purge days; the 2026 dates in the report are frozen-manifest metadata/missing-day checks, not data reads",
+      "status": "PASS"
+    },
+    {
+      "id": "V18",
+      "name": "adapter native evidence coverage",
+      "observed": "7 adapter probes have profile_boundary, native limitation and native behavior records (F05 uses native_control, F29 uses native_book); F02 unknown-aggressor is intentionally PARTIAL, the six required completion probes are PASS",
+      "status": "PASS"
+    },
+    {
+      "id": "V19",
+      "name": "pre/post adapter native probe equality",
+      "observed": "14 common native probes are identical before and after adapter completion, excluding elapsed_ms; the adapter added fields but did not change F02/F03/F06/F33/F34 native behavior",
+      "status": "PASS"
+    },
+    {
+      "id": "V20",
+      "name": "evidence path integrity",
+      "observed": "36 referenced evidence/source paths checked in STATE/TASKS/matrix/report/resume; no real missing path (only a LIVE_CAPTURE*.json glob and the shell token sh were non-paths)",
+      "status": "PASS"
+    },
+    {
+      "id": "V21",
+      "name": "static analysis and cross-language contracts",
+      "observed": "go vet ./... PASS; gofmt -l clean; contracts build PASS; crosslang all_match true; runkey key_order_invariant true",
+      "status": "PASS"
+    },
+    {
+      "id": "V22",
+      "name": "script modes and ADR mapping",
+      "observed": "all run-owned scripts are 100755 except the pre-existing probe_native_capabilities.py (invoked via python); ADR-0004 and ADR-0005 point at the existing test files and claims have matching probes",
+      "status": "PASS"
+    },
+    {
+      "id": "V23",
+      "name": "B2 under RP-8G",
+      "observed": "B2 RP-8G: 12 timed runs, p90 26.967 s, median 24.659 s, target 30 s, 1,241,800 events, all raw reports present; B2 passes both declared profiles, but #13 remains open because B3 10M fails its 120 s target",
+      "status": "PASS"
+    },
+    {
+      "id": "V25",
+      "name": "evaluator and accounting entry points",
+      "observed": "evaluator-demo PASS with signature_verified=true and both refusals; accounting CLI on the native archive tape reconstructs cash 991.11310345, equity 991.10431345, position 0.001, residual 0, matching native",
+      "status": "PASS"
+    },
+    {
+      "id": "V26",
+      "name": "isolation fail-closed checks",
+      "observed": "provision_isolation.sh syntax OK and exits 77 as non-root; real-principal gate fails closed without principals; worker network-namespace egress test passes",
+      "status": "PASS"
+    },
+    {
+      "id": "V27",
+      "name": "20 USDT infeasibility",
+      "observed": "m2-run capital 200 x 0.1 returns INFEASIBLE_VENUE_MIN_NOTIONAL, requested 20 vs 58.94189 minimum at 58,941.89",
+      "status": "PASS"
+    },
+    {
+      "id": "V28",
+      "name": "native pin and route",
+      "observed": "verify_native_pin PASS 12/12, Nautilus HEAD 27a8e54..., remote tag dereferences to pin, Cargo.lock/source/report/binary/corpus hashes match; workers ran deepseek-v4.1-flash high; root session was low and config was corrected to high during validation",
+      "status": "PASS_WITH_NOTE"
+    },
+    {
+      "id": "V24",
+      "name": "B3 10M under RP-8G",
+      "observed": "B3 RP-8G: 3 timed runs, p90 203.617 s, target 120 s, 11,247,697 events, all raw reports present; combined with RP-4G 209.741 s, B3 misses on both declared profiles",
+      "status": "FAIL_TARGET"
+    },
+    {
+      "id": "V30",
+      "name": "#16 reserve thresholds",
+      "observed": "INTEGRATION_ISSUE05_VERIFY records reserved_calendar_dates 238 and reserved_accepted_days 237, below the 250-day primary minimum and 500-day sensitivity window (architecture fresh_days_per_cohort=500)",
+      "status": "PASS"
+    },
+    {
+      "id": "V31",
+      "name": "#17/#18 forward and export gates",
+      "observed": "forward_calibration_ready(15,15,1,false) = INSUFFICIENT_OBSERVATION; (200,50,10,true) = READY; build_export EDGE with unauthorized capital = CAPITAL_UNAUTHORIZED, bad signature = INVALID_SIGNATURE",
+      "status": "PASS"
+    },
+    {
+      "id": "V32",
+      "name": "#15 soak continuity",
+      "observed": "soak.jsonl 2,196 samples from 2026-11-08T22:21:50Z to 2026-11-10T11:02:35Z, elapsed 131,633 s, 0 non-OK health, 0 gaps > 120 s, disk 103.82 GiB free, queue empty, OOS WAITING_FRESH_OOS; no B8 artifact and B8 remains explicitly unrun",
+      "status": "PASS"
+    },
+    {
+      "id": "V33",
+      "name": "#14 B6 estimate",
+      "observed": "1,186.61 core-hours recomputed exactly as 1000*(1+4 effects)*sum(per-generator CPU seconds)/3600 = 4,271,795.25 s; null 4,000 + power 16,000 = 20,000 programs; budget 2,700 s is insufficient",
+      "status": "PASS"
+    },
+    {
+      "id": "V34",
+      "name": "#3 liquidation limitations",
+      "observed": "VENUE_LIMITATIONS and FUNCTIONAL_SPIKE confirm test-fixture-only historical rules and native failures: entry-based maintenance 5.0 vs oracle 4.7, quote-only trigger, no isolated sub-account, no liquidation fee",
+      "status": "PASS"
+    }
+  ],
+  "evidence_sha256": {
+    "B2_RECHECK_2026-11-10.json": "d970a5ef2cdd620c5e381c35fe5ab18d9339b7e4f2388b1a4b54271056b630e0",
+    "B2_RP8G_RECHECK.json": "6d1fa822821e1a2687c0892f3db75cb4aae6b824c7772987033012ca5f4b4d56",
+    "B3_10M_ATOMIC_L2_2026-11-10.json": "ab60fdbc8c5b05e6c02cb39727c6a5ddeb8e8488a1330dc25e5db94f77902e5e",
+    "B3_10M_RP8G.json": "ad3a5109a08f8f986b7f36cb601b1b29c9cd208ccb40a471817ba362d263df2c",
+    "INTEGRATION_V11_FINAL.json": "23f04eaf699bc237b13dd66408f5a720385530cbf394d09f6ed8be13c31e7ffb",
+    "LIVE240_1s_control.json": "ac78463f681f28b910589a727f8ccb6da710dc1968cca1c5144ff526e8e43198",
+    "LIVE240_1s_gap.json": "d83bb4aafe097bac46db862cb783aa89ac605b803d9efe9e8c6243192462096e",
+    "LIVE240_1s_main.json": "b73cef6833a9a4727694e556db05cd4650823eea1cc7b112d775973355ca0e2e",
+    "LOCAL_VIEW_F22_2026-11-10.json": "25f5ce73210368650882ffc79059163d6c03b9f99798fa3ed3a8dc9047dfa5b9",
+    "LOCAL_VIEW_F22_REPRO.json": "0b0c569ca171adab97a53ebdd0bb576f727bac4abc01f67f28027558e9a3058b",
+    "M2_DEV_RUN.json": "f548324ae326319e513712a543bdd510ee1458b23d3a2b7f30a152d4cf3590c0",
+    "M2_DEV_RUN_MINI.json": "2b7951fc779779b7f5e833b9a47ccf54616f2f511c4899ea6ad3bbcf00320f5a",
+    "PASSIVE_QUEUE_ADAPTER_2026-11-10.json": "3da3f6cf8397a91360995125b36755e32a87c6424182ca34465b712768f6a9d0",
+    "PASSIVE_REPRO.json": "f21d32b1bf04f12387f1bed604e57a443c07a0bc993f2276ed12420348228102",
+    "PIN_VERIFICATION_FINAL.txt": "0ba4c1c70eca7f115a1c4289b4c488ca178acb4ac829094608b2ba4529483e14"
+  },
+  "findings": [
+    {
+      "id": "F22-PATH",
+      "severity": "info",
+      "summary": "The F22 evidence binds the worker-worktree absolute path. That path is required to reproduce the exact binary hash because the source binding embeds CARGO_MANIFEST_DIR; recreating the worktree at that path reproduces source hash b21c7f19..., binary hash af79abd8..., and the full tape/f22/counts output byte-equal. Future assemblers could still emit a repo-relative source path plus the reproduction path separately."
+    },
+    {
+      "id": "M2-TEST-HERMETIC",
+      "severity": "low",
+      "summary": "tests/test_m2.py::test_frozen_manifest_marks_missing_execution_days assumes data/native exists and fails in a clean clone. Add a skip when DATA is absent. The acceptance path itself is unaffected."
+    },
+    {
+      "id": "TRACKED-BUILD-CACHE",
+      "severity": "medium",
+      "summary": "151 files under policy/rust/target (45 MB) are tracked from commit 517a6c3, before ce91981. They are build cache, not source, and should be removed in a separate hygiene commit/PR. PR #36 did not add or modify them."
+    },
+    {
+      "id": "STATE-PRE-MERGE",
+      "severity": "info",
+      "summary": "STATE.json/TASKS.md record closures as pending merge and the matrix points at tested code SHA 8b46425, not merge SHA 166f8c1. This is expected for a pre-merge commit; GitHub is authoritative post-merge."
+    },
+    {
+      "id": "STALE-INTEGRATION-EVIDENCE",
+      "severity": "medium",
+      "summary": "Three older INTEGRATION_ISSUE04/10/13_VERIFY.json files still describe the pre-adapter/pre-recheck state (F22 blocked, F04/F05/F07/F29/F31 missing, B2 FAIL_MARGINAL). The newer evidence supersedes them, but the old files remain in TASK/STATE evidence lists. Add explicit superseded_by/post_merge_status fields in a documentation cleanup."
+    },
+    {
+      "id": "LOCALVIEW-8DP-DRIFT",
+      "severity": "medium",
+      "summary": "On the 240s live capture with taker_1s and a 30s response delay, LocalView cash/equity is 999.4832680399999999999999999 versus exchange 999.48326803 (1e-8 USDT). Position and independent residual are exact, and the archive-day certified profile is exact. The local Decimal ledger does not quantize cash to the currency 8dp at finalize, so broader profiles can exceed the certified exactness scope."
+    },
+    {
+      "id": "F22-BINARY-PATH",
+      "severity": "medium",
+      "summary": "tests/test_local_view.py asserts the evidence binary hash whenever the binary exists, even if the recorded source path is absent. Rebuilding native/local_view from the merged repo path produces hash 30e4b9b9..., not the evidence hash af79abd8..., and the test fails. The recorded-path rebuild reproduces af79abd8... and passes. Fix: only assert the binary hash when the recorded source path exists, otherwise skip with the source hash as the stable binding."
+    },
+    {
+      "id": "WERROR-UNRAISABLE-SQLITE",
+      "severity": "low",
+      "summary": "A full pytest run with -W error fails on an ignored sqlite3.Connection finalizer warning attributed to test_control_zero_delay_equals_native_runner. The test passes in isolation, so this is cross-test resource cleanup/order, not a functional LocalView failure. Close sqlite connections explicitly or filter that unraisable warning in the test harness."
+    },
+    {
+      "id": "ROOT-EFFORT-LOW",
+      "severity": "medium",
+      "summary": "The two worker sessions ran deepseek-v4.1-flash at high effort, but the root session environment reported PI_REASONING_LEVEL=low and config had openai_reasoning_effort=low. The config was corrected to high during validation. Code/evidence validity is unaffected, but the requested root high-effort condition was not met for the earlier work."
+    }
+  ],
+  "fresh_clone": {
+    "core_suite": "70 passed",
+    "focused_suite": "63 passed, 1 skipped, 1 failed before the hermetic-test patch; 3 passed, 2 skipped for tests/test_m2.py after the patch",
+    "go_build": "PASS",
+    "head": "166f8c1c06508e29b77477092b2c6a7c6586dfd4",
+    "local_view_build": "PASS (27.9 s)",
+    "note": "The one failure is the non-hermetic M2 manifest test; the acceptance path and all closure evidence still pass.",
+    "passive_runner_build": "PASS (28.5 s)",
+    "path": "/home/quant/quant/.jcode-scratch-validate/qel-main",
+    "tracked_files": 643
+  },
+  "generated_utc": "2026-11-10T10:04:48Z",
+  "issues_closed_by_pr": [
+    4,
+    10
+  ],
+  "merged_main_sha": "166f8c1c06508e29b77477092b2c6a7c6586dfd4",
+  "overall": "PASS_WITH_RECORDED_HYGIENE_FINDINGS",
+  "post_fix_note": "The listed findings were addressed in this follow-up; see POST_FIX_VERIFICATION.json. The F22 hash here is the post-fix evidence hash.",
+  "pr": {
+    "head": "d7737967dec51fa9735af7eda9988dec6cd9ceb4",
+    "number": 36,
+    "state": "MERGED",
+    "url": "https://github.com/ddawnlll/quant-edge-lab/pull/36"
+  },
+  "proposed_fixes": [
+    {
+      "artifact": "/home/quant/quant/.jcode-scratch-validate/fix_m2_test_hermetic.patch",
+      "finding": "M2-TEST-HERMETIC",
+      "validated": "yes, tests/test_m2.py: 3 passed, 2 skipped in the clean clone"
+    },
+    {
+      "artifact": "command: git rm -r --cached policy/rust/target && git commit -m 'chore: stop tracking Rust build cache'",
+      "finding": "TRACKED-BUILD-CACHE",
+      "validated": "not applied to main; 151 files / 45 MB are pre-existing from commit 517a6c3"
+    },
+    {
+      "artifact": "recommendation: emit repo-relative source paths in future evidence assemblers; committed hash b21c7f19... matches merged native/local_view/src/main.rs",
+      "finding": "F22-PATH",
+      "validated": "hash match verified"
+    },
+    {
+      "artifact": "/home/quant/quant/.jcode-scratch-validate/fix_stale_integration_evidence.patch",
+      "finding": "STALE-INTEGRATION-EVIDENCE",
+      "validated": "yes, focused tests 60 passed in the clean clone after adding superseded_by/post_merge_status"
+    },
+    {
+      "artifact": "recommendation: quantize delivered cash/equity to currency precision at response application and finalize, then rerun archive-day and 240s profiles; not applied to main",
+      "finding": "LOCALVIEW-8DP-DRIFT",
+      "validated": "reproduced with qel-local-view --strategy policy/examples/taker_1s.json --feed-delay-ns 50000000 --response-delay-ns 30000000000"
+    },
+    {
+      "artifact": "/home/quant/quant/.jcode-scratch-validate/fix_f22_binary_path_test.patch",
+      "finding": "F22-BINARY-PATH",
+      "validated": "yes, tests/test_local_view.py 11 passed, 1 skipped in the clean clone"
+    },
+    {
+      "artifact": "config corrected: provider.openai_reasoning_effort=high; [agents].swarm_root_effort=high; [agents].swarm_effort=high",
+      "finding": "ROOT-EFFORT-LOW",
+      "validated": "worker session JSONs show reasoning_effort=high; root env remains PI_REASONING_LEVEL=low for the already-running process"
+    }
+  ],
+  "remote_branches": [
+    "main"
+  ],
+  "repository": "https://github.com/ddawnlll/quant-edge-lab",
+  "reproduction": {
+    "f22_binary": "af79abd879da22082230a42fd84cd86c13b9b2e8d7fc3e0409b1df1f86075801 reproduced at /home/quant/quant/qel-lv",
+    "f22_run": "tape, f22 block, counts, local_view and exchange blocks byte-equal to committed LOCAL_VIEW_F22_RUN.json",
+    "passive": "all 21 probe semantics equal to committed PASSIVE_QUEUE_ADAPTER payload; only elapsed_ms differs",
+    "passive_binary": "273b44530a010e2598df7fda298dcd8a8c229cda7b56f930b00dcf35ffd35aee reproduced"
+  },
+  "runtime": {
+    "disk": "104G free (28% used)",
+    "services": "qel-soak, qel-qeld, qel-worker active",
+    "soak_latest": "2026-11-10T10:10:28Z elapsed 128506 s health OK",
+    "soak_wake": "2026-11-16T22:26:00Z scheduled as sched_d9b2017c",
+    "spec_tree_diff_vs_ce91981": 0,
+    "spec_zip_sha256": "db18e7a6e94b8c9b233a48097040d1a3a6c655ea126d5e6805d67d4f6e91fd30"
+  },
+  "schema": "qel.post_merge_validation/1",
+  "updated_utc": "2026-11-10T12:05:44Z"
+}

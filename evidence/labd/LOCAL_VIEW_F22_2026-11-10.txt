@@ -1,8 +1,8 @@
 F22 two-world LocalView evidence
 ================================
 status: PASS_SCOPED_F22_PROFILE
-source sha256: b21c7f19894253a07ce095e014511f61c6adb38511e978fab6343d2acd9e5cc2
-binary sha256: af79abd879da22082230a42fd84cd86c13b9b2e8d7fc3e0409b1df1f86075801
+source sha256: 678260ee46911bbdf073cbaf6809a51f60cf7ade640e0cae688352ee049a7f73
+binary sha256: ad897f9950fcada3ca03e4971c30888f793e4eff397d3667d851a17e160787ee
 corpus sha256: c7a4c79484a611820c2e314f48397de299294b009d24766ad5c2d03cc5ee22ed
 nautilus: v1.231.0 27a8e54e7ac3c57d6cbf8891f0283dfbaee97317
 
@@ -13,7 +13,7 @@ nautilus: v1.231.0 27a8e54e7ac3c57d6cbf8891f0283dfbaee97317
   local residual=0 cash_diff=0 equity_diff=0 position_diff=0
   policy_reads_before_delivery=0 first_tick_violations=0
   convergence_pass=True
-  peak_rss_kb=90292 elapsed_ms=7021
+  peak_rss_kb=94184 elapsed_ms=9924
 
 [main] f22_main_feed50ms_response25ms status=PASS
   feed_delay_ns=50000000 response_delay_ns=25000000
@@ -22,7 +22,7 @@ nautilus: v1.231.0 27a8e54e7ac3c57d6cbf8891f0283dfbaee97317
   local residual=0 cash_diff=0 equity_diff=0 position_diff=0
   policy_reads_before_delivery=0 first_tick_violations=0
   convergence_pass=True
-  peak_rss_kb=91736 elapsed_ms=9246
+  peak_rss_kb=97208 elapsed_ms=8346
 
 [large_response] f22_large_response_30s status=PASS
   feed_delay_ns=50000000 response_delay_ns=30000000000
@@ -31,7 +31,7 @@ nautilus: v1.231.0 27a8e54e7ac3c57d6cbf8891f0283dfbaee97317
   local residual=0 cash_diff=0 equity_diff=0 position_diff=0
   policy_reads_before_delivery=0 first_tick_violations=0
   convergence_pass=True
-  peak_rss_kb=93200 elapsed_ms=8032
+  peak_rss_kb=96008 elapsed_ms=10909
 
 [decision_in_gap] f22_decision_in_gap_90s status=PASS
   feed_delay_ns=50000000 response_delay_ns=90000000000
@@ -40,7 +40,7 @@ nautilus: v1.231.0 27a8e54e7ac3c57d6cbf8891f0283dfbaee97317
   local residual=0 cash_diff=0 equity_diff=0 position_diff=0
   policy_reads_before_delivery=0 first_tick_violations=0
   convergence_pass=True
-  peak_rss_kb=92956 elapsed_ms=5931
+  peak_rss_kb=97772 elapsed_ms=10069
 
 status basis: {"control_equals_native_runner": true, "exchange_accounting_pass": true, "f22_invariants_pass": true, "local_accounting_pass": true, "runs_pass": true}
 f22 invariant groups: {"1_exchange_updates_before_response_delivery": true, "2_no_policy_decision_uses_fill_before_delivery": true, "3_feed_delay_charged_once": true, "4_local_view_converges_to_exchange": true, "5_zero_delay_control_equals_native_runner": true, "large_response_gap": true}

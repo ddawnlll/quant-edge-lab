@@ -1,0 +1,483 @@
+diff --git a/evidence/labd/INTEGRATION_ISSUE04_VERIFY.json b/evidence/labd/INTEGRATION_ISSUE04_VERIFY.json
+index cf55a5a..a4fc1ca 100644
+--- a/evidence/labd/INTEGRATION_ISSUE04_VERIFY.json
++++ b/evidence/labd/INTEGRATION_ISSUE04_VERIFY.json
+@@ -1,72 +1,99 @@
+ {
+-  "issue": 4,
+-  "task": "TASK-11",
+-  "kind": "COORDINATOR_INDEPENDENT_VERIFICATION",
+-  "integration_branch": "qel/int-20261109",
++  "acceptance_note": "Engineering verified on the integration branch. Acceptance remains scoped to the taker L1 certificate; full TASK-11 acceptance requires F22 LocalView evidence that the pinned backend does not expose.",
+   "base_sha": "f6dbde793e9db6c6124f4826b5bdff7e793502c1",
+-  "patch_commit": "555543e935f3aa951a957614e54f56fc15a51a7d",
++  "evidence_hashes": {
++    "evidence/labd/FUNDING_MUTATIONS.txt": "e07bcccaefc4169ef402cb6aa9d42dcfa36ee0aadef8dda19c18ad9ddd67e617",
++    "evidence/labd/NATIVE_FUNDING_AUDIT.json": "d6767208e5816ad935b951354a35eab825326756d557bddcabec4d6da9ec492e",
++    "evidence/labd/NATIVE_FUNDING_RUN.json": "348f803a0827947859a9bbbc775831dd26a5e6affe7d140494870744ddffb337",
++    "evidence/labd/NATIVE_FUNDING_RUN_240S.json": "b69f6a31e2a14e247cf484df75eabf368dcbc90565eebcecc0ed9b95b12b48f2"
++  },
+   "integrated_commit": "598b91f",
++  "integration_branch": "qel/int-20261109",
++  "issue": 4,
++  "kind": "COORDINATOR_INDEPENDENT_VERIFICATION",
+   "native_pin": {
++    "commit": "27a8e54e7ac3c57d6cbf8891f0283dfbaee97317",
+     "repository": "https://github.com/nautechsystems/nautilus_trader",
+-    "tag": "v1.231.0",
+-    "commit": "27a8e54e7ac3c57d6cbf8891f0283dfbaee97317"
++    "tag": "v1.231.0"
+   },
++  "non_claims": [
++    "F22 LocalView delayed delivery remains BLOCKED_BACKEND; the two-world split is not certified",
++    "L2 queue, passive fill and shared-level consumption remain unavailable in the pinned backend",
++    "funding crossing maintenance margin and liquidation are not certified by this issue"
++  ],
++  "patch_commit": "555543e935f3aa951a957614e54f56fc15a51a7d",
++  "post_merge_status": "F22 PASS at the adapter-managed two-world profile; issue #4 closed by PR #36.",
++  "scoped_claims": [
++    "taker-only L1 quote/trade/mark/funding archive replay",
++    "nonzero funding is present on the primary economic tape with attributable epoch and deterministic settlement identity",
++    "independent exact accounting matches native cash, equity and position with zero unexplained residual",
++    "identical inputs reproduce semantically identical outputs"
++  ],
++  "superseded_by": "evidence/labd/LOCAL_VIEW_F22_2026-11-10.json",
++  "task": "TASK-11",
++  "verdict": "PASS_SCOPED_TAKER",
+   "verification": {
+-    "pytest": {"command": "PYTHONPATH=python QEL_ROOT=$PWD .venv/bin/python -m pytest -q tests", "result": "53 passed", "exit_code": 0},
+-    "cargo_build": {"command": "CARGO_TARGET_DIR=/home/quant/quant/.build-cache/qel-native cargo build --release", "exit_code": 0},
++    "cargo_build": {
++      "command": "CARGO_TARGET_DIR=/home/quant/quant/.build-cache/qel-native cargo build --release",
++      "exit_code": 0
++    },
++    "mutations": {
++      "duplicate_settlement_rejected": {
++        "code": "PROTOCOL_VIOLATION",
++        "passed": true
++      },
++      "funding_after_end_fold_rejected": {
++        "code": "PROTOCOL_VIOLATION",
++        "passed": true
++      },
++      "future_epoch_rejected": {
++        "code": "PROTOCOL_VIOLATION",
++        "passed": true
++      },
++      "remove_funding_visible": {
++        "cash_diff": "12003/4000000",
++        "passed": true
++      },
++      "reordered_fills_rejected": {
++        "code": "OUT_OF_ORDER",
++        "passed": true
++      }
++    },
+     "native_run": {
+       "command": "qel-native-runner --events data/native/DS-ARCHIVE-BTCUSDT-2026-11-07/events.jsonl --strategy policy/examples/taker_1m.json",
++      "elapsed_ms": 5942,
+       "events": 358200,
+       "orders": 307,
+-      "positions": 154,
+-      "elapsed_ms": 5942,
+       "peak_rss_kb": 115972,
++      "positions": 154,
+       "run_sha256": "e03a104a56aa3103dd627120204b307e42d8c936ceb5deb657a780aea796e8b4",
+       "semantic_repeat_equal": true,
+       "semantic_repeat_sha256": "ee482acfaeb6a5bcb1bd12563fc9ce26c23f6107a2b7e3ac272ea075bd85fe2c",
+       "tape_sha256": "ae14e67b5a761a698426969fb3043fd79178ddc66dcda79ed447e489cda1c1c9"
+     },
++    "pytest": {
++      "command": "PYTHONPATH=python QEL_ROOT=$PWD .venv/bin/python -m pytest -q tests",
++      "exit_code": 0,
++      "result": "53 passed"
++    },
+     "reconciliation": {
+-      "funding_events": 2,
++      "cash_diff": "0",
++      "equity_diff": "0",
++      "funding_by_epoch": {
++        "154": "-0.00398673",
++        "94": "0.00098598"
++      },
+       "funding_cash": "-0.00300075",
+-      "funding_by_epoch": {"94": "0.00098598", "154": "-0.00398673"},
+-      "reconstructed_cash": "991.11310345",
++      "funding_events": 2,
+       "native_cash": "991.11310345",
+-      "reconstructed_equity": "991.10431345",
+       "native_equity": "991.10431345",
+-      "reconstructed_position": "0.001",
+       "native_position": "0.001",
+-      "cash_diff": "0",
+-      "equity_diff": "0",
+       "position_diff": "0",
+-      "unexplained_residual": "0",
+-      "postings_balanced": true
+-    },
+-    "mutations": {
+-      "remove_funding_visible": {"passed": true, "cash_diff": "12003/4000000"},
+-      "duplicate_settlement_rejected": {"passed": true, "code": "PROTOCOL_VIOLATION"},
+-      "future_epoch_rejected": {"passed": true, "code": "PROTOCOL_VIOLATION"},
+-      "funding_after_end_fold_rejected": {"passed": true, "code": "PROTOCOL_VIOLATION"},
+-      "reordered_fills_rejected": {"passed": true, "code": "OUT_OF_ORDER"}
++      "postings_balanced": true,
++      "reconstructed_cash": "991.11310345",
++      "reconstructed_equity": "991.10431345",
++      "reconstructed_position": "0.001",
++      "unexplained_residual": "0"
+     }
+-  },
+-  "scoped_claims": [
+-    "taker-only L1 quote/trade/mark/funding archive replay",
+-    "nonzero funding is present on the primary economic tape with attributable epoch and deterministic settlement identity",
+-    "independent exact accounting matches native cash, equity and position with zero unexplained residual",
+-    "identical inputs reproduce semantically identical outputs"
+-  ],
+-  "non_claims": [
+-    "F22 LocalView delayed delivery remains BLOCKED_BACKEND; the two-world split is not certified",
+-    "L2 queue, passive fill and shared-level consumption remain unavailable in the pinned backend",
+-    "funding crossing maintenance margin and liquidation are not certified by this issue"
+-  ],
+-  "evidence_hashes": {
+-    "evidence/labd/NATIVE_FUNDING_RUN.json": "348f803a0827947859a9bbbc775831dd26a5e6affe7d140494870744ddffb337",
+-    "evidence/labd/NATIVE_FUNDING_RUN_240S.json": "b69f6a31e2a14e247cf484df75eabf368dcbc90565eebcecc0ed9b95b12b48f2",
+-    "evidence/labd/NATIVE_FUNDING_AUDIT.json": "d6767208e5816ad935b951354a35eab825326756d557bddcabec4d6da9ec492e",
+-    "evidence/labd/FUNDING_MUTATIONS.txt": "e07bcccaefc4169ef402cb6aa9d42dcfa36ee0aadef8dda19c18ad9ddd67e617"
+-  },
+-  "verdict": "PASS_SCOPED_TAKER",
+-  "acceptance_note": "Engineering verified on the integration branch. Acceptance remains scoped to the taker L1 certificate; full TASK-11 acceptance requires F22 LocalView evidence that the pinned backend does not expose."
++  }
+ }
+diff --git a/evidence/labd/INTEGRATION_ISSUE10_VERIFY.json b/evidence/labd/INTEGRATION_ISSUE10_VERIFY.json
+index 8bd9a99..fdd140c 100644
+--- a/evidence/labd/INTEGRATION_ISSUE10_VERIFY.json
++++ b/evidence/labd/INTEGRATION_ISSUE10_VERIFY.json
+@@ -1,27 +1,77 @@
+ {
++  "acceptance_boundary": {
++    "missing": [
++      "F04 cancel race",
++      "F05 replace priority",
++      "F07 epoch safety",
++      "F29 book sequence",
++      "F31 duplicate fill",
++      "client-managed OCO"
++    ],
++    "note": "TASK-17 is scoped to the proven passive queue slice. Full acceptance requires the missing fixtures or explicit BLOCKED_BACKEND evidence.",
++    "status": "PARTIAL_EVIDENCE_PENDING",
++    "verified": [
++      "F02",
++      "F03",
++      "F06 native OCO",
++      "F33",
++      "F34"
++    ]
++  },
++  "acceptance_note": "The passive runner and F02/F03/F06/F33/F34 slice are integrated. TASK-17 remains PARTIAL on the missing fixtures and LocalView.",
++  "base_sha": "34450161570f8092c1945e51c2d569ff916a16df",
++  "claims_not_made": [
++    "full TASK-17 acceptance",
++    "public queue-state readback",
++    "unknown-aggressor or resync fidelity",
++    "full L2 depth",
++    "LocalView or mark-based liquidation"
++  ],
++  "evidence_hashes": {
++    "evidence/labd/PASSIVE_QUEUE_2026-11-10.json": "committed with patch",
++    "evidence/labd/PASSIVE_QUEUE_2026-11-10.txt": "committed with patch"
++  },
++  "integrated_commit": "3cb5905",
++  "integration_branch": "qel/followup8-20261109",
+   "issue": 10,
+-  "task": "TASK-17",
+   "kind": "COORDINATOR_VERIFICATION_PASSIVE_QUEUE_SLICE",
+-  "integration_branch": "qel/followup8-20261109",
+-  "base_sha": "34450161570f8092c1945e51c2d569ff916a16df",
+   "patch_commit": "0c65f9403a69b40a088ec5b49324222e2149f9a6",
+-  "integrated_commit": "3cb5905",
++  "post_merge_status": "All required checks PASS at ADAPTER_OVER_NATIVE; native gaps remain recorded; issue #10 closed by PR #36.",
++  "superseded_by": "evidence/labd/PASSIVE_QUEUE_ADAPTER_2026-11-10.json",
++  "task": "TASK-17",
++  "verdict": "PASS_SCOPED_PASSIVE_QUEUE_SLICE",
+   "verification": {
+-    "pytest": {"command": "QEL_DATA_ROOT=... PYTHONPATH=python QEL_ROOT=$PWD pytest -q tests", "result": "309 passed", "exit_code": 0},
+-    "focused": {"command": "pytest -q tests/test_passive_queue.py", "result": "24 passed", "exit_code": 0},
+     "build": {
+-      "crate": "native/passive_runner",
++      "binary_sha256": "6f32c2833e617123062640384f5b728112411b7a81822535d76a135589db4813",
+       "command": "CARGO_TARGET_DIR=/home/quant/quant/.build-cache/qel-native cargo build --release -j 4",
++      "crate": "native/passive_runner",
+       "exit_code": 0,
+-      "binary_sha256": "6f32c2833e617123062640384f5b728112411b7a81822535d76a135589db4813",
+-      "source_sha256": "f9bcde4cc626f9dfa81ec9604a77836f98a5f9eec14650e5947f6dd7dfbee120",
+       "peak_rss_kb": 17084,
++      "source_sha256": "f9bcde4cc626f9dfa81ec9604a77836f98a5f9eec14650e5947f6dd7dfbee120",
+       "wall_ms": 170
+     },
++    "capability": {
++      "CAP_L2_QUEUE": "PARTIAL",
++      "local_view": "BLOCKED_BACKEND",
++      "mark_liquidation": "BLOCKED_BACKEND",
++      "supported_slice": "F02 queue-ahead/depth-once/cancel-remainder/shared-level; F03 IOC; F06 native OCO; F33 FOK/stop-limit gap; F34 partial-entry protection",
++      "unproven": [
++        "public queue readback",
++        "unknown aggressor",
++        "resync after gaps",
++        "full L2 depth",
++        "F04 cancel race",
++        "F05 replace priority",
++        "F07 epoch safety",
++        "F29 book sequence",
++        "F31 duplicate fill",
++        "client-managed OCO"
++      ]
++    },
+     "fixtures": {
+       "F02": "PASS: ahead 100, trades 80 then 30 -> exactly 10 filled, leaves 10, ahead inferred 0",
+-      "F02_depth_once": "PASS: L2 depth reduction not double-consumed",
+       "F02_cancel_remainder": "PASS: partial fill then deterministic cancel, no further fills",
++      "F02_depth_once": "PASS: L2 depth reduction not double-consumed",
+       "F02_shared_level": "PASS: one shared level budget across two passive orders",
+       "F03": "PASS: marketable IOC shared level (6 + 4, second cancels 2)",
+       "F04": "BLOCKED_BACKEND: cancel race",
+@@ -34,31 +84,15 @@
+       "F33_STOP_LIMIT_GAP": "PASS",
+       "F34": "PASS: partial-entry protection sized on filled qty only"
+     },
+-    "capability": {
+-      "CAP_L2_QUEUE": "PARTIAL",
+-      "supported_slice": "F02 queue-ahead/depth-once/cancel-remainder/shared-level; F03 IOC; F06 native OCO; F33 FOK/stop-limit gap; F34 partial-entry protection",
+-      "unproven": ["public queue readback", "unknown aggressor", "resync after gaps", "full L2 depth", "F04 cancel race", "F05 replace priority", "F07 epoch safety", "F29 book sequence", "F31 duplicate fill", "client-managed OCO"],
+-      "local_view": "BLOCKED_BACKEND",
+-      "mark_liquidation": "BLOCKED_BACKEND"
++    "focused": {
++      "command": "pytest -q tests/test_passive_queue.py",
++      "exit_code": 0,
++      "result": "24 passed"
++    },
++    "pytest": {
++      "command": "QEL_DATA_ROOT=... PYTHONPATH=python QEL_ROOT=$PWD pytest -q tests",
++      "exit_code": 0,
++      "result": "309 passed"
+     }
+-  },
+-  "acceptance_boundary": {
+-    "status": "PARTIAL_EVIDENCE_PENDING",
+-    "verified": ["F02", "F03", "F06 native OCO", "F33", "F34"],
+-    "missing": ["F04 cancel race", "F05 replace priority", "F07 epoch safety", "F29 book sequence", "F31 duplicate fill", "client-managed OCO"],
+-    "note": "TASK-17 is scoped to the proven passive queue slice. Full acceptance requires the missing fixtures or explicit BLOCKED_BACKEND evidence."
+-  },
+-  "claims_not_made": [
+-    "full TASK-17 acceptance",
+-    "public queue-state readback",
+-    "unknown-aggressor or resync fidelity",
+-    "full L2 depth",
+-    "LocalView or mark-based liquidation"
+-  ],
+-  "evidence_hashes": {
+-    "evidence/labd/PASSIVE_QUEUE_2026-11-10.json": "committed with patch",
+-    "evidence/labd/PASSIVE_QUEUE_2026-11-10.txt": "committed with patch"
+-  },
+-  "verdict": "PASS_SCOPED_PASSIVE_QUEUE_SLICE",
+-  "acceptance_note": "The passive runner and F02/F03/F06/F33/F34 slice are integrated. TASK-17 remains PARTIAL on the missing fixtures and LocalView."
++  }
+ }
+diff --git a/evidence/labd/INTEGRATION_ISSUE13_VERIFY.json b/evidence/labd/INTEGRATION_ISSUE13_VERIFY.json
+index a54f76c..78010de 100644
+--- a/evidence/labd/INTEGRATION_ISSUE13_VERIFY.json
++++ b/evidence/labd/INTEGRATION_ISSUE13_VERIFY.json
+@@ -1,55 +1,92 @@
+ {
++  "acceptance_boundary": {
++    "missing": [
++      "B2 warm p90 <= 30 s: measured 30.141 s (RP-4G) and 30.351 s (RP-8G), 0.14-0.35 s over"
++    ],
++    "note": "B0/B1/B3/B4/B5 pass. B2 misses its 30 s warm p90 by 0.14-0.35 s on the current host; the prior 20.545 s result is not reproducible. Full TASK-25 acceptance is not claimed.",
++    "status": "PARTIAL_B2_PERF_MISS",
++    "superseding_evidence": "evidence/labd/T25_B2_B3_PROFILES.json",
++    "verified": [
++      "B0",
++      "B1",
++      "B3",
++      "B4",
++      "B5",
++      "T-RELEASE",
++      "RP-4G and RP-8G cgroup enforcement",
++      "2 warmups + 12 timed repeats per profile"
++    ]
++  },
++  "acceptance_note": "Benchmark harnesses, frozen corpora and cgroup-enforced B0/B1/B3/B4/B5 results are integrated. B2 remains a filed marginal miss at 30.141/30.351 s vs the 30 s target; #13 is not closed.",
++  "base_sha": "9329a87",
++  "claims_not_made": [
++    "full TASK-25 acceptance",
++    "B2 30 s warm p90"
++  ],
++  "evidence_hashes": {
++    "evidence/labd/B0_TYPED_SPECIFICATION.json": "committed with patch",
++    "evidence/labd/B1_BATCH_SCREEN.json": "committed with patch",
++    "evidence/labd/B4_PROFILES_EVIDENCE.json": "committed with this verification",
++    "evidence/labd/B5_LEDGER_RESTORE.json": "committed with patch",
++    "evidence/labd/T25_ACCEPTANCE.json": "committed with patch",
++    "evidence/labd/T25_B2_B3_PROFILES.json": "committed with this verification",
++    "evidence/labd/T_RELEASE_BUILD.json": "committed with patch"
++  },
++  "integrated_commit": "32bbb61",
++  "integration_branch": "qel/followup4-20261109",
+   "issue": 13,
+-  "task": "TASK-25",
+   "kind": "COORDINATOR_INDEPENDENT_VERIFICATION",
+-  "integration_branch": "qel/followup4-20261109",
+-  "base_sha": "9329a87",
+   "patch_commit": "2c839f34daeef2b988e831babfd0398bc857eff8",
+-  "integrated_commit": "32bbb61",
++  "post_merge_status": "B2 PASS 26.452 s; B3 10M FAIL_TARGET 209.741 s; issue #13 remains open.",
++  "superseded_by": "evidence/labd/B2_RECHECK_2026-11-10.json, evidence/labd/B3_10M_ATOMIC_L2_2026-11-10.json",
++  "task": "TASK-25",
++  "verdict": "PASS_B0_B1_B3_B4_B5_B2_FAIL_MARGINAL",
+   "verification": {
+-    "pytest": {"command": "QEL_DATA_ROOT=/home/quant/quant/quant-edge-lab/data PYTHONPATH=python QEL_ROOT=$PWD .venv/bin/python -m pytest -q tests", "result": "248 passed", "exit_code": 0},
+-    "profiles": {
+-      "RP-4G": {"enforcement": "CGROUP_V2_MEMORY_MAX", "memory_max_bytes": 4294967296, "swap_max_bytes": 0, "enforced": true},
+-      "RP-8G": {"enforcement": "CGROUP_V2_MEMORY_MAX", "memory_max_bytes": 8589934592, "swap_max_bytes": 0, "enforced": true}
+-    },
+     "B0": {
+-      "status": "PASS",
+-      "mode": "schema-only and native separated",
+       "dag_nodes": 256,
++      "mode": "schema-only and native separated",
++      "native_jit_compilations": 0,
+       "p90_ms": 2.295577,
++      "status": "PASS",
+       "target_ms": 100,
+-      "native_jit_compilations": 0,
+       "timed_repeats": 12,
+       "warmups": 2
+     },
+     "B1": {
+-      "status": "PASS",
++      "include": [
++        "READ",
++        "FEATURES",
++        "VARIANTS",
++        "OUTPUT_HASH_FSYNC"
++      ],
++      "peak_mib": {
++        "RP-4G": 200.67,
++        "RP-8G": 197.07
++      },
+       "rows": 1000000,
+-      "variants": 8,
+-      "warm_p90_seconds": 2.663590709,
++      "status": "PASS",
+       "target_seconds": 10,
+       "timed_repeats": 12,
+-      "warmups": 2,
+-      "include": ["READ", "FEATURES", "VARIANTS", "OUTPUT_HASH_FSYNC"],
+-      "peak_mib": {"RP-4G": 200.67, "RP-8G": 197.07}
++      "variants": 8,
++      "warm_p90_seconds": 2.663590709,
++      "warmups": 2
+     },
+     "B5": {
+-      "status": "PASS",
+-      "ledger_events": 100000,
+       "artifact_pointers": 1000,
++      "crash_matrix": "F17",
++      "ledger_events": 100000,
+       "lost_committed_decisions": 0,
+-      "torn_pass": 0,
+-      "read_transaction_ms": 810.43,
+-      "read_transaction_target_ms": 2000,
+       "metadata_restore_minutes": 0.4656,
+       "metadata_restore_target_minutes": 60,
+-      "crash_matrix": "F17",
+-      "peak_mib": {"RP-4G": 428.64}
++      "peak_mib": {
++        "RP-4G": 428.64
++      },
++      "read_transaction_ms": 810.43,
++      "read_transaction_target_ms": 2000,
++      "status": "PASS",
++      "torn_pass": 0
+     },
+-    "T_RELEASE": {"status": "PASS", "go_tests": "PASS", "rust_tests": "PASS", "evidence": "evidence/labd/T_RELEASE_BUILD.json"},
+     "T25_ACCEPTANCE": {
+-      "status": "PARTIAL/EVIDENCE_PENDING",
+-      "full_acceptance_claimed": false,
+       "check_status": {
+         "B0": "PASS",
+         "B1": "PASS",
+@@ -58,31 +95,34 @@
+         "B4": "PASS",
+         "B5": "PASS",
+         "T-RELEASE": "SEE_T_RELEASE_BUILD"
++      },
++      "full_acceptance_claimed": false,
++      "status": "PARTIAL/EVIDENCE_PENDING"
++    },
++    "T_RELEASE": {
++      "evidence": "evidence/labd/T_RELEASE_BUILD.json",
++      "go_tests": "PASS",
++      "rust_tests": "PASS",
++      "status": "PASS"
++    },
++    "profiles": {
++      "RP-4G": {
++        "enforced": true,
++        "enforcement": "CGROUP_V2_MEMORY_MAX",
++        "memory_max_bytes": 4294967296,
++        "swap_max_bytes": 0
++      },
++      "RP-8G": {
++        "enforced": true,
++        "enforcement": "CGROUP_V2_MEMORY_MAX",
++        "memory_max_bytes": 8589934592,
++        "swap_max_bytes": 0
+       }
++    },
++    "pytest": {
++      "command": "QEL_DATA_ROOT=/home/quant/quant/quant-edge-lab/data PYTHONPATH=python QEL_ROOT=$PWD .venv/bin/python -m pytest -q tests",
++      "exit_code": 0,
++      "result": "248 passed"
+     }
+-  },
+-  "acceptance_boundary": {
+-    "status": "PARTIAL_B2_PERF_MISS",
+-    "verified": ["B0", "B1", "B3", "B4", "B5", "T-RELEASE", "RP-4G and RP-8G cgroup enforcement", "2 warmups + 12 timed repeats per profile"],
+-    "missing": [
+-      "B2 warm p90 <= 30 s: measured 30.141 s (RP-4G) and 30.351 s (RP-8G), 0.14-0.35 s over"
+-    ],
+-    "note": "B0/B1/B3/B4/B5 pass. B2 misses its 30 s warm p90 by 0.14-0.35 s on the current host; the prior 20.545 s result is not reproducible. Full TASK-25 acceptance is not claimed.",
+-    "superseding_evidence": "evidence/labd/T25_B2_B3_PROFILES.json"
+-  },
+-  "claims_not_made": [
+-    "full TASK-25 acceptance",
+-    "B2 30 s warm p90"
+-  ],
+-  "evidence_hashes": {
+-    "evidence/labd/B0_TYPED_SPECIFICATION.json": "committed with patch",
+-    "evidence/labd/B1_BATCH_SCREEN.json": "committed with patch",
+-    "evidence/labd/B5_LEDGER_RESTORE.json": "committed with patch",
+-    "evidence/labd/T25_B2_B3_PROFILES.json": "committed with this verification",
+-    "evidence/labd/B4_PROFILES_EVIDENCE.json": "committed with this verification",
+-    "evidence/labd/T25_ACCEPTANCE.json": "committed with patch",
+-    "evidence/labd/T_RELEASE_BUILD.json": "committed with patch"
+-  },
+-  "verdict": "PASS_B0_B1_B3_B4_B5_B2_FAIL_MARGINAL",
+-  "acceptance_note": "Benchmark harnesses, frozen corpora and cgroup-enforced B0/B1/B3/B4/B5 results are integrated. B2 remains a filed marginal miss at 30.141/30.351 s vs the 30 s target; #13 is not closed."
++  }
+ }
+diff --git a/tests/test_m2.py b/tests/test_m2.py
+index c1278f8..4a422ad 100644
+--- a/tests/test_m2.py
++++ b/tests/test_m2.py
+@@ -57,6 +57,8 @@ def test_development_fold_refuses_short_history() -> None:
+ 
+ 
+ def test_frozen_manifest_marks_missing_execution_days() -> None:
++    if not DATA.is_dir():
++        pytest.skip("development corpus is not present in this checkout")
+     manifest = json.loads(MANIFEST.read_text())
+     execution = load_execution_days(str(DATA), _dev_dates())
+     assert len(execution) == 7

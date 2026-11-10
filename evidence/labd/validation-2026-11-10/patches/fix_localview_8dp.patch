@@ -1,0 +1,26 @@
+diff --git a/native/local_view/src/main.rs b/native/local_view/src/main.rs
+index d98e6a3..5b9207a 100644
+--- a/native/local_view/src/main.rs
++++ b/native/local_view/src/main.rs
+@@ -624,8 +624,8 @@ impl LocalViewTaker {
+                     realized
+                 };
+                 self.local.realized += realized;
+-                self.local.cash += realized - fee;
+-                self.local.fees += fee;
++                self.local.cash = (self.local.cash + realized - fee).round_dp(8);
++                self.local.fees = (self.local.fees + fee).round_dp(8);
+                 self.local.delivered_fills += 1;
+                 if let Some(id) = position_id {
+                     self.local.position_id = Some(id.clone());
+@@ -656,8 +656,8 @@ impl LocalViewTaker {
+             }
+             ResponseKind::Funding { amount } => {
+                 let cash_before = self.local.cash;
+-                self.local.cash += amount;
+-                self.local.funding_cash += amount;
++                self.local.cash = (self.local.cash + amount).round_dp(8);
++                self.local.funding_cash = (self.local.funding_cash + amount).round_dp(8);
+                 self.local.delivered_fundings += 1;
+                 let mut shared = self.shared.lock().unwrap();
+                 if let Some(record) = shared
