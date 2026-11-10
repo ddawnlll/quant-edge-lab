@@ -22,7 +22,8 @@
     "TAKER_L1_FUNDING_STREAMING"
   ],
   "verified_capability_slices": [
-    "CAP-L2-QUEUE-F02"
+    "CAP-L2-QUEUE-F02",
+    "CAP-L2-QUEUE-F02-F03-F06-F33-F34"
   ],
   "capability_recertifications": [
     {
@@ -30,15 +31,21 @@
       "date": "2026-11-10",
       "capability": "CAP-L2-QUEUE",
       "status": "PARTIAL",
-      "slice": "F02 queue-ahead with queue_position(true), trade_execution(true), liquidity_consumption(true); exact 10 fill on second trade; depth-once; get_quantity_at_level public",
+      "slice": "F02 queue-ahead/depth-once/cancel-remainder/shared-level; F03 IOC; F06 native OCO; F33 FOK/stop-limit gap; F34 partial-entry protection",
       "unproven": [
         "public queue readback",
-        "shared-level budget",
         "unknown aggressor",
         "resync after gaps",
-        "full L2 depth"
+        "full L2 depth",
+        "F04 cancel race",
+        "F05 replace priority",
+        "F07 epoch safety",
+        "F29 book sequence",
+        "F31 duplicate fill",
+        "client-managed OCO"
       ],
-      "evidence": "evidence/native/FUNCTIONAL_SPIKE_2026-11-09.json"
+      "evidence": "evidence/native/FUNCTIONAL_SPIKE_2026-11-09.json",
+      "follow_up_evidence": "evidence/labd/PASSIVE_QUEUE_2026-11-10.json"
     }
   ]
 }

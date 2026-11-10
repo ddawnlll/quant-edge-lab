@@ -66,3 +66,21 @@ The following remain unsupported or unproven:
 - The two-world/LocalView work remains blocked.
 - The taker L1 funding certificate is unchanged.
 - No production module was changed by this ADR; the spike is evidence only.
+
+## Follow-up 2026-11-10: passive runner
+
+`native/passive_runner` (source sha `f9bcde4c…`, binary sha `6f32c283…`) now
+reproduces F02 through the public API and adds:
+- partial maker fill plus deterministic cancel of the remainder;
+- one shared level budget across two passive orders and across two marketable
+  IOC orders (6 + 4, second cancels 2);
+- F03 IOC, F06 native OCO, F33 FOK and stop-limit gap, F34 partial-entry
+  protection sized on filled quantity only.
+
+Still unproven or blocked: public queue-state readback, unknown aggressor,
+resync after gaps, full L2 depth, F04 cancel race, F05 replace priority, F07
+epoch safety, F29 book sequence, F31 duplicate-fill injection and
+client-managed OCO. `CAP-L2-QUEUE` remains PARTIAL; LocalView and mark-based
+liquidation remain BLOCKED_BACKEND. Evidence:
+`evidence/labd/PASSIVE_QUEUE_2026-11-10.json` and
+`evidence/labd/INTEGRATION_ISSUE10_VERIFY.json`.
