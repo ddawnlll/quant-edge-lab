@@ -84,10 +84,7 @@ def main() -> int:
         },
         "f22": {
             "status": f22.get("status"),
-            "invariants": {
-                key: {run: value.get("pass") for run, value in block.items()}
-                for key, block in f22.get("f22_invariants", {}).items()
-            },
+            "invariants": f22.get("f22_invariants"),
             "cross_world": f22.get("cross_world_summary"),
         },
         "passive_queue": {
