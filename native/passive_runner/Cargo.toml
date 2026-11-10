@@ -11,5 +11,6 @@ serde_json = "1.0"
 nautilus-backtest = { git = "https://github.com/nautechsystems/nautilus_trader", rev = "27a8e54e7ac3c57d6cbf8891f0283dfbaee97317" }
 nautilus-common = { git = "https://github.com/nautechsystems/nautilus_trader", rev = "27a8e54e7ac3c57d6cbf8891f0283dfbaee97317" }
 nautilus-core = { git = "https://github.com/nautechsystems/nautilus_trader", rev = "27a8e54e7ac3c57d6cbf8891f0283dfbaee97317" }
+nautilus-execution = { git = "https://github.com/nautechsystems/nautilus_trader", rev = "27a8e54e7ac3c57d6cbf8891f0283dfbaee97317" }
 nautilus-model = { git = "https://github.com/nautechsystems/nautilus_trader", rev = "27a8e54e7ac3c57d6cbf8891f0283dfbaee97317", features = ["stubs"] }
 nautilus-trading = { git = "https://github.com/nautechsystems/nautilus_trader", rev = "27a8e54e7ac3c57d6cbf8891f0283dfbaee97317" }

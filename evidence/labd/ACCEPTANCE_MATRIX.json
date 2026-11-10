@@ -208,17 +208,17 @@
       "checks": {
         "F02": "PASS: ahead 100, trades 80+30 -> 10 fill, depth-once, cancel remainder, shared level",
         "F03": "PASS: marketable IOC shared level",
-        "F04": "BLOCKED_BACKEND: cancel race",
-        "F05": "PARTIAL: replace priority",
-        "F06": "PASS native OCO; client-managed OCO BLOCKED_BACKEND",
-        "F07": "BLOCKED_BACKEND: epoch safety",
-        "F29": "BLOCKED_BACKEND: book sequence",
-        "F31": "BLOCKED_BACKEND: duplicate fill injection",
+        "F04": "PARTIAL: delayed cancel arrives after fill; no overfill; missing ALREADY_FILLED response",
+        "F05": "PARTIAL: same-price increase preserves priority; no public priority counter/readback",
+        "F06": "PASS native OCO; client-managed OCO PARTIAL and overfills",
+        "F07": "BLOCKED_BACKEND: no position-epoch/stale-stop hook",
+        "F29": "BLOCKED_BACKEND: no book sequence/resync hook",
+        "F31": "PARTIAL: duplicate fill suppressed; no out-of-order ACK hook",
         "F33": "PASS: FOK and stop-limit gap",
         "F34": "PASS: partial-entry protection sized on filled qty"
       },
       "status": "PARTIAL_EVIDENCE_PENDING",
-      "blocker": "CAP-L2-QUEUE PARTIAL: F04/F05/F07/F29/F31 and client-managed OCO remain unproven; LocalView/liquidation still blocked"
+      "blocker": "CAP-L2-QUEUE PARTIAL: F04/F05/F31 partial with exact missing APIs; F07/F29 blocked; client-managed OCO overfills; LocalView/liquidation blocked"
     },
     {
       "issue": 11,

@@ -1,4 +1,4 @@
-"""TASK-17 passive queue evidence checks.
+"""TASK-17 passive queue completion evidence checks.
 
 These tests validate the recorded native evidence against the independent
 pure-Python fixture oracle. They never mutate the evidence and they never
@@ -17,12 +17,17 @@ import pytest
 from qel.conformance import Harness
 
 ROOT = Path(__file__).resolve().parents[1]
-EVIDENCE = ROOT / "evidence" / "labd" / "PASSIVE_QUEUE_2026-11-10.json"
+EVIDENCE = ROOT / "evidence" / "labd" / "PASSIVE_QUEUE_COMPLETION_2026-11-10.json"
 BINARY = Path("/home/quant/quant/.build-cache/qel-native/release/qel-passive-runner")
 
 
 def sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def canonical_sha256(value) -> str:
+    text = json.dumps(value, sort_keys=True, separators=(",", ":"))
+    return hashlib.sha256(text.encode()).hexdigest()
 
 
 @pytest.fixture(scope="module")
@@ -63,6 +68,7 @@ def test_evidence_records_binary_and_source_hashes(evidence: dict) -> None:
     assert build["exit_code"] == 0
     assert build["crate"] == "native/passive_runner"
     assert sha256(ROOT / build["source"]["path"]) == build["source"]["sha256"]
+    assert sha256(ROOT / build["cargo_toml"]["path"]) == build["cargo_toml"]["sha256"]
 
 
 def test_binary_hash_matches_built_artifact_if_present(evidence: dict) -> None:
@@ -79,21 +85,31 @@ def test_evidence_records_resources(evidence: dict) -> None:
     assert evidence["probe_payload"]["elapsed_ms"] >= 0
 
 
-def test_standalone_payload_matches_embedded_payload(evidence: dict) -> None:
-    run = evidence["run"]
-    payload_path = ROOT / run["probe_payload_path"]
-    assert payload_path.exists()
-    assert sha256(payload_path) == run["probe_payload_sha256"]
-    assert json.loads(payload_path.read_text()) == evidence["probe_payload"]
+def test_embedded_payload_is_self_consistent(evidence: dict) -> None:
+    payload = evidence["probe_payload"]
+    assert payload["probe"] == "qel-passive-queue-runner"
+    assert payload["pinned"]["commit"] == evidence["pinned"]["commit"]
+    assert canonical_sha256(payload) == evidence["run"]["probe_payload_sha256"]
+    assert payload["summary"] == evidence["summary"]
 
 
 def test_acceptance_boundary_is_explicit(evidence: dict) -> None:
     boundary = evidence["acceptance_boundary"]
     assert "PARTIAL" in boundary["claimed"]
     joined = " ".join(boundary["not_claimed"]).lower()
-    for must_not_claim in ("queue state readback", "unknown-aggressor", "resync", "localview"):
-        assert must_not_claim in joined or must_not_claim == "localview"
-    assert "taker L1 funding certificate" in " ".join(boundary["unchanged"])
+    for must_not_claim in (
+        "queue state readback",
+        "unknown aggressor",
+        "resync",
+        "localview",
+        "f07",
+        "f29",
+        "f31",
+    ):
+        assert must_not_claim in joined, must_not_claim
+    unchanged = " ".join(boundary["unchanged"]).lower()
+    assert "taker l1 funding certificate" in unchanged
+    assert "cap-l2-queue remains partial" in unchanged
 
 
 # ---------------------------------------------------------------------------
@@ -176,7 +192,7 @@ def test_f34_partial_entry_protection_matches_oracle(probes: dict) -> None:
 
 
 # ---------------------------------------------------------------------------
-# Time in force, stop-limit, replace, OCO
+# Time in force, stop-limit, replace, native OCO
 # ---------------------------------------------------------------------------
 
 
@@ -206,8 +222,18 @@ def test_f05_replace_quantity_matches_oracle_but_priority_is_unreadable(probes: 
     assert num(f05["accepted_qty"]) == num(expected["accepted_qty"]) == 15
     assert f05["priority_reset_count"] is None
     assert f05["ahead_qty"] is None
-    # Native behavior contradicts the fixture's replace_increase_resets=true.
+
+
+def test_f05_native_replace_preserves_priority_on_same_price_increase(probes: dict) -> None:
+    f05 = probes["f05_replace"]
+    # The fixture expects an increase to reset priority (priority_reset_count=1);
+    # the native engine preserves the tracked queue on a same-price size change.
+    assert f05["observed_priority_behavior"] == "preserved_on_same_price_increase"
+    assert f05["native_matches_fixture_priority"] is False
     assert num(f05["priority_probe_fill_after_increase_qty"]) > 0
+    assert f05["priority_reset_count_public"] is False
+    assert f05["ahead_qty_public"] is False
+    assert "private" in f05["missing_api"]
 
 
 def test_f06_native_oco_matches_oracle(probes: dict) -> None:
@@ -222,11 +248,84 @@ def test_f06_native_oco_matches_oracle(probes: dict) -> None:
 
 
 # ---------------------------------------------------------------------------
+# Remaining checks: F04, F29, F31, client-managed OCO
+# ---------------------------------------------------------------------------
+
+
+def test_f04_delayed_cancel_race_has_no_overfill(probes: dict) -> None:
+    f04 = probes["f04_cancel_race"]
+    assert f04["verdict"] == "PARTIAL"
+    assert f04["pass"] is True
+    assert f04["delayed_cancel_arrival_reproduced"] is True
+    # Cancel is sent at 10 with delete latency 20, so it arrives at 30.
+    assert f04["setup"]["cancel_sent_ns"] == 10
+    assert f04["setup"]["cancel_arrival_ns"] == 30
+    assert f04["setup"]["trade_ns"] == 20
+    assert f04["after_cancel_sent"]["status"] == "PendingCancel"
+    assert num(f04["final_filled_qty"]) == 1
+    assert num(f04["final_canceled_qty"]) == 0
+    assert f04["after_cancel_arrival"]["status"] == "Filled"
+    assert f04["overfill"] is False
+    # The fixture's ALREADY_FILLED cancel response is not emitted.
+    assert f04["last_cancel_response"] is None
+    assert f04["cancel_response_api_present"] is False
+    assert f04["cancel_rejections"] == []
+
+
+def test_f29_book_gap_is_not_detected(probes: dict) -> None:
+    f29 = probes["f29_book_sequence"]
+    assert f29["verdict"] == "BLOCKED_BACKEND"
+    assert f29["sequence_stream"] == [100, 101, 102, 110, 105]
+    assert f29["gap_detected"] is False
+    assert f29["out_of_order_detected"] is False
+    assert f29["apply_errors"] == [None, None, None, None, None]
+    assert f29["sequence_high_water"] == 110
+    assert f29["absolute_updates_not_additive"] is True
+    assert f29["book_state_api_present"] is False
+    assert f29["last_good_seq_api_present"] is False
+
+
+def test_f31_duplicate_fill_is_suppressed_by_oms(probes: dict) -> None:
+    f31 = probes["f31_duplicate_fill"]
+    assert f31["verdict"] == "PARTIAL"
+    assert f31["pass"] is True
+    assert f31["duplicate_fill_predicate"] is True
+    assert f31["duplicate_suppressed"] is True
+    assert f31["strategy_fill_events_before_injection"] == 1
+    assert f31["strategy_fill_events_after_injection"] == 1
+    assert num(f31["accepted_qty"]) == 2
+    assert num(f31["filled_qty"]) == 1
+    assert num(f31["canceled_qty"]) == 1
+    assert f31["state"] == "Canceled"
+    assert f31["duplicate_fee_or_funding_debits"] == 0
+    # Native keeps the unfilled leaves after a cancel; the fixture expects 0.
+    assert f31["native_leaves_qty_after_cancel"] == 1
+    assert f31["venue_seq_field_present"] is False
+    assert f31["local_order_event_data_hook_present"] is False
+
+
+def test_client_managed_oco_can_overfill(probes: dict) -> None:
+    cm = probes["f06_client_unsafe_observable"]
+    assert cm["verdict"] == "PARTIAL"
+    assert cm["pass"] is True
+    assert num(cm["entry_filled_qty"]) == 1
+    assert num(cm["stop_filled_qty"]) == 1
+    assert num(cm["tp_filled_qty"]) == 1
+    assert num(cm["exit_total_qty"]) == 2
+    assert cm["overfill_observed"] is True
+    assert num(cm["over_exit_qty"]) == 1
+    assert num(cm["position_qty_after"]) == -1
+    assert cm["position_side_after"] == "Short"
+    assert cm["position_reversed"] is True
+    assert cm["native_oco_sibling_cancelled"] is False
+
+
+# ---------------------------------------------------------------------------
 # Honest BLOCKED records
 # ---------------------------------------------------------------------------
 
 
-@pytest.mark.parametrize("fixture_id", ["F04", "F07", "F29", "F31", "F06_CLIENT_UNSAFE_OBSERVABLE"])
+@pytest.mark.parametrize("fixture_id", ["F07", "F29"])
 def test_unreachable_capabilities_are_blocked_with_exact_api(evidence: dict, fixture_id: str) -> None:
     fixture = evidence["per_fixture"][fixture_id]
     assert fixture["verdict"] == "BLOCKED_BACKEND"
@@ -234,15 +333,29 @@ def test_unreachable_capabilities_are_blocked_with_exact_api(evidence: dict, fix
     assert missing, f"{fixture_id} must record the exact missing API"
 
 
-def test_f04_cancel_race_records_the_missing_hook(evidence: dict, probes: dict) -> None:
-    f04 = probes["f04_cancel_race"]
-    assert f04["verdict"] == "BLOCKED_BACKEND"
-    assert f04["pass"] is False
-    # The fill itself is observable; the cancel response is not.
-    assert num(f04["after_trade"]["filled_qty"]) == 1
-    assert f04["after_cancel"]["status"] == "Filled"
-    assert f04["cancel_rejections"] == []
-    assert "no delayed cancel-arrival API" in evidence["per_fixture"]["F04"]["missing"]
+def test_f07_records_the_missing_epoch_field(evidence: dict) -> None:
+    f07 = evidence["per_fixture"]["F07"]
+    assert f07["verdict"] == "BLOCKED_BACKEND"
+    assert "no epoch field" in f07["missing_api"]
+    assert "epoch" in f07["missing_field"]
+    assert "STALE_POSITION_EPOCH" in f07["missing_error"]
+
+
+def test_f04_records_the_missing_cancel_response(evidence: dict) -> None:
+    f04 = evidence["per_fixture"]["F04"]
+    assert f04["verdict"] == "PARTIAL"
+    assert "ALREADY_FILLED" in f04["missing"]
+    assert "process_cancel" in f04["missing"]
+    assert f04["fixture_assertion_not_met"] == "last_cancel_response == ALREADY_FILLED"
+
+
+def test_partial_fixtures_record_exact_gaps(evidence: dict) -> None:
+    assert evidence["per_fixture"]["F05"]["verdict"] == "PARTIAL"
+    assert evidence["per_fixture"]["F31"]["verdict"] == "PARTIAL"
+    assert evidence["per_fixture"]["F06_CLIENT_UNSAFE_OBSERVABLE"]["verdict"] == "PARTIAL"
+    assert "priority_reset_count" in evidence["per_fixture"]["F05"]["missing"]
+    assert "LOCAL_ORDER_EVENT" in evidence["per_fixture"]["F31"]["missing"]
+    assert evidence["per_fixture"]["F06_CLIENT_UNSAFE_OBSERVABLE"]["overfill_observed"] is True
 
 
 def test_capability_verdict_stays_partial(evidence: dict) -> None:
