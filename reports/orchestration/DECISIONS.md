@@ -1,0 +1,5 @@
+- 2026-11-10: Wave A first (A1+A2 parallel, disjoint paths). No sudo.
+- B3 203.6s miss is real; no corpus substitution.
+- B6 1187 core-h = human gate, never auto-launch.
+- M2 INSUFFICIENT_EVIDENCE stays valid outcome; never invent EDGE.
+- 20 USDT BTC infeasible (58.94 min) — show honestly, separate research-capital scenario.

@@ -1,0 +1,75 @@
+{
+  "budgets_usdt": [
+    "20",
+    "100",
+    "1000"
+  ],
+  "note": "min_qty provenance is TEST_FIXTURE for BTCUSDT; historical PIT venue rule files are the TASK-10 gap. 20 USDT BTC is INFEASIBLE at ~58941 (min 58.94). Raising leverage/risk to bypass is forbidden without liquidation/stop proof.",
+  "rows": [
+    {
+      "budget_usdt": "20",
+      "feasible": false,
+      "min_notional": "5894189/100000",
+      "min_qty": "1/1000",
+      "provenance": "TEST_FIXTURE",
+      "reason": "INFEASIBLE_VENUE_MIN_NOTIONAL",
+      "reference_price": "5894189/100",
+      "status": "INFEASIBLE",
+      "symbol": "BTCUSDT",
+      "venue": "binance_usdm"
+    },
+    {
+      "budget_usdt": "100",
+      "feasible": true,
+      "min_notional": "5894189/100000",
+      "min_qty": "1/1000",
+      "provenance": "TEST_FIXTURE",
+      "reason": "VENUE_MIN_OK",
+      "reference_price": "5894189/100",
+      "status": "ELIGIBLE",
+      "symbol": "BTCUSDT",
+      "venue": "binance_usdm"
+    },
+    {
+      "budget_usdt": "1000",
+      "feasible": true,
+      "min_notional": "5894189/100000",
+      "min_qty": "1/1000",
+      "provenance": "TEST_FIXTURE",
+      "reason": "VENUE_MIN_OK",
+      "reference_price": "5894189/100",
+      "status": "ELIGIBLE",
+      "symbol": "BTCUSDT",
+      "venue": "binance_usdm"
+    },
+    {
+      "budget_usdt": "20",
+      "note": "no PIT venue metadata pinned in repo",
+      "provenance": "NONE",
+      "reason": "NO_PIT_VENUE_METADATA",
+      "status": "UNKNOWN",
+      "symbol": "ETHUSDT",
+      "venue": "binance_usdm"
+    },
+    {
+      "budget_usdt": "100",
+      "note": "no PIT venue metadata pinned in repo",
+      "provenance": "NONE",
+      "reason": "NO_PIT_VENUE_METADATA",
+      "status": "UNKNOWN",
+      "symbol": "ETHUSDT",
+      "venue": "binance_usdm"
+    },
+    {
+      "budget_usdt": "1000",
+      "note": "no PIT venue metadata pinned in repo",
+      "provenance": "NONE",
+      "reason": "NO_PIT_VENUE_METADATA",
+      "status": "UNKNOWN",
+      "symbol": "ETHUSDT",
+      "venue": "binance_usdm"
+    }
+  ],
+  "schema": "qel.m2_symbol_feasibility/1.0",
+  "verdict": "HAS_ELIGIBLE"
+}
