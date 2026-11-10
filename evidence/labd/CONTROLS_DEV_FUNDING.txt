@@ -1,0 +1,78 @@
+TASK-13 DEVELOPMENT-WEEK FUNDING CONTROLS
+==============================================================
+status: PASS_DEVELOPMENT_WEEK_FUNDING_CONTROLS_NO_PROMOTION
+branch: qel/issue-06-funding  base: 577f9a07111042054232f3c5084a8aea4fc854b2
+source sha256: 4beae601166d5183d098226e690c817fe577b7f705ec275477cb69b0e9d20d24
+resampled sha256: 6be94d1b281c662351d28bd22876ba7b8da313d8eb49217c0a266a941f70eaa9 (10080 grid quotes)
+cadence: first Quote at/after each 60s UTC boundary, 22 trades/day cap.
+         Full native cadence NOT_RUN (time box); reason recorded in JSON.
+
+FUNDING MODEL
+  convention: LONG_PAYS_POSITIVE_RATE_SHORT_RECEIVES
+  window: [entry_ts, exit_ts)  reference: POSITION_ENTRY_NOTIONAL
+  raw events: 147  unique: 21  dropped duplicates: 126
+  in eval window: 15
+  funding hash: bb5d26a7563085c8daa424104e3bbafb5386b4c982f3236a6eea53ae3f7438e1
+  total funding: 202470654673/1250000000000 (0.161977 USDT)
+  mean per seed: 0.0001619765237384
+  sign probe: {'rate': '0.001', 'reference_notional': '100', 'long_position_cash_delta': '-0.1', 'short_position_cash_delta': '0.1', 'long_pays_positive_rate': True, 'short_receives_positive_rate': True, 'passed': True}
+
+CONTROLS
+  seeds: 1000/1000  status: PASS
+  trades: 132000  rejected: 0
+  control mean: -11.93150582  std: 0.77197743
+  daily hash: c2e7afa077748a54e6816c595a5ed713ece84fc5a7c25503a733fb8d788e4115
+  seed hash: e0e0d8f60e36b7b8058c54494632408ec3634d012016cf6529bdd55c7c3dff26
+  trials: 1000 preserved, dropped=0
+
+BATCH / SEQUENTIAL
+  subset: 100 seeds  equal=True
+  series equal=True  seed series equal=True
+
+PER DAY
+  2024-09-01: trades=0 holding_ns=0 exposure_notional_ns=0 funding=0 mean_pnl=0 zero_trade_seeds=1000 missing_seeds=0
+  2024-09-02: trades=22000 holding_ns=1319928000000000 exposure_notional_ns=131992800000000000 funding=0 mean_pnl=-2.0076854992 zero_trade_seeds=0 missing_seeds=0
+  2024-09-03: trades=22000 holding_ns=1319966000000000 exposure_notional_ns=131996600000000000 funding=158102093877/1250000000000 mean_pnl=-1.9556873703248984 zero_trade_seeds=0 missing_seeds=0
+  2024-09-04: trades=22000 holding_ns=1319759000000000 exposure_notional_ns=131975900000000000 funding=-28303993511/312500000000 mean_pnl=-2.0670541892592352 zero_trade_seeds=0 missing_seeds=0
+  2024-09-05: trades=22000 holding_ns=1319911000000000 exposure_notional_ns=131991100000000000 funding=85947352677/1000000000000 mean_pnl=-1.960365206807323 zero_trade_seeds=0 missing_seeds=0
+  2024-09-06: trades=22000 holding_ns=1319921000000000 exposure_notional_ns=131992100000000000 funding=8024055039/200000000000 mean_pnl=-1.974970841324805 zero_trade_seeds=0 missing_seeds=0
+  2024-09-07: trades=22000 holding_ns=1319490000000000 exposure_notional_ns=131949000000000000 funding=0 mean_pnl=-1.965742716784 zero_trade_seeds=0 missing_seeds=0
+
+PER STRATUM
+  H00: trades=249 holding_ns=14721000000000 exposure_notional_ns=1472100000000000 funding=-0.0170729119582 reject=0
+  H01: trades=268 holding_ns=16080000000000 exposure_notional_ns=1608000000000000 funding=0 reject=0
+  H02: trades=236 holding_ns=14160000000000 exposure_notional_ns=1416000000000000 funding=0 reject=0
+  H03: trades=293 holding_ns=17580000000000 exposure_notional_ns=1758000000000000 funding=0 reject=0
+  H04: trades=306 holding_ns=18273000000000 exposure_notional_ns=1827300000000000 funding=0 reject=0
+  H05: trades=319 holding_ns=19140000000000 exposure_notional_ns=1914000000000000 funding=0 reject=0
+  H06: trades=360 holding_ns=21601000000000 exposure_notional_ns=2160100000000000 funding=0 reject=0
+  H07: trades=373 holding_ns=22380000000000 exposure_notional_ns=2238000000000000 funding=0 reject=0
+  H08: trades=438 holding_ns=26010000000000 exposure_notional_ns=2601000000000000 funding=-0.0539345995262 reject=0
+  H09: trades=471 holding_ns=28260000000000 exposure_notional_ns=2826000000000000 funding=0 reject=0
+  H10: trades=469 holding_ns=28140000000000 exposure_notional_ns=2814000000000000 funding=0 reject=0
+  H11: trades=555 holding_ns=33300000000000 exposure_notional_ns=3330000000000000 funding=0 reject=0
+  H12: trades=597 holding_ns=35820000000000 exposure_notional_ns=3582000000000000 funding=0 reject=0
+  H13: trades=686 holding_ns=41160000000000 exposure_notional_ns=4116000000000000 funding=0 reject=0
+  H14: trades=824 holding_ns=49440000000000 exposure_notional_ns=4944000000000000 funding=0 reject=0
+  H15: trades=1001 holding_ns=60060000000000 exposure_notional_ns=6006000000000000 funding=0 reject=0
+  H16: trades=1207 holding_ns=72168000000000 exposure_notional_ns=7216800000000000 funding=0.2329840352228 reject=0
+  H17: trades=1638 holding_ns=98287000000000 exposure_notional_ns=9828700000000000 funding=0 reject=0
+  H18: trades=1158 holding_ns=69480000000000 exposure_notional_ns=6948000000000000 funding=0 reject=0
+  H19: trades=1453 holding_ns=87180000000000 exposure_notional_ns=8718000000000000 funding=0 reject=0
+  H20: trades=2042 holding_ns=122273000000000 exposure_notional_ns=12227300000000000 funding=0 reject=0
+  H21: trades=2992 holding_ns=179522000000000 exposure_notional_ns=17952200000000000 funding=0 reject=0
+  H22: trades=5870 holding_ns=352200000000000 exposure_notional_ns=35220000000000000 funding=0 reject=0
+  H23: trades=108195 holding_ns=6491740000000000 exposure_notional_ns=649174000000000000 funding=0 reject=0
+
+ACCEPTANCE
+  F27=PASS (SEVEN_DAY_DEVELOPMENT_CALENDAR_WITH_EXACT_FUNDING)
+  B1=PASS_FROM_TASK_25  T-PROTOCOL=PASS_FROM_TASK_12
+  promotion=NOT_A_PROMOTION  edge=NOT_CLAIMED
+
+RESOURCES
+  matched_controls wall: 140.038s  total wall: 330.327s
+  peak RSS: 134119424 bytes (127.9 MiB)
+
+CHECKS
+  focused: 38 passed, 0 failed (exit 0)
+  full suite: 279 passed, 6 skipped, 0 failed (exit 0)

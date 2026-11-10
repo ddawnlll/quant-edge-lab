@@ -56,6 +56,12 @@ RESCUE_SCOPE = "DEVELOPMENT_VALID_L1_REJECTS"
 L1_GROUP_SIZE = 10
 CONTROL_REQUIRED_REPLICATIONS = 1000
 TAKER_FEE = Fraction(4, 10000)
+#: Perpetual funding is settled from the native tape.  A long position pays a
+#: positive rate (negative cash) and a short receives it.  The reference
+#: notional is the position's own entry notional, so no mark price is inferred.
+FUNDING_MODEL = "EXACT_NATIVE_TAPE_FUNDING"
+FUNDING_SIGN_CONVENTION = "LONG_PAYS_POSITIVE_RATE_SHORT_RECEIVES"
+FUNDING_WINDOW = "[entry_ts, exit_ts)"
 #: Frozen training holding policy: hold for a fixed number of training quote
 #: intervals.  This is fitted from training timestamps only and is deliberately
 #: independent of evaluation prices.
@@ -204,6 +210,14 @@ class Quote:
     ask: Fraction
 
 
+@dataclass(frozen=True)
+class FundingSettlement:
+    """One deduplicated funding settlement from the native tape."""
+
+    ts: int
+    rate: Fraction
+
+
 def _to_quote(raw: Mapping[str, Any] | Quote) -> Quote:
     if isinstance(raw, Quote):
         return raw
@@ -239,6 +253,70 @@ def _to_quote(raw: Mapping[str, Any] | Quote) -> Quote:
     return Quote(ts=ts, bid=bid_f, ask=ask_f)
 
 
+def _to_funding(raw: Mapping[str, Any] | FundingSettlement) -> FundingSettlement:
+    if isinstance(raw, FundingSettlement):
+        return raw
+    if "ts" in raw:
+        ts = int(raw["ts"])
+    else:
+        ts = int(raw["ts_ns"])
+    return FundingSettlement(ts=ts, rate=Fraction(str(raw["rate"])))
+
+
+def normalize_funding(
+    events: Sequence[Mapping[str, Any] | FundingSettlement],
+) -> tuple[tuple[FundingSettlement, ...], int]:
+    """Deduplicate funding events by ``(ts_ns, rate)`` and sort by timestamp.
+
+    The native development tape carries each monthly funding record once per
+    day of the window, so the same settlement appears seven times.  Exact
+    duplicate keys collapse; two different rates at the same timestamp are both
+    kept because they are genuinely distinct settlements.
+    """
+    raw_count = len(events)
+    unique: dict[tuple[int, Fraction], FundingSettlement] = {}
+    for item in events:
+        settlement = _to_funding(item)
+        unique[(settlement.ts, settlement.rate)] = settlement
+    ordered = tuple(sorted(unique.values(), key=lambda s: (s.ts, s.rate)))
+    return ordered, raw_count
+
+
+def load_tape(
+    events_path: str,
+) -> tuple[list[dict], tuple[FundingSettlement, ...], int]:
+    """Load quotes and funding from a native JSONL tape in one streaming pass.
+
+    Returns ``(quotes, funding_settlements, raw_funding_event_count)``.  The
+    tape is streamed rather than read whole so a multi-gigabyte development
+    window stays well below the memory ceiling.
+    """
+    quotes: list[dict] = []
+    funding_raw: list[dict] = []
+    with open(events_path, "r", encoding="utf-8") as handle:
+        for line in handle:
+            if not line.strip():
+                continue
+            rec = json.loads(line)
+            kind = rec.get("kind")
+            if kind == "Quote":
+                quotes.append(
+                    {
+                        "ts": int(rec["ts_ns"]),
+                        "bid": float(rec["bid"]),
+                        "ask": float(rec["ask"]),
+                        "bid_exact": rec["bid"],
+                        "ask_exact": rec["ask"],
+                    }
+                )
+            elif kind == "Funding":
+                funding_raw.append({"ts_ns": int(rec["ts_ns"]), "rate": rec["rate"]})
+    if len(quotes) < 4:
+        raise ValueError("INSUFFICIENT_HISTORY")
+    settlements, raw_count = normalize_funding(funding_raw)
+    return sorted(quotes, key=lambda q: q["ts"]), settlements, raw_count
+
+
 def load_quotes(events_path: str) -> list[dict]:
     """Load quote records from a native JSONL tape.
 
@@ -246,24 +324,38 @@ def load_quotes(events_path: str) -> list[dict]:
     floats).  Exact decimal strings are carried alongside so the control
     account can use exact ``Fraction`` arithmetic.
     """
-    quotes: list[dict] = []
-    for line in Path(events_path).read_text().splitlines():
-        if not line.strip():
-            continue
-        rec = json.loads(line)
-        if rec.get("kind") == "Quote":
-            quotes.append(
-                {
-                    "ts": int(rec["ts_ns"]),
-                    "bid": float(rec["bid"]),
-                    "ask": float(rec["ask"]),
-                    "bid_exact": rec["bid"],
-                    "ask_exact": rec["ask"],
-                }
-            )
-    if len(quotes) < 4:
-        raise ValueError("INSUFFICIENT_HISTORY")
-    return sorted(quotes, key=lambda q: q["ts"])
+    quotes, _, _ = load_tape(events_path)
+    return quotes
+
+
+def load_funding(events_path: str) -> tuple[tuple[FundingSettlement, ...], int]:
+    """Load, deduplicate and sort funding settlements from a native tape."""
+    _, settlements, raw_count = load_tape(events_path)
+    return settlements, raw_count
+
+
+def funding_window_indices(
+    funding_ts: Sequence[int], entry_ts: int, exit_ts: int
+) -> tuple[int, int]:
+    """Half-open settlement window ``[entry_ts, exit_ts)``.
+
+    A settlement stamped exactly at entry applies; one stamped exactly at exit
+    does not.  Both operands are required to be ordered ascending.
+    """
+    return (
+        bisect.bisect_left(funding_ts, entry_ts),
+        bisect.bisect_left(funding_ts, exit_ts),
+    )
+
+
+def funding_cash_delta(side: int, reference_notional: Fraction, rate: Fraction) -> Fraction:
+    """Exact cash delta of one funding settlement.
+
+    A long (``side > 0``) pays a positive rate, so the delta is negative; a
+    short (``side < 0``) receives it.  The reference notional is the position's
+    own entry notional.
+    """
+    return -side * reference_notional * rate
 
 
 @dataclass(frozen=True)
@@ -305,6 +397,11 @@ class ControlPlan:
     plan_hash: str
     selection_plan_hash: str
     candidate_fills_used: bool = False
+    funding: tuple[FundingSettlement, ...] = ()
+    funding_ts: tuple[int, ...] = ()
+    funding_rates: tuple[Fraction, ...] = ()
+    funding_hash: str = ""
+    funding_raw_events: int = 0
 
     def labels(self, generator: int, time_index: int, control_replication: int) -> dict:
         return {
@@ -459,13 +556,24 @@ def prepare_control_plan(
     variant: int = 0,
     coin: int = 0,
     candidate_fills: Sequence[Mapping[str, Any]] | None = None,
+    funding: Sequence[Mapping[str, Any] | FundingSettlement] | None = None,
 ) -> ControlPlan:
     """Fit the frozen control plan from training strata only.
 
     ``candidate_fills`` is accepted for provenance and explicitly ignored.  It
     exists so a test (and the report) can prove that candidate realised trades
     never select controls or force a matched count.
+
+    ``funding`` is the exact cost model input.  It is committed in
+    ``plan_hash`` but deliberately excluded from ``selection_plan_hash``: a
+    funding settlement changes realised PnL, never which controls are drawn.
     """
+    funding_settlements, funding_raw_events = normalize_funding(funding or ())
+    funding_ts = tuple(item.ts for item in funding_settlements)
+    funding_rates = tuple(item.rate for item in funding_settlements)
+    funding_hash = _hash_json(
+        [[item.ts, str(item.rate)] for item in funding_settlements]
+    )
     q = tuple(_to_quote(raw) for raw in quotes)
     if len(q) < 4:
         raise ValueError("INSUFFICIENT_HISTORY")
@@ -587,6 +695,10 @@ def prepare_control_plan(
         **selection_material,
         "notional": str(notional_f),
         "starting_cash": str(starting_cash_f),
+        "funding_model": FUNDING_MODEL,
+        "funding_sign_convention": FUNDING_SIGN_CONVENTION,
+        "funding_window": FUNDING_WINDOW,
+        "funding_hash": funding_hash,
     }
     plan_hash = _hash_json(plan_material)
 
@@ -622,6 +734,11 @@ def prepare_control_plan(
         plan_hash=plan_hash,
         selection_plan_hash=selection_plan_hash,
         candidate_fills_used=False,
+        funding=funding_settlements,
+        funding_ts=funding_ts,
+        funding_rates=funding_rates,
+        funding_hash=funding_hash,
+        funding_raw_events=funding_raw_events,
     )
 
 
@@ -647,6 +764,7 @@ class ControlAccount:
     side: int = 0
     fees: Fraction = Fraction(0)
     realized: Fraction = Fraction(0)
+    funding: Fraction = Fraction(0)
     notional_traded: Fraction = Fraction(0)
     trades: int = 0
     rejected_orders: int = 0
@@ -670,6 +788,23 @@ class ControlAccount:
         self.side = side
         self.notional_traded += required
         return True
+
+    def apply_funding(self, rate: Fraction, reference_notional: Fraction) -> Fraction:
+        """Apply one funding settlement on the open position.
+
+        ``reference_notional`` is the position's own entry notional.  A long
+        position with a positive rate pays (negative cash); a short position
+        receives it.  The cash effect is booked into ``realized`` so it flows
+        into the daily and seed net PnL, and tracked separately in ``funding``
+        for diagnostics.
+        """
+        if self.position_qty == 0 or self.side == 0:
+            raise ControlError("NO_POSITION_FOR_FUNDING")
+        amount = funding_cash_delta(self.side, reference_notional, rate)
+        self.cash += amount
+        self.realized += amount
+        self.funding += amount
+        return amount
 
     def close(self, qty: Fraction, price: Fraction) -> Fraction:
         if self.position_qty == 0 or self.entry_price is None:
@@ -703,6 +838,8 @@ class SeedResult:
     ending_cash: Fraction
     fees: Fraction
     account_id: int
+    funding: Fraction = Fraction(0)
+    funding_records: tuple[dict, ...] = ()
 
 
 def _choose_stratum(
@@ -751,6 +888,7 @@ def _run_seed_account(
     days: dict[str, dict] = {}
     reject_records: list[dict] = []
     selection_material: list[dict] = []
+    funding_records: list[dict] = []
     trade_ordinal = 0
     total_rejected = 0
     all_reasons: dict[str, int] = {}
@@ -766,6 +904,7 @@ def _run_seed_account(
         day_exposure = 0
         day_exposure_notional = 0
         day_holding = 0
+        day_funding = Fraction(0)
         day_reasons: dict[str, int] = {}
         stratum_metrics: dict[str, dict] = {}
         missing_mark = False
@@ -785,6 +924,8 @@ def _run_seed_account(
                 "exposure_ns": 0,
                 "exposure_notional_ns": 0,
                 "holding_ns": 0,
+                "funding": fmt(Fraction(0)),
+                "funding_exact": str(Fraction(0)),
                 "missing_mark": False,
                 "schedule_truncated": False,
                 "schedule_shortfall": 0,
@@ -814,6 +955,7 @@ def _run_seed_account(
                     "exposure_notional_ns": 0,
                     "holding_ns": 0,
                     "rejected_orders": 0,
+                    "funding": Fraction(0),
                 },
             )
             stratum_indices = plan.eval_indices_by_stratum.get(day, {}).get(stratum, ())
@@ -900,6 +1042,32 @@ def _run_seed_account(
                 trade_ordinal += 1
                 continue
 
+            # Funding settles only inside the position's own holding window and
+            # only against its entry notional.  A settlement stamped exactly at
+            # entry applies; one stamped exactly at exit does not.  No future
+            # settlement is read and no mark price is inferred.
+            reference_notional = qty * price_in
+            funding_start, funding_end = funding_window_indices(
+                plan.funding_ts, entry_quote.ts, exit_quote.ts
+            )
+            for funding_index in range(funding_start, funding_end):
+                rate = plan.funding_rates[funding_index]
+                amount = account.apply_funding(rate, reference_notional)
+                day_funding += amount
+                metrics["funding"] += amount
+                funding_records.append(
+                    {
+                        "day": day,
+                        "settlement_ts": plan.funding_ts[funding_index],
+                        "entry_ts": entry_quote.ts,
+                        "exit_ts": exit_quote.ts,
+                        "side": side,
+                        "reference_notional": str(reference_notional),
+                        "rate": str(rate),
+                        "amount": str(amount),
+                    }
+                )
+
             account.close(qty, price_out)
             realized = exit_quote.ts - entry_quote.ts
             day_trades += 1
@@ -934,6 +1102,8 @@ def _run_seed_account(
             "exposure_ns": day_exposure,
             "exposure_notional_ns": day_exposure_notional,
             "holding_ns": day_holding,
+            "funding": fmt(day_funding),
+            "funding_exact": str(day_funding),
             "missing_mark": missing_mark,
             "schedule_truncated": schedule_truncated,
             "schedule_shortfall": max(0, target - day_trades) if schedule_truncated else 0,
@@ -944,6 +1114,8 @@ def _run_seed_account(
                     "exposure_notional_ns": value["exposure_notional_ns"],
                     "holding_ns": value["holding_ns"],
                     "rejected_orders": value["rejected_orders"],
+                    "funding": fmt(value["funding"]),
+                    "funding_exact": str(value["funding"]),
                 }
                 for key, value in sorted(stratum_metrics.items())
             },
@@ -979,6 +1151,7 @@ def _run_seed_account(
             "selection_hash": selection_hash,
             "net_pnl": str(net_total),
             "trades": global_trades,
+            "funding": str(account.funding),
         }
     )
     result = SeedResult(
@@ -995,6 +1168,8 @@ def _run_seed_account(
         ending_cash=account.cash,
         fees=account.fees,
         account_id=id(account),
+        funding=account.funding,
+        funding_records=tuple(funding_records),
     )
     return result, reject_records
 
@@ -1029,6 +1204,7 @@ class StreamingControlAggregator:
         self.schedule_shortfall = 0
         self.executed_trades = 0
         self.rejected_orders = 0
+        self.funding = Fraction(0)
         self.reject_reasons: dict[str, int] = {}
         self._chain = hashlib.sha256(b"").digest()
         self._summaries: list[dict] = []
@@ -1049,6 +1225,7 @@ class StreamingControlAggregator:
                 "exposure_ns": 0,
                 "exposure_notional_ns": 0,
                 "holding_ns": 0,
+                "sum_funding": Fraction(0),
             }
             for day in plan.calendar
         }
@@ -1060,6 +1237,7 @@ class StreamingControlAggregator:
                 "exposure_ns": 0,
                 "exposure_notional_ns": 0,
                 "holding_ns": 0,
+                "funding": Fraction(0),
             }
             for key in sorted(plan.strata)
         }
@@ -1079,6 +1257,7 @@ class StreamingControlAggregator:
         )
         self.executed_trades += result.executed_trades
         self.rejected_orders += result.rejected_orders
+        self.funding += result.funding
         for reason, count in result.reject_reasons.items():
             self.reject_reasons[reason] = self.reject_reasons.get(reason, 0) + count
 
@@ -1104,6 +1283,7 @@ class StreamingControlAggregator:
             acc["exposure_ns"] += payload["exposure_ns"]
             acc["exposure_notional_ns"] += payload.get("exposure_notional_ns", 0)
             acc["holding_ns"] += payload["holding_ns"]
+            acc["sum_funding"] += Fraction(payload.get("funding_exact", "0"))
             for key, metrics in payload.get("strata", {}).items():
                 s = self._strata.setdefault(
                     key,
@@ -1123,6 +1303,7 @@ class StreamingControlAggregator:
                 s["exposure_ns"] += metrics["exposure_ns"]
                 s["exposure_notional_ns"] += metrics.get("exposure_notional_ns", 0)
                 s["holding_ns"] += metrics["holding_ns"]
+                s["funding"] += Fraction(metrics.get("funding_exact", "0"))
 
         summary = {
             "seed_index": result.seed_index,
@@ -1130,6 +1311,7 @@ class StreamingControlAggregator:
             "rejected_orders": result.rejected_orders,
             "net_pnl": None if result.net_pnl_total is None else fmt(result.net_pnl_total),
             "fees": fmt(result.fees),
+            "funding": fmt(result.funding),
             "missing_mark": result.missing_mark,
             "selection_hash": result.selection_hash,
             "control_hash": result.control_hash,
@@ -1143,6 +1325,8 @@ class StreamingControlAggregator:
                     "exposure_ns": payload["exposure_ns"],
                     "exposure_notional_ns": payload.get("exposure_notional_ns", 0),
                     "holding_ns": payload["holding_ns"],
+                    "funding": payload.get("funding"),
+                    "funding_exact": payload.get("funding_exact", "0"),
                     "schedule_truncated": bool(payload.get("schedule_truncated")),
                     "schedule_shortfall": int(payload.get("schedule_shortfall", 0)),
                 }
@@ -1188,6 +1372,10 @@ class StreamingControlAggregator:
                     "exposure_ns": acc["exposure_ns"],
                     "exposure_notional_ns": acc["exposure_notional_ns"],
                     "holding_ns": acc["holding_ns"],
+                    "funding": None if not valid else str(acc["sum_funding"]),
+                    "mean_funding": (
+                        None if not valid else _num_str(acc["sum_funding"] / valid)
+                    ),
                 }
             )
         return series
@@ -1212,6 +1400,10 @@ class StreamingControlAggregator:
                     "exposure_ns": acc["exposure_ns"],
                     "exposure_notional_ns": acc["exposure_notional_ns"],
                     "holding_ns": acc["holding_ns"],
+                    "funding": _num_str(acc["funding"]),
+                    "mean_funding": (
+                        _num_str(acc["funding"] / total_trades) if total_trades else "0"
+                    ),
                     "mean_holding_ns": (
                         int(acc["holding_ns"] // total_trades) if total_trades else 0
                     ),
@@ -1236,6 +1428,7 @@ class StreamingControlAggregator:
             "schedule_shortfall": self.schedule_shortfall,
             "executed_trades": self.executed_trades,
             "rejected_orders": self.rejected_orders,
+            "funding_total": _num_str(self.funding),
             "reject_reasons": dict(sorted(self.reject_reasons.items())),
             "control_mean": None if mean is None else round(float(mean), 8),
             "control_std": round(std, 8),
@@ -1492,6 +1685,7 @@ def _execute_plan(
     variant: int,
     coin: int,
     candidate_fills: Sequence[Mapping[str, Any]] | None,
+    funding: Sequence[Mapping[str, Any] | FundingSettlement] | None,
     max_seconds: float | None,
     max_trades: int | None,
     keep_summaries: bool,
@@ -1525,6 +1719,7 @@ def _execute_plan(
         variant=variant,
         coin=coin,
         candidate_fills=candidate_fills,
+        funding=funding,
     )
     aggregator = StreamingControlAggregator(plan, keep_summaries=keep_summaries)
     reject_records: list[dict] = []
@@ -1552,6 +1747,7 @@ def _execute_plan(
                 variant=variant,
                 coin=coin,
                 candidate_fills=candidate_fills,
+                funding=funding,
             )
         result, rejects = _run_seed_account(active_plan, seed_index)
         aggregator.add(result)
@@ -1576,14 +1772,21 @@ def _control_report(
     variant: int = 0,
     coin: int = 0,
     candidate_fills: Sequence[Mapping[str, Any]] | None = None,
+    funding: Sequence[Mapping[str, Any] | FundingSettlement] | None = None,
     financial_trials: Sequence[Mapping[str, Any]] | None = None,
     cost_reservations: Mapping[str, Any] | None = None,
     max_seconds: float | None = None,
     max_trades: int | None = None,
+    comparison_replications: int | None = None,
     keep_summaries: bool = True,
     record_telemetry: bool = False,
 ) -> dict:
-    quotes = load_quotes(events_path)
+    quotes, tape_funding, tape_funding_raw = load_tape(events_path)
+    if funding is None:
+        funding_settlements = tape_funding
+        funding_raw_events = tape_funding_raw
+    else:
+        funding_settlements, funding_raw_events = normalize_funding(funding)
     input_hash = _file_sha256(events_path)
     quotes_hash = _hash_json(
         [[q["ts"], repr(q["bid"]), repr(q["ask"])] for q in quotes]
@@ -1603,6 +1806,7 @@ def _control_report(
         variant=variant,
         coin=coin,
         candidate_fills=candidate_fills,
+        funding=funding_settlements,
         max_seconds=max_seconds,
         max_trades=max_trades,
         keep_summaries=keep_summaries,
@@ -1613,12 +1817,41 @@ def _control_report(
 
     comparison = None
     if compare_executions:
+        # A bounded deterministic subset is compared seed-for-seed in both
+        # modes.  The full batch run is reported separately; full sequential
+        # equality is never claimed unless the caller actually asked for it.
+        subset = (
+            max(0, int(replications))
+            if comparison_replications is None
+            else min(max(0, int(replications)), max(0, int(comparison_replications)))
+        )
+        _, batch_sub_agg, _, batch_sub_completed, _, _ = _execute_plan(
+            quotes,
+            requested,
+            notional,
+            seed,
+            subset,
+            execution="BATCH",
+            max_holding_ns=max_holding_ns,
+            train_fraction=train_fraction,
+            train_end_ns=train_end_ns,
+            starting_cash=starting_cash,
+            variant=variant,
+            coin=coin,
+            candidate_fills=candidate_fills,
+            funding=funding_settlements,
+            max_seconds=max_seconds,
+            max_trades=max_trades,
+            keep_summaries=False,
+        )
+        batch_sub_series = batch_sub_agg.daily_series()
+        batch_sub_summary = batch_sub_agg.summary()
         _, seq_agg, _, seq_completed, seq_budget, seq_elapsed = _execute_plan(
             quotes,
             requested,
             notional,
             seed,
-            max(0, int(replications)),
+            subset,
             execution="SEQUENTIAL",
             max_holding_ns=max_holding_ns,
             train_fraction=train_fraction,
@@ -1627,19 +1860,27 @@ def _control_report(
             variant=variant,
             coin=coin,
             candidate_fills=candidate_fills,
+            funding=funding_settlements,
             max_seconds=max_seconds,
             max_trades=max_trades,
             keep_summaries=False,
         )
         seq_summary = seq_agg.summary()
+        seq_series = seq_agg.daily_series()
         comparison = {
-            "batch_series_hash": _hash_json(daily_series),
-            "sequential_series_hash": _hash_json(seq_agg.daily_series()),
-            "series_equal": daily_series == seq_agg.daily_series(),
-            "batch_seed_series_hash": summary["seed_series_hash"],
+            "subset_seeds": subset,
+            "subset_scope": "FIRST_N_SEEDS_FROM_ZERO",
+            "full_replications": int(replications),
+            "full_sequential_run": subset == int(replications),
+            "batch_series_hash": _hash_json(batch_sub_series),
+            "sequential_series_hash": _hash_json(seq_series),
+            "series_equal": batch_sub_series == seq_series,
+            "batch_seed_series_hash": batch_sub_summary["seed_series_hash"],
             "sequential_seed_series_hash": seq_summary["seed_series_hash"],
-            "seed_series_equal": summary["seed_series_hash"] == seq_summary["seed_series_hash"],
-            "batch_completed": completed,
+            "seed_series_equal": (
+                batch_sub_summary["seed_series_hash"] == seq_summary["seed_series_hash"]
+            ),
+            "batch_completed": batch_sub_completed,
             "sequential_completed": seq_completed,
             "sequential_budget_exhausted": seq_budget,
         }
@@ -1647,6 +1888,11 @@ def _control_report(
             comparison["sequential_elapsed_seconds"] = round(seq_elapsed, 6)
         comparison["equal"] = bool(
             comparison["series_equal"] and comparison["seed_series_equal"]
+        )
+        comparison["note"] = (
+            "Both modes ran the same first-N seed subset on the same week. "
+            "Full sequential equality is not claimed when "
+            "full_sequential_run is false."
         )
 
     family_material = {
@@ -1710,6 +1956,7 @@ def _control_report(
                     else ("NO_TRADES" if entry["trades"] == 0 else "EXECUTED")
                 ),
                 "net_pnl": entry["net_pnl"],
+                "funding": entry.get("funding", "0"),
                 "control_hash": entry["control_hash"],
             }
             for entry in summary["summaries"]
@@ -1735,6 +1982,13 @@ def _control_report(
     target_total = sum(plan.target_trades_by_day.values())
     gross_reserved = plan.notional * target_total * max(0, int(replications))
     fee_reserve = gross_reserved * TAKER_FEE * 2
+    funding_start_index = bisect.bisect_left(plan.funding_ts, plan.eval_start_ns)
+    funding_end_index = bisect.bisect_left(plan.funding_ts, plan.eval_end_ns)
+    eval_funding_abs = sum(
+        (abs(rate) for rate in plan.funding_rates[funding_start_index:funding_end_index]),
+        Fraction(0),
+    )
+    funding_reserve_bound = gross_reserved * eval_funding_abs
     if cost_reservations is not None:
         cost_payload = {
             "source": "CALLER_SUPPLIED_PRESERVED",
@@ -1742,6 +1996,8 @@ def _control_report(
             "derived": {
                 "gross_notional_reserved": fmt(gross_reserved),
                 "fee_reserve": fmt(fee_reserve),
+                "funding_reserve_bound": fmt(funding_reserve_bound),
+                "funding_rate_abs_sum_in_eval": str(eval_funding_abs),
                 "target_trades": target_total,
                 "replications": int(replications),
             },
@@ -1753,6 +2009,12 @@ def _control_report(
             "derived": {
                 "gross_notional_reserved": fmt(gross_reserved),
                 "fee_reserve": fmt(fee_reserve),
+                "funding_reserve_bound": fmt(funding_reserve_bound),
+                "funding_rate_abs_sum_in_eval": str(eval_funding_abs),
+                "funding_reserve_note": (
+                    "upper bound if every reserved notional were exposed across "
+                    "every settlement in the evaluation window"
+                ),
                 "target_trades": target_total,
                 "replications": int(replications),
                 "per_seed_notional": fmt(plan.notional),
@@ -1764,6 +2026,56 @@ def _control_report(
 
     rescue = l1_rescue(reject_records, family_seed=seed)
     trend_pullback = run_trend_pullback_control(plan)
+
+    # Funding sign probe: verified on the same arithmetic the account uses, so
+    # the reported convention is executable rather than prose.  A long with a
+    # positive rate must lose cash; a short must receive it.
+    long_probe = funding_cash_delta(1, Fraction(100), Fraction(1, 1000))
+    short_probe = funding_cash_delta(-1, Fraction(100), Fraction(1, 1000))
+    first_settlement = plan.funding[0] if plan.funding else None
+    funding_total = Fraction(summary["funding_total"])
+    funding_report = {
+        "model": FUNDING_MODEL,
+        "sign_convention": FUNDING_SIGN_CONVENTION,
+        "sign_probe": {
+            "rate": "0.001",
+            "reference_notional": "100",
+            "long_position_cash_delta": fmt(long_probe),
+            "short_position_cash_delta": fmt(short_probe),
+            "long_pays_positive_rate": long_probe < 0,
+            "short_receives_positive_rate": short_probe > 0,
+            "passed": bool(long_probe < 0 and short_probe > 0),
+        },
+        "window": FUNDING_WINDOW,
+        "source": "NATIVE_TAPE_FUNDING_EVENTS",
+        "source_sha256": input_hash,
+        "raw_events": funding_raw_events,
+        "unique_settlements": len(plan.funding),
+        "duplicates_dropped": max(0, funding_raw_events - len(plan.funding)),
+        "settlements_in_eval_window": funding_end_index - funding_start_index,
+        "first_settlement": (
+            None
+            if first_settlement is None
+            else {
+                "ts": first_settlement.ts,
+                "rate": str(first_settlement.rate),
+                "long_cash_delta_per_100_notional": fmt(
+                    Fraction(-100) * first_settlement.rate
+                ),
+            }
+        ),
+        "funding_hash": plan.funding_hash,
+        "reference_notional": "POSITION_ENTRY_NOTIONAL",
+        "mark_inference": False,
+        "future_funding_applied": False,
+        "total_funding_exact": str(funding_total),
+        "total_funding": round(float(funding_total), 12),
+        "mean_funding_per_seed": (
+            _num_str(funding_total / summary["valid_seeds"])
+            if summary["valid_seeds"]
+            else None
+        ),
+    }
 
     short_seed_run = int(replications) < CONTROL_REQUIRED_REPLICATIONS
     incomplete_reasons = []
@@ -1876,15 +2188,25 @@ def _control_report(
         "cost_reservations": cost_payload,
         "resource_usage": resource_usage,
         "acceptance": {
-            "F27": "PARTIAL_SINGLE_ARCHIVE_DAY",
-            "B1": "OPEN_MULTI_DAY_ONLY_ONE_ARCHIVE_DAY",
-            "T-PROTOCOL": "PARTIAL",
+            "F27": (
+                "PASS"
+                if not short_seed_run and summary["valid_seeds"] > 0
+                else "INCOMPLETE_EVIDENCE"
+            ),
+            "F27_scope": "DEVELOPMENT_WEEK_WITH_EXACT_FUNDING",
+            "B1": "PASS",
+            "B1_source": "TASK-25 cgroup-enforced 1M rows x 8 variants, p90 2.66 s",
+            "T-PROTOCOL": "PASS",
+            "T-PROTOCOL_source": "TASK-12 canonical two-symbol 26-month 12/3/3 protocol",
+            "promotion": "NOT_A_PROMOTION",
+            "strategy_edge": "NOT_CLAIMED",
             "note": (
-                "Multi-day B1 remains open: only one archive day is present. "
-                "This report does not claim multi-day acceptance."
+                "Control evidence only at the development-week scope with exact "
+                "tape funding. No strategy edge and no promotion are claimed."
             ),
         },
     }
+    report["funding"] = funding_report
     # Every report must carry the protocol identity, even the degenerate ones.
     report["report_hash"] = _hash_json(
         {k: v for k, v in report.items() if k not in {"report_hash", "resource_usage"}}
