@@ -1,0 +1,89 @@
+{
+  "kind": "TASK13_FULL_1000_SEED_BATCH_SEQUENTIAL_EQUALITY",
+  "task": "TASK-13",
+  "issue": "https://github.com/ddawnlll/quant-edge-lab/issues/6",
+  "generated_at_utc": "2026-11-10T02:32:00Z",
+  "base_sha": "9827593",
+  "scope": {
+    "calendar": "2024-09-01..2024-09-07 seven-day development week",
+    "symbol": "BTCUSDT",
+    "cadence": "60-second resampled quote grid, first Quote at or after each UTC minute boundary",
+    "trade_cap_per_day": 22,
+    "notional": 100.0,
+    "seed": 7,
+    "replications": 1000,
+    "funding": "EXACT_NATIVE_TAPE_FUNDING, 147 raw events -> 21 unique settlements",
+    "promotion": "NOT_A_PROMOTION",
+    "strategy_edge": "NOT_CLAIMED"
+  },
+  "inputs": {
+    "raw_tape": {
+      "path": "data/native/DS-DEV-BTCUSDT-2024-09-W1/events.jsonl",
+      "sha256": "4beae601166d5183d098226e690c817fe577b7f705ec275477cb69b0e9d20d24",
+      "events": 10152840
+    },
+    "resampled_tape": {
+      "path": "/home/quant/.qel-coord/events_dev_week_60s.jsonl",
+      "sha256": "ae7a4ac356e6a6189be2f8d2b845b99adba0590130c848c930efc97aa9a1e6b4",
+      "quotes": 10080,
+      "funding_events": 147,
+      "selection_rule": "first Quote event at or after each 60-second UTC boundary, source order preserved, all seven days retained"
+    },
+    "semantic_equivalence_to_recorded_batch": {
+      "note": "The resampled tape was regenerated after the scratch copy was removed. It reproduces the exact recorded batch hashes from CONTROLS_DEV_FUNDING.json, proving the regenerated tape is semantically identical for the control path.",
+      "quotes_hash": "c89052a2b3355b7091fb83aabc8975652e5e86b013d78d02b2640b828474bac6",
+      "plan_hash": "aef4d7dc32ca70744160ccafe4818eafc08ace8468d4f094a2185127eee48f01",
+      "batch_seed_series_hash": "e0e0d8f60e36b7b8058c54494632408ec3634d012016cf6529bdd55c7c3dff26",
+      "batch_daily_series_hash": "c2e7afa077748a54e6816c595a5ed713ece84fc5a7c25503a733fb8d788e4115"
+    }
+  },
+  "runs": {
+    "batch": {
+      "execution": "BATCH",
+      "replications": 1000,
+      "seeds_completed": 1000,
+      "elapsed_seconds": 105.83,
+      "seed_series_hash": "e0e0d8f60e36b7b8058c54494632408ec3634d012016cf6529bdd55c7c3dff26",
+      "daily_series_hash": "c2e7afa077748a54e6816c595a5ed713ece84fc5a7c25503a733fb8d788e4115",
+      "control_hash": "e0e0d8f60e36b7b8058c54494632408ec3634d012016cf6529bdd55c7c3dff26",
+      "executed_trades": 132000,
+      "rejected_orders": 0,
+      "truncated_seeds": 0,
+      "schedule_shortfall": 0,
+      "zero_trade_seeds": 0
+    },
+    "sequential": {
+      "execution": "SEQUENTIAL",
+      "replications": 1000,
+      "seeds_completed": 1000,
+      "elapsed_seconds": 352.63,
+      "seed_series_hash": "e0e0d8f60e36b7b8058c54494632408ec3634d012016cf6529bdd55c7c3dff26",
+      "daily_series_hash": "c2e7afa077748a54e6816c595a5ed713ece84fc5a7c25503a733fb8d788e4115",
+      "control_hash": "e0e0d8f60e36b7b8058c54494632408ec3634d012016cf6529bdd55c7c3dff26",
+      "executed_trades": 132000,
+      "rejected_orders": 0,
+      "truncated_seeds": 0,
+      "schedule_shortfall": 0,
+      "zero_trade_seeds": 0
+    }
+  },
+  "comparison": {
+    "rule": "Compare every report field and every daily-series row of the full 1000-seed BATCH and SEQUENTIAL reports. Only execution, report_hash and resource_usage are excluded because they intentionally differ by execution mode or are telemetry.",
+    "fields_compared": 51,
+    "daily_series_rows_compared": 7,
+    "differing_fields_excluding_allowed": 0,
+    "daily_series_equal": true,
+    "seed_series_equal": true,
+    "full_sequential_run": true,
+    "full_sequential_equal": true,
+    "comparison_hash_sha256": "7b6ff841b017133c40c183d7ed04cfc7406d331ffb4c2625b3052661bd0efb98",
+    "note": "The full 1000-seed sequential execution is now complete and equal to the full 1000-seed batch execution. The prior 100-seed subset equality is superseded for this check."
+  },
+  "commands": {
+    "resample": "PYTHONPATH=python .venv/bin/python /home/quant/.qel-coord/resample_60s.py",
+    "batch": "PYTHONPATH=python .venv/bin/python -c \"matched_controls('/home/quant/.qel-coord/events_dev_week_60s.jsonl', trades=22, notional=100.0, seed=7, replications=1000, execution='BATCH', record_telemetry=True)\"",
+    "sequential": "PYTHONPATH=python .venv/bin/python -c \"matched_controls('/home/quant/.qel-coord/events_dev_week_60s.jsonl', trades=22, notional=100.0, seed=7, replications=1000, execution='SEQUENTIAL', record_telemetry=True)\""
+  },
+  "verdict": "PASS_FULL_1000_SEED_BATCH_SEQUENTIAL_EQUALITY",
+  "acceptance_note": "This closes the batch/sequential equality blocker for #6 at the seven-day development scope. Promotion and strategy-edge claims remain out of scope. The canonical 1000-seed batch funding report remains evidence/labd/CONTROLS_DEV_FUNDING.json."
+}

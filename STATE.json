@@ -3,7 +3,7 @@
   "spec_version": "1.1.0",
   "spec_package_sha256": "db18e7a6e94b8c9b233a48097040d1a3a6c655ea126d5e6805d67d4f6e91fd30",
   "baseline_sha256": "71628e4b4ceceac3447759cdabab131e16237aff9fd7569a09f1bc61e4d70d06",
-  "updated_utc": "2026-11-10T01:50:45Z",
+  "updated_utc": "2026-11-10T03:42:45Z",
   "host": {
     "os": "Debian GNU/Linux 13 (trixie)",
     "kernel": "6.12.115+deb13.1-amd64",
@@ -157,16 +157,16 @@
       "scope_note": "real two-symbol 26-month markPriceKlines, two 12/3/3 folds, sealed 30% reserve; intraday aggTrades coverage is 3 months and belongs to TASK-13"
     },
     "TASK-13": {
-      "status": "PARTIAL",
+      "status": "DONE",
       "evidence": [
         "python/qel/research/control.py",
         "tests/test_controls_funding.py",
         "evidence/labd/CONTROLS_DEV_FUNDING.json",
         "evidence/labd/CONTROLS_DEV_FUNDING.txt",
+        "evidence/labd/T13_FULL_SEQUENTIAL_EQUALITY.json",
         "evidence/labd/INTEGRATION_ISSUE06_FUNDING_VERIFY.json"
       ],
-      "progress": "7-day development-week 1000-seed controls with exact funding, F27 PASS, B1 PASS from TASK-25, T-PROTOCOL PASS from TASK-12; 100-seed batch/sequential subset equal; full 1000-seed sequential still running",
-      "blocked": "full 1000-seed sequential equality pending"
+      "progress": "7-day development-week 1000-seed controls with exact funding, F27 PASS, B1 PASS from TASK-25, T-PROTOCOL PASS from TASK-12; full 1000-seed batch and sequential reports equal on all 51 substantive fields and all 7 daily rows (0 differences), executed 132,000 trades in both modes"
     },
     "TASK-14": {
       "status": "DONE",
@@ -219,7 +219,7 @@
       "blocked": "CAP-LOCAL-VIEW"
     },
     "TASK-19": {
-      "status": "PARTIAL",
+      "status": "DONE",
       "evidence": [
         "native/runner/src/main.rs",
         "tests/test_streaming.py",
@@ -227,11 +227,12 @@
         "evidence/labd/B2_QUOTE_TRADE_REPLAY.json",
         "evidence/labd/B3_L2_ATOMIC_STREAMING.json",
         "evidence/labd/B4_MEMORY_PLATEAU.json",
-        "evidence/labd/B4_100M_BLOCKED.json",
+        "evidence/labd/B4_100M_EVIDENCE.json",
+        "evidence/labd/B4_PROFILES_EVIDENCE.json",
         "evidence/labd/F15_CONFORMANCE.json",
         "evidence/labd/INTEGRATION_ISSUE12_VERIFY.json"
       ],
-      "blocked": "B4 100M not run (projected 22.5 min) and cgroup memory controller unavailable; 10M plateau certified at 0.0502 MiB/M"
+      "progress": "B4 100M completed under enforced RP-4G: 101,229,273 events, 1,593 batches, exit 0, 133.0 MiB process peak, 0.827 MiB/M final-decile slope (target 1), active positions end 1, 245 epochs retained, 30,633 closed orders and 754 closed positions purged; 1M/10M also measured under RP-4G and RP-8G"
     },
     "TASK-20": {
       "status": "DONE",
@@ -278,11 +279,14 @@
         "evidence/labd/B0_TYPED_SPECIFICATION.json",
         "evidence/labd/B1_BATCH_SCREEN.json",
         "evidence/labd/B5_LEDGER_RESTORE.json",
+        "evidence/labd/T25_B2_B3_PROFILES.json",
+        "evidence/labd/B4_PROFILES_EVIDENCE.json",
         "evidence/labd/T25_ACCEPTANCE.json",
         "evidence/labd/T_RELEASE_BUILD.json",
         "evidence/labd/INTEGRATION_ISSUE13_VERIFY.json"
       ],
-      "blocked": "B2/B3/B4 not re-run under enforced RP-4G/RP-8G profiles; B4 100M not run"
+      "progress": "B3 passes under RP-4G/RP-8G with 2 warmups + 12 timed repeats (p90 30.141 s / 30.351 s, target 120); B4 passes at 1M/10M/100M; B2 misses its 30 s warm p90 under both profiles (30.141 s RP-4G, 30.351 s RP-8G; 0.14-0.35 s over) and is filed as FAIL_MARGINAL; the prior 20.545 s B2 result is not reproducible on the current host",
+      "blocked": "B2 warm p90 30.141 s (RP-4G) / 30.351 s (RP-8G) exceeds the 30 s target by 0.14-0.35 s; replay throughput on the current host is ~30% slower than the prior 20.545 s evidence"
     },
     "TASK-26": {
       "status": "PARTIAL",

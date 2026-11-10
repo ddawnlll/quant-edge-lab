@@ -1,0 +1,75 @@
+{
+  "kind": "TASK25_B2_B3_PROFILE_RERUN",
+  "task": "TASK-25",
+  "issue": "https://github.com/ddawnlll/quant-edge-lab/issues/13",
+  "generated_at_utc": "2026-11-10T03:40:00Z",
+  "base_sha": "9827593",
+  "protocol": {
+    "workload": "quote/trade replay of data/native/bench/events_100x.jsonl (1,241,800 events) with policy/examples/taker_1s.json",
+    "mode": "--chunk-bytes 8388608 (byte_bounded)",
+    "warmups": 2,
+    "timed_repeats": 12,
+    "profiles": ["RP-4G", "RP-8G"],
+    "enforcement": "systemd-run --user --scope with MemoryMax=4G/8G and MemorySwapMax=0",
+    "p90_rule": "conservative nearest-rank p90 of the 12 timed runs (11th of 12); the prior 3-run evidence used the slowest run for n=3",
+    "runner_binary_sha256": "e8d7e4f363257ec94f6ef0185e4610917513ce9733766afc063921f02db8199a",
+    "retention": "all 28 attempts (2 warmups + 12 timed per profile) retained in evidence/labd/T25_B2_B3_PROFILE_runs.jsonl; per-run receipts and logs retained locally under evidence/labd/T25_*.json and evidence/labd/T25_B2_B3_PROFILE.log"
+  },
+  "runs": {
+    "RP-4G": {
+      "timed_wall_ms": [23711, 23138, 25414, 28675, 27335, 25363, 24955, 31696, 25317, 28662, 30141, 25481],
+      "timed_elapsed_ms": [23593, 23010, 25299, 28586, 27226, 25241, 24834, 31576, 25189, 28523, 30000, 25337],
+      "p90_wall_ms": 30141,
+      "p90_elapsed_ms": 30000,
+      "p90_wall_linear_ms": 29994.4,
+      "peak_rss_kb": 47356,
+      "cgroup_peak_bytes": 79257600,
+      "memory_max_bytes": 4294967296
+    },
+    "RP-8G": {
+      "timed_wall_ms": [30353, 30124, 28941, 28841, 24872, 28472, 25057, 27306, 27616, 29155, 30154, 30351],
+      "timed_elapsed_ms": [30243, 29983, 28840, 28728, 24743, 28378, 24956, 27193, 27474, 29017, 30037, 30188],
+      "p90_wall_ms": 30351,
+      "p90_elapsed_ms": 30188,
+      "p90_wall_linear_ms": 30331.3,
+      "peak_rss_kb": 46904,
+      "cgroup_peak_bytes": 79798272,
+      "memory_max_bytes": 8589934592
+    }
+  },
+  "checks": {
+    "B2": {
+      "target_seconds": 30.0,
+      "metric": "warm p90 wall",
+      "RP-4G": {"value_seconds": 30.141, "passed": false, "overage_ms": 141},
+      "RP-8G": {"value_seconds": 30.351, "passed": false, "overage_ms": 351},
+      "status": "FAIL_MARGINAL",
+      "note": "The conservative nearest-rank p90 misses the 30 s target by 141 ms (0.47%) under RP-4G and 351 ms (1.17%) under RP-8G. Using elapsed_ms instead of wall still misses under RP-8G (30.188 s) and equals 30.000 s under RP-4G. Prior non-profile evidence measured 20.545 s, which is not reproducible on the current host."
+    },
+    "B3": {
+      "target_seconds": 120.0,
+      "metric": "p90 wall",
+      "RP-4G": {"value_seconds": 30.141, "passed": true},
+      "RP-8G": {"value_seconds": 30.351, "passed": true},
+      "status": "PASS",
+      "atomicity": {
+        "record_split_count": 0,
+        "same_timestamp_group_split_count": 0,
+        "sub_line_budget_parity": "chunk-bytes=1 completed all 12418 records and matched the materialized tape",
+        "funding_state_continuous": true,
+        "source": "evidence/labd/STREAMING_PARITY.json"
+      }
+    }
+  },
+  "exploratory_attempts": {
+    "note": "Earlier sets were retained to show host variance and are not used for the final p90. They include failed and passing attempts.",
+    "B2_RP4G_3run_first": {"wall_ms": [28395, 30776, 26101], "p90_ms": 30776, "result": "FAIL_MARGINAL"},
+    "B2_RP8G_3run_first": {"wall_ms": [25372, 27665, 28306], "p90_ms": 28306, "result": "PASS"},
+    "B3_RP4G_3run_first": {"wall_ms": [24119, 25766, 25998], "p90_ms": 25998, "result": "PASS"},
+    "B3_RP8G_3run_first": {"wall_ms": [28401, 28260, 28534], "p90_ms": 28534, "result": "PASS"},
+    "B2_RP4G_warm4": {"warmup_wall_ms": 27878, "timed_wall_ms": [29580, 27675, 23993], "p90_ms": 29580, "result": "PASS_MARGINAL"},
+    "single_scope_5run": {"warmup_wall_ms": [30991, 29538], "timed_wall_ms": [30702, 29423, 27965], "p90_ms": 30702, "result": "FAIL_MARGINAL", "note": "single cgroup scope with warm page cache; no improvement, so the miss is not a per-scope cold-cache artifact"}
+  },
+  "verdict": "B2_FAIL_MARGINAL_B3_PASS",
+  "acceptance_note": "B3 passes with a 4x margin. B2 misses its 30 s warm p90 by 0.14-0.35 s on the current host. The miss is filed rather than hidden; #13 cannot claim full acceptance on B2. The prior 20.545 s B2 figure remains historical evidence and is not reproduced by the profile re-run."
+}

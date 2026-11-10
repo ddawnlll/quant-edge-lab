@@ -1,0 +1,40 @@
+{
+  "kind": "TASK19_B4_PROFILES_AND_SCALES",
+  "task": "TASK-19",
+  "issues": ["https://github.com/ddawnlll/quant-edge-lab/issues/12", "https://github.com/ddawnlll/quant-edge-lab/issues/13"],
+  "generated_at_utc": "2026-11-10T03:39:30Z",
+  "base_sha": "9827593",
+  "purpose": "B4 memory measurements under enforced RP-4G and RP-8G cgroups at 1M, 10M and 100M events. The 100M run is the binding B4 acceptance run; the 1M/10M profile runs complete the scale profile set.",
+  "measurement": {
+    "mechanism": "systemd-run --user --scope with MemoryMax and MemorySwapMax=0; per-batch VmRSS/VmHWM from /proc/self/status; cgroup memory.peak from the scope",
+    "runner_binary_sha256": "e8d7e4f363257ec94f6ef0185e4610917513ce9733766afc063921f02db8199a",
+    "chunk_bytes": 8388608,
+    "slope_rule": "least-squares slope of VmRSS bytes against events over the final decile of batch samples; MiB per million events"
+  },
+  "runs": {
+    "1M_RP4G": {"corpus": "data/native/bench/events_100x.jsonl", "strategy": "policy/examples/taker_1s.json", "events": 1241800, "batches": 20, "elapsed_ms": 26934, "peak_rss_kb": 43404, "cgroup_peak_bytes": 44384256, "memory_max_bytes": 4294967296, "final_decile_slope_mib_per_million": 0.7649, "final_decile_note": "only 2 samples in the final decile; slope is allocator noise, not a trend", "status": "PASS"},
+    "1M_RP8G": {"corpus": "data/native/bench/events_100x.jsonl", "strategy": "policy/examples/taker_1s.json", "events": 1241800, "batches": 20, "elapsed_ms": 30944, "peak_rss_kb": 43692, "cgroup_peak_bytes": 44699648, "memory_max_bytes": 8589934592, "final_decile_slope_mib_per_million": 0.7649, "final_decile_note": "only 2 samples in the final decile; slope is allocator noise, not a trend", "status": "PASS"},
+    "10M_RP4G": {"corpus": "data/native/DS-MULTIDAY-10M/events.jsonl", "strategy": "policy/examples/taker_1m.json", "events": 11247697, "batches": 177, "elapsed_ms": 217072, "peak_rss_kb": 50584, "cgroup_peak_bytes": 57114624, "memory_max_bytes": 4294967296, "final_decile_slope_mib_per_million": 0.0142, "status": "PASS"},
+    "10M_RP8G": {"corpus": "data/native/DS-MULTIDAY-10M/events.jsonl", "strategy": "policy/examples/taker_1m.json", "events": 11247697, "batches": 177, "elapsed_ms": 249317, "peak_rss_kb": 49080, "cgroup_peak_bytes": 55263232, "memory_max_bytes": 8589934592, "final_decile_slope_mib_per_million": 0.0088, "status": "PASS"},
+    "100M_RP4G": {"corpus": "data/native/DS-BTCUSDT-100M/events.jsonl", "strategy": "policy/examples/taker_1m.json", "events": 101229273, "batches": 1593, "elapsed_ms": 2460459, "peak_rss_kb": 136184, "cgroup_peak_bytes": 4294967296, "memory_max_bytes": 4294967296, "final_decile_slope_mib_per_million": 0.8272, "status": "PASS", "source": "evidence/labd/B4_100M_EVIDENCE.json"}
+  },
+  "targets": {
+    "no_oom": true,
+    "peak_within_worker_limit_2gib": true,
+    "bounded_active_state": true,
+    "final_decile_slope_le_1_mib_per_million": true,
+    "run_completed": true
+  },
+  "comparison": {
+    "10m_peak_mib": {"RP-4G": 49.4, "RP-8G": 47.9},
+    "100m_peak_mib": 132.99,
+    "100m_note": "The 100M cgroup peak equals the 4G limit because 13.4GB of corpus page cache is charged to the scope; the process peak is 133.0 MiB. The cgroup did not OOM and the run exited 0.",
+    "scale_note": "Peak process memory grows 43.4 MiB (1M) -> 49.4 MiB (10M) -> 133.0 MiB (100M), sublinear in events (100x events, 3.1x peak). The 100M final-decile slope is 0.827 MiB/M, below the 1 MiB/M target but higher than the 0.014 MiB/M 10M slope; active state remains bounded and purged."
+  },
+  "artifacts": {
+    "100m": ["evidence/labd/B4_100M_EVIDENCE.json", "evidence/labd/B4_100M.json.gz", "evidence/labd/B4_100M.rss.jsonl", "evidence/labd/B4_100M.memory_peak.txt", "evidence/labd/B4_100M.run.json"],
+    "profiles": ["evidence/labd/B4_1M_RP4G.json.gz", "evidence/labd/B4_1M_RP8G.json.gz", "evidence/labd/B4_10M_RP4G.json.gz", "evidence/labd/B4_10M_RP8G.json.gz"]
+  },
+  "verdict": "PASS_B4_1M_10M_4G_8G_AND_100M_4G",
+  "acceptance_note": "Closes the B4 cgroup/profile blocker for #12 and supplies B4 profile evidence for #13. B4 is a memory check, not a p90 latency check."
+}

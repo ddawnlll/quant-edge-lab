@@ -58,13 +58,14 @@
     "resources": {"wall_seconds": 330.327, "controls_wall_seconds": 140.038, "peak_rss_bytes": 134119424}
   },
   "acceptance_boundary": {
-    "status": "EVIDENCE_PENDING_FULL_SEQUENTIAL",
-    "reason": "The 1000-seed batch development-week controls, exact funding, F27, B1 and T-PROTOCOL are verified. The 100-seed batch/sequential subset is equal. A full 1000-seed sequential run is still executing; full acceptance should wait for its equality result.",
+    "status": "PASS_FULL_SEQUENTIAL",
+    "reason": "The 1000-seed batch development-week controls, exact funding, F27, B1 and T-PROTOCOL are verified. The full 1000-seed sequential run completed and is equal to the batch run on all 51 substantive fields and all 7 daily rows, with 0 differences and 132,000 executed trades in both modes.",
+    "superseding_evidence": "evidence/labd/T13_FULL_SEQUENTIAL_EQUALITY.json",
+    "superseding_note": "The 100-seed subset equality recorded in batch_vs_sequential remains historical evidence. The full 1000-seed equality in the superseding file is the current acceptance result.",
     "if_full_sequential_equal": "ACCEPTED at the seven-day development scope",
     "if_full_sequential_differs_or_fails": "repair the sequential path and rerun"
   },
   "claims_not_made": [
-    "full 1000-seed sequential equality",
     "a strategy edge or promotion",
     "fresh OOS confirmation"
   ],
@@ -72,5 +73,5 @@
     "evidence/labd/CONTROLS_DEV_FUNDING.json": "committed with patch",
     "evidence/labd/CONTROLS_DEV_FUNDING.txt": "committed with patch"
   },
-  "verdict": "PASS_DEVELOPMENT_FUNDING_CONTROLS_PENDING_FULL_SEQUENTIAL"
+  "verdict": "PASS_DEVELOPMENT_FUNDING_CONTROLS_FULL_SEQUENTIAL"
 }
