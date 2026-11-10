@@ -1,0 +1,76 @@
+{
+  "issue": 6,
+  "task": "TASK-13",
+  "kind": "COORDINATOR_VERIFICATION_DEVELOPMENT_FUNDING",
+  "integration_branch": "qel/followup7-20261109",
+  "base_sha": "577f9a07111042054232f3c5084a8aea4fc854b2",
+  "patch_commit": "c8e353582fa8abd18d0d9166bdd5ee0920c51ada",
+  "integrated_commit": "fdb6e99",
+  "verification": {
+    "pytest": {"command": "QEL_DATA_ROOT=... PYTHONPATH=python QEL_ROOT=$PWD pytest -q tests", "result": "285 passed", "exit_code": 0},
+    "focused": {"command": "pytest -q tests/test_controls_funding.py tests/test_controls.py", "result": "38 passed", "exit_code": 0},
+    "development_week": {
+      "path": "data/native/DS-DEV-BTCUSDT-2024-09-W1/events.jsonl",
+      "sha256": "4beae601166d5183d098226e690c817fe577b7f705ec275477cb69b0e9d20d24",
+      "events": 10152840,
+      "calendar": ["2024-09-01", "2024-09-02", "2024-09-03", "2024-09-04", "2024-09-05", "2024-09-06", "2024-09-07"]
+    },
+    "controls": {
+      "replications": 1000,
+      "seeds_completed": 1000,
+      "executed_trades": 132000,
+      "rejected_orders": 0,
+      "draw_mapping": "HMAC_SHA256_COUNTER_V1",
+      "matched_on": ["calendar", "trade_count", "holding_time"],
+      "control_mean": -11.93150582,
+      "zero_trade_day_retained": true,
+      "financial_trials_preserved": 1000,
+      "financial_trials_dropped": 0,
+      "per_stratum": 24
+    },
+    "funding": {
+      "model": "EXACT_NATIVE_TAPE_FUNDING",
+      "convention": "LONG_PAYS_POSITIVE_RATE_SHORT_RECEIVES",
+      "window": "[entry_ts, exit_ts)",
+      "reference_notional": "POSITION_ENTRY_NOTIONAL",
+      "raw_events": 147,
+      "unique_settlements": 21,
+      "duplicates_dropped": 126,
+      "settlements_in_eval_window": 15,
+      "total_funding": "0.161977",
+      "future_funding_applied": false,
+      "mark_inference": false,
+      "sign_probe": {"long_cash_delta_per_100": "-0.1", "short_cash_delta_per_100": "0.1", "passed": true}
+    },
+    "batch_vs_sequential": {
+      "subset_seeds": 100,
+      "equal": true,
+      "series_equal": true,
+      "seed_series_equal": true,
+      "full_sequential_run": false,
+      "note": "The 100-seed subset is equal in both modes. A full 1000-seed sequential run is still executing in the background (task 391301r9wk) and is not claimed here."
+    },
+    "required_checks": {
+      "F27": "PASS at the seven-day development calendar with exact funding",
+      "B1": "PASS from TASK-25 (1M rows x 8 variants, warm p90 2.66 s)",
+      "T-PROTOCOL": "PASS from TASK-12 (two-symbol 26-month 12/3/3 folds)"
+    },
+    "resources": {"wall_seconds": 330.327, "controls_wall_seconds": 140.038, "peak_rss_bytes": 134119424}
+  },
+  "acceptance_boundary": {
+    "status": "EVIDENCE_PENDING_FULL_SEQUENTIAL",
+    "reason": "The 1000-seed batch development-week controls, exact funding, F27, B1 and T-PROTOCOL are verified. The 100-seed batch/sequential subset is equal. A full 1000-seed sequential run is still executing; full acceptance should wait for its equality result.",
+    "if_full_sequential_equal": "ACCEPTED at the seven-day development scope",
+    "if_full_sequential_differs_or_fails": "repair the sequential path and rerun"
+  },
+  "claims_not_made": [
+    "full 1000-seed sequential equality",
+    "a strategy edge or promotion",
+    "fresh OOS confirmation"
+  ],
+  "evidence_hashes": {
+    "evidence/labd/CONTROLS_DEV_FUNDING.json": "committed with patch",
+    "evidence/labd/CONTROLS_DEV_FUNDING.txt": "committed with patch"
+  },
+  "verdict": "PASS_DEVELOPMENT_FUNDING_CONTROLS_PENDING_FULL_SEQUENTIAL"
+}
