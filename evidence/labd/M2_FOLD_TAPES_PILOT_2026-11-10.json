@@ -1,0 +1,32 @@
+{
+  "kind": "M2_FOLD_TAPES_PILOT_2026-11-10",
+  "generated_utc": "2026-11-10T23:20:00Z",
+  "base_sha": "8b59f795663f9e8ba332341a676d389d4e470bf8",
+  "pilot_day": {
+    "day": "2024-09-01",
+    "tape": "data/native/_fold/2024-09-01.jsonl",
+    "tape_bytes": 164587466,
+    "counts": {"Quote": 84476, "Trade": 1163029, "Mark": 1440, "Funding": 3},
+    "sha256": "92bee987b25c0db2c69cbc9db4324b7a67c66c8352807a2e4adceee691d457f2",
+    "build_wall_s_single_worker": 85,
+    "canonical_equivalence": "BYTE_IDENTICAL to qel.prepare.archive.build over the same inputs (sha256 above), validated in this cycle and covered by tests/test_m2_fold_tapes.py",
+    "funding_source": "Binance monthly fundingRate zip BTCUSDT-fundingRate-2024-09.zip (calc_time, last_funding_rate); daily fundingRate zips do not exist in the public archive (404 verified)"
+  },
+  "full_window_estimates": {
+    "days": 546,
+    "tape_bytes_per_day_observed": 164587466,
+    "projected_tape_total_gb": 89.9,
+    "disk_free_gb_at_cycle_start": 68,
+    "build_wall_s_per_day_single_worker": 85,
+    "projected_build_wall_h_workers4": 3.2,
+    "conclusion": "Persistent full-window tape artifacts do not fit on this VM (89.9GB > 68GB free). A3 must stream day-by-day (build, replay, discard) or use larger disks; raw zips (10.6GB) plus the deterministic builder keep every tape reproducible."
+  },
+  "a3_blockers": [
+    "Disk: 546 persistent fold tapes project to ~90GB vs 68GB free. Streaming per-day execution is the viable design; it is not yet implemented in qel/research/m2.py (which is dev-week only).",
+    "Controls memory: ControlPlan materialises every quote (456 train+val days x 86,400 quotes/day = ~39M quote objects) far beyond 11Gi RAM. Full-fold control fitting needs a streaming redesign that preserves the frozen selection protocol.",
+    "Compute: full-fold 12-variant replays (6,552 day-variants) plus 1,000 control seeds at fold scale are unmeasured; per-day replay is ~28s/variant-day at HEAD binary, i.e. ~51 CPU-hours for variants alone single-threaded before controls."
+  ],
+  "a1_gate": "ELIGIBLE at 100/1000 USDT budgets (BTC 20 USDT remains INFEASIBLE_VENUE_MIN_NOTIONAL); m2-run default capital 1000 x risk 0.1 = 100 USDT notional passes the feasibility gate.",
+  "status": "A3_NOT_RUN",
+  "note": "The reproducible M2 development walk-forward that does exist remains the labelled development-week run (evidence/labd/M2_DEV_RUN.json, scope DEVELOPMENT_WEEK_SCOPE). Nothing in this pilot changes that evidence."
+}
