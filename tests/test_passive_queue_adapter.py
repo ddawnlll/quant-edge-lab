@@ -143,6 +143,15 @@ def test_every_adapter_probe_names_the_native_limitation(probes: dict) -> None:
         assert probe.get("profile_boundary"), name
 
 
+def test_artifact_supersession_is_recorded(evidence: dict) -> None:
+    supersession = evidence["artifact_supersession"]
+    assert supersession["prior_artifact_untouched"] is True
+    assert supersession["prior_artifact_path"].endswith("PASSIVE_QUEUE_COMPLETION_2026-11-10.json")
+    stale = " ".join(supersession["stale_checks"])
+    assert "test_evidence_records_binary_and_source_hashes" in stale
+    assert "re-pinned" in stale
+
+
 # ---------------------------------------------------------------------------
 # F04: explicit ALREADY_FILLED cancel response
 # ---------------------------------------------------------------------------

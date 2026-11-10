@@ -2236,6 +2236,10 @@ fn probe_f04_adapter() -> Result<Value> {
             "cancel_rejections": logged("cancel_rejected"),
         },
         "native_limitation": "OrderMatchingEngine::process_cancel purges a terminal order silently (crates/execution/src/matching_engine/engine.rs); OrderCancelRejected is never emitted for ALREADY_FILLED",
+        "profile_boundary": {
+            "adapter_managed": "terminal-aware cancel response resolved at the client arrival boundary",
+            "native_gap": "no ALREADY_FILLED cancel response and no OrderCancelRejected for a terminal order",
+        },
         "verdict": if pass { "PASS" } else { "FAIL" },
         "verdict_reason": if pass {
             "adapter local state answers the late cancel with ALREADY_FILLED at the arrival boundary; native fill stands at 1 lot and no quantity is overfilled"
