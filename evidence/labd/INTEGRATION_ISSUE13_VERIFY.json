@@ -53,37 +53,36 @@
       "check_status": {
         "B0": "PASS",
         "B1": "PASS",
-        "B2": "EVIDENCE_PENDING_PROFILE_ENFORCEMENT",
-        "B3": "EVIDENCE_PENDING_PROFILE_ENFORCEMENT",
-        "B4": "EVIDENCE_PENDING_100M_AND_PROFILE_ENFORCEMENT",
+        "B2": "FAIL_MARGINAL",
+        "B3": "PASS",
+        "B4": "PASS",
         "B5": "PASS",
         "T-RELEASE": "SEE_T_RELEASE_BUILD"
       }
     }
   },
   "acceptance_boundary": {
-    "status": "PARTIAL/EVIDENCE_PENDING",
-    "verified": ["B0", "B1", "B5", "T-RELEASE", "RP-4G and RP-8G cgroup enforcement"],
+    "status": "PARTIAL_B2_PERF_MISS",
+    "verified": ["B0", "B1", "B3", "B4", "B5", "T-RELEASE", "RP-4G and RP-8G cgroup enforcement", "2 warmups + 12 timed repeats per profile"],
     "missing": [
-      "B2 re-run under the enforced RP-4G/RP-8G profiles",
-      "B3 re-run under the enforced RP-4G/RP-8G profiles",
-      "B4 re-run under the enforced RP-4G/RP-8G profiles",
-      "B4 100M-event plateau"
+      "B2 warm p90 <= 30 s: measured 30.141 s (RP-4G) and 30.351 s (RP-8G), 0.14-0.35 s over"
     ],
-    "note": "B0/B1/B5 pass their targets under enforced profiles. Full TASK-25 acceptance is not claimed."
+    "note": "B0/B1/B3/B4/B5 pass. B2 misses its 30 s warm p90 by 0.14-0.35 s on the current host; the prior 20.545 s result is not reproducible. Full TASK-25 acceptance is not claimed.",
+    "superseding_evidence": "evidence/labd/T25_B2_B3_PROFILES.json"
   },
   "claims_not_made": [
     "full TASK-25 acceptance",
-    "B4 100M certified",
-    "B2/B3/B4 profile-specific acceptance"
+    "B2 30 s warm p90"
   ],
   "evidence_hashes": {
     "evidence/labd/B0_TYPED_SPECIFICATION.json": "committed with patch",
     "evidence/labd/B1_BATCH_SCREEN.json": "committed with patch",
     "evidence/labd/B5_LEDGER_RESTORE.json": "committed with patch",
+    "evidence/labd/T25_B2_B3_PROFILES.json": "committed with this verification",
+    "evidence/labd/B4_PROFILES_EVIDENCE.json": "committed with this verification",
     "evidence/labd/T25_ACCEPTANCE.json": "committed with patch",
     "evidence/labd/T_RELEASE_BUILD.json": "committed with patch"
   },
-  "verdict": "PASS_B0_B1_B5_AND_T_RELEASE",
-  "acceptance_note": "Benchmark harnesses, frozen corpora and cgroup-enforced B0/B1/B5 results are integrated. #13 remains PARTIAL on B2/B3/B4 profile re-runs and the B4 100M plateau."
+  "verdict": "PASS_B0_B1_B3_B4_B5_B2_FAIL_MARGINAL",
+  "acceptance_note": "Benchmark harnesses, frozen corpora and cgroup-enforced B0/B1/B3/B4/B5 results are integrated. B2 remains a filed marginal miss at 30.141/30.351 s vs the 30 s target; #13 is not closed."
 }

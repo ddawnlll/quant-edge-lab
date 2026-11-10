@@ -1,0 +1,86 @@
+{
+  "kind": "TASK19_B4_100M_MEMORY_PLATEAU",
+  "task": "TASK-19",
+  "issue": "https://github.com/ddawnlll/quant-edge-lab/issues/12",
+  "required_check": "B4",
+  "generated_at_utc": "2026-11-10T02:56:30Z",
+  "base_sha": "9827593",
+  "workload": {
+    "description": "byte-bounded replay of a 101.2M-event chronological corpus",
+    "corpus": "data/native/DS-BTCUSDT-100M/events.jsonl",
+    "corpus_sha256": "91e4d6699a408060292f37ca6c31c2e3dff64167494b4027869e6b78c2aef379",
+    "corpus_bytes": 13358953161,
+    "events": 101229273,
+    "construction": "nine chronological copies of DS-MULTIDAY-10M with a 10-day timestamp offset per copy; copy boundaries verified (2026-11-06T23:59:59.999 -> 2026-11-09T00:00:00)",
+    "strategy": "policy/examples/taker_1m.json",
+    "mode": "--chunk-bytes 8388608 (byte_bounded)",
+    "runner_binary": "/home/quant/quant/.build-cache/qel-native/release/qel-native-runner",
+    "runner_binary_sha256": "e8d7e4f363257ec94f6ef0185e4610917513ce9733766afc063921f02db8199a"
+  },
+  "resource_measurement": {
+    "method": "systemd-run --user --scope with MemoryMax=4G and MemorySwapMax=0; per-batch VmRSS/VmHWM samples from /proc/self/status; cgroup memory.peak read from the scope",
+    "cgroup": "RP-4G",
+    "memory_max_bytes": 4294967296,
+    "memory_swap_max_bytes": 0,
+    "cgroup_memory_peak_bytes": 4294967296,
+    "cgroup_peak_note": "The cgroup peak equals the 4G limit because page cache for the 13.4GB corpus is charged to the scope. It is not process RSS. The process VmHWM and the per-batch samples are the memory-growth evidence; the run exited 0 with no OOM kill.",
+    "process_peak_rss_kb": 136184,
+    "process_peak_rss_mib": 132.99,
+    "worker_memory_limit_bytes": 2147483648,
+    "samples_artifact": "resource.rss_samples embedded in evidence/labd/B4_100M.json (1593 batch samples)"
+  },
+  "run": {
+    "status": "PASS",
+    "exit_code": 0,
+    "elapsed_ms": 2460459,
+    "wall_seconds": 2461,
+    "batches": 1593,
+    "events_processed": 101229273,
+    "events_replayed": 101229273,
+    "first_rss_kb": 24956,
+    "last_rss_kb": 100312,
+    "peak_sampled_rss_kb": 100312,
+    "final_decile_start_events": 91226045,
+    "final_decile_end_events": 101229273,
+    "final_decile_events": 10003228,
+    "final_decile_start_rss_kb": 94200,
+    "final_decile_end_rss_kb": 100312,
+    "final_decile_slope_bytes_per_event": 0.8673713644,
+    "final_decile_slope_bytes_per_million_events": 867371.3644,
+    "final_decile_slope_mib_per_million_events": 0.8272,
+    "orders": 30633,
+    "positions": 15317,
+    "active_orders_end": 0,
+    "active_positions_end": 1,
+    "epochs_retained_end": 245,
+    "purged_closed_orders": 30633,
+    "purged_closed_positions": 754
+  },
+  "targets": {
+    "peak_within_worker_memory_max": {"value": true, "evidence": "133.0 MiB process peak vs 2048 MiB worker limit"},
+    "active_state_growth_unbounded": {"value": false, "evidence": "active positions end 1, retained epochs 245, all 30,633 closed orders and 754 closed positions purged at end"},
+    "postwarmup_last_decile_memory_slope_bytes_per_million_events": {"value": 867371.4, "target": 1048576, "operator": "LE", "passed": true},
+    "run_completed": {"value": true},
+    "oom_events": {"value": 0}
+  },
+  "comparison": {
+    "b4_10m": {
+      "source": "evidence/labd/B4_MEMORY_PLATEAU.json",
+      "events": 11247697,
+      "peak_rss_kb": 44464,
+      "slope_mib_per_million_events": 0.0502
+    },
+    "note": "The 100M peak (133.0 MiB) is 3.0x the 10M peak (43.4 MiB), while events are 9.0x larger. The final-decile slope is higher than at 10M but remains below the 1 MiB/M target. Active state is bounded and purged; there is no linear 376 MB-style growth."
+  },
+  "artifacts": {
+    "runner_receipt": "evidence/labd/B4_100M.json.gz",
+    "runner_receipt_uncompressed_sha256": "1c1b96db01edc30d998ed7f108c89742275e3837ae34a33a0c76bfaad5a93326",
+    "runner_receipt_note": "Gzip of the 5.7MB raw receipt; the uncompressed hash is recorded so the receipt is reproducible.",
+    "rss_samples": "evidence/labd/B4_100M.rss.jsonl",
+    "cgroup_peak": "evidence/labd/B4_100M.memory_peak.txt",
+    "run_metadata": "evidence/labd/B4_100M.run.json",
+    "console_log": "/home/quant/.qel-coord/B4_100M.console.log"
+  },
+  "verdict": "PASS_B4_100M",
+  "acceptance_note": "B4 now has a completed 101.2M-event run under an enforced 4G cgroup, with a 133.0 MiB process peak and a 0.827 MiB/M-event final-decile slope. This closes the B4 100M blocker for #12 and supplies the B4 profile re-run for #13 at RP-4G. The RP-8G profile is not separately required because the process peak is 133 MiB; if the issue requires both profiles literally, the same run can be repeated under RP-8G."
+}
