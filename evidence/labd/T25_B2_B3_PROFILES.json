@@ -13,7 +13,7 @@
     "enforcement": "systemd-run --user --scope with MemoryMax=4G/8G and MemorySwapMax=0",
     "p90_rule": "conservative nearest-rank p90 of the 12 timed runs (11th of 12); the prior 3-run evidence used the slowest run for n=3",
     "runner_binary_sha256": "e8d7e4f363257ec94f6ef0185e4610917513ce9733766afc063921f02db8199a",
-    "retention": "all 28 attempts (2 warmups + 12 timed per profile) retained in evidence/labd/T25_B2_B3_PROFILE_runs.jsonl; per-run receipts and logs retained locally under evidence/labd/T25_*.json and evidence/labd/T25_B2_B3_PROFILE.log"
+    "retention": "all 28 attempts (2 warmups + 12 timed per profile) retained in evidence/labd/T25_B2_B3_PROFILE_runs.jsonl; per-run receipts, logs and exploratory attempts archived locally outside git at /home/quant/.qel-coord/evidence-t25-runs-20261110/evidence/labd/ (435MB)"
   },
   "runs": {
     "RP-4G": {
