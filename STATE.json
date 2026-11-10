@@ -3,7 +3,7 @@
   "spec_version": "1.1.0",
   "spec_package_sha256": "db18e7a6e94b8c9b233a48097040d1a3a6c655ea126d5e6805d67d4f6e91fd30",
   "baseline_sha256": "71628e4b4ceceac3447759cdabab131e16237aff9fd7569a09f1bc61e4d70d06",
-  "updated_utc": "2026-11-10T00:36:10Z",
+  "updated_utc": "2026-11-10T01:31:00Z",
   "host": {
     "os": "Debian GNU/Linux 13 (trixie)",
     "kernel": "6.12.115+deb13.1-amd64",
@@ -204,8 +204,15 @@
       "scope_note": "synthetic cohort certification; fresh OOS/G4 market confirmation external"
     },
     "TASK-17": {
-      "status": "BLOCKED",
-      "blocked": "CAP-L2-QUEUE"
+      "status": "PARTIAL",
+      "evidence": [
+        "native/passive_runner/src/main.rs",
+        "tests/test_passive_queue.py",
+        "evidence/labd/PASSIVE_QUEUE_2026-11-10.json",
+        "evidence/labd/PASSIVE_QUEUE_2026-11-10.txt",
+        "evidence/labd/INTEGRATION_ISSUE10_VERIFY.json"
+      ],
+      "scope_note": "CAP-L2-QUEUE PARTIAL: F02 queue-ahead/depth-once/cancel-remainder/shared-level, F03 IOC, F06 native OCO, F33 FOK/stop-limit gap, F34 partial-entry protection; F04 cancel race, F05 replace priority, F07 epoch safety, F29 book sequence, F31 duplicate fill, client-managed OCO remain blocked"
     },
     "TASK-18": {
       "status": "BLOCKED",
