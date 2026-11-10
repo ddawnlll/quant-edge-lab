@@ -1,0 +1,40 @@
+{
+  "cohort": {
+    "alpha_den": 200,
+    "alpha_num": 5,
+    "anchor_generation": 1,
+    "anchor_hash": "4adce2ddf7a6c273020a7f230673bf0aa9882c63ca890da9136e173416f45351",
+    "cohort_id": "COHORT-E2E",
+    "commitment": "7ad2f1cb67a6bf31bb0c886fd236fded0eb290e070397911aa4268f357fe6fdd",
+    "receipt_hash": "4d499ab8f761baa62894bbbfe3a395ee883a0cb3ad0af02a6ee6e780b0a418cf",
+    "state": "FROZEN"
+  },
+  "consumption": {
+    "alpha_spent_den": 200,
+    "alpha_spent_num": 5,
+    "anchor_generation": 2,
+    "anchor_hash": "aa56f36c548ccaa1c2d16907b081156be4fbcc4fec074b0cae49a117d787a379",
+    "cohort_id": "COHORT-E2E",
+    "commitment": "7ad2f1cb67a6bf31bb0c886fd236fded0eb290e070397911aa4268f357fe6fdd",
+    "receipt_hash": "4d499ab8f761baa62894bbbfe3a395ee883a0cb3ad0af02a6ee6e780b0a418cf",
+    "recovered": false,
+    "request_id": null,
+    "reused": false
+  },
+  "data_boundary": "synthetic evaluator calibration vector, not a market result",
+  "db_mode": "0o600",
+  "decision": {
+    "p_control": 0.7509576926093006,
+    "p_iut": 0.7509576926093006,
+    "p_profit": 0.08339782252059952,
+    "public_key": "c1a2446651c775be9baa69a84ace3f5819042519284f1e1fe6eef8426c84df17",
+    "signature": "d9b1b8d5bdbf32e28e1267ba081516457d59cdd656c32abe3e8b3b80768c5847f2b3b342f58f69c250ba17dc3126e1a69eef7c44fd88926200cf40828c27fa07",
+    "verdict": "INSUFFICIENT_EVIDENCE"
+  },
+  "key_mode": "0o600",
+  "pre_consumption_refusal": "WAITING_AUTHORIZED_COHORT",
+  "second_decision_refusal": "PROTOCOL_VIOLATION",
+  "signature_verified": true,
+  "status": "PASS",
+  "unacknowledged_refusal": "WAITING_AUTHORIZED_COHORT"
+}

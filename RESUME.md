@@ -4,6 +4,11 @@ Updated: 2026-11-10. Repository:
 <https://github.com/ddawnlll/quant-edge-lab>. Integration branch
 `qel/v1.1-completion`, based on `ce91981`.
 
+Post-merge follow-up: `docs/V11_POST_MERGE_VALIDATION.md` and
+`evidence/labd/validation-2026-11-10/` record the 33-check audit, the applied
+8dp LocalView fix, the F22/M2 test hardening, stale evidence supersession,
+and removal of the tracked Rust build cache. Remaining gates are unchanged.
+
 ## State
 
 The execution-fidelity milestone is complete at the tested scopes:

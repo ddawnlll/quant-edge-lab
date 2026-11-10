@@ -1,0 +1,196 @@
+{
+  "failed_attempts_retained": true,
+  "generated_utc": "2026-11-10T10:40:36Z",
+  "kind": "TASK25_B2_RECHECK",
+  "median_wall_s": 24.659,
+  "memory_max_bytes": 4294967296,
+  "memory_swap_max_bytes": 0,
+  "p90_wall_s": 26.967,
+  "profile": "RP-8G",
+  "protocol": {
+    "p90_rule": "nearest-rank p90 of the 12 timed wall-clock runs",
+    "timed_repeats": 12,
+    "warmups": 2
+  },
+  "resource_note": "process RSS from the runner report; cgroup peak includes page cache and is reported separately",
+  "target_s": 30,
+  "timed": [
+    {
+      "batches": 20,
+      "cgroup_peak_bytes": 36573184,
+      "elapsed_s": 23.924,
+      "events": 1241800,
+      "exit_code": 0,
+      "label": "timed00",
+      "peak_rss_kb": 43888,
+      "report": "/home/quant/quant/.build-cache/b2-recheck-rp8g/timed00.json",
+      "stderr_tail": "",
+      "wall_s": 24.05
+    },
+    {
+      "batches": 20,
+      "cgroup_peak_bytes": 37015552,
+      "elapsed_s": 28.008,
+      "events": 1241800,
+      "exit_code": 0,
+      "label": "timed01",
+      "peak_rss_kb": 44388,
+      "report": "/home/quant/quant/.build-cache/b2-recheck-rp8g/timed01.json",
+      "stderr_tail": "",
+      "wall_s": 28.121
+    },
+    {
+      "batches": 20,
+      "cgroup_peak_bytes": 38526976,
+      "elapsed_s": 24.673,
+      "events": 1241800,
+      "exit_code": 0,
+      "label": "timed02",
+      "peak_rss_kb": 45944,
+      "report": "/home/quant/quant/.build-cache/b2-recheck-rp8g/timed02.json",
+      "stderr_tail": "",
+      "wall_s": 24.819
+    },
+    {
+      "batches": 20,
+      "cgroup_peak_bytes": 36626432,
+      "elapsed_s": 20.562,
+      "events": 1241800,
+      "exit_code": 0,
+      "label": "timed03",
+      "peak_rss_kb": 43944,
+      "report": "/home/quant/quant/.build-cache/b2-recheck-rp8g/timed03.json",
+      "stderr_tail": "",
+      "wall_s": 20.646
+    },
+    {
+      "batches": 20,
+      "cgroup_peak_bytes": 36556800,
+      "elapsed_s": 25.492,
+      "events": 1241800,
+      "exit_code": 0,
+      "label": "timed04",
+      "peak_rss_kb": 43800,
+      "report": "/home/quant/quant/.build-cache/b2-recheck-rp8g/timed04.json",
+      "stderr_tail": "",
+      "wall_s": 25.603
+    },
+    {
+      "batches": 20,
+      "cgroup_peak_bytes": 36261888,
+      "elapsed_s": 24.367,
+      "events": 1241800,
+      "exit_code": 0,
+      "label": "timed05",
+      "peak_rss_kb": 43484,
+      "report": "/home/quant/quant/.build-cache/b2-recheck-rp8g/timed05.json",
+      "stderr_tail": "",
+      "wall_s": 24.498
+    },
+    {
+      "batches": 20,
+      "cgroup_peak_bytes": 36405248,
+      "elapsed_s": 25.404,
+      "events": 1241800,
+      "exit_code": 0,
+      "label": "timed06",
+      "peak_rss_kb": 43624,
+      "report": "/home/quant/quant/.build-cache/b2-recheck-rp8g/timed06.json",
+      "stderr_tail": "",
+      "wall_s": 25.59
+    },
+    {
+      "batches": 20,
+      "cgroup_peak_bytes": 36536320,
+      "elapsed_s": 26.839,
+      "events": 1241800,
+      "exit_code": 0,
+      "label": "timed07",
+      "peak_rss_kb": 43612,
+      "report": "/home/quant/quant/.build-cache/b2-recheck-rp8g/timed07.json",
+      "stderr_tail": "",
+      "wall_s": 26.967
+    },
+    {
+      "batches": 20,
+      "cgroup_peak_bytes": 36618240,
+      "elapsed_s": 21.017,
+      "events": 1241800,
+      "exit_code": 0,
+      "label": "timed08",
+      "peak_rss_kb": 43884,
+      "report": "/home/quant/quant/.build-cache/b2-recheck-rp8g/timed08.json",
+      "stderr_tail": "",
+      "wall_s": 21.101
+    },
+    {
+      "batches": 20,
+      "cgroup_peak_bytes": 36368384,
+      "elapsed_s": 21.383,
+      "events": 1241800,
+      "exit_code": 0,
+      "label": "timed09",
+      "peak_rss_kb": 43432,
+      "report": "/home/quant/quant/.build-cache/b2-recheck-rp8g/timed09.json",
+      "stderr_tail": "",
+      "wall_s": 21.484
+    },
+    {
+      "batches": 20,
+      "cgroup_peak_bytes": 38547456,
+      "elapsed_s": 24.765,
+      "events": 1241800,
+      "exit_code": 0,
+      "label": "timed10",
+      "peak_rss_kb": 45816,
+      "report": "/home/quant/quant/.build-cache/b2-recheck-rp8g/timed10.json",
+      "stderr_tail": "",
+      "wall_s": 24.855
+    },
+    {
+      "batches": 20,
+      "cgroup_peak_bytes": 38678528,
+      "elapsed_s": 23.968,
+      "events": 1241800,
+      "exit_code": 0,
+      "label": "timed11",
+      "peak_rss_kb": 45896,
+      "report": "/home/quant/quant/.build-cache/b2-recheck-rp8g/timed11.json",
+      "stderr_tail": "",
+      "wall_s": 24.076
+    }
+  ],
+  "verdict": "PASS",
+  "warmups": [
+    {
+      "batches": 20,
+      "cgroup_peak_bytes": 36401152,
+      "elapsed_s": 26.46,
+      "events": 1241800,
+      "exit_code": 0,
+      "label": "warm0",
+      "peak_rss_kb": 43712,
+      "report": "/home/quant/quant/.build-cache/b2-recheck-rp8g/warm0.json",
+      "stderr_tail": "",
+      "wall_s": 26.586
+    },
+    {
+      "batches": 20,
+      "cgroup_peak_bytes": 36360192,
+      "elapsed_s": 24.026,
+      "events": 1241800,
+      "exit_code": 0,
+      "label": "warm1",
+      "peak_rss_kb": 43648,
+      "report": "/home/quant/quant/.build-cache/b2-recheck-rp8g/warm1.json",
+      "stderr_tail": "",
+      "wall_s": 24.139
+    }
+  ],
+  "workload": {
+    "bytes": 164130300,
+    "corpus": "/home/quant/quant/quant-edge-lab/data/native/bench/events_100x.jsonl",
+    "mode": "--chunk-bytes 8388608",
+    "strategy": "/home/quant/quant/quant-edge-lab/policy/examples/taker_1s.json"
+  }
+}

@@ -57,6 +57,8 @@ def test_development_fold_refuses_short_history() -> None:
 
 
 def test_frozen_manifest_marks_missing_execution_days() -> None:
+    if not DATA.is_dir():
+        pytest.skip("development corpus is not present in this checkout")
     manifest = json.loads(MANIFEST.read_text())
     execution = load_execution_days(str(DATA), _dev_dates())
     assert len(execution) == 7

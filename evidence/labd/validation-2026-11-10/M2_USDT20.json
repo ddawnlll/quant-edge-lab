@@ -1,0 +1,50 @@
+{
+  "capital": "200",
+  "execution_days": 7,
+  "manifest_check": {
+    "executable_fold_count": 0,
+    "fold_count": 2,
+    "folds": [
+      {
+        "executable": false,
+        "fold_id": "WF-D64AF439CD8D6E7F",
+        "missing_execution_days": [
+          "2025-09-01",
+          "2025-11-30",
+          "2025-12-01"
+        ],
+        "train_start": "2024-09-01",
+        "validation_end": "2025-11-30",
+        "validation_start": "2025-09-01"
+      },
+      {
+        "executable": false,
+        "fold_id": "WF-2CCA0B04C796FBFC",
+        "missing_execution_days": [
+          "2025-12-01",
+          "2026-02-28",
+          "2026-03-01"
+        ],
+        "train_start": "2024-09-01",
+        "validation_end": "2026-02-28",
+        "validation_start": "2025-12-01"
+      }
+    ],
+    "manifest_split_hash": "29f071efe8938cb15aabb360a86cf6f60b11534016e3ceb6c2abc58959f0b538",
+    "status": "INSUFFICIENT_EXECUTION_DATA"
+  },
+  "reason": "TARGET_NOTIONAL_BELOW_VENUE_MINIMUM",
+  "requested_notional": "20",
+  "risk_fraction": "0.1",
+  "schema": "qel.m2_run/1.1",
+  "status": "INFEASIBLE_VENUE_MIN_NOTIONAL",
+  "venue": {
+    "feasible": false,
+    "min_notional": "58.94189",
+    "min_quantity": "1/1000",
+    "note": "The 20 USDT target is below the 0.001 BTC venue minimum at this price; it cannot be honored without rounding up and changing the risk target.",
+    "reference_price": "58941.89",
+    "status": "INFEASIBLE_VENUE_MIN_NOTIONAL",
+    "target_notional": "20"
+  }
+}

@@ -1,0 +1,90 @@
+{
+  "artifact_hashes": {
+    "B2_RP8G_RECHECK.json": "6d1fa822821e1a2687c0892f3db75cb4aae6b824c7772987033012ca5f4b4d56",
+    "B3_10M_RP8G.json": "ad3a5109a08f8f986b7f36cb601b1b29c9cd208ccb40a471817ba362d263df2c",
+    "LOCAL_VIEW_F22_2026-11-10.json": "25f5ce73210368650882ffc79059163d6c03b9f99798fa3ed3a8dc9047dfa5b9",
+    "M2_DEV_RUN_MINI.json": "2b7951fc779779b7f5e833b9a47ccf54616f2f511c4899ea6ad3bbcf00320f5a",
+    "POST_MERGE_VALIDATION.json": "73b492804e8bd7ad94ebd4c352c850fbe1d47b898b7dd45920a2c3deaf55fffb"
+  },
+  "base_main_sha": "166f8c1c06508e29b77477092b2c6a7c6586dfd4",
+  "f22": {
+    "binary_path": "/home/quant/quant/.build-cache/qel-native/release/qel-local-view",
+    "binary_sha256": "ad897f9950fcada3ca03e4971c30888f793e4eff397d3667d851a17e160787ee",
+    "invariant_pass": {
+      "1_exchange_updates_before_response_delivery": {
+        "control_zero_delay": true,
+        "decision_in_gap": true,
+        "large_response": true,
+        "main": true
+      },
+      "2_no_policy_decision_uses_fill_before_delivery": {
+        "control_zero_delay": true,
+        "decision_in_gap": true,
+        "large_response": true,
+        "main": true
+      },
+      "3_feed_delay_charged_once": {
+        "control_zero_delay": true,
+        "decision_in_gap": true,
+        "large_response": true,
+        "main": true
+      },
+      "4_local_view_converges_to_exchange": {
+        "control_zero_delay": true,
+        "decision_in_gap": true,
+        "large_response": true,
+        "main": true
+      },
+      "5_zero_delay_control_equals_native_runner": {},
+      "large_response_gap": {
+        "decision_in_gap_90s": true,
+        "large_response_30s": true
+      }
+    },
+    "source_path": "/home/quant/quant/quant-edge-lab/native/local_view/src/main.rs",
+    "source_sha256": "678260ee46911bbdf073cbaf6809a51f60cf7ade640e0cae688352ee049a7f73",
+    "status": "PASS_SCOPED_F22_PROFILE"
+  },
+  "fixes_applied": [
+    "LocalView cash/fees/funding now quantized to 8dp at response application and finalize",
+    "F22 evidence/test now scopes binary hash to the recorded source path",
+    "M2 manifest test skips when data/native is absent in a clean clone",
+    "INTEGRATION_ISSUE04/10/13 evidence records superseded_by/post_merge_status",
+    "151 pre-existing policy/rust/target build-cache files removed from the index"
+  ],
+  "focused_tests": "65 passed (test_local_view, test_m2, test_benchmarks, test_passive_queue_adapter)",
+  "generated_utc": "2026-11-10T11:59:33Z",
+  "live_240s": {
+    "control": {
+      "cash_diff": "0.00000000",
+      "equity_diff": "0.00000000",
+      "fills": 15,
+      "position_diff": "0.000",
+      "status": "PASS"
+    },
+    "gap": {
+      "cash_diff": "0.00000000",
+      "equity_diff": "0.00000000",
+      "fills": 16,
+      "position_diff": "0",
+      "status": "PASS"
+    },
+    "main": {
+      "cash_diff": "0.00000000",
+      "equity_diff": "0.00000000",
+      "fills": 15,
+      "position_diff": "0.000",
+      "status": "PASS"
+    }
+  },
+  "note": "The validation report in this directory records the pre-fix audit. This manifest records the applied fixes and the post-fix F22/240s results.",
+  "remaining_external_gates": [
+    "fresh OOS authority",
+    "administrator-created UIDs",
+    "live capital authorization",
+    "full B6 compute",
+    "B3 10M throughput",
+    "7-day soak/B8"
+  ],
+  "schema": "qel.post_fix_verification/1"
+}

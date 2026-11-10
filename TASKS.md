@@ -75,3 +75,13 @@ derived from a native tape (TASK-13 screen/controls, TASK-19 chunk parity,
 TASK-25 timings that consumed the tape, and the archive PnL figures) is stale
 until re-run on the integrated runner. The conformance fixtures and the
 synthetic statistics calibration are not affected by this change.
+
+## Post-merge validation follow-up
+
+`docs/V11_POST_MERGE_VALIDATION.md` and
+`evidence/labd/validation-2026-11-10/` record the post-merge audit and the
+applied follow-up fixes: 8dp LocalView cash/fee/funding quantization, F22 and
+M2 test hardening, supersession fields on the issue-04/10/13 verification
+records, and removal of 151 pre-existing tracked Rust build-cache files.
+The archive-day F22 evidence and 240s live-capture profiles were regenerated
+with the fixed binary and all convergence differences are exactly zero.

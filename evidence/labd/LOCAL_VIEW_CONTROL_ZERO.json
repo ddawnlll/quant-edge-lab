@@ -2,25 +2,25 @@
   "binding": {
     "binary": {
       "path": "/home/quant/quant/.build-cache/qel-native/release/qel-local-view",
-      "sha256": "af79abd879da22082230a42fd84cd86c13b9b2e8d7fc3e0409b1df1f86075801"
+      "sha256": "ad897f9950fcada3ca03e4971c30888f793e4eff397d3667d851a17e160787ee"
     },
     "cargo_toml": {
-      "path": "/home/quant/quant/qel-lv/native/local_view/Cargo.toml",
+      "path": "/home/quant/quant/quant-edge-lab/native/local_view/Cargo.toml",
       "sha256": "e5c52908a6ff5d84355f745cebfd32ef8563dcade65468fabea60aa969557788"
     },
     "corpus": {
-      "path": "/home/quant/quant/quant-edge-lab/data/native/DS-ARCHIVE-BTCUSDT-2026-11-07/events.jsonl",
+      "path": "data/native/DS-ARCHIVE-BTCUSDT-2026-11-07/events.jsonl",
       "sha256": "c7a4c79484a611820c2e314f48397de299294b009d24766ad5c2d03cc5ee22ed"
     },
-    "git_head": "ce91981055125328dae4b59add8e5432892c4f20",
+    "git_head": "166f8c1c06508e29b77477092b2c6a7c6586dfd4",
     "nautilus": {
       "commit": "27a8e54e7ac3c57d6cbf8891f0283dfbaee97317",
       "repository": "https://github.com/nautechsystems/nautilus_trader",
       "tag": "v1.231.0"
     },
     "source": {
-      "path": "/home/quant/quant/qel-lv/native/local_view/src/main.rs",
-      "sha256": "b21c7f19894253a07ce095e014511f61c6adb38511e978fab6343d2acd9e5cc2"
+      "path": "/home/quant/quant/quant-edge-lab/native/local_view/src/main.rs",
+      "sha256": "678260ee46911bbdf073cbaf6809a51f60cf7ade640e0cae688352ee049a7f73"
     },
     "strategy": {
       "path": "policy/examples/taker_1m.json",
@@ -28,7 +28,7 @@
     }
   },
   "command": {
-    "events": "/home/quant/quant/quant-edge-lab/data/native/DS-ARCHIVE-BTCUSDT-2026-11-07/events.jsonl",
+    "events": "data/native/DS-ARCHIVE-BTCUSDT-2026-11-07/events.jsonl",
     "feed_delay_ns": "0",
     "notional": "100",
     "response_delay_ns": "0",
@@ -26543,7 +26543,7 @@
       "settlement_id": "FUND:1794096000000000000:BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001:154"
     }
   ],
-  "generated_at_utc": "1794300010.032583500Z",
+  "generated_at_utc": "1794311813.327591969Z",
   "local_tape": [
     {
       "cash": "1000",
@@ -29051,10 +29051,10 @@
   },
   "profile": "control_zero_delay",
   "resource": {
-    "current_rss_kb": 90292,
-    "elapsed_ms": 7021,
-    "events_path": "/home/quant/quant/quant-edge-lab/data/native/DS-ARCHIVE-BTCUSDT-2026-11-07/events.jsonl",
-    "peak_rss_kb": 90292,
+    "current_rss_kb": 94184,
+    "elapsed_ms": 9924,
+    "events_path": "data/native/DS-ARCHIVE-BTCUSDT-2026-11-07/events.jsonl",
+    "peak_rss_kb": 94184,
     "ts_last_ns": "1794096000000000000"
   },
   "schema": "qel.local_view.f22.v1",
