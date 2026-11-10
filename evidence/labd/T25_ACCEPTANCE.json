@@ -2,19 +2,17 @@
   "check_status": {
     "B0": "PASS",
     "B1": "PASS",
-    "B2": "EVIDENCE_PENDING_PROFILE_ENFORCEMENT",
-    "B3": "EVIDENCE_PENDING_PROFILE_ENFORCEMENT",
-    "B4": "EVIDENCE_PENDING_100M_AND_PROFILE_ENFORCEMENT",
+    "B2": "PASS 26.452 s warm p90 RP-4G (target 30)",
+    "B3": "FAIL_TARGET 209.741 s p90 on the 10M-row atomic L2 corpus (target 120)",
+    "B4": "PASS at 1M/10M under RP-4G and RP-8G and at 100M under RP-4G; 100M RP-8G unrun",
     "B5": "PASS",
     "T-RELEASE": "SEE_T_RELEASE_BUILD"
   },
   "full_acceptance_claimed": false,
   "kind": "TASK25_ACCEPTANCE",
   "missing_items": [
-    "B4 100M events: BLOCKED_NOT_RUN (see evidence/labd/B4_100M_BLOCKED.json)",
-    "B2: prior TASK-19 evidence exists but was not re-run under the enforced RP-4G/RP-8G profiles",
-    "B3: prior TASK-19 evidence exists but was not re-run under the enforced RP-4G/RP-8G profiles",
-    "B4: prior TASK-19 evidence exists but was not re-run under the enforced RP-4G/RP-8G profiles"
+    "B3: 10M-row atomic L2 p90 209.741 s misses the 120 s target (evidence/labd/B3_10M_ATOMIC_L2_2026-11-10.json)",
+    "B4: 100M events under RP-8G has not been run"
   ],
   "required_checks": [
     "B0",
@@ -25,6 +23,6 @@
     "B5",
     "T-RELEASE"
   ],
-  "status": "PARTIAL/EVIDENCE_PENDING",
+  "status": "PARTIAL/B3_10M_FAIL_TARGET",
   "task": "TASK-25"
 }

@@ -1,0 +1,75 @@
+{
+  "attempts": [
+    {
+      "batches": 177,
+      "cgroup_peak_bytes": 41070592,
+      "elapsed_s": 194.121,
+      "events": 11247697,
+      "exit_code": 0,
+      "label": "warm0",
+      "orders": 3401,
+      "positions": 1701,
+      "process_peak_rss_kb": null,
+      "report": "/home/quant/quant/.build-cache/b3-10m/warm0.json"
+    },
+    {
+      "batches": 177,
+      "cgroup_peak_bytes": 36524032,
+      "elapsed_s": 200.338,
+      "events": 11247697,
+      "exit_code": 0,
+      "label": "timed0",
+      "orders": 3401,
+      "positions": 1701,
+      "process_peak_rss_kb": null,
+      "report": "/home/quant/quant/.build-cache/b3-10m/timed0.json"
+    },
+    {
+      "batches": 177,
+      "cgroup_peak_bytes": 39866368,
+      "elapsed_s": 186.628,
+      "events": 11247697,
+      "exit_code": 0,
+      "label": "timed1",
+      "orders": 3401,
+      "positions": 1701,
+      "process_peak_rss_kb": null,
+      "report": "/home/quant/quant/.build-cache/b3-10m/timed1.json"
+    },
+    {
+      "batches": 177,
+      "cgroup_peak_bytes": 40890368,
+      "elapsed_s": 209.741,
+      "events": 11247697,
+      "exit_code": 0,
+      "label": "timed2",
+      "orders": 3401,
+      "positions": 1701,
+      "process_peak_rss_kb": null,
+      "report": "/home/quant/quant/.build-cache/b3-10m/timed2.json"
+    }
+  ],
+  "base_sha": null,
+  "failed_attempts_retained": true,
+  "generated_utc": "2026-11-10T08:59:55Z",
+  "kind": "TASK25_B3_ATOMIC_L2_10M_REMEASURE",
+  "memory_max_bytes": 4294967296,
+  "memory_swap_max_bytes": 0,
+  "p90_s": 209.741,
+  "profile": "RP-4G",
+  "protocol": {
+    "p90_rule": "nearest-rank p90 of the three timed wall-clock elapsed values; the target is missed by over 55%, so three repeats are retained as a failure measurement rather than running 12 repeats of an already failing workload.",
+    "timed_repeats": 3,
+    "warmups": 1
+  },
+  "resource_note": "process RSS is the runner peak; cgroup peak includes page cache and is reported separately",
+  "target_s": 120,
+  "verdict": "FAIL_TARGET",
+  "workload": {
+    "bytes": 1484328129,
+    "corpus": "data/native/DS-MULTIDAY-10M/events.jsonl",
+    "events": 11247697,
+    "mode": "--chunk-bytes 8388608",
+    "strategy": "policy/examples/taker_1m.json"
+  }
+}

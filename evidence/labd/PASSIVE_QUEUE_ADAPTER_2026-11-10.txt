@@ -1,0 +1,44 @@
+PASSIVE_QUEUE_ADAPTER evidence run
+generated_at_utc: 2026-11-10T08:42:20Z
+command: /home/quant/quant/.build-cache/qel-native/release/qel-passive-runner <payload.json>
+exit_code: 0
+wall_ms: 156
+peak_rss_kib: 30028
+payload_sha256: ce42c7656c3888f1da00d4a701c6bd900bd2cc06201970d01aae6e41c57bb211
+source main.rs: 22f37e7f5220a98913afc8e0f5c3bea25e3e913eef78905e09b100ef8c1d7bb4
+source adapter.rs: 37f272648e46b00b751496dba86f4d281c399ba52c5ddee979d48cc25009e525
+binary: 273b44530a010e2598df7fda298dcd8a8c229cda7b56f930b00dcf35ffd35aee
+
+adapter verdicts (profile ADAPTER_OVER_NATIVE):
+  F02+UNKNOWN_AGGRESSOR: PARTIAL
+  F04: PASS
+  F05: PASS
+  F06_CLIENT_REDUCE_ONLY: PASS
+  F07: PASS
+  F29: PASS
+  F31: PASS
+
+native verdicts (unchanged):
+  F02: PASS
+  F02+CANCEL_REMAINDER: PASS
+  F02+SHARED_LEVEL: PASS
+  F02+depth-once: PASS
+  F03: PASS
+  F04: PARTIAL
+  F05: PARTIAL
+  F06: PASS
+  F06_CLIENT_UNSAFE_OBSERVABLE: PARTIAL
+  F07: BLOCKED_BACKEND
+  F29: BLOCKED_BACKEND
+  F31: PARTIAL
+  F33_FOK: PASS
+  F33_STOP_LIMIT_GAP: PASS
+  F34: PASS
+
+oracle comparison:
+  F04: match=True verdict=PASS
+  F05: match=True verdict=PASS
+  F06_CLIENT_REDUCE_ONLY: match=True verdict=PASS
+  F07: match=True verdict=PASS
+  F29: match=True verdict=PASS
+  F31: match=True verdict=PASS

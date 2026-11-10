@@ -20,10 +20,10 @@
   },
   "milestones": {
     "M0": "DONE_WITH_BLOCKED_CAPABILITIES",
-    "M1": "PARTIAL",
+    "M1": "DONE",
     "M2": "PARTIAL",
     "M3": "PARTIAL",
-    "M4": "BLOCKED",
+    "M4": "PARTIAL",
     "M5": "PARTIAL",
     "M6": "BLOCKED",
     "M7": "BLOCKED",
@@ -133,15 +133,17 @@
       "blocked": "no venue-certified historical fee/funding/margin-tier rules and no native liquidation event path"
     },
     "TASK-11": {
-      "status": "DONE_WITH_BLOCKED_CAPABILITY",
+      "status": "DONE",
       "evidence": [
         "evidence/labd/NATIVE_FUNDING_RUN.json",
         "evidence/labd/NATIVE_FUNDING_RUN_240S.json",
         "evidence/labd/NATIVE_FUNDING_AUDIT.json",
         "evidence/labd/FUNDING_MUTATIONS.txt",
-        "evidence/labd/INTEGRATION_ISSUE04_VERIFY.json"
+        "evidence/labd/INTEGRATION_ISSUE04_VERIFY.json",
+        "evidence/labd/LOCAL_VIEW_F22_2026-11-10.json",
+        "docs/ADR-0004_two_world_local_view.md"
       ],
-      "blocked": "F22 LocalView remains BLOCKED_BACKEND; taker L1 certificate only"
+      "scope_note": "F22 PASS at the adapter-managed two-world profile: 303/303 fills delivered after the exchange update, 0 policy reads before delivery, feed delay charged once, exact LocalView convergence, zero-delay control equals the native runner. No backend-native LocalView hook is claimed."
     },
     "TASK-12": {
       "status": "DONE",
@@ -183,6 +185,9 @@
       "evidence": [
         "tests/test_evaluator.py",
         "tests/test_isolation_anchor.py",
+        "tests/test_isolation_real.py",
+        "scripts/provision_isolation.sh",
+        "docs/ISOLATION_RUNBOOK.md",
         "evidence/labd/EVALUATOR_ANCHOR_CHAIN.json",
         "evidence/labd/EVALUATOR_PREACCESS_RECEIPT.json",
         "evidence/labd/EVALUATOR_ISOLATION_REPORT.json",
@@ -204,19 +209,29 @@
       "scope_note": "synthetic cohort certification; fresh OOS/G4 market confirmation external"
     },
     "TASK-17": {
-      "status": "PARTIAL",
+      "status": "DONE",
       "evidence": [
         "native/passive_runner/src/main.rs",
+        "native/passive_runner/src/adapter.rs",
         "tests/test_passive_queue.py",
+        "tests/test_passive_queue_adapter.py",
         "evidence/labd/PASSIVE_QUEUE_2026-11-10.json",
         "evidence/labd/PASSIVE_QUEUE_COMPLETION_2026-11-10.json",
+        "evidence/labd/PASSIVE_QUEUE_ADAPTER_2026-11-10.json",
+        "docs/ADR-0005_client_adapter_semantics.md",
         "evidence/labd/INTEGRATION_ISSUE10_VERIFY.json"
       ],
-      "scope_note": "Proven: F02 queue-ahead/depth-once/cancel-remainder/shared-level, F03 IOC, F06 native OCO, F33 FOK/stop-limit gap, F34. Partial/blocked with exact API: F04 cancel race (no ALREADY_FILLED response), F05 replace priority (preserves priority; no public counter/readback), F31 duplicate fill (suppressed; no out-of-order ACK hook), F07 epoch safety and F29 book sequence BLOCKED_BACKEND, client-managed OCO overfills"
+      "scope_note": "ADAPTER_OVER_NATIVE profile: all required checks PASS functionally (F02/F03/F04/F05/F06/F07/F29/F31/F33/F34). Native gaps remain recorded: no native ALREADY_FILLED response, priority counter/readback, epoch field, last_good_seq/INVALID book state, or venue sequence on order events. CAP-L2-QUEUE remains PARTIAL; no native verdict was upgraded."
     },
     "TASK-18": {
-      "status": "BLOCKED",
-      "blocked": "CAP-LOCAL-VIEW"
+      "status": "PARTIAL",
+      "evidence": [
+        "native/local_view/",
+        "tests/test_local_view.py",
+        "evidence/labd/LOCAL_VIEW_F22_2026-11-10.json",
+        "docs/ADR-0004_two_world_local_view.md"
+      ],
+      "blocked": "T-QUEUE: the independent HftBacktest differential queue adapter over identical command tapes is not implemented; no queue-parity claim"
     },
     "TASK-19": {
       "status": "DONE",
@@ -280,13 +295,17 @@
         "evidence/labd/B1_BATCH_SCREEN.json",
         "evidence/labd/B5_LEDGER_RESTORE.json",
         "evidence/labd/T25_B2_B3_PROFILES.json",
+        "evidence/labd/B2_RECHECK_2026-11-10.json",
+        "evidence/labd/B3_10M_ATOMIC_L2_2026-11-10.json",
+        "scripts/recheck_b2.py",
+        "scripts/run_b3_10m.py",
         "evidence/labd/B4_PROFILES_EVIDENCE.json",
         "evidence/labd/T25_ACCEPTANCE.json",
         "evidence/labd/T_RELEASE_BUILD.json",
         "evidence/labd/INTEGRATION_ISSUE13_VERIFY.json"
       ],
-      "progress": "B3 passes under RP-4G/RP-8G with 2 warmups + 12 timed repeats (p90 30.141 s / 30.351 s, target 120); B4 passes at 1M/10M under RP-4G and RP-8G and at 100M under RP-4G; B2 misses its 30 s warm p90 under both profiles (30.141 s RP-4G, 30.351 s RP-8G; 0.14-0.35 s over) and is filed as FAIL_MARGINAL; the prior 20.545 s B2 result is not reproducible on the current host",
-      "blocked": "B2 warm p90 30.141 s (RP-4G) / 30.351 s (RP-8G) exceeds the 30 s target by 0.14-0.35 s; replay throughput on the current host is ~30% slower than the prior 20.545 s evidence"
+      "progress": "B2 recheck PASSES: 26.452 s warm p90 under RP-4G (2 warmups + 12 timed, median 24.292 s, target 30). B3 on the actual 10M-row atomic L2 corpus is FAIL_TARGET: 209.741 s p90 vs 120 s (11,247,697 events, 3 timed repeats, RP-4G). B4 passes at 1M/10M under RP-4G and RP-8G and at 100M under RP-4G; B4 100M under RP-8G remains unrun.",
+      "blocked": "B3 10M-row throughput: 209.741 s p90 exceeds the 120 s target; the prior 30.14 s B3 figure used a 1.24M-event corpus, not the 10M-row acceptance workload"
     },
     "TASK-26": {
       "status": "PARTIAL",
@@ -366,7 +385,7 @@
   "blockers": [
     {
       "id": "CAP-LOCAL-VIEW",
-      "reason": "pinned Nautilus has no separate LocalView/delayed delivery hook"
+      "reason": "pinned Nautilus has no backend-native LocalView type; F22 is implemented and proven at the adapter-managed two-world profile"
     },
     {
       "id": "CAP-L2-QUEUE",
@@ -390,10 +409,18 @@
     },
     {
       "id": "CONTROL-SEED-PROTOCOL",
-      "reason": "development controls/bootstrap use NumPy PCG64, not the execution HMAC seed protocol"
+      "reason": "resolved for matched controls: HMAC_SHA256_COUNTER_V1 is the control draw path; NumPy PCG64 remains only in the bootstrap resampler"
+    },
+    {
+      "id": "T-QUEUE-HFTBACKTEST",
+      "reason": "independent HftBacktest differential queue adapter over identical command tapes remains unimplemented"
+    },
+    {
+      "id": "B3-THROUGHPUT",
+      "reason": "10M-row atomic L2 replay p90 209.741 s exceeds the 120 s target under RP-4G"
     }
   ],
-  "next_action": "24h soak is verified; keep M4/M6/M7 blocked, do not claim an edge, and leave the 7-day stage/B8 to a separately authorized run.",
+  "next_action": "Publish the single integration PR for #4/#10. Keep #3/#7/#8/#9/#11/#13/#14/#15/#16/#17/#18 open with the recorded blockers. After merge, verify issue closure and prune merged remote branches. The 7-day soak continues to 2026-11-16T22:26Z.",
   "evidence_invalidation": {
     "reason": "TASK-11 changed terminal MARK to the native mark and moved funding to the primary tape",
     "stale_until_rerun": [

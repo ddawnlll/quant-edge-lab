@@ -1,0 +1,2548 @@
+{
+  "artifact": "PASSIVE_QUEUE_ADAPTER_EVIDENCE",
+  "task": "TASK-17",
+  "issue": "#10",
+  "date": "2026-11-10",
+  "generated_at_utc": "2026-11-10T08:42:20Z",
+  "worktree": "/home/quant/quant/qel-pq",
+  "branch": "qel/w-passive-completion",
+  "base_sha": "ce91981055125328dae4b59add8e5432892c4f20",
+  "code_commit": "4ce8bcbe7d92127473d04ce81c618e77aebb6a1b",
+  "profile": "ADAPTER_OVER_NATIVE",
+  "scope": "client adapter completion for F04, F05, F06 client profile, F07, F29, F31 and the F02 unknown-aggressor profile",
+  "pinned": {
+    "repo": "https://github.com/nautechsystems/nautilus_trader",
+    "tag": "v1.231.0",
+    "commit": "27a8e54e7ac3c57d6cbf8891f0283dfbaee97317",
+    "local_clone": "/home/quant/quant/src-clones/nautilus",
+    "head_matches_expected": true
+  },
+  "build": {
+    "crate": "native/passive_runner",
+    "package": "qel-passive-runner",
+    "profile": "release",
+    "command": "cd native/passive_runner && CARGO_TARGET_DIR=/home/quant/quant/.build-cache/qel-native cargo build --release -j 2",
+    "exit_code": 0,
+    "target_dir": "/home/quant/quant/.build-cache/qel-native",
+    "sources": [
+      {
+        "path": "native/passive_runner/src/main.rs",
+        "sha256": "22f37e7f5220a98913afc8e0f5c3bea25e3e913eef78905e09b100ef8c1d7bb4",
+        "bytes": 134985
+      },
+      {
+        "path": "native/passive_runner/src/adapter.rs",
+        "sha256": "37f272648e46b00b751496dba86f4d281c399ba52c5ddee979d48cc25009e525",
+        "bytes": 40098
+      }
+    ],
+    "cargo_toml": {
+      "path": "native/passive_runner/Cargo.toml",
+      "sha256": "3e93e812a75b0d95fe6b071cecb1d13b91af7ecec29b1941976c49f9bbc745f6"
+    },
+    "cargo_lock": {
+      "path": "native/passive_runner/Cargo.lock",
+      "sha256": "3686380d3607a623396a04e569c64d7ae3ebedfc458d432b6bed8b8545810e62"
+    },
+    "binary": {
+      "path": "/home/quant/quant/.build-cache/qel-native/release/qel-passive-runner",
+      "sha256": "273b44530a010e2598df7fda298dcd8a8c229cda7b56f930b00dcf35ffd35aee",
+      "bytes": 12612520
+    },
+    "warnings": []
+  },
+  "run": {
+    "command": "/home/quant/quant/.build-cache/qel-native/release/qel-passive-runner <payload.json>",
+    "exit_code": 0,
+    "wall_ms": 156,
+    "peak_rss_kb": 30028,
+    "peak_rss_mib": 29.32,
+    "resource_slot": "exclusive Rust build/run; peak RSS far below the 2 GiB budget",
+    "probe_payload_sha256": "ce42c7656c3888f1da00d4a701c6bd900bd2cc06201970d01aae6e41c57bb211",
+    "probe_payload_canonicalization": "sha256 of json.dumps(payload, sort_keys=True, separators=(',',':'))",
+    "evidence_assembly": "payload embedded verbatim under probe_payload; build hashes, resource numbers and oracle comparison merged around it",
+    "deterministic": true,
+    "determinism_check": "two consecutive runs produced identical payloads excluding elapsed_ms",
+    "stdout_bytes": 64409
+  },
+  "artifact_supersession": {
+    "pre_adapter_artifact": {
+      "path": "evidence/labd/PASSIVE_QUEUE_COMPLETION_PRE_ADAPTER_2026-11-10.json",
+      "sha256": "df3653feaf427e12ba3ad87ada7a390241dcc359f9b11f8bc83d5d8e3793e130",
+      "note": "byte-identical copy of the audited pre-adapter completion evidence (main.rs 803cfcac, binary a634683f)"
+    },
+    "regenerated_artifact": {
+      "path": "evidence/labd/PASSIVE_QUEUE_COMPLETION_2026-11-10.json",
+      "sha256": "17e33ab500fb9bb47c48160c42c2abb977485c02e1ca30bf25bfd8a04eaee827",
+      "superseded_sha256": "df3653feaf427e12ba3ad87ada7a390241dcc359f9b11f8bc83d5d8e3793e130"
+    },
+    "reason": "the adapter slice changed native/passive_runner/src/main.rs and rebuilt the binary; the completion evidence pinned the pre-adapter source and binary, so it was regenerated against the new build with the unchanged native probes and the original file preserved verbatim as the pre-adapter artifact",
+    "date": "2026-11-10",
+    "behavioral_change": "none: every native probe payload is unchanged modulo elapsed_ms; F02/F03/F06/F33/F34 remain PASS, F04/F05/F31 remain PARTIAL, F29 and native F07 remain BLOCKED_BACKEND"
+  },
+  "native_summary": {
+    "F02": "PASS",
+    "F02+CANCEL_REMAINDER": "PASS",
+    "F02+SHARED_LEVEL": "PASS",
+    "F02+depth-once": "PASS",
+    "F03": "PASS",
+    "F04": "PARTIAL",
+    "F05": "PARTIAL",
+    "F06": "PASS",
+    "F06_CLIENT_UNSAFE_OBSERVABLE": "PARTIAL",
+    "F07": "BLOCKED_BACKEND",
+    "F29": "BLOCKED_BACKEND",
+    "F31": "PARTIAL",
+    "F33_FOK": "PASS",
+    "F33_STOP_LIMIT_GAP": "PASS",
+    "F34": "PASS"
+  },
+  "adapter_summary": {
+    "F02+UNKNOWN_AGGRESSOR": "PARTIAL",
+    "F04": "PASS",
+    "F05": "PASS",
+    "F06_CLIENT_REDUCE_ONLY": "PASS",
+    "F07": "PASS",
+    "F29": "PASS",
+    "F31": "PASS",
+    "profile": "ADAPTER_OVER_NATIVE"
+  },
+  "oracle_comparison": {
+    "F04": {
+      "probe": "adapter_f04_cancel_race",
+      "profile": "ADAPTER_OVER_NATIVE",
+      "paths": {
+        "filled_qty": {
+          "oracle": "1",
+          "adapter": 1.0,
+          "match": true
+        },
+        "state": {
+          "oracle": "FILLED",
+          "adapter": "FILLED",
+          "match": true
+        },
+        "last_cancel_response": {
+          "oracle": "ALREADY_FILLED",
+          "adapter": "ALREADY_FILLED",
+          "match": true
+        }
+      },
+      "match": true,
+      "note": "oracle values are produced by the pure-Python QEL fixture harness and are never used as runner inputs"
+    },
+    "F05": {
+      "probe": "adapter_f05_replace",
+      "profile": "ADAPTER_OVER_NATIVE",
+      "paths": {
+        "filled_qty": {
+          "oracle": "2",
+          "adapter": 2.0,
+          "match": true
+        },
+        "leaves_qty": {
+          "oracle": "13",
+          "adapter": 13.0,
+          "match": true
+        },
+        "accepted_qty": {
+          "oracle": "15",
+          "adapter": 15.0,
+          "match": true
+        },
+        "priority_reset_count": {
+          "oracle": 1,
+          "adapter": 1,
+          "match": true
+        },
+        "ahead_qty": {
+          "oracle": "100",
+          "adapter": 100.0,
+          "match": true
+        }
+      },
+      "match": true,
+      "note": "oracle values are produced by the pure-Python QEL fixture harness and are never used as runner inputs"
+    },
+    "F06_CLIENT_REDUCE_ONLY": {
+      "probe": "adapter_f06_client_oco",
+      "profile": "ADAPTER_OVER_NATIVE",
+      "paths": {
+        "position_qty": {
+          "oracle": "0",
+          "adapter": 0.0,
+          "match": true
+        },
+        "fill_count": {
+          "oracle": 1,
+          "adapter": 1,
+          "match": true
+        },
+        "second_child_response": {
+          "oracle": "REDUCE_ONLY_REJECT",
+          "adapter": "REDUCE_ONLY_REJECT",
+          "match": true
+        }
+      },
+      "match": true,
+      "note": "oracle values are produced by the pure-Python QEL fixture harness and are never used as runner inputs"
+    },
+    "F07": {
+      "probe": "adapter_f07_epoch",
+      "profile": "ADAPTER_OVER_NATIVE",
+      "paths": {
+        "new_epoch_qty": {
+          "oracle": "1",
+          "adapter": 1.0,
+          "match": true
+        },
+        "stale_stop_response": {
+          "oracle": "STALE_POSITION_EPOCH",
+          "adapter": "STALE_POSITION_EPOCH",
+          "match": true
+        },
+        "stale_fill_count": {
+          "oracle": 0,
+          "adapter": 0,
+          "match": true
+        }
+      },
+      "match": true,
+      "note": "oracle values are produced by the pure-Python QEL fixture harness and are never used as runner inputs"
+    },
+    "F29": {
+      "probe": "adapter_f29_book_sequence",
+      "profile": "ADAPTER_OVER_NATIVE",
+      "paths": {
+        "initial_match": {
+          "oracle": true,
+          "adapter": true,
+          "match": true
+        },
+        "last_good_seq": {
+          "oracle": "102",
+          "adapter": "102",
+          "match": true
+        },
+        "book_state": {
+          "oracle": "INVALID",
+          "adapter": "INVALID",
+          "match": true
+        },
+        "absolute_updates_not_additive": {
+          "oracle": true,
+          "adapter": true,
+          "match": true
+        }
+      },
+      "match": true,
+      "note": "oracle values are produced by the pure-Python QEL fixture harness and are never used as runner inputs"
+    },
+    "F31": {
+      "probe": "adapter_f31_duplicate_fill",
+      "profile": "ADAPTER_OVER_NATIVE",
+      "paths": {
+        "accepted_qty": {
+          "oracle": "2",
+          "adapter": 2.0,
+          "match": true
+        },
+        "filled_qty": {
+          "oracle": "1",
+          "adapter": 1.0,
+          "match": true
+        },
+        "leaves_qty": {
+          "oracle": "0",
+          "adapter": 0.0,
+          "match": true
+        },
+        "canceled_qty": {
+          "oracle": "1",
+          "adapter": 1.0,
+          "match": true
+        },
+        "duplicate_funding_or_fee_debits": {
+          "oracle": 0,
+          "adapter": 0,
+          "match": true
+        },
+        "state": {
+          "oracle": "CANCELED",
+          "adapter": "CANCELED",
+          "match": true
+        }
+      },
+      "match": true,
+      "note": "oracle values are produced by the pure-Python QEL fixture harness and are never used as runner inputs"
+    }
+  },
+  "per_fixture": {
+    "F04": {
+      "profile": "ADAPTER_OVER_NATIVE",
+      "verdict": "PASS",
+      "pass": true,
+      "probe": "adapter_f04_cancel_race",
+      "oracle_match": true,
+      "native_limitation": "OrderMatchingEngine::process_cancel purges a terminal order silently (crates/execution/src/matching_engine/engine.rs); OrderCancelRejected is never emitted for ALREADY_FILLED",
+      "adapter_fields": {
+        "filled_qty": 1.0,
+        "leaves_qty": null,
+        "accepted_qty": null,
+        "canceled_qty": null,
+        "priority_reset_count": null,
+        "ahead_qty": null,
+        "last_cancel_response": "ALREADY_FILLED",
+        "stale_stop_response": null,
+        "position_epoch": null,
+        "last_good_seq": null,
+        "book_state": null,
+        "initial_match": null,
+        "position_qty": null,
+        "fill_count": null,
+        "second_child_response": null,
+        "state": "FILLED"
+      }
+    },
+    "F05": {
+      "profile": "ADAPTER_OVER_NATIVE",
+      "verdict": "PASS",
+      "pass": true,
+      "probe": "adapter_f05_replace",
+      "oracle_match": true,
+      "native_limitation": "no public priority_reset_count and no public queue-ahead readback; OrderMatchingEngine::process_modify only re-snapshots the queue on a price change",
+      "adapter_fields": {
+        "filled_qty": 2.0,
+        "leaves_qty": 13.0,
+        "accepted_qty": 15.0,
+        "canceled_qty": null,
+        "priority_reset_count": 1,
+        "ahead_qty": 100.0,
+        "last_cancel_response": null,
+        "stale_stop_response": null,
+        "position_epoch": null,
+        "last_good_seq": null,
+        "book_state": null,
+        "initial_match": null,
+        "position_qty": null,
+        "fill_count": null,
+        "second_child_response": null,
+        "state": null
+      }
+    },
+    "F06_CLIENT_REDUCE_ONLY": {
+      "profile": "ADAPTER_OVER_NATIVE",
+      "verdict": "PASS",
+      "pass": true,
+      "probe": "adapter_f06_client_oco",
+      "oracle_match": true,
+      "native_limitation": "the OCO contingency group only cancels a sibling for a native bracket submitted as an order list; a client-managed group has no group/epoch advisory and no both-legs-eligible event",
+      "adapter_fields": {
+        "filled_qty": null,
+        "leaves_qty": null,
+        "accepted_qty": null,
+        "canceled_qty": null,
+        "priority_reset_count": null,
+        "ahead_qty": null,
+        "last_cancel_response": null,
+        "stale_stop_response": null,
+        "position_epoch": null,
+        "last_good_seq": null,
+        "book_state": null,
+        "initial_match": null,
+        "position_qty": 0.0,
+        "fill_count": 1,
+        "second_child_response": "REDUCE_ONLY_REJECT",
+        "state": null
+      }
+    },
+    "F07": {
+      "profile": "ADAPTER_OVER_NATIVE",
+      "verdict": "PASS",
+      "pass": true,
+      "probe": "adapter_f07_epoch",
+      "oracle_match": true,
+      "native_limitation": "nautilus_model::position::Position has no epoch/position_epoch field and OrderMatchingEngine has no stale-epoch comparison; STALE-NATIVE is accepted by the venue with epoch-1 semantics",
+      "adapter_fields": {
+        "filled_qty": null,
+        "leaves_qty": null,
+        "accepted_qty": null,
+        "canceled_qty": null,
+        "priority_reset_count": null,
+        "ahead_qty": null,
+        "last_cancel_response": null,
+        "stale_stop_response": "STALE_POSITION_EPOCH",
+        "position_epoch": 2,
+        "last_good_seq": null,
+        "book_state": null,
+        "initial_match": null,
+        "position_qty": null,
+        "fill_count": null,
+        "second_child_response": null,
+        "state": null
+      }
+    },
+    "F29": {
+      "profile": "ADAPTER_OVER_NATIVE",
+      "verdict": "PASS",
+      "pass": true,
+      "probe": "adapter_f29_book_sequence",
+      "oracle_match": true,
+      "native_limitation": "OrderBook exposes `sequence` as a high-water mark only: there is no snapshot anchor, no last_good_seq, no INVALID state and apply_delta/apply_deltas never validate continuity (crates/model/src/orderbook/book.rs)",
+      "adapter_fields": {
+        "filled_qty": null,
+        "leaves_qty": null,
+        "accepted_qty": null,
+        "canceled_qty": null,
+        "priority_reset_count": null,
+        "ahead_qty": null,
+        "last_cancel_response": null,
+        "stale_stop_response": null,
+        "position_epoch": null,
+        "last_good_seq": "102",
+        "book_state": "INVALID",
+        "initial_match": true,
+        "position_qty": null,
+        "fill_count": null,
+        "second_child_response": null,
+        "state": null
+      }
+    },
+    "F31": {
+      "profile": "ADAPTER_OVER_NATIVE",
+      "verdict": "PASS",
+      "pass": true,
+      "probe": "adapter_f31_duplicate_fill",
+      "oracle_match": true,
+      "native_limitation": "OrderFilled/OrderAccepted carry no venue_seq and BacktestEngine/Data exposes no LOCAL_ORDER_EVENT hook; the native order keeps leaves_qty=1 after a cancel",
+      "adapter_fields": {
+        "filled_qty": 1.0,
+        "leaves_qty": 0.0,
+        "accepted_qty": 2.0,
+        "canceled_qty": 1.0,
+        "priority_reset_count": null,
+        "ahead_qty": null,
+        "last_cancel_response": null,
+        "stale_stop_response": null,
+        "position_epoch": null,
+        "last_good_seq": null,
+        "book_state": null,
+        "initial_match": null,
+        "position_qty": null,
+        "fill_count": null,
+        "second_child_response": null,
+        "state": "CANCELED"
+      }
+    },
+    "F02+UNKNOWN_AGGRESSOR": {
+      "profile": "ADAPTER_OVER_NATIVE",
+      "verdict": "PARTIAL",
+      "pass": true,
+      "probe": "adapter_f02_unknown_aggressor",
+      "oracle_match": null,
+      "native_limitation": "the native matching engine decrements queue-ahead for AggressorSide::NoAggressor and forces both sides to the trade price (crates/execution/src/matching_engine/engine.rs), so it fills where the conservative client model does not",
+      "adapter_fields": {
+        "policy": "CONSERVATIVE_NO_DEPLETION",
+        "ahead_after_unknown_trade": 20.0,
+        "fill_on_unknown_aggressor_qty": 0.0,
+        "native_fill_on_unknown_aggressor_qty": 10.0,
+        "profile_difference": true
+      }
+    }
+  },
+  "exact_api": {
+    "adapter_module": "native/passive_runner/src/adapter.rs (profile ADAPTER_OVER_NATIVE)",
+    "venue_config": "SimulatedVenueConfig::builder().queue_position(..).liquidity_consumption(..).trade_execution(true).support_contingent_orders(true).use_reduce_only(true).reject_stop_orders(true).maybe_latency_model(..)",
+    "delayed_cancel": "StaticLatencyModel::new(base, insert, update, delete) + Strategy::cancel_order",
+    "maker_submit": "Strategy::submit_order(OrderAny, position_id, client_id, params)",
+    "cancel": "Strategy::cancel_order(ClientOrderId, client_id, params)",
+    "modify": "Strategy::modify_order(ClientOrderId, quantity, price, trigger_price, client_id, params)",
+    "readback": [
+      "Cache::order(ClientOrderId) -> OrderAny",
+      "Order::filled_qty / leaves_qty / status / quantity / avg_px",
+      "Cache::positions_open / positions_closed",
+      "OrderBook::sequence / get_quantity_at_level"
+    ],
+    "injection": [
+      "BacktestEngine::kernel_mut().exec_engine.borrow_mut().process(&OrderEventAny::Filled(fill)) for the native F31 probe",
+      "OrderBook::apply_delta(&OrderBookDelta) for the F29 probes"
+    ],
+    "private_symbols_not_used": [
+      "OrderMatchingEngine::snapshot_queue_position",
+      "OrderMatchingEngine::decrement_queue_on_trade",
+      "queue_ahead_total / queue_pending / queue_ahead_orders / queue_excess",
+      "priority_reset_count"
+    ]
+  },
+  "boundary": {
+    "profile": "ADAPTER_OVER_NATIVE",
+    "definition": "client order-management layer over the pinned native matching engine; native matching remains the exchange",
+    "adapter_owned": [
+      "explicit ALREADY_FILLED cancel response from local terminal state (F04)",
+      "client-managed cancel+new replace with priority_reset_count (F05)",
+      "monotonic position epoch and STALE_POSITION_EPOCH rejection before the venue (F07)",
+      "book-delta sequence high-water mark with INVALID/RESYNC_REQUIRED and last_good_seq (F29)",
+      "venue sequence stamping, duplicate-fill and out-of-order ACK suppression, zeroed canceled leaves (F31)",
+      "atomic client OCO sibling cancel with reduce-only exits sized from the filled entry (F06 client profile)",
+      "conservative no-depletion queue policy on unknown-aggressor trades"
+    ],
+    "not_claimed": [
+      "any of these as a native venue capability",
+      "order-book matching fidelity from the adapter",
+      "client-server persistence or restart durability of adapter state",
+      "native queue-state readback or native priority_reset_count",
+      "native venue sequence on order events",
+      "empty-book resync from a real venue snapshot feed",
+      "unknown-aggressor fill parity with the native engine",
+      "any native capability upgrade for F04, F05, F07, F29 or F31",
+      "CAP-L2-QUEUE beyond PARTIAL",
+      "CAP-LOCAL-VIEW, CAP-ISOLATED or mark-based liquidation"
+    ],
+    "native_verdicts_unchanged": {
+      "F02": "PASS",
+      "F02+CANCEL_REMAINDER": "PASS",
+      "F02+SHARED_LEVEL": "PASS",
+      "F02+depth-once": "PASS",
+      "F03": "PASS",
+      "F04": "PARTIAL",
+      "F05": "PARTIAL",
+      "F06": "PASS",
+      "F06_CLIENT_UNSAFE_OBSERVABLE": "PARTIAL",
+      "F07": "BLOCKED_BACKEND",
+      "F29": "BLOCKED_BACKEND",
+      "F31": "PARTIAL",
+      "F33_FOK": "PASS",
+      "F33_STOP_LIMIT_GAP": "PASS",
+      "F34": "PASS"
+    },
+    "native_blocked": {
+      "F07": "BLOCKED_BACKEND",
+      "F29": "BLOCKED_BACKEND"
+    },
+    "unchanged_probe_check": "embedded native probes equal PASSIVE_QUEUE_COMPLETION_2026-11-10.json modulo elapsed_ms",
+    "denied_operations": [
+      "fork or monkey patch of nautilus_trader",
+      "private engine field access",
+      "adapter-based order matching",
+      "claimed venue persistence of adapter state"
+    ]
+  },
+  "probe_payload": {
+    "acceptance_boundary": {
+      "adapter_note": "the adapter profile above answers F04, F05, F07, F29, F31 and the F06 client profile as client-owned semantics; it does not change any native capability verdict and CAP-L2-QUEUE remains PARTIAL",
+      "claimed": "CAP-L2-QUEUE PARTIAL: passive maker queue-ahead on the F02 slice, trade-driven queue depletion, depth-once on L2",
+      "not_claimed": [
+        "queue state readback",
+        "shared level budget across multiple passive orders unless F02+SHARED_LEVEL passes",
+        "unknown aggressor handling",
+        "resync after book gaps",
+        "full L2 depth semantics beyond the tested level",
+        "mark-based liquidation / LocalView / CAP-ISOLATED",
+        "F07 position epochs",
+        "F29 last_good_seq and INVALID book state",
+        "F31 delayed/out-of-order ACK venue sequencing",
+        "native F04 ALREADY_FILLED cancel response and native F05 priority_reset_count (adapter-managed in this evidence; the native gaps remain)"
+      ]
+    },
+    "adapter_profile": {
+      "claimed": [
+        "explicit ALREADY_FILLED cancel response from local terminal state (F04)",
+        "client-managed cancel+new replace with priority_reset_count (F05)",
+        "monotonic position epoch and STALE_POSITION_EPOCH rejection before the venue (F07)",
+        "book-delta sequence high-water mark with INVALID/RESYNC_REQUIRED and last_good_seq (F29)",
+        "venue sequence stamping, duplicate-fill and out-of-order ACK suppression, zeroed canceled leaves (F31)",
+        "atomic client OCO sibling cancel with reduce-only exits sized from the filled entry (F06 client profile)",
+        "conservative no-depletion queue policy on unknown-aggressor trades"
+      ],
+      "definition": "client order-management layer over the pinned native matching engine; native matching remains the exchange",
+      "name": "ADAPTER_OVER_NATIVE",
+      "not_claimed": [
+        "any of these as a native venue capability",
+        "order-book matching fidelity from the adapter",
+        "client-server persistence or restart durability of adapter state",
+        "native queue-state readback or native priority_reset_count",
+        "native venue sequence on order events",
+        "empty-book resync from a real venue snapshot feed",
+        "unknown-aggressor fill parity with the native engine"
+      ]
+    },
+    "adapter_summary": {
+      "F02+UNKNOWN_AGGRESSOR": "PARTIAL",
+      "F04": "PASS",
+      "F05": "PASS",
+      "F06_CLIENT_REDUCE_ONLY": "PASS",
+      "F07": "PASS",
+      "F29": "PASS",
+      "F31": "PASS",
+      "profile": "ADAPTER_OVER_NATIVE"
+    },
+    "blocked_fixtures": {
+      "F07": {
+        "checked_symbols": [
+          "nautilus_model::position::Position",
+          "OrderFilled",
+          "OrderMatchingEngine::process_order",
+          "OrderMatchingEngine::process_cancel"
+        ],
+        "claim": "stale stop with STALE_POSITION_EPOCH response cannot be produced or observed",
+        "evidence": "crates/model/src/position.rs Position struct: opening_order_id, ts_opened, ts_closed; no epoch. crates/execution/src/matching_engine/engine.rs has no epoch comparison.",
+        "missing_api": "nautilus_model::position::Position has no epoch field and OrderMatchingEngine has no stale-epoch rejection path",
+        "missing_error": "no STALE_POSITION_EPOCH code or stale-epoch comparison exists under crates/ (grep over crates/**/*.rs returns only websocket-connection and adapter-specific epochs)",
+        "missing_field": "Position has no epoch/position_epoch field (crates/model/src/position.rs Position fields include opening_order_id, closing_order_id, ts_opened, ts_closed, trade_ids)",
+        "title": "Epoch safety",
+        "verdict": "BLOCKED_BACKEND"
+      },
+      "F29": {
+        "claim": "book_state INVALID and last_good_seq are not observable",
+        "evidence": "crates/model/src/orderbook/book.rs exposes sequence and increment(); apply_deltas applies deltas without gap validation or book invalidation",
+        "missing_api": "OrderBook.sequence is a public counter but there is no snapshot-anchor, sequence-gap or INVALID-book state API",
+        "probe": "probes.f29_book_sequence feeds sequence 100,101,102,110,105: the forward gap and the out-of-order delta are both accepted with no error",
+        "title": "Snapshot anchor and renewal",
+        "verdict": "BLOCKED_BACKEND"
+      },
+      "F29_FIELDS": {
+        "missing_field": "last_good_seq, book_state (VALID/INVALID), snapshot anchor / last_update_id",
+        "present_field": "OrderBook.sequence (high-water mark only)",
+        "title": "Missing book fields",
+        "verdict": "BLOCKED_BACKEND"
+      },
+      "F31": {
+        "claim": "duplicate-fill suppression cannot be exercised natively; only the order-level predicate exists",
+        "evidence": "Order::is_duplicate_fill exists (crates/model/src/orders/mod.rs) but there is no public injection path through BacktestEngine",
+        "missing_api": "no backtest API to inject LOCAL_ORDER_EVENT / out-of-order ACK / duplicate fill into the local OMS",
+        "title": "Delayed ACK, duplicate fill and canceled qty",
+        "verdict": "BLOCKED_BACKEND"
+      },
+      "F31_FIELDS": {
+        "missing_field": "venue_seq on OrderFilled/OrderAccepted; BacktestEngine/Data LOCAL_ORDER_EVENT hook",
+        "present_hook": "ExecutionEngine::process(&OrderEventAny) for duplicate-fill suppression (probes.f31_duplicate_fill)",
+        "title": "Missing event-ordering fields",
+        "verdict": "BLOCKED_BACKEND"
+      }
+    },
+    "elapsed_ms": 142,
+    "pinned": {
+      "commit": "27a8e54e7ac3c57d6cbf8891f0283dfbaee97317",
+      "repo": "https://github.com/nautechsystems/nautilus_trader",
+      "tag": "v1.231.0"
+    },
+    "probe": "qel-passive-queue-runner",
+    "probes": {
+      "adapter_f02_unknown_aggressor": {
+        "adapter": {
+          "ahead_after_known_trade": 20.0,
+          "ahead_after_unknown_trade": 20.0,
+          "fill_on_unknown_aggressor_qty": 0.0,
+          "local_order": {
+            "ahead_qty": 20.0,
+            "canceled_qty": 0.0,
+            "client_order_id": "O-1",
+            "fill_ids": [
+              "T-102270a43835fdf2-001"
+            ],
+            "filled_qty": 10.0,
+            "group": null,
+            "leaves_qty": 10.0,
+            "position_epoch": null,
+            "quantity": 20.0,
+            "reduce_only": false,
+            "side": "BUY",
+            "state": "PARTIALLY_FILLED",
+            "venue_seq": 2
+          },
+          "policy": "CONSERVATIVE_NO_DEPLETION",
+          "queue_depletions_skipped": 1,
+          "trades": [
+            {
+              "aggressor": "SELLER",
+              "ahead_after": 20.0,
+              "depleted_qty": 80.0,
+              "fill_qty": 0.0,
+              "policy": "AGGRESSOR_ATTRIBUTED",
+              "qty": 80.0,
+              "ts_event": 1000000002
+            },
+            {
+              "aggressor": "UNKNOWN",
+              "ahead_after": 20.0,
+              "depleted_qty": 0.0,
+              "fill_qty": 0.0,
+              "policy": "CONSERVATIVE_NO_DEPLETION",
+              "qty": 30.0,
+              "ts_event": 1000000003
+            }
+          ],
+          "unknown_aggressor_trades": 1
+        },
+        "cancel_errors": [],
+        "cancel_rejections": [],
+        "elapsed_ms": 5,
+        "events": [
+          {
+            "client_order_id": "O-1",
+            "px": "100.00",
+            "qty": 10.0,
+            "ts_event": 1000000003
+          }
+        ],
+        "fixture": "F02+UNKNOWN_AGGRESSOR",
+        "kind": "unknown_aggressor_queue",
+        "native": {
+          "after_seller_trade": {
+            "avg_px": null,
+            "canceled_qty": null,
+            "client_order_id": "O-1",
+            "filled_qty": 0.0,
+            "leaves_qty": 20.0,
+            "order_type": "Limit",
+            "quantity": 20.0,
+            "status": "Accepted"
+          },
+          "after_submit": {
+            "avg_px": null,
+            "canceled_qty": null,
+            "client_order_id": "O-1",
+            "filled_qty": 0.0,
+            "leaves_qty": 20.0,
+            "order_type": "Limit",
+            "quantity": 20.0,
+            "status": "Accepted"
+          },
+          "after_unknown_trade": {
+            "avg_px": "100.00",
+            "canceled_qty": null,
+            "client_order_id": "O-1",
+            "filled_qty": 10.0,
+            "leaves_qty": 10.0,
+            "order_type": "Limit",
+            "quantity": 20.0,
+            "status": "PartiallyFilled"
+          },
+          "fill_on_unknown_aggressor_qty": 10.0,
+          "filled_qty_after_unknown_trade": 10.0
+        },
+        "native_fill_on_unknown_aggressor_qty": 10.0,
+        "native_limitation": "the native matching engine decrements queue-ahead for AggressorSide::NoAggressor and forces both sides to the trade price (crates/execution/src/matching_engine/engine.rs), so it fills where the conservative client model does not",
+        "order_rejections": [],
+        "pass": true,
+        "probe_log": [],
+        "profile": "ADAPTER_OVER_NATIVE",
+        "profile_boundary": {
+          "adapter_managed": "conservative no-depletion policy on unknown aggressor trades",
+          "native_gap": "the native engine treats NoAggressor as a two-sided trade; the adapter does not reproduce that because the print cannot be attributed to the resting side"
+        },
+        "profile_difference": true,
+        "scenario": "ADAPTER_OVER_NATIVE",
+        "verdict": "PARTIAL",
+        "verdict_reason": "adapter queue model is conservative and does not deplete on the unknown aggressor; the native engine filled on the same trade, which is recorded as the profile difference"
+      },
+      "adapter_f04_cancel_race": {
+        "adapter": {
+          "cancel_arrived": {
+            "client_order_id": "O-1",
+            "response": "ALREADY_FILLED",
+            "ts_event": 1000000040
+          },
+          "cancel_requested": {
+            "cancel_arrival_ns": 30,
+            "cancel_sent_ns": 10,
+            "client_order_id": "O-1",
+            "decision": "DISPATCH_TO_VENUE",
+            "delete_latency_ns": 20,
+            "immediate_response": "PENDING",
+            "ts_event": 1000000010
+          },
+          "cancel_response_count": 1,
+          "fills": [
+            {
+              "applied_qty": 1.0,
+              "client_order_id": "O-1",
+              "fill_id": "T-43e23c813abf878d-001",
+              "qty": 1.0,
+              "ts_event": 1000000020,
+              "venue_seq": 2,
+              "verdict": "APPLIED"
+            }
+          ],
+          "local_order": {
+            "ahead_qty": 0.0,
+            "canceled_qty": 0.0,
+            "client_order_id": "O-1",
+            "fill_ids": [
+              "T-43e23c813abf878d-001"
+            ],
+            "filled_qty": 1.0,
+            "group": null,
+            "leaves_qty": 0.0,
+            "position_epoch": null,
+            "quantity": 1.0,
+            "reduce_only": false,
+            "side": "BUY",
+            "state": "FILLED",
+            "venue_seq": 2
+          },
+          "strategy_fill_events": 1
+        },
+        "cancel_errors": [],
+        "cancel_rejections": [],
+        "delayed_cancel_arrival_reproduced": true,
+        "elapsed_ms": 4,
+        "events": [
+          {
+            "client_order_id": "O-1",
+            "px": "100.00",
+            "qty": 1.0,
+            "ts_event": 1000000020
+          }
+        ],
+        "filled_qty": 1.0,
+        "fixture": "F04",
+        "kind": "cancel_race",
+        "last_cancel_response": "ALREADY_FILLED",
+        "native": {
+          "after_cancel_arrival": {
+            "avg_px": "100.00",
+            "canceled_qty": null,
+            "client_order_id": "O-1",
+            "filled_qty": 1.0,
+            "leaves_qty": 0.0,
+            "order_type": "Limit",
+            "quantity": 1.0,
+            "status": "Filled"
+          },
+          "after_cancel_sent": {
+            "avg_px": null,
+            "canceled_qty": null,
+            "client_order_id": "O-1",
+            "filled_qty": 0.0,
+            "leaves_qty": 1.0,
+            "order_type": "Limit",
+            "quantity": 1.0,
+            "status": "PendingCancel"
+          },
+          "after_submit": {
+            "avg_px": null,
+            "canceled_qty": null,
+            "client_order_id": "O-1",
+            "filled_qty": 0.0,
+            "leaves_qty": 1.0,
+            "order_type": "Limit",
+            "quantity": 1.0,
+            "status": "Accepted"
+          },
+          "after_trade": {
+            "avg_px": "100.00",
+            "canceled_qty": null,
+            "client_order_id": "O-1",
+            "filled_qty": 1.0,
+            "leaves_qty": 0.0,
+            "order_type": "Limit",
+            "quantity": 1.0,
+            "status": "Filled"
+          },
+          "cancel_rejections": []
+        },
+        "native_limitation": "OrderMatchingEngine::process_cancel purges a terminal order silently (crates/execution/src/matching_engine/engine.rs); OrderCancelRejected is never emitted for ALREADY_FILLED",
+        "order_rejections": [],
+        "overfill": false,
+        "pass": true,
+        "probe_log": [],
+        "profile": "ADAPTER_OVER_NATIVE",
+        "profile_boundary": {
+          "adapter_managed": "terminal-aware cancel response resolved at the client arrival boundary",
+          "native_gap": "no ALREADY_FILLED cancel response and no OrderCancelRejected for a terminal order"
+        },
+        "scenario": "ADAPTER_OVER_NATIVE",
+        "setup": {
+          "ahead": 0.0,
+          "cancel_arrival_ns": 30,
+          "cancel_sent_ns": 10,
+          "delete_latency_ns": 20,
+          "order_qty": 1.0,
+          "trade_ns": 20
+        },
+        "state": "FILLED",
+        "verdict": "PASS",
+        "verdict_reason": "adapter local state answers the late cancel with ALREADY_FILLED at the arrival boundary; native fill stands at 1 lot and no quantity is overfilled"
+      },
+      "adapter_f05_replace": {
+        "accepted_qty": 15.0,
+        "adapter": {
+          "canceled_original": {
+            "ahead_qty": 100.0,
+            "canceled_qty": 8.0,
+            "client_order_id": "O-1",
+            "fill_ids": [
+              "T-6cf48bd92bd1335f-001"
+            ],
+            "filled_qty": 2.0,
+            "group": null,
+            "leaves_qty": 0.0,
+            "position_epoch": null,
+            "quantity": 10.0,
+            "reduce_only": false,
+            "side": "BUY",
+            "state": "CANCELED",
+            "venue_seq": 2
+          },
+          "replace_count": 1,
+          "replaces": [
+            {
+              "accepted_qty": 20.0,
+              "ahead_qty": 100.0,
+              "canceled_remainder_qty": 8.0,
+              "displayed_at_level": 100.0,
+              "filled_qty": 2.0,
+              "increase": true,
+              "leaves_qty": 18.0,
+              "new_order_id": "O-1-R1",
+              "priority_reset": true,
+              "request_id": "O-1"
+            },
+            {
+              "accepted_qty": 15.0,
+              "ahead_qty": 100.0,
+              "canceled_remainder_qty": 0.0,
+              "displayed_at_level": 100.0,
+              "filled_qty": 2.0,
+              "increase": false,
+              "leaves_qty": 13.0,
+              "new_order_id": "O-1-R1",
+              "priority_reset": false,
+              "request_id": "O-1-R1"
+            }
+          ],
+          "successor": {
+            "ahead_qty": 100.0,
+            "canceled_qty": 0.0,
+            "client_order_id": "O-1-R1",
+            "fill_ids": [],
+            "filled_qty": 2.0,
+            "group": null,
+            "leaves_qty": 13.0,
+            "position_epoch": null,
+            "quantity": 15.0,
+            "reduce_only": false,
+            "side": "BUY",
+            "state": "PARTIALLY_FILLED",
+            "venue_seq": 3
+          }
+        },
+        "ahead_qty": 100.0,
+        "cancel_errors": [],
+        "cancel_rejections": [],
+        "elapsed_ms": 13,
+        "events": [
+          {
+            "client_order_id": "O-1",
+            "px": "100.00",
+            "qty": 2.0,
+            "ts_event": 1000000002
+          }
+        ],
+        "filled_qty": 2.0,
+        "fixture": "F05",
+        "kind": "replace_priority",
+        "leaves_qty": 13.0,
+        "native_control": {
+          "ahead_qty_public": false,
+          "engine_path": "OrderMatchingEngine::process_modify only calls snapshot_queue_position when the price changed; a same-price quantity change does not reset the tracked queue",
+          "missing_api": "no public priority_reset_count and no public queue-ahead readback; OrderMatchingEngine.queue_ahead_total is private",
+          "native_matches_fixture_priority": false,
+          "observed_priority_behavior": "preserved_on_same_price_increase",
+          "priority_probe_fill_after_increase_qty": 5.0,
+          "priority_reset_count_public": false
+        },
+        "native_limitation": "no public priority_reset_count and no public queue-ahead readback; OrderMatchingEngine::process_modify only re-snapshots the queue on a price change, so a same-price native replace preserves priority",
+        "native_mirror": {
+          "after_trade": {
+            "avg_px": "100.00",
+            "canceled_qty": null,
+            "client_order_id": "O-1",
+            "filled_qty": 2.0,
+            "leaves_qty": 8.0,
+            "order_type": "Limit",
+            "quantity": 10.0,
+            "status": "PartiallyFilled"
+          },
+          "note": "the venue successor carries the remaining quantity (13) while the client aggregate carries 2 filled + 13 leaves = 15 accepted",
+          "successor_after_modify": {
+            "avg_px": null,
+            "canceled_qty": null,
+            "client_order_id": "O-1-R1",
+            "filled_qty": 0.0,
+            "leaves_qty": 13.0,
+            "order_type": "Limit",
+            "quantity": 13.0,
+            "status": "Accepted"
+          }
+        },
+        "order_rejections": [],
+        "pass": true,
+        "priority_reset_count": 1,
+        "probe_log": [],
+        "profile": "ADAPTER_OVER_NATIVE",
+        "profile_boundary": {
+          "adapter_managed": "cancel+new replace when priority must reset; in-place resize otherwise",
+          "native_gap": "no public priority_reset_count and no public queue-ahead readback; OrderMatchingEngine::process_modify only re-snapshots the queue on a price change"
+        },
+        "replace_increase_resets": true,
+        "scenario": "ADAPTER_OVER_NATIVE",
+        "setup": {
+          "ahead": 100.0,
+          "order_qty": 10.0,
+          "replace_decrease_resets": false,
+          "replace_increase_resets": true,
+          "sequence": [
+            10.0,
+            20.0,
+            15.0
+          ]
+        },
+        "verdict": "PASS",
+        "verdict_reason": "adapter priority_reset_count=1 with cancel+new on the increase; quantities match the oracle; native same-price replace preserves priority and remains recorded"
+      },
+      "adapter_f06_client_oco": {
+        "adapter": {
+          "bracket": {
+            "entry_filled_qty": 1.0,
+            "group": "GR-1",
+            "policy": "SIZED_FROM_FILLED_ENTRY",
+            "sl_qty": 1.0,
+            "tp_qty": 1.0
+          },
+          "group_sibling_cancel": {
+            "decision": "DISPATCH_TO_VENUE",
+            "filled_order_id": "GR-TP",
+            "policy": "ATOMIC_CLIENT_OCO",
+            "sibling_id": "GR-SL"
+          },
+          "group_sibling_canceled": {
+            "response": "CANCELED",
+            "sibling_id": "GR-SL"
+          },
+          "group_sibling_cancels": 1,
+          "orders": [
+            {
+              "ahead_qty": 0.0,
+              "canceled_qty": 0.0,
+              "client_order_id": "GR-ENTRY",
+              "fill_ids": [
+                "T-fb379160bc6733b4-001"
+              ],
+              "filled_qty": 1.0,
+              "group": null,
+              "leaves_qty": 0.0,
+              "position_epoch": null,
+              "quantity": 1.0,
+              "reduce_only": false,
+              "side": "BUY",
+              "state": "FILLED",
+              "venue_seq": 2
+            },
+            {
+              "ahead_qty": 0.0,
+              "canceled_qty": 1.0,
+              "client_order_id": "GR-SL",
+              "fill_ids": [],
+              "filled_qty": 0.0,
+              "group": "GR-1",
+              "leaves_qty": 0.0,
+              "position_epoch": null,
+              "quantity": 1.0,
+              "reduce_only": true,
+              "side": "SELL",
+              "state": "CANCELED",
+              "venue_seq": 4
+            },
+            {
+              "ahead_qty": 0.0,
+              "canceled_qty": 0.0,
+              "client_order_id": "GR-TP",
+              "fill_ids": [
+                "T-102270a43835fdf2-002"
+              ],
+              "filled_qty": 1.0,
+              "group": "GR-1",
+              "leaves_qty": 0.0,
+              "position_epoch": null,
+              "quantity": 1.0,
+              "reduce_only": true,
+              "side": "SELL",
+              "state": "FILLED",
+              "venue_seq": 5
+            }
+          ],
+          "reduce_only_guard": {
+            "position_qty": 0.0,
+            "requested_qty": 1.0,
+            "response": "REDUCE_ONLY_REJECT",
+            "venue_submission": false
+          },
+          "strategy_fill_events": 2
+        },
+        "cancel_errors": [],
+        "cancel_rejections": [],
+        "elapsed_ms": 10,
+        "entry_filled_qty": 1.0,
+        "events": [
+          {
+            "client_order_id": "GR-ENTRY",
+            "px": "100.00",
+            "qty": 1.0,
+            "ts_event": 1000000001
+          },
+          {
+            "client_order_id": "GR-TP",
+            "px": "101.00",
+            "qty": 1.0,
+            "ts_event": 1000000003
+          }
+        ],
+        "exit_qty_sized_from_filled": 1.0,
+        "exit_total_qty": 1.0,
+        "fill_count": 1,
+        "fixture": "F06",
+        "kind": "client_managed_oco_safe",
+        "native": {
+          "entry": {
+            "avg_px": "100.00",
+            "canceled_qty": null,
+            "client_order_id": "GR-ENTRY",
+            "filled_qty": 1.0,
+            "leaves_qty": 0.0,
+            "order_type": "Market",
+            "quantity": 1.0,
+            "status": "Filled"
+          },
+          "note": "the sibling cancel is client-initiated after the fill; native OCO (F06 NATIVE_ATOMIC) performs it autonomously and is unchanged",
+          "open_positions": 0,
+          "position_signed_qty_after_tp": 0.0,
+          "second_child_native_control": {
+            "avg_px": null,
+            "canceled_qty": null,
+            "client_order_id": "GR-SL2",
+            "filled_qty": 0.0,
+            "leaves_qty": 1.0,
+            "order_type": "Limit",
+            "quantity": 1.0,
+            "status": "Rejected"
+          },
+          "sl_after_install": {
+            "avg_px": null,
+            "canceled_qty": null,
+            "client_order_id": "GR-SL",
+            "filled_qty": 0.0,
+            "leaves_qty": 1.0,
+            "order_type": "StopLimit",
+            "quantity": 1.0,
+            "status": "Accepted"
+          },
+          "sl_after_sibling_cancel": {
+            "avg_px": null,
+            "canceled_qty": 1.0,
+            "client_order_id": "GR-SL",
+            "filled_qty": 0.0,
+            "leaves_qty": 1.0,
+            "order_type": "StopLimit",
+            "quantity": 1.0,
+            "status": "Canceled"
+          },
+          "tp_after_fill": {
+            "avg_px": "101.00",
+            "canceled_qty": null,
+            "client_order_id": "GR-TP",
+            "filled_qty": 1.0,
+            "leaves_qty": 0.0,
+            "order_type": "Limit",
+            "quantity": 1.0,
+            "status": "Filled"
+          },
+          "tp_after_install": {
+            "avg_px": null,
+            "canceled_qty": null,
+            "client_order_id": "GR-TP",
+            "filled_qty": 0.0,
+            "leaves_qty": 1.0,
+            "order_type": "Limit",
+            "quantity": 1.0,
+            "status": "Accepted"
+          }
+        },
+        "native_limitation": "the OCO contingency group only cancels a sibling for a native bracket submitted as an order list; a client-managed group has no group/epoch advisory and no both-legs-eligible event",
+        "native_oco_unchanged": true,
+        "oco_fill_count": 1,
+        "order_rejections": [
+          {
+            "client_order_id": "GR-SL2",
+            "reason": "Reduce-only order GR-SL2 (LIMIT-SELL) would have increased position"
+          }
+        ],
+        "overfill": false,
+        "pass": true,
+        "position_qty": 0.0,
+        "position_reversed": false,
+        "probe_log": [],
+        "profile": "ADAPTER_OVER_NATIVE",
+        "profile_boundary": {
+          "adapter_managed": "atomic client group, sibling cancel on first fill, exits sized from the filled entry, reduce-only exit rejected while flat",
+          "native_gap": "no client group state, no group-level atomic cancel and no reduce-only rejection advisory for a client-managed pair"
+        },
+        "scenario": "CLIENT_REDUCE_ONLY",
+        "second_child_response": "REDUCE_ONLY_REJECT",
+        "verdict": "PASS",
+        "verdict_reason": "one client OCO fill for a 1-lot entry, sibling canceled atomically, zero overfill and no position reversal; native OCO unchanged"
+      },
+      "adapter_f07_epoch": {
+        "adapter": {
+          "epoch_sequence": [
+            "E-1",
+            "E-2",
+            "E-3"
+          ],
+          "fills": [
+            {
+              "applied_qty": 1.0,
+              "client_order_id": "E-1",
+              "fill_id": "T-fb379160bc6733b4-001",
+              "qty": 1.0,
+              "ts_event": 1000000001,
+              "venue_seq": 2,
+              "verdict": "APPLIED"
+            },
+            {
+              "applied_qty": 1.0,
+              "client_order_id": "E-2",
+              "fill_id": "T-6cf48bd92bd1335f-002",
+              "qty": 1.0,
+              "ts_event": 1000000002,
+              "venue_seq": 4,
+              "verdict": "APPLIED"
+            },
+            {
+              "applied_qty": 1.0,
+              "client_order_id": "E-3",
+              "fill_id": "T-102270a43835fdf2-003",
+              "qty": 1.0,
+              "ts_event": 1000000003,
+              "venue_seq": 6,
+              "verdict": "APPLIED"
+            }
+          ],
+          "fresh_stop": {
+            "client_order_id": "FRESH-STOP",
+            "epoch": 2,
+            "quantity": 1.0,
+            "response": "ACCEPTED",
+            "venue_seq": 7,
+            "venue_submission": true
+          },
+          "position_qty": 1.0,
+          "stale_order_registered": false,
+          "stale_stop": {
+            "client_order_id": "STALE-STOP",
+            "current_epoch": 2,
+            "requested_epoch": 1,
+            "response": "STALE_POSITION_EPOCH",
+            "venue_submission": false
+          },
+          "venue_submissions": 4
+        },
+        "cancel_errors": [],
+        "cancel_rejections": [],
+        "elapsed_ms": 8,
+        "events": [
+          {
+            "client_order_id": "E-1",
+            "px": "100.10",
+            "qty": 1.0,
+            "ts_event": 1000000001
+          },
+          {
+            "client_order_id": "E-2",
+            "px": "100.00",
+            "qty": 1.0,
+            "ts_event": 1000000002
+          },
+          {
+            "client_order_id": "E-3",
+            "px": "100.10",
+            "qty": 1.0,
+            "ts_event": 1000000003
+          }
+        ],
+        "fixture": "F07",
+        "kind": "epoch_safety",
+        "native": {
+          "close_fill": {
+            "avg_px": "100.00",
+            "canceled_qty": null,
+            "client_order_id": "E-2",
+            "filled_qty": 1.0,
+            "leaves_qty": 0.0,
+            "order_type": "Market",
+            "quantity": 1.0,
+            "status": "Filled"
+          },
+          "epoch_1_fill": {
+            "avg_px": "100.10",
+            "canceled_qty": null,
+            "client_order_id": "E-1",
+            "filled_qty": 1.0,
+            "leaves_qty": 0.0,
+            "order_type": "Market",
+            "quantity": 1.0,
+            "status": "Filled"
+          },
+          "fresh_stop_after_submit": {
+            "avg_px": null,
+            "canceled_qty": null,
+            "client_order_id": "FRESH-STOP",
+            "filled_qty": 0.0,
+            "leaves_qty": 1.0,
+            "order_type": "StopLimit",
+            "quantity": 1.0,
+            "status": "Accepted"
+          },
+          "native_control_after_submit": {
+            "avg_px": null,
+            "canceled_qty": null,
+            "client_order_id": "STALE-NATIVE",
+            "filled_qty": 0.0,
+            "leaves_qty": 1.0,
+            "order_type": "StopLimit",
+            "quantity": 1.0,
+            "status": "Accepted"
+          },
+          "reopen_fill": {
+            "avg_px": "100.10",
+            "canceled_qty": null,
+            "client_order_id": "E-3",
+            "filled_qty": 1.0,
+            "leaves_qty": 0.0,
+            "order_type": "Market",
+            "quantity": 1.0,
+            "status": "Filled"
+          },
+          "stale_stop_present": false
+        },
+        "native_limitation": "nautilus_model::position::Position has no epoch/position_epoch field and OrderMatchingEngine has no stale-epoch comparison; STALE-NATIVE is accepted by the venue with epoch-1 semantics",
+        "new_epoch_qty": 1.0,
+        "order_rejections": [],
+        "pass": true,
+        "position_epoch": 2,
+        "probe_log": [],
+        "profile": "ADAPTER_OVER_NATIVE",
+        "profile_boundary": {
+          "adapter_managed": "monotonic position epoch, stamped on open/reopen, checked before any stop reaches the venue",
+          "native_gap": "no epoch field on Position and no stale-entity rejection path or error code"
+        },
+        "requested_epoch": 1,
+        "scenario": "ADAPTER_OVER_NATIVE",
+        "setup": {
+          "open_epoch": 1,
+          "qty": 1.0,
+          "reopen_epoch": 2,
+          "stale_request_epoch": 1
+        },
+        "stale_fill_count": 0,
+        "stale_stop_response": "STALE_POSITION_EPOCH",
+        "verdict": "PASS",
+        "verdict_reason": "stale epoch stop rejected with STALE_POSITION_EPOCH before venue submission; fresh epoch stop accepted; the same stop sent natively is accepted, proving the native gap"
+      },
+      "adapter_f29_book_sequence": {
+        "absolute_updates_not_additive": true,
+        "adapter": {
+          "anchor_at_rejection": 100,
+          "applied": 2,
+          "applied_stream": [
+            {
+              "adapter_verdict": "APPLIED",
+              "first": 99,
+              "forwarded_to_native_book": true,
+              "last": 101,
+              "previous": 98
+            },
+            {
+              "adapter_verdict": "APPLIED",
+              "first": 102,
+              "forwarded_to_native_book": true,
+              "last": 102,
+              "previous": 101
+            }
+          ],
+          "last_good_seq_at_rejection": 102,
+          "rejected": 1,
+          "rejected_delta": {
+            "adapter_verdict": "REJECTED",
+            "code": "PREVIOUS_SEQUENCE_MISMATCH",
+            "first": 103,
+            "forwarded_to_native_book": false,
+            "last": 103,
+            "previous": 999
+          },
+          "resync": {
+            "delta_after_resync": "APPLIED",
+            "risk_allowed": true,
+            "snapshot": 110,
+            "state_after": "VALID"
+          },
+          "risk_gate": {
+            "blocked_risk_requests": 1,
+            "code": "BOOK_RESYNC_REQUIRED",
+            "risk_events": [
+              "BOOK_RESYNC_REQUIRED:F29-NEW"
+            ]
+          }
+        },
+        "book_state": "INVALID",
+        "cancel_errors": [],
+        "cancel_rejections": [],
+        "elapsed_ms": 0,
+        "events": [],
+        "fixture": "F29",
+        "initial_match": true,
+        "kind": "book_sequence",
+        "last_good_seq": "102",
+        "native_book": {
+          "apply_errors": [
+            null,
+            null
+          ],
+          "ask_level_qty_after": 8.0,
+          "bid_99_level_qty": 0.0,
+          "bid_level_qty_after": 60.0,
+          "bid_level_qty_at_snapshot": 100.0,
+          "bid_level_qty_before": 60.0,
+          "note": "the rejected delta is never forwarded to OrderBook::apply_delta, so the native book keeps sequence 102 and no 99.00 level",
+          "rejected_delta_applied": false,
+          "seed_errors": [
+            null,
+            null
+          ],
+          "sequence_after_rejected_delta": 102,
+          "sequence_before_rejected_delta": 102
+        },
+        "native_limitation": "OrderBook exposes `sequence` as a high-water mark only: there is no snapshot anchor, no last_good_seq, no INVALID state and apply_delta/apply_deltas never validate continuity (crates/model/src/orderbook/book.rs)",
+        "order_rejections": [],
+        "pass": true,
+        "probe_log": [],
+        "profile": "ADAPTER_OVER_NATIVE",
+        "profile_boundary": {
+          "adapter_managed": "book-delta sequence high-water mark, INVALID/RESYNC_REQUIRED gate, last_good_seq retention and snapshot-based resync",
+          "native_gap": "no last_good_seq, book_state or gap validation in the public book API"
+        },
+        "scenario": "ADAPTER_OVER_NATIVE",
+        "sequence_stream": [
+          100,
+          101,
+          102,
+          110,
+          105
+        ],
+        "verdict": "PASS",
+        "verdict_reason": "sequence gap invalidates the client book at last_good_seq=102, risk is blocked until a snapshot resync, and the rejected delta never mutates the native book"
+      },
+      "adapter_f31_duplicate_fill": {
+        "accepted_qty": 2.0,
+        "adapter": {
+          "duplicate_fills_suppressed": 1,
+          "event_trace": {
+            "cancel_arrived": {
+              "client_order_id": "O-1",
+              "response": "CANCELED"
+            },
+            "delayed_ack": {
+              "client_order_id": "O-1",
+              "event": "ACCEPTED",
+              "venue_seq": 1,
+              "verdict": "OUT_OF_ORDER_SUPPRESSED"
+            },
+            "duplicate_fill": {
+              "applied_qty": 0.0,
+              "client_order_id": "O-1",
+              "fill_id": "T-6cf48bd92bd1335f-001",
+              "qty": 1.0,
+              "venue_seq": 2,
+              "verdict": "DUPLICATE_SUPPRESSED"
+            },
+            "fill": [
+              {
+                "applied_qty": 1.0,
+                "client_order_id": "O-1",
+                "fill_id": "T-6cf48bd92bd1335f-001",
+                "qty": 1.0,
+                "ts_event": 1000000002,
+                "venue_seq": 2,
+                "verdict": "APPLIED"
+              }
+            ]
+          },
+          "last_venue_seq": 2,
+          "local_order": {
+            "ahead_qty": 0.0,
+            "canceled_qty": 1.0,
+            "client_order_id": "O-1",
+            "fill_ids": [
+              "T-6cf48bd92bd1335f-001"
+            ],
+            "filled_qty": 1.0,
+            "group": null,
+            "leaves_qty": 0.0,
+            "position_epoch": null,
+            "quantity": 2.0,
+            "reduce_only": false,
+            "side": "BUY",
+            "state": "CANCELED",
+            "venue_seq": 2
+          },
+          "out_of_order_events_suppressed": 1,
+          "venue_seq_source": "adapter stamp: the pinned engine has no venue sequence on OrderAccepted/OrderFilled"
+        },
+        "cancel_errors": [],
+        "cancel_rejections": [],
+        "canceled_qty": 1.0,
+        "duplicate_funding_or_fee_debits": 0,
+        "elapsed_ms": 24,
+        "events": [
+          {
+            "client_order_id": "O-1",
+            "px": "100.00",
+            "qty": 1.0,
+            "ts_event": 1000000002
+          }
+        ],
+        "filled_qty": 1.0,
+        "fixture": "F31",
+        "fixture_expects_leaves_qty": 0.0,
+        "kind": "duplicate_fill",
+        "leaves_qty": 0.0,
+        "native": {
+          "after_cancel": {
+            "avg_px": "100.00",
+            "canceled_qty": 1.0,
+            "client_order_id": "O-1",
+            "filled_qty": 1.0,
+            "leaves_qty": 1.0,
+            "order_type": "Limit",
+            "quantity": 2.0,
+            "status": "Canceled"
+          },
+          "after_partial": {
+            "avg_px": "100.00",
+            "canceled_qty": null,
+            "client_order_id": "O-1",
+            "filled_qty": 1.0,
+            "leaves_qty": 1.0,
+            "order_type": "Limit",
+            "quantity": 2.0,
+            "status": "PartiallyFilled"
+          },
+          "leaves_qty_after_cancel": 1.0,
+          "local_order_event_hook_present": false,
+          "venue_seq_field_present": false
+        },
+        "native_leaves_qty_after_cancel": 1.0,
+        "native_limitation": "OrderFilled/OrderAccepted carry no venue_seq and BacktestEngine/Data exposes no LOCAL_ORDER_EVENT hook; the native order keeps leaves_qty=1 after a cancel",
+        "order_rejections": [],
+        "pass": true,
+        "probe_log": [],
+        "profile": "ADAPTER_OVER_NATIVE",
+        "profile_boundary": {
+          "adapter_managed": "venue sequence stamping, duplicate-fill dedupe by (order id, venue sequence, trade id), out-of-order ACK suppression, canceled leaves zeroed in client state",
+          "native_gap": "no venue_seq on order events, no LOCAL_ORDER_EVENT injection, leaves_qty not zeroed on cancel"
+        },
+        "scenario": "ADAPTER_OVER_NATIVE",
+        "state": "CANCELED",
+        "strategy_fill_events": 1,
+        "verdict": "PASS",
+        "verdict_reason": "exactly one strategy-visible fill; duplicate fill and delayed ACK suppressed with no fee debit; client canceled leaves are zero while the native order keeps leaves=1"
+      },
+      "f02_cancel_remainder": {
+        "after_cancel": {
+          "avg_px": "100.00",
+          "canceled_qty": 10.0,
+          "client_order_id": "O-1",
+          "filled_qty": 10.0,
+          "leaves_qty": 10.0,
+          "order_type": "Limit",
+          "quantity": 20.0,
+          "status": "Canceled"
+        },
+        "after_extra_trade": {
+          "avg_px": "100.00",
+          "canceled_qty": 10.0,
+          "client_order_id": "O-1",
+          "filled_qty": 10.0,
+          "leaves_qty": 10.0,
+          "order_type": "Limit",
+          "quantity": 20.0,
+          "status": "Canceled"
+        },
+        "after_fill": {
+          "avg_px": "100.00",
+          "canceled_qty": null,
+          "client_order_id": "O-1",
+          "filled_qty": 10.0,
+          "leaves_qty": 10.0,
+          "order_type": "Limit",
+          "quantity": 20.0,
+          "status": "PartiallyFilled"
+        },
+        "cancel_errors": [],
+        "cancel_rejections": [],
+        "elapsed_ms": 5,
+        "events": [
+          {
+            "client_order_id": "O-1",
+            "px": "100.00",
+            "qty": 10.0,
+            "ts_event": 1000000003
+          }
+        ],
+        "fixture": "F02+CANCEL_REMAINDER",
+        "kind": "partial_fill_then_cancel",
+        "order_rejections": [],
+        "pass": true,
+        "probe_log": [],
+        "verdict": "PASS"
+      },
+      "f02_depth_once": {
+        "after_trade_1": {
+          "avg_px": null,
+          "canceled_qty": null,
+          "client_order_id": "O-1",
+          "filled_qty": 0.0,
+          "leaves_qty": 20.0,
+          "order_type": "Limit",
+          "quantity": 20.0,
+          "status": "Accepted"
+        },
+        "after_trade_2": {
+          "avg_px": "100.00",
+          "canceled_qty": null,
+          "client_order_id": "O-1",
+          "filled_qty": 10.0,
+          "leaves_qty": 10.0,
+          "order_type": "Limit",
+          "quantity": 20.0,
+          "status": "PartiallyFilled"
+        },
+        "book_type": "L2_MBP",
+        "cancel_errors": [],
+        "cancel_rejections": [],
+        "depth_reduction_double_consumed": false,
+        "elapsed_ms": 5,
+        "events": [
+          {
+            "client_order_id": "O-1",
+            "px": "100.00",
+            "qty": 10.0,
+            "ts_event": 1000000004
+          }
+        ],
+        "fill_step_2_qty": 10.0,
+        "filled_after_trade_1_qty": 0.0,
+        "fixture": "F02+depth-once",
+        "kind": "passive_maker_queue_l2",
+        "order_rejections": [],
+        "pass": true,
+        "probe_log": [],
+        "setup": {
+          "ahead": 100.0,
+          "depth_delta_after_trade": 20.0,
+          "order_qty": 20.0,
+          "trades": [
+            80.0,
+            30.0
+          ]
+        },
+        "verdict": "PASS"
+      },
+      "f02_queue": {
+        "after_trade_1": {
+          "avg_px": null,
+          "canceled_qty": null,
+          "client_order_id": "O-1",
+          "filled_qty": 0.0,
+          "leaves_qty": 20.0,
+          "order_type": "Limit",
+          "quantity": 20.0,
+          "status": "Accepted"
+        },
+        "after_trade_2": {
+          "avg_px": "100.00",
+          "canceled_qty": null,
+          "client_order_id": "O-1",
+          "filled_qty": 10.0,
+          "leaves_qty": 10.0,
+          "order_type": "Limit",
+          "quantity": 20.0,
+          "status": "PartiallyFilled"
+        },
+        "ahead_qty_after": 0.0,
+        "book_type": "L1_MBP",
+        "cancel_errors": [],
+        "cancel_rejections": [],
+        "elapsed_ms": 26,
+        "events": [
+          {
+            "client_order_id": "O-1",
+            "px": "100.00",
+            "qty": 10.0,
+            "ts_event": 1000000003
+          }
+        ],
+        "fill_step_2_qty": 10.0,
+        "filled_after_trade_1_qty": 0.0,
+        "fixture": "F02",
+        "kind": "passive_maker_queue",
+        "leaves_qty": 10.0,
+        "order_rejections": [],
+        "pass": true,
+        "position_qty": 10.0,
+        "probe_log": [],
+        "queue_state_note": "ahead is inferred from the exact 10.0 fill on the second trade; queue_ahead_total has no public readback",
+        "queue_state_observable": false,
+        "scenario": "BASE",
+        "setup": {
+          "ahead": 100.0,
+          "order_price": 100.0,
+          "order_qty": 20.0,
+          "trades": [
+            80.0,
+            30.0
+          ]
+        },
+        "venue_config": "queue_position(true).liquidity_consumption(true).trade_execution(true)",
+        "verdict": "PASS"
+      },
+      "f02_shared_level": {
+        "after_trade_1": {
+          "O-1": {
+            "avg_px": null,
+            "canceled_qty": null,
+            "client_order_id": "O-1",
+            "filled_qty": 0.0,
+            "leaves_qty": 10.0,
+            "order_type": "Limit",
+            "quantity": 10.0,
+            "status": "Accepted"
+          },
+          "O-2": {
+            "avg_px": null,
+            "canceled_qty": null,
+            "client_order_id": "O-2",
+            "filled_qty": 0.0,
+            "leaves_qty": 10.0,
+            "order_type": "Limit",
+            "quantity": 10.0,
+            "status": "Accepted"
+          }
+        },
+        "after_trade_2": {
+          "O-1": {
+            "avg_px": "100.00",
+            "canceled_qty": null,
+            "client_order_id": "O-1",
+            "filled_qty": 10.0,
+            "leaves_qty": 0.0,
+            "order_type": "Limit",
+            "quantity": 10.0,
+            "status": "Filled"
+          },
+          "O-2": {
+            "avg_px": null,
+            "canceled_qty": null,
+            "client_order_id": "O-2",
+            "filled_qty": 0.0,
+            "leaves_qty": 10.0,
+            "order_type": "Limit",
+            "quantity": 10.0,
+            "status": "Accepted"
+          }
+        },
+        "cancel_errors": [],
+        "cancel_rejections": [],
+        "claim": "shared level budget respected in this setup",
+        "elapsed_ms": 5,
+        "events": [
+          {
+            "client_order_id": "O-1",
+            "px": "100.00",
+            "qty": 10.0,
+            "ts_event": 1000000003
+          }
+        ],
+        "filled_total_qty": 10.0,
+        "fixture": "F02+SHARED_LEVEL",
+        "kind": "shared_level_budget",
+        "level_consumed_once": true,
+        "order_rejections": [],
+        "pass": true,
+        "per_order_budget_observed": false,
+        "probe_log": [],
+        "setup": {
+          "ahead_per_order": 100.0,
+          "level_qty": 100.0,
+          "order_qty_each": 10.0,
+          "trades": [
+            80.0,
+            30.0
+          ]
+        },
+        "verdict": "PASS"
+      },
+      "f03_shared_liquidity": {
+        "O-1": {
+          "avg_px": "100.00",
+          "canceled_qty": null,
+          "client_order_id": "O-1",
+          "filled_qty": 6.0,
+          "leaves_qty": 0.0,
+          "order_type": "Market",
+          "quantity": 6.0,
+          "status": "Filled"
+        },
+        "O-2": {
+          "avg_px": "100.00",
+          "canceled_qty": 2.0,
+          "client_order_id": "O-2",
+          "filled_qty": 4.0,
+          "leaves_qty": 2.0,
+          "order_type": "Market",
+          "quantity": 6.0,
+          "status": "Canceled"
+        },
+        "cancel_errors": [],
+        "cancel_rejections": [],
+        "elapsed_ms": 3,
+        "events": [
+          {
+            "client_order_id": "O-1",
+            "px": "100.00",
+            "qty": 6.0,
+            "ts_event": 1000000001
+          },
+          {
+            "client_order_id": "O-2",
+            "px": "100.00",
+            "qty": 4.0,
+            "ts_event": 1000000001
+          }
+        ],
+        "fixture": "F03",
+        "kind": "marketable_ioc_shared_level",
+        "note": "single level consumed once across marketable orders",
+        "order_rejections": [],
+        "pass": true,
+        "probe_log": [],
+        "scenario": "BASE",
+        "setup": {
+          "ask": 100.0,
+          "ask_qty": 10.0,
+          "bid": 99.0,
+          "bid_qty": 10.0,
+          "orders": [
+            6.0,
+            6.0
+          ]
+        },
+        "total_filled_qty": 10.0,
+        "verdict": "PASS"
+      },
+      "f04_cancel_race": {
+        "after_cancel_arrival": {
+          "avg_px": "100.00",
+          "canceled_qty": null,
+          "client_order_id": "O-1",
+          "filled_qty": 1.0,
+          "leaves_qty": 0.0,
+          "order_type": "Limit",
+          "quantity": 1.0,
+          "status": "Filled"
+        },
+        "after_cancel_sent": {
+          "avg_px": null,
+          "canceled_qty": null,
+          "client_order_id": "O-1",
+          "filled_qty": 0.0,
+          "leaves_qty": 1.0,
+          "order_type": "Limit",
+          "quantity": 1.0,
+          "status": "PendingCancel"
+        },
+        "after_submit": {
+          "avg_px": null,
+          "canceled_qty": null,
+          "client_order_id": "O-1",
+          "filled_qty": 0.0,
+          "leaves_qty": 1.0,
+          "order_type": "Limit",
+          "quantity": 1.0,
+          "status": "Accepted"
+        },
+        "after_trade": {
+          "avg_px": "100.00",
+          "canceled_qty": null,
+          "client_order_id": "O-1",
+          "filled_qty": 1.0,
+          "leaves_qty": 0.0,
+          "order_type": "Limit",
+          "quantity": 1.0,
+          "status": "Filled"
+        },
+        "cancel_errors": [],
+        "cancel_rejection_count": 0,
+        "cancel_rejections": [],
+        "cancel_response_api_present": false,
+        "delayed_cancel_api": "SimulatedVenueConfig::builder().latency_model(Box::new(StaticLatencyModel::new(0, 0, 0, delete_latency_ns)))",
+        "delayed_cancel_arrival_reproduced": true,
+        "elapsed_ms": 3,
+        "events": [
+          {
+            "client_order_id": "O-1",
+            "px": "100.00",
+            "qty": 1.0,
+            "ts_event": 1000000020
+          }
+        ],
+        "final_canceled_qty": 0.0,
+        "final_filled_qty": 1.0,
+        "fixture": "F04",
+        "kind": "cancel_race",
+        "last_cancel_response": null,
+        "missing_api": "OrderCancelRejected / ALREADY_FILLED cancel response: OrderMatchingEngine::process_cancel purges a terminal order silently (crates/execution/src/matching_engine/engine.rs)",
+        "order_rejections": [],
+        "overfill": false,
+        "pass": true,
+        "probe_log": [],
+        "scenario": "BASE",
+        "setup": {
+          "ahead": 0.0,
+          "cancel_arrival_ns": 30,
+          "cancel_sent_ns": 10,
+          "delete_latency_ns": 20,
+          "order_qty": 1.0,
+          "trade_ns": 20
+        },
+        "verdict": "PARTIAL",
+        "verdict_reason": "deterministic delayed cancel arrival built (CANCEL_SENT at 10, arrival 30); fill stands at t=20, no overfill; the engine emits no ALREADY_FILLED cancel response"
+      },
+      "f05_replace": {
+        "accepted_qty": 15.0,
+        "after_decrease": {
+          "avg_px": "100.00",
+          "canceled_qty": null,
+          "client_order_id": "O-1",
+          "filled_qty": 2.0,
+          "leaves_qty": 13.0,
+          "order_type": "Limit",
+          "quantity": 15.0,
+          "status": "PartiallyFilled"
+        },
+        "after_increase": {
+          "avg_px": "100.00",
+          "canceled_qty": null,
+          "client_order_id": "O-1",
+          "filled_qty": 2.0,
+          "leaves_qty": 18.0,
+          "order_type": "Limit",
+          "quantity": 20.0,
+          "status": "PartiallyFilled"
+        },
+        "after_probe_trade": {
+          "avg_px": "100.00",
+          "canceled_qty": null,
+          "client_order_id": "O-1",
+          "filled_qty": 7.0,
+          "leaves_qty": 8.0,
+          "order_type": "Limit",
+          "quantity": 15.0,
+          "status": "PartiallyFilled"
+        },
+        "after_trade": {
+          "avg_px": "100.00",
+          "canceled_qty": null,
+          "client_order_id": "O-1",
+          "filled_qty": 2.0,
+          "leaves_qty": 8.0,
+          "order_type": "Limit",
+          "quantity": 10.0,
+          "status": "PartiallyFilled"
+        },
+        "ahead_qty": null,
+        "ahead_qty_public": false,
+        "cancel_errors": [],
+        "cancel_rejections": [],
+        "elapsed_ms": 3,
+        "engine_path": "OrderMatchingEngine::process_modify only calls snapshot_queue_position when the price changed; a same-price quantity change does not reset the tracked queue",
+        "events": [
+          {
+            "client_order_id": "O-1",
+            "px": "100.00",
+            "qty": 2.0,
+            "ts_event": 1000000002
+          },
+          {
+            "client_order_id": "O-1",
+            "px": "100.00",
+            "qty": 5.0,
+            "ts_event": 1000000005
+          }
+        ],
+        "filled_qty": 2.0,
+        "fixture": "F05",
+        "fixture_expects_priority_reset_on_increase": true,
+        "fixture_priority_reset_count_expected": 1,
+        "kind": "replace_priority",
+        "leaves_qty": 13.0,
+        "missing_api": "no public priority_reset_count and no public queue-ahead readback; OrderMatchingEngine.queue_ahead_total is private",
+        "native_matches_fixture_priority": false,
+        "observed_priority_behavior": "preserved_on_same_price_increase",
+        "order_rejections": [],
+        "pass": true,
+        "priority_probe_fill_after_increase_qty": 5.0,
+        "priority_probe_inference": "fill after replace increase: queue position was preserved, not reset",
+        "priority_reset_count": null,
+        "priority_reset_count_public": false,
+        "probe_log": [],
+        "scenario": "BASE",
+        "verdict": "PARTIAL",
+        "verdict_reason": "replace quantity accounting reproduced; priority_reset_count and ahead_qty have no public readback"
+      },
+      "f06_client_unsafe_observable": {
+        "after_entry": {
+          "entry": {
+            "avg_px": "100.00",
+            "canceled_qty": null,
+            "client_order_id": "CM-ENTRY",
+            "filled_qty": 1.0,
+            "leaves_qty": 0.0,
+            "order_type": "Market",
+            "quantity": 1.0,
+            "status": "Filled"
+          },
+          "position_qty": 1.0,
+          "sl": {
+            "avg_px": null,
+            "canceled_qty": null,
+            "client_order_id": "CM-SL",
+            "filled_qty": 0.0,
+            "leaves_qty": 1.0,
+            "order_type": "StopLimit",
+            "quantity": 1.0,
+            "status": "Accepted"
+          },
+          "tp": {
+            "avg_px": null,
+            "canceled_qty": null,
+            "client_order_id": "CM-TP",
+            "filled_qty": 0.0,
+            "leaves_qty": 1.0,
+            "order_type": "Limit",
+            "quantity": 1.0,
+            "status": "Accepted"
+          }
+        },
+        "after_stop_fill": {
+          "closed_positions": 1,
+          "open_positions": 0,
+          "position_qty": 0.0,
+          "position_signed_qty": 0.0,
+          "sl": {
+            "avg_px": "98.00",
+            "canceled_qty": null,
+            "client_order_id": "CM-SL",
+            "filled_qty": 1.0,
+            "leaves_qty": 0.0,
+            "order_type": "StopLimit",
+            "quantity": 1.0,
+            "status": "Filled"
+          },
+          "tp": {
+            "avg_px": null,
+            "canceled_qty": null,
+            "client_order_id": "CM-TP",
+            "filled_qty": 0.0,
+            "leaves_qty": 1.0,
+            "order_type": "Limit",
+            "quantity": 1.0,
+            "status": "Accepted"
+          }
+        },
+        "after_tp_fill": {
+          "closed_positions": 0,
+          "open_positions": 1,
+          "position_qty": 1.0,
+          "position_side": "Short",
+          "position_signed_qty": -1.0,
+          "sl": {
+            "avg_px": "98.00",
+            "canceled_qty": null,
+            "client_order_id": "CM-SL",
+            "filled_qty": 1.0,
+            "leaves_qty": 0.0,
+            "order_type": "StopLimit",
+            "quantity": 1.0,
+            "status": "Filled"
+          },
+          "tp": {
+            "avg_px": "101.00",
+            "canceled_qty": null,
+            "client_order_id": "CM-TP",
+            "filled_qty": 1.0,
+            "leaves_qty": 0.0,
+            "order_type": "Limit",
+            "quantity": 1.0,
+            "status": "Filled"
+          }
+        },
+        "cancel_errors": [],
+        "cancel_rejections": [],
+        "control_reference": "F06 NATIVE_ATOMIC: the OCO sibling is canceled when one leg fills",
+        "elapsed_ms": 4,
+        "entry_filled_qty": 1.0,
+        "entry_qty": 1.0,
+        "events": [
+          {
+            "client_order_id": "CM-ENTRY",
+            "px": "100.00",
+            "qty": 1.0,
+            "ts_event": 1000000001
+          },
+          {
+            "client_order_id": "CM-SL",
+            "px": "98.00",
+            "qty": 1.0,
+            "ts_event": 1000000003
+          },
+          {
+            "client_order_id": "CM-TP",
+            "px": "101.00",
+            "qty": 1.0,
+            "ts_event": 1000000004
+          }
+        ],
+        "exit_total_qty": 2.0,
+        "fixture": "F06_CLIENT_UNSAFE_OBSERVABLE",
+        "kind": "client_managed_oco_overfill",
+        "missing_api": "no client-order group/epoch advisory or synthetic both-legs-eligible event; the overfill is driven by an ordinary two-phase price path instead",
+        "native_oco_sibling_cancelled": false,
+        "order_rejections": [],
+        "over_exit_qty": 1.0,
+        "overfill_observed": true,
+        "pass": true,
+        "position_qty_after": -1.0,
+        "position_reversed": true,
+        "position_side_after": "Short",
+        "probe_log": [],
+        "scenario": "CLIENT_MANAGED",
+        "stop_filled_qty": 1.0,
+        "tp_filled_qty": 1.0,
+        "verdict": "PARTIAL",
+        "verdict_reason": "unsafe observable reproduced: 2 exits for a 1-lot entry, position reversed to -1; native OCO prevents this only when the bracket is submitted as an OCO list"
+      },
+      "f06_oco": {
+        "after_entry": {
+          "entry": {
+            "avg_px": "100.00",
+            "canceled_qty": null,
+            "client_order_id": "OCO-ENTRY",
+            "filled_qty": 1.0,
+            "leaves_qty": 0.0,
+            "order_type": "Limit",
+            "quantity": 1.0,
+            "status": "Filled"
+          },
+          "position_qty": 1.0,
+          "sl": {
+            "avg_px": null,
+            "canceled_qty": null,
+            "client_order_id": "OCO-SL",
+            "filled_qty": 0.0,
+            "leaves_qty": 1.0,
+            "order_type": "StopMarket",
+            "quantity": 1.0,
+            "status": "Accepted"
+          },
+          "tp": {
+            "avg_px": null,
+            "canceled_qty": null,
+            "client_order_id": "OCO-TP",
+            "filled_qty": 0.0,
+            "leaves_qty": 1.0,
+            "order_type": "Limit",
+            "quantity": 1.0,
+            "status": "Accepted"
+          }
+        },
+        "after_tp": {
+          "closed_positions": 1,
+          "open_positions": 0,
+          "position_qty": 0.0,
+          "reduce_only_flat": {
+            "avg_px": null,
+            "canceled_qty": null,
+            "client_order_id": "RO-FLAT",
+            "filled_qty": 0.0,
+            "leaves_qty": 1.0,
+            "order_type": "Limit",
+            "quantity": 1.0,
+            "status": "Rejected"
+          },
+          "sl": {
+            "avg_px": null,
+            "canceled_qty": 1.0,
+            "client_order_id": "OCO-SL",
+            "filled_qty": 0.0,
+            "leaves_qty": 1.0,
+            "order_type": "StopMarket",
+            "quantity": 1.0,
+            "status": "Canceled"
+          },
+          "tp": {
+            "avg_px": "101.00",
+            "canceled_qty": null,
+            "client_order_id": "OCO-TP",
+            "filled_qty": 1.0,
+            "leaves_qty": 0.0,
+            "order_type": "Limit",
+            "quantity": 1.0,
+            "status": "Filled"
+          }
+        },
+        "cancel_errors": [],
+        "cancel_rejections": [],
+        "client_managed_profile": {
+          "reason": "no API to force both OCO legs eligible at one price; a single price path cannot fill both a 99 stop and a 101 limit, so the CLIENT_UNSAFE_OBSERVABLE overfill is not reproducible natively",
+          "verdict": "BLOCKED_BACKEND"
+        },
+        "elapsed_ms": 4,
+        "events": [
+          {
+            "client_order_id": "OCO-ENTRY",
+            "px": "100.00",
+            "qty": 1.0,
+            "ts_event": 1000000001
+          },
+          {
+            "client_order_id": "OCO-TP",
+            "px": "101.00",
+            "qty": 1.0,
+            "ts_event": 1000000003
+          }
+        ],
+        "fixture": "F06",
+        "kind": "native_oco",
+        "oco_supported": true,
+        "order_rejections": [
+          {
+            "client_order_id": "RO-FLAT",
+            "reason": "Reduce-only order RO-FLAT (LIMIT-SELL) would have increased position"
+          }
+        ],
+        "pass": true,
+        "probe_log": [],
+        "reduce_only_rejections": [
+          {
+            "client_order_id": "RO-FLAT",
+            "reason": "Reduce-only order RO-FLAT (LIMIT-SELL) would have increased position"
+          }
+        ],
+        "scenario": "NATIVE_ATOMIC",
+        "verdict": "PASS"
+      },
+      "f29_book_sequence": {
+        "absolute_updates_not_additive": true,
+        "apply_errors": [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "best_bid": "100.00",
+        "book_state_api_present": false,
+        "book_type": "L2_MBP",
+        "cancel_errors": [],
+        "cancel_rejections": [],
+        "elapsed_ms": 0,
+        "events": [],
+        "fixture": "F29",
+        "gap_detected": false,
+        "gap_expected_between": [
+          103,
+          109
+        ],
+        "kind": "book_sequence",
+        "last_good_seq_api_present": false,
+        "level_qty_after_absolute_update": 20.0,
+        "missing_api": "OrderBook.sequence is public but there is no last_good_seq, book_state (INVALID) or sequence-gap API; apply_delta/apply_deltas never validate sequence continuity and BookIntegrityError has no gap variant",
+        "order_rejections": [],
+        "out_of_order_detected": false,
+        "probe_log": [],
+        "scenario": "BASE",
+        "sequence_high_water": 110,
+        "sequence_regressed": false,
+        "sequence_stream": [
+          100,
+          101,
+          102,
+          110,
+          105
+        ],
+        "snapshot_anchor_api_present": false,
+        "verdict": "BLOCKED_BACKEND",
+        "verdict_reason": "the fixture needs book_state=INVALID and last_good_seq=102; the public book silently applies both the forward gap and the out-of-order delta (high-water mark only)"
+      },
+      "f31_duplicate_fill": {
+        "accepted_qty": 2.0,
+        "after_cancel": {
+          "avg_px": "100.00",
+          "canceled_qty": 1.0,
+          "client_order_id": "O-1",
+          "filled_qty": 1.0,
+          "leaves_qty": 1.0,
+          "order_type": "Limit",
+          "quantity": 2.0,
+          "status": "Canceled"
+        },
+        "after_duplicate_injection": {
+          "avg_px": "100.00",
+          "canceled_qty": null,
+          "client_order_id": "O-1",
+          "filled_qty": 1.0,
+          "leaves_qty": 1.0,
+          "order_type": "Limit",
+          "quantity": 2.0,
+          "status": "PartiallyFilled"
+        },
+        "after_partial": {
+          "avg_px": "100.00",
+          "canceled_qty": null,
+          "client_order_id": "O-1",
+          "filled_qty": 1.0,
+          "leaves_qty": 1.0,
+          "order_type": "Limit",
+          "quantity": 2.0,
+          "status": "PartiallyFilled"
+        },
+        "cancel_errors": [],
+        "cancel_rejections": [],
+        "canceled_qty": 1.0,
+        "duplicate_fee_or_funding_debits": 0,
+        "duplicate_fill_predicate": true,
+        "duplicate_suppressed": true,
+        "elapsed_ms": 3,
+        "event_order_api_present": false,
+        "events": [
+          {
+            "client_order_id": "O-1",
+            "px": "100.00",
+            "qty": 1.0,
+            "ts_event": 1000000002
+          }
+        ],
+        "filled_qty": 1.0,
+        "fixture": "F31",
+        "fixture_expects_leaves_qty": 0.0,
+        "injection_api": "BacktestEngine::kernel_mut().exec_engine.borrow_mut().process(&OrderEventAny::Filled(fill))",
+        "kind": "duplicate_fill",
+        "leaves_qty": 1.0,
+        "local_order_event_data_hook_present": false,
+        "missing_api": "OrderFilled/OrderAccepted carry no venue_seq; BacktestEngine/Data has no LOCAL_ORDER_EVENT injection operation, so the out-of-order ACK (seq 2 then seq 1) cannot be replayed. Duplicate-fill suppression itself is reachable through ExecutionEngine::process",
+        "native_leaves_qty_after_cancel": 1.0,
+        "order_rejections": [],
+        "pass": true,
+        "probe_log": [],
+        "scenario": "BASE",
+        "state": "Canceled",
+        "strategy_fill_events_after_injection": 1,
+        "strategy_fill_events_before_injection": 1,
+        "venue_seq_field_present": false,
+        "verdict": "PARTIAL",
+        "verdict_reason": "duplicate fill suppressed by the public OMS (filled=1, canceled=1, Canceled, no second strategy fill); delayed/out-of-order ACK and the fixture's leaves_qty=0 are not reproducible"
+      },
+      "f33_fok": {
+        "O-1": {
+          "avg_px": null,
+          "canceled_qty": 6.0,
+          "client_order_id": "O-1",
+          "filled_qty": 0.0,
+          "leaves_qty": 6.0,
+          "order_type": "Limit",
+          "quantity": 6.0,
+          "status": "Canceled"
+        },
+        "cancel_errors": [],
+        "cancel_rejections": [],
+        "elapsed_ms": 2,
+        "events": [],
+        "fixture": "F33",
+        "kind": "time_in_force",
+        "order_rejections": [],
+        "pass": true,
+        "probe_log": [],
+        "rejections": [],
+        "scenario": "FOK",
+        "time_in_force_supported": true,
+        "verdict": "PASS"
+      },
+      "f33_stop_limit_gap": {
+        "cancel_errors": [],
+        "cancel_rejections": [],
+        "elapsed_ms": 3,
+        "events": [
+          {
+            "client_order_id": "ENTRY",
+            "px": "100.00",
+            "qty": 1.0,
+            "ts_event": 1000000001
+          }
+        ],
+        "filled_qty": 0.0,
+        "fixture": "F33",
+        "kind": "stop_limit",
+        "note": "trigger fires on last price; the gapped limit cannot fill and the position is unchanged",
+        "order_rejections": [],
+        "pass": true,
+        "position_after_entry_qty": 1.0,
+        "position_after_gap_qty": 1.0,
+        "probe_log": [],
+        "scenario": "STOP_LIMIT_GAP",
+        "stop_after_entry": {
+          "avg_px": null,
+          "canceled_qty": null,
+          "client_order_id": "PROT-STOP",
+          "filled_qty": 0.0,
+          "leaves_qty": 1.0,
+          "order_type": "StopLimit",
+          "quantity": 1.0,
+          "status": "Accepted"
+        },
+        "stop_after_gap": {
+          "avg_px": null,
+          "canceled_qty": null,
+          "client_order_id": "PROT-STOP",
+          "filled_qty": 0.0,
+          "leaves_qty": 1.0,
+          "order_type": "StopLimit",
+          "quantity": 1.0,
+          "status": "Triggered"
+        },
+        "triggered": true,
+        "verdict": "PASS"
+      },
+      "f34_partial_entry": {
+        "cancel_errors": [],
+        "cancel_rejections": [],
+        "canceled_entry_remainder_qty": 7.0,
+        "elapsed_ms": 3,
+        "entry_after_partial": {
+          "avg_px": "100.00",
+          "canceled_qty": null,
+          "client_order_id": "ENTRY-1",
+          "filled_qty": 3.0,
+          "leaves_qty": 7.0,
+          "order_type": "Limit",
+          "quantity": 10.0,
+          "status": "PartiallyFilled"
+        },
+        "entry_after_protection": {
+          "avg_px": "100.00",
+          "canceled_qty": 7.0,
+          "client_order_id": "ENTRY-1",
+          "filled_qty": 3.0,
+          "leaves_qty": 7.0,
+          "order_type": "Limit",
+          "quantity": 10.0,
+          "status": "Canceled"
+        },
+        "events": [
+          {
+            "client_order_id": "ENTRY-1",
+            "px": "100.00",
+            "qty": 3.0,
+            "ts_event": 1000000002
+          }
+        ],
+        "exit_total_qty": 3.0,
+        "fixture": "F34",
+        "kind": "partial_entry_protection",
+        "note": "protection is client-managed: the native bracket supports one TP plus one SL, so the split TP is built here",
+        "order_rejections": [],
+        "pass": true,
+        "position_after_partial_qty": 3.0,
+        "position_qty": 3.0,
+        "probe_log": [
+          {
+            "filled_qty": 3.0,
+            "stop_qty": 3.0,
+            "tp1_qty": 1.0,
+            "tp2_qty": 2.0
+          }
+        ],
+        "scenario": "BASE",
+        "setup": {
+          "entry_qty": 10.0,
+          "filled_qty": 3.0,
+          "lot": 1.0
+        },
+        "stop": {
+          "avg_px": null,
+          "canceled_qty": null,
+          "client_order_id": "PROT-STOP",
+          "filled_qty": 0.0,
+          "leaves_qty": 3.0,
+          "order_type": "StopLimit",
+          "quantity": 3.0,
+          "status": "Accepted"
+        },
+        "stop_qty": 3.0,
+        "tp1": {
+          "avg_px": null,
+          "canceled_qty": null,
+          "client_order_id": "PROT-TP1",
+          "filled_qty": 0.0,
+          "leaves_qty": 1.0,
+          "order_type": "Limit",
+          "quantity": 1.0,
+          "status": "Accepted"
+        },
+        "tp1_qty": 1.0,
+        "tp2": {
+          "avg_px": null,
+          "canceled_qty": null,
+          "client_order_id": "PROT-TP2",
+          "filled_qty": 0.0,
+          "leaves_qty": 2.0,
+          "order_type": "Limit",
+          "quantity": 2.0,
+          "status": "Accepted"
+        },
+        "tp2_qty": 2.0,
+        "unfilled_entry_protected_as_position": false,
+        "verdict": "PASS"
+      }
+    },
+    "scope": "#10 / TASK-17",
+    "summary": {
+      "F02": "PASS",
+      "F02+CANCEL_REMAINDER": "PASS",
+      "F02+SHARED_LEVEL": "PASS",
+      "F02+depth-once": "PASS",
+      "F03": "PASS",
+      "F04": "PARTIAL",
+      "F05": "PARTIAL",
+      "F06": "PASS",
+      "F06_CLIENT_UNSAFE_OBSERVABLE": "PARTIAL",
+      "F07": "BLOCKED_BACKEND",
+      "F29": "BLOCKED_BACKEND",
+      "F31": "PARTIAL",
+      "F33_FOK": "PASS",
+      "F33_STOP_LIMIT_GAP": "PASS",
+      "F34": "PASS"
+    }
+  }
+}

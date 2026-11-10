@@ -1,0 +1,427 @@
+{
+  "benchmarks": {
+    "B2": {
+      "median_wall_s": 24.292,
+      "p90_wall_s": 26.452,
+      "target_s": 30,
+      "verdict": "PASS"
+    },
+    "B3_10M": {
+      "events": 11247697,
+      "p90_s": 209.741,
+      "target_s": 120,
+      "verdict": "FAIL_TARGET"
+    }
+  },
+  "candidate_sha": "8b464258ed3fceb5224eaa2563497724b64b7ea7",
+  "closures_pending_merge": [
+    4,
+    10
+  ],
+  "evidence_sha256": {
+    "ACCEPTANCE_MATRIX.json": "40f9cf64848a7debc71254e326193c8053429191cd1f428395e9271d5b8d16b5",
+    "B2_RECHECK_2026-11-10.json": "d970a5ef2cdd620c5e381c35fe5ab18d9339b7e4f2388b1a4b54271056b630e0",
+    "B3_10M_ATOMIC_L2_2026-11-10.json": "ab60fdbc8c5b05e6c02cb39727c6a5ddeb8e8488a1330dc25e5db94f77902e5e",
+    "LOCAL_VIEW_F22_2026-11-10.json": "5d6c7c7f500ae5838d53604f5cbdcc5c96187d89b729f42b5549f36ba30cd7c1",
+    "M2_DEV_RUN.json": "f548324ae326319e513712a543bdd510ee1458b23d3a2b7f30a152d4cf3590c0",
+    "PASSIVE_QUEUE_ADAPTER_2026-11-10.json": "3da3f6cf8397a91360995125b36755e32a87c6424182ca34465b712768f6a9d0",
+    "PASSIVE_QUEUE_COMPLETION_2026-11-10.json": "17e33ab500fb9bb47c48160c42c2abb977485c02e1ca30bf25bfd8a04eaee827"
+  },
+  "f22": {
+    "cross_world": {
+      "decisions": 1425,
+      "delivered_fill_count": 303,
+      "fill_count": 303,
+      "fill_notional": "22984.74129",
+      "fill_qty": "0.303",
+      "fill_side_breakdown": {
+        "buy": 152,
+        "sell": 151
+      },
+      "fills_visible_after_delivery": 303,
+      "fills_visible_before_delivery": 0,
+      "fills_with_decisions_in_gap": 0,
+      "funding_cash": "-0.00300075",
+      "funding_count": 2,
+      "policy_reads_before_delivery": 0,
+      "time_to_delivery_ns": {
+        "count": 303,
+        "max": "5362000000",
+        "mean": "478165016",
+        "min": "25000000",
+        "p50": "317000000",
+        "p90": "909000000",
+        "p99": "3476000000"
+      }
+    },
+    "invariants": {
+      "1_exchange_updates_before_response_delivery": {
+        "control_zero_delay": {
+          "delivered_before_exchange_update": 0,
+          "fills": 307,
+          "pass": true,
+          "response_delay_ns": 0,
+          "strictly_later": 305
+        },
+        "decision_in_gap": {
+          "delivered_before_exchange_update": 0,
+          "fills": 294,
+          "pass": true,
+          "response_delay_ns": 90000000000,
+          "strictly_later": 294
+        },
+        "large_response": {
+          "delivered_before_exchange_update": 0,
+          "fills": 303,
+          "pass": true,
+          "response_delay_ns": 30000000000,
+          "strictly_later": 303
+        },
+        "main": {
+          "delivered_before_exchange_update": 0,
+          "fills": 303,
+          "pass": true,
+          "response_delay_ns": 25000000,
+          "strictly_later": 303
+        }
+      },
+      "2_no_policy_decision_uses_fill_before_delivery": {
+        "control_zero_delay": {
+          "decisions_with_unseen_fills": 0,
+          "fills": 307,
+          "fills_with_intervening_decisions": 0,
+          "max_in_flight_qty": "0",
+          "pass": true,
+          "policy_reads_before_delivery": 0,
+          "sample_decision": null
+        },
+        "decision_in_gap": {
+          "decisions_with_unseen_fills": 294,
+          "fills": 294,
+          "fills_with_intervening_decisions": 294,
+          "max_in_flight_qty": "0.002",
+          "pass": true,
+          "policy_reads_before_delivery": 0,
+          "sample_decision": {
+            "delivered_fills": 0,
+            "exchange_fills_at_or_before": 1,
+            "exchange_fills_before": 1,
+            "expected_position_from_delivered_fills": "0",
+            "in_flight_qty": "-0.001",
+            "local_cash": "1000",
+            "local_position_qty": "0",
+            "pre_existing_fills_in_flight": 1,
+            "same_tick_pending_fills": 0,
+            "seq": 5259,
+            "ts": "1794010562504000000"
+          }
+        },
+        "large_response": {
+          "decisions_with_unseen_fills": 0,
+          "fills": 303,
+          "fills_with_intervening_decisions": 0,
+          "max_in_flight_qty": "0",
+          "pass": true,
+          "policy_reads_before_delivery": 0,
+          "sample_decision": null
+        },
+        "main": {
+          "decisions_with_unseen_fills": 0,
+          "fills": 303,
+          "fills_with_intervening_decisions": 0,
+          "max_in_flight_qty": "0",
+          "pass": true,
+          "policy_reads_before_delivery": 0,
+          "sample_decision": null
+        }
+      },
+      "3_feed_delay_charged_once": {
+        "control_zero_delay": {
+          "delivered_before_due": 0,
+          "feed_delay_ns": 0,
+          "first_tick_violations": 0,
+          "items": 358196,
+          "max_lateness_ns": 0,
+          "max_total_delay_ns": 0,
+          "min_total_delay_ns": 0,
+          "pass": true
+        },
+        "decision_in_gap": {
+          "delivered_before_due": 0,
+          "feed_delay_ns": 50000000,
+          "first_tick_violations": 0,
+          "items": 358196,
+          "max_lateness_ns": 89951000000,
+          "max_total_delay_ns": 90001000000,
+          "min_total_delay_ns": 50000000,
+          "pass": true
+        },
+        "large_response": {
+          "delivered_before_due": 0,
+          "feed_delay_ns": 50000000,
+          "first_tick_violations": 0,
+          "items": 358196,
+          "max_lateness_ns": 29951000000,
+          "max_total_delay_ns": 30001000000,
+          "min_total_delay_ns": 50000000,
+          "pass": true
+        },
+        "main": {
+          "delivered_before_due": 0,
+          "feed_delay_ns": 50000000,
+          "first_tick_violations": 0,
+          "items": 358196,
+          "max_lateness_ns": 10598000000,
+          "max_total_delay_ns": 10648000000,
+          "min_total_delay_ns": 50000000,
+          "pass": true
+        }
+      },
+      "4_local_view_converges_to_exchange": {
+        "control_zero_delay": {
+          "cash_diff": "0.00000000",
+          "cash_diff_numeric": "0",
+          "equity_diff": "0.00000000",
+          "equity_diff_numeric": "0",
+          "exchange_cash": "991.11310345",
+          "exchange_equity": "991.10431345",
+          "exchange_position_qty": "0.001",
+          "local_cash": "991.11310345",
+          "local_equity": "991.10431345",
+          "local_position_qty": "0.001",
+          "pass": true,
+          "position_diff": "0.000",
+          "position_diff_numeric": "0"
+        },
+        "decision_in_gap": {
+          "cash_diff": "0.00000000",
+          "cash_diff_numeric": "0",
+          "equity_diff": "0.00000000",
+          "equity_diff_numeric": "0",
+          "exchange_cash": "991.16473661",
+          "exchange_equity": "991.15595661",
+          "exchange_position_qty": "0.001",
+          "local_cash": "991.16473661",
+          "local_equity": "991.15595661",
+          "local_position_qty": "0.001",
+          "pass": true,
+          "position_diff": "0.000",
+          "position_diff_numeric": "0"
+        },
+        "large_response": {
+          "cash_diff": "0.00000000",
+          "cash_diff_numeric": "0",
+          "equity_diff": "0.00000000",
+          "equity_diff_numeric": "0",
+          "exchange_cash": "991.22981277",
+          "exchange_equity": "991.22103277",
+          "exchange_position_qty": "0.001",
+          "local_cash": "991.22981277",
+          "local_equity": "991.22103277",
+          "local_position_qty": "0.001",
+          "pass": true,
+          "position_diff": "0.000",
+          "position_diff_numeric": "0"
+        },
+        "main": {
+          "cash_diff": "0.00000000",
+          "cash_diff_numeric": "0",
+          "equity_diff": "0.00000000",
+          "equity_diff_numeric": "0",
+          "exchange_cash": "991.22981277",
+          "exchange_equity": "991.22103277",
+          "exchange_position_qty": "0.001",
+          "local_cash": "991.22981277",
+          "local_equity": "991.22103277",
+          "local_position_qty": "0.001",
+          "pass": true,
+          "position_diff": "0.000",
+          "position_diff_numeric": "0"
+        }
+      },
+      "5_zero_delay_control_equals_native_runner": {
+        "account_diff": {},
+        "control_status": "PASS",
+        "expected_difference": "Zero response delay is delivered on the next data callback rather than synchronously inside the exchange settlement callback. With feed_delay_ns=0 the policy cadence and tape are still field-identical; no order-timing difference was observed.",
+        "field_mismatches": [],
+        "fill_count": [
+          307,
+          307
+        ],
+        "funding_count": [
+          2,
+          2
+        ],
+        "native_run": "evidence/labd/LOCAL_VIEW_NATIVE_CONTROL.json",
+        "native_status": "PASS",
+        "semantically_equal": true
+      },
+      "large_response_gap": {
+        "decision_in_gap_90s": {
+          "fills": 294,
+          "fills_with_decisions_in_gap": 294,
+          "fills_without_decisions_in_gap": 0,
+          "no_decision_in_any_gap": false,
+          "pass": true,
+          "response_delay_ns": 90000000000,
+          "sample_fill": {
+            "decisions_in_gap": 1,
+            "deliver_at": "1794010590428000000",
+            "delivered": true,
+            "delivered_at": "1794010591000000000",
+            "exchange_position_after": "-0.001",
+            "exchange_position_before": "0",
+            "exchange_ts": "1794010500428000000",
+            "fee": "0.03037112",
+            "local_cash_after": "999.96962888",
+            "local_cash_before": "1000",
+            "local_position_after": "-0.001",
+            "local_position_before": "0",
+            "position_id": "BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001",
+            "price": "75927.80",
+            "qty": "0.001",
+            "seq": 5066,
+            "side": "SELL"
+          }
+        },
+        "large_response_30s": {
+          "fills": 303,
+          "fills_with_decisions_in_gap": 0,
+          "fills_without_decisions_in_gap": 303,
+          "no_decision_in_any_gap": true,
+          "pass": true,
+          "response_delay_ns": 30000000000,
+          "sample_fill": null
+        }
+      }
+    },
+    "status": "PASS_SCOPED_F22_PROFILE"
+  },
+  "generated_utc": "2026-11-10T09:47:49Z",
+  "issue_counts": {
+    "accepted_pending_merge_count": 2,
+    "accepted_pending_merge_issues": [
+      4,
+      10
+    ],
+    "already_closed_count": 5,
+    "already_closed_issues": [
+      1,
+      2,
+      5,
+      6,
+      12
+    ],
+    "integrated_issue_count": 13,
+    "remaining_open_count": 11,
+    "remaining_open_issues": [
+      3,
+      7,
+      8,
+      9,
+      11,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18
+    ],
+    "traceability": "every required check is mapped to an observed result or an explicit blocker"
+  },
+  "left_open_with_blockers": [
+    3,
+    7,
+    8,
+    9,
+    11,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18
+  ],
+  "m2": {
+    "controls_seeds": 1000,
+    "decision_verdict": "INSUFFICIENT_EVIDENCE",
+    "fold": {
+      "embargo_ns": 86400000000000,
+      "fold_id": "DEVWEEK-D67748C4E6D756AD",
+      "label_horizon_ns": 86400000000000,
+      "purge_dates": [
+        "2024-09-04"
+      ],
+      "purge_days": 1,
+      "scope": "DEVELOPMENT_WEEK_SCOPE",
+      "train_dates": [
+        "2024-09-01",
+        "2024-09-02",
+        "2024-09-03"
+      ],
+      "train_end": "2024-09-03",
+      "train_start": "2024-09-01",
+      "validation_dates": [
+        "2024-09-05",
+        "2024-09-06",
+        "2024-09-07"
+      ],
+      "validation_end": "2024-09-07",
+      "validation_start": "2024-09-05"
+    },
+    "scope": "DEVELOPMENT_WEEK_SCOPE",
+    "selected_variant": "STRAT-VAR-10",
+    "status": "PASS",
+    "validation_variants": [
+      "STRAT-VAR-00",
+      "STRAT-VAR-01",
+      "STRAT-VAR-02",
+      "STRAT-VAR-03",
+      "STRAT-VAR-04",
+      "STRAT-VAR-05",
+      "STRAT-VAR-06",
+      "STRAT-VAR-07",
+      "STRAT-VAR-08",
+      "STRAT-VAR-09",
+      "STRAT-VAR-10",
+      "STRAT-VAR-11"
+    ],
+    "venue": {
+      "feasible": true,
+      "min_notional": "58.94189",
+      "min_quantity": "1/1000",
+      "note": "The 20 USDT target is below the 0.001 BTC venue minimum at this price; it cannot be honored without rounding up and changing the risk target.",
+      "reference_price": "58941.89",
+      "status": "PASS",
+      "target_notional": "100"
+    }
+  },
+  "notes": [
+    "No positive edge, fresh OOS result or live authority is claimed.",
+    "All closures are contingent on the PR merge.",
+    "The 7-day soak and B8 remain open; the 26-month execution folds have no intraday data."
+  ],
+  "passive_queue": {
+    "profile": "ADAPTER_OVER_NATIVE",
+    "summary": {
+      "F02+UNKNOWN_AGGRESSOR": "PARTIAL",
+      "F04": "PASS",
+      "F05": "PASS",
+      "F06_CLIENT_REDUCE_ONLY": "PASS",
+      "F07": "PASS",
+      "F29": "PASS",
+      "F31": "PASS",
+      "profile": "ADAPTER_OVER_NATIVE"
+    }
+  },
+  "schema": "qel.integration.v11/1",
+  "status": "PASS_WITH_RECORDED_BLOCKERS",
+  "tests": {
+    "go": "ok ./labd/... (8 packages)",
+    "native_crates": "local_view cargo test OK; passive_runner 15 adapter tests OK",
+    "pytest": "368 passed, 4 skipped",
+    "rust": "7 policy tests passed",
+    "spec_manifest": "sha256sum -c MANIFEST.sha256: OK",
+    "spec_validator": "PASS_SPECIFICATION_ONLY, 20/20 mutants rejected"
+  }
+}

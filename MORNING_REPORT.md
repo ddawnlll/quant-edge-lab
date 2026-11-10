@@ -1,5 +1,9 @@
 # Morning Report
 
+Completion update 2026-11-10: see `docs/V11_ACCEPTANCE_REPORT.md` for the
+F22/adapter closures, the first M2 development run and the remaining blockers.
+This section is historical.
+
 Status time: 2026-11-09T00:33Z. This is a development and verification report.
 It is not a profitability claim and does not certify a trading edge.
 

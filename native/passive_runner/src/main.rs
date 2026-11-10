@@ -8,6 +8,8 @@
 //! Output: one JSON document on stdout (and optionally written to argv[1]) with
 //! one entry per probe and an explicit PASS / PARTIAL / BLOCKED_BACKEND verdict.
 
+mod adapter;
+
 use std::{
     fmt::Debug,
     fs,
@@ -15,6 +17,7 @@ use std::{
     time::Instant,
 };
 
+use crate::adapter::{Adapter, AggressorView, CancelDecision, Side};
 use anyhow::Result;
 use nautilus_backtest::{
     config::{BacktestEngineConfig, SimulatedVenueConfig},
@@ -50,6 +53,30 @@ const MAINTENANCE_RATE: Decimal = Decimal::from_parts(5, 0, 0, false, 2); // 0.0
 
 static LOG: Mutex<Vec<Value>> = Mutex::new(Vec::new());
 static LAST_FILL: Mutex<Option<OrderFilled>> = Mutex::new(None);
+/// Last adapter snapshot recorded by the strategy. The adapter is a client
+/// order-management layer, so its state is read here rather than from the
+/// engine's private internals.
+static ADAPTER_STATE: Mutex<Option<Value>> = Mutex::new(None);
+
+fn take_adapter_state() -> Value {
+    ADAPTER_STATE
+        .lock()
+        .ok()
+        .and_then(|mut slot| slot.take())
+        .unwrap_or(Value::Null)
+}
+
+fn adapter_order(state: &Value, client_order_id: &str) -> Value {
+    state["orders"]
+        .as_array()
+        .and_then(|orders| {
+            orders
+                .iter()
+                .find(|order| order["client_order_id"] == client_order_id)
+        })
+        .cloned()
+        .unwrap_or(Value::Null)
+}
 
 fn log_event(kind: &str, detail: Value) {
     if let Ok(mut log) = LOG.lock() {
@@ -75,6 +102,22 @@ fn logged(kind: &str) -> Vec<Value> {
                 .collect()
         })
         .unwrap_or_default()
+}
+
+/// Adapter actions recorded by the strategy, in order.
+fn adapter_actions(action: &str) -> Vec<Value> {
+    logged("adapter")
+        .into_iter()
+        .filter(|entry| entry["action"] == action)
+        .map(|entry| entry["detail"].clone())
+        .collect()
+}
+
+fn adapter_detail(action: &str) -> Value {
+    adapter_actions(action)
+        .into_iter()
+        .next()
+        .unwrap_or(Value::Null)
 }
 
 // ---------------------------------------------------------------------------
@@ -266,6 +309,40 @@ enum Mode {
     F31Dup,
     /// Client-managed OCO: both legs are plain orders, so both can fill.
     ClientOcoUnsafe,
+    /// F04 over the adapter: local terminal state answers the late cancel.
+    AdapterCancelRace,
+    /// F05 over the adapter: cancel+new replace with a priority reset count.
+    AdapterReplace,
+    /// F07 over the adapter: position epoch gate on the protective stop.
+    AdapterEpoch,
+    /// F31 over the adapter: venue sequence, dedupe and out-of-order ACK.
+    AdapterF31,
+    /// F06 client profile: atomic client OCO plus a reduce-only exit guard.
+    AdapterClientOco,
+    /// F02 over the adapter: conservative queue on an unknown aggressor.
+    AdapterUnknownAggressor,
+}
+
+/// Maps a native aggressor onto the adapter's directional view.
+fn aggressor_view(aggressor: AggressorSide) -> AggressorView {
+    match aggressor {
+        AggressorSide::Buyer => AggressorView::Buyer,
+        AggressorSide::Seller => AggressorView::Seller,
+        _ => AggressorView::Unknown,
+    }
+}
+
+/// True for every mode that keeps adapter state.
+fn uses_adapter(mode: Mode) -> bool {
+    matches!(
+        mode,
+        Mode::AdapterCancelRace
+            | Mode::AdapterReplace
+            | Mode::AdapterEpoch
+            | Mode::AdapterF31
+            | Mode::AdapterClientOco
+            | Mode::AdapterUnknownAggressor
+    )
 }
 
 struct Passive {
@@ -278,6 +355,9 @@ struct Passive {
     oco_submitted: bool,
     reduce_only_probe: bool,
     protection_installed: bool,
+    adapter: Adapter,
+    last_fill_id: Option<String>,
+    replace_id: Option<String>,
 }
 
 impl Passive {
@@ -296,6 +376,9 @@ impl Passive {
             oco_submitted: false,
             reduce_only_probe: false,
             protection_installed: false,
+            adapter: Adapter::new(),
+            last_fill_id: None,
+            replace_id: None,
         }
     }
 
@@ -405,6 +488,19 @@ impl Passive {
             .order(&ClientOrderId::new(id))
             .map_or(0.0, |order| order.filled_qty().as_f64())
     }
+
+    /// Records one adapter action plus the resulting adapter state. The probe
+    /// reads the last snapshot after the engine run, so no private engine
+    /// state is needed for any adapter claim.
+    fn record_adapter(&self, action: &str, detail: Value) {
+        if let Ok(mut slot) = ADAPTER_STATE.lock() {
+            *slot = Some(self.adapter.snapshot());
+        }
+        log_event(
+            "adapter",
+            json!({"action": action, "detail": detail}),
+        );
+    }
 }
 
 nautilus_strategy!(Passive, {
@@ -429,6 +525,61 @@ nautilus_strategy!(Passive, {
                 "ts_event": event.ts_event.as_u64(),
             }),
         );
+        if !uses_adapter(self.mode) {
+            return;
+        }
+        let client_order_id = event.client_order_id.to_string();
+        if self.adapter.order(&client_order_id).is_none() {
+            return;
+        }
+        // The pinned engine carries no venue sequence on order events, so the
+        // adapter stamps one for every event it accepts.
+        let venue_seq = self.adapter.stamp_venue_seq();
+        let fill_id = event.trade_id.to_string();
+        let qty = event.last_qty.as_f64();
+        let (verdict, applied) = self
+            .adapter
+            .note_fill(&client_order_id, venue_seq, &fill_id, qty);
+        self.last_fill_id = Some(fill_id.clone());
+        self.record_adapter(
+            "fill",
+            json!({
+                "client_order_id": client_order_id,
+                "venue_seq": venue_seq,
+                "fill_id": fill_id,
+                "qty": qty,
+                "verdict": verdict.as_str(),
+                "applied_qty": applied,
+                "ts_event": event.ts_event.as_u64(),
+            }),
+        );
+        if verdict == adapter::EventVerdict::Applied {
+            if let Some(group_cancel) = self.adapter.group_sibling_after_fill(&client_order_id) {
+                let sibling_id = group_cancel.sibling_id.clone();
+                let (decision, _) = self.adapter.request_cancel(&sibling_id);
+                self.record_adapter(
+                    "group_sibling_cancel",
+                    json!({
+                        "filled_order_id": group_cancel.filled_order_id,
+                        "sibling_id": sibling_id,
+                        "policy": "ATOMIC_CLIENT_OCO",
+                        "decision": decision.as_str(),
+                    }),
+                );
+                if decision == CancelDecision::DispatchToVenue {
+                    if let Err(error) =
+                        self.cancel_order(ClientOrderId::new(&sibling_id), None, None)
+                    {
+                        log_event("cancel_error", json!(format!("{error:#}")));
+                    }
+                    let response = self.adapter.resolve_cancel(&sibling_id);
+                    self.record_adapter(
+                        "group_sibling_canceled",
+                        json!({"sibling_id": sibling_id, "response": response}),
+                    );
+                }
+            }
+        }
     }
 
     fn on_order_cancel_rejected(&mut self, event: OrderCancelRejected) {
@@ -468,7 +619,7 @@ impl DataActor for Passive {
         Ok(())
     }
 
-    fn on_quote(&mut self, _quote: &QuoteTick) -> anyhow::Result<()> {
+    fn on_quote(&mut self, quote: &QuoteTick) -> anyhow::Result<()> {
         self.quotes += 1;
         match self.mode {
             Mode::F02 | Mode::F02Cancel => {
@@ -589,13 +740,414 @@ impl DataActor for Passive {
                     self.stop_limit("CM-SL", OrderSide::Sell, "1.000", "98.00", "99.00", false)?;
                 }
             }
+            Mode::AdapterCancelRace => {
+                if self.quotes == 1 {
+                    let venue_seq =
+                        self.adapter
+                            .register("O-1", Side::Buy, 1.0, None, false, 0.0, None);
+                    self.record_adapter(
+                        "register",
+                        json!({
+                            "client_order_id": "O-1",
+                            "venue_seq": venue_seq,
+                            "quantity": 1.0,
+                            "ts_event": quote.ts_event.as_u64(),
+                        }),
+                    );
+                    self.limit("O-1", OrderSide::Buy, "1.000", "100.00", TimeInForce::Gtc, false, false)?;
+                }
+                if self.quotes == 2 {
+                    let (decision, response) = self.adapter.request_cancel("O-1");
+                    self.record_adapter(
+                        "cancel_requested",
+                        json!({
+                            "client_order_id": "O-1",
+                            "decision": decision.as_str(),
+                            "immediate_response": response,
+                            "delete_latency_ns": 20,
+                            "cancel_sent_ns": 10,
+                            "cancel_arrival_ns": 30,
+                            "ts_event": quote.ts_event.as_u64(),
+                        }),
+                    );
+                    if decision == CancelDecision::DispatchToVenue {
+                        self.cancel_order(ClientOrderId::new("O-1"), None, None)?;
+                    }
+                }
+                if self.quotes == 3 {
+                    let response = self.adapter.resolve_cancel("O-1");
+                    self.record_adapter(
+                        "cancel_arrived",
+                        json!({
+                            "client_order_id": "O-1",
+                            "response": response,
+                            "ts_event": quote.ts_event.as_u64(),
+                        }),
+                    );
+                }
+            }
+            Mode::AdapterReplace => {
+                let displayed = quote.bid_size.as_f64();
+                if self.quotes == 1 {
+                    let venue_seq = self.adapter.register(
+                        "O-1",
+                        Side::Buy,
+                        10.0,
+                        None,
+                        false,
+                        displayed,
+                        None,
+                    );
+                    self.record_adapter(
+                        "register",
+                        json!({
+                            "client_order_id": "O-1",
+                            "venue_seq": venue_seq,
+                            "quantity": 10.0,
+                            "ahead_qty": displayed,
+                        }),
+                    );
+                    self.limit("O-1", OrderSide::Buy, "10.000", "100.00", TimeInForce::Gtc, false, false)?;
+                }
+                if self.quotes == 2 {
+                    // Fixture REPLACE #1: 10 -> 20 at the same price. The client
+                    // rule resets priority, so the adapter cancels and re-enters.
+                    let outcome = self
+                        .adapter
+                        .request_replace("O-1", 20.0, displayed, true)
+                        .map_err(|code| anyhow::anyhow!("replace rejected: {code}"))?;
+                    self.record_adapter(
+                        "replace",
+                        json!({
+                            "request_id": outcome.request_id,
+                            "new_order_id": outcome.new_order_id,
+                            "accepted_qty": outcome.accepted_qty,
+                            "filled_qty": outcome.filled_qty,
+                            "leaves_qty": outcome.leaves_qty,
+                            "ahead_qty": outcome.ahead_qty,
+                            "canceled_remainder_qty": outcome.canceled_remainder_qty,
+                            "priority_reset": outcome.priority_reset,
+                            "increase": outcome.increase,
+                            "displayed_at_level": displayed,
+                        }),
+                    );
+                    if outcome.new_order_id != outcome.request_id {
+                        self.cancel_order(ClientOrderId::new(&outcome.request_id), None, None)?;
+                        let qty = format!("{:.3}", outcome.leaves_qty);
+                        self.limit(
+                            &outcome.new_order_id,
+                            OrderSide::Buy,
+                            &qty,
+                            "100.00",
+                            TimeInForce::Gtc,
+                            false,
+                            false,
+                        )?;
+                        self.replace_id = Some(outcome.new_order_id);
+                    }
+                }
+                if self.quotes == 3 {
+                    // Fixture REPLACE #2: 20 -> 15 at the same price. A decrease
+                    // keeps priority, so the adapter resizes in place.
+                    let current = self.replace_id.clone().unwrap_or_else(|| "O-1".to_string());
+                    let outcome = self
+                        .adapter
+                        .request_replace(&current, 15.0, displayed, true)
+                        .map_err(|code| anyhow::anyhow!("replace rejected: {code}"))?;
+                    self.record_adapter(
+                        "replace",
+                        json!({
+                            "request_id": outcome.request_id,
+                            "new_order_id": outcome.new_order_id,
+                            "accepted_qty": outcome.accepted_qty,
+                            "filled_qty": outcome.filled_qty,
+                            "leaves_qty": outcome.leaves_qty,
+                            "ahead_qty": outcome.ahead_qty,
+                            "canceled_remainder_qty": outcome.canceled_remainder_qty,
+                            "priority_reset": outcome.priority_reset,
+                            "increase": outcome.increase,
+                            "displayed_at_level": displayed,
+                        }),
+                    );
+                    let qty = format!("{:.3}", outcome.leaves_qty);
+                    self.modify_order(
+                        ClientOrderId::new(&outcome.new_order_id),
+                        Some(Quantity::from(qty)),
+                        Some(Price::from("100.00")),
+                        None,
+                        None,
+                        None,
+                    )?;
+                }
+            }
+            Mode::AdapterEpoch => {
+                if self.quotes == 1 {
+                    self.adapter
+                        .register("E-1", Side::Buy, 1.0, None, false, 0.0, None);
+                    self.market("E-1", OrderSide::Buy, "1.000", TimeInForce::Ioc, false)?;
+                }
+                if self.quotes == 2 {
+                    self.adapter
+                        .register("E-2", Side::Sell, 1.0, None, false, 0.0, None);
+                    self.market("E-2", OrderSide::Sell, "1.000", TimeInForce::Ioc, false)?;
+                }
+                if self.quotes == 3 {
+                    self.adapter
+                        .register("E-3", Side::Buy, 1.0, None, false, 0.0, None);
+                    self.market("E-3", OrderSide::Buy, "1.000", TimeInForce::Ioc, false)?;
+                }
+                if self.quotes == 4 {
+                    let epoch = self.adapter.position_epoch;
+                    // A stop built for the closed position must never reach the venue.
+                    let stale = self.adapter.submit_stop_with_epoch(
+                        "STALE-STOP",
+                        1,
+                        Side::Sell,
+                        1.0,
+                        Some("GR-OLD"),
+                        true,
+                    );
+                    self.record_adapter(
+                        "stale_stop",
+                        json!({
+                            "client_order_id": "STALE-STOP",
+                            "requested_epoch": 1,
+                            "current_epoch": epoch,
+                            "response": match stale { Ok(_) => "ACCEPTED", Err(code) => code },
+                            "venue_submission": stale.is_ok(),
+                        }),
+                    );
+                    let qty = self.adapter.position_qty.abs();
+                    match self.adapter.submit_stop_with_epoch(
+                        "FRESH-STOP",
+                        epoch,
+                        Side::Sell,
+                        qty,
+                        None,
+                        true,
+                    ) {
+                        Ok(venue_seq) => {
+                            self.record_adapter(
+                                "fresh_stop",
+                                json!({
+                                    "client_order_id": "FRESH-STOP",
+                                    "epoch": epoch,
+                                    "quantity": qty,
+                                    "venue_seq": venue_seq,
+                                    "response": "ACCEPTED",
+                                    "venue_submission": true,
+                                }),
+                            );
+                            let formatted = format!("{qty:.3}");
+                            self.stop_limit(
+                                "FRESH-STOP",
+                                OrderSide::Sell,
+                                &formatted,
+                                "98.00",
+                                "98.00",
+                                true,
+                            )?;
+                        }
+                        Err(code) => self.record_adapter(
+                            "fresh_stop",
+                            json!({"response": code, "venue_submission": false}),
+                        ),
+                    }
+                }
+                if self.quotes == 5 {
+                    // Native control: the same stale-epoch stop sent straight to
+                    // the venue has no epoch gate at all.
+                    self.stop_limit("STALE-NATIVE", OrderSide::Sell, "1.000", "98.00", "98.00", true)?;
+                    self.record_adapter(
+                        "native_control",
+                        json!({
+                            "client_order_id": "STALE-NATIVE",
+                            "epoch_semantics": 1,
+                            "venue_submission": true,
+                            "note": "submitted without the adapter epoch gate",
+                        }),
+                    );
+                }
+                if self.quotes == 6 {
+                    let _ = self.cancel_order(ClientOrderId::new("FRESH-STOP"), None, None);
+                    let _ = self.cancel_order(ClientOrderId::new("STALE-NATIVE"), None, None);
+                }
+            }
+            Mode::AdapterF31 => {
+                if self.quotes == 1 {
+                    let venue_seq =
+                        self.adapter
+                            .register("O-1", Side::Buy, 2.0, None, false, 0.0, None);
+                    self.record_adapter(
+                        "register",
+                        json!({
+                            "client_order_id": "O-1",
+                            "venue_seq": venue_seq,
+                            "quantity": 2.0,
+                        }),
+                    );
+                    self.limit("O-1", OrderSide::Buy, "2.000", "100.00", TimeInForce::Gtc, false, false)?;
+                }
+                if self.quotes == 2 {
+                    let fill_id = self.last_fill_id.clone().unwrap_or_default();
+                    // Delayed ACK: seq 1 arrives after the seq 2 fill.
+                    let ack = self.adapter.note_accepted("O-1", 1);
+                    self.record_adapter(
+                        "delayed_ack",
+                        json!({
+                            "client_order_id": "O-1",
+                            "venue_seq": 1,
+                            "event": "ACCEPTED",
+                            "verdict": ack.as_str(),
+                        }),
+                    );
+                    // Duplicate fill: same venue seq and trade id.
+                    let (duplicate, applied) =
+                        self.adapter.note_fill("O-1", 2, &fill_id, 1.0);
+                    self.record_adapter(
+                        "duplicate_fill",
+                        json!({
+                            "client_order_id": "O-1",
+                            "venue_seq": 2,
+                            "fill_id": fill_id,
+                            "qty": 1.0,
+                            "verdict": duplicate.as_str(),
+                            "applied_qty": applied,
+                        }),
+                    );
+                    let (decision, _) = self.adapter.request_cancel("O-1");
+                    self.record_adapter(
+                        "cancel_requested",
+                        json!({"client_order_id": "O-1", "decision": decision.as_str()}),
+                    );
+                    if decision == CancelDecision::DispatchToVenue {
+                        self.cancel_order(ClientOrderId::new("O-1"), None, None)?;
+                        let response = self.adapter.resolve_cancel("O-1");
+                        self.record_adapter(
+                            "cancel_arrived",
+                            json!({"client_order_id": "O-1", "response": response}),
+                        );
+                    }
+                }
+            }
+            Mode::AdapterClientOco => {
+                if self.quotes == 1 {
+                    self.adapter
+                        .register("GR-ENTRY", Side::Buy, 1.0, None, false, 0.0, None);
+                    self.market("GR-ENTRY", OrderSide::Buy, "1.000", TimeInForce::Ioc, false)?;
+                }
+                if self.quotes == 2 {
+                    // Client bracket sized on the filled entry quantity only.
+                    let filled = self
+                        .adapter
+                        .order("GR-ENTRY")
+                        .map_or(0.0, |order| order.filled);
+                    let exit_qty = self.adapter.size_reduce_only_exit(filled, filled);
+                    self.adapter.register(
+                        "GR-TP",
+                        Side::Sell,
+                        exit_qty,
+                        Some("GR-1"),
+                        true,
+                        0.0,
+                        None,
+                    );
+                    self.adapter.register(
+                        "GR-SL",
+                        Side::Sell,
+                        exit_qty,
+                        Some("GR-1"),
+                        true,
+                        0.0,
+                        None,
+                    );
+                    self.record_adapter(
+                        "bracket_registered",
+                        json!({
+                            "group": "GR-1",
+                            "entry_filled_qty": filled,
+                            "tp_qty": exit_qty,
+                            "sl_qty": exit_qty,
+                            "policy": "SIZED_FROM_FILLED_ENTRY",
+                        }),
+                    );
+                    let formatted = format!("{exit_qty:.3}");
+                    self.limit("GR-TP", OrderSide::Sell, &formatted, "101.00", TimeInForce::Gtc, false, true)?;
+                    self.stop_limit("GR-SL", OrderSide::Sell, &formatted, "98.00", "98.00", true)?;
+                }
+                if self.quotes == 3 {
+                    let remaining = self
+                        .adapter
+                        .order("GR-TP")
+                        .map_or(0.0, |order| order.quantity);
+                    let guard = self.adapter.guard_reduce_only_exit(remaining);
+                    self.record_adapter(
+                        "reduce_only_guard",
+                        json!({
+                            "requested_qty": remaining,
+                            "position_qty": self.adapter.position_qty,
+                            "response": match guard { Ok(qty) => json!(qty), Err(code) => json!(code) },
+                            "venue_submission": guard.is_ok(),
+                        }),
+                    );
+                    // Native control: the same exit order sent straight to the
+                    // venue, rested away from the market so it cannot fill.
+                    self.limit("GR-SL2", OrderSide::Sell, "1.000", "105.00", TimeInForce::Gtc, false, true)?;
+                }
+                if self.quotes == 4 {
+                    let _ = self.cancel_order(ClientOrderId::new("GR-SL2"), None, None);
+                    let _ = self.cancel_order(ClientOrderId::new("GR-SL"), None, None);
+                }
+            }
+            Mode::AdapterUnknownAggressor => {
+                if self.quotes == 1 {
+                    let displayed = quote.bid_size.as_f64();
+                    let venue_seq = self.adapter.register(
+                        "O-1",
+                        Side::Buy,
+                        20.0,
+                        None,
+                        false,
+                        displayed,
+                        None,
+                    );
+                    self.record_adapter(
+                        "register",
+                        json!({
+                            "client_order_id": "O-1",
+                            "venue_seq": venue_seq,
+                            "quantity": 20.0,
+                            "ahead_qty": displayed,
+                        }),
+                    );
+                    self.limit("O-1", OrderSide::Buy, "20.000", "100.00", TimeInForce::Gtc, false, false)?;
+                }
+            }
             Mode::F02Depth => {}
         }
         Ok(())
     }
 
-    fn on_trade(&mut self, _tick: &TradeTick) -> anyhow::Result<()> {
+    fn on_trade(&mut self, tick: &TradeTick) -> anyhow::Result<()> {
         self.trades += 1;
+        if self.mode == Mode::AdapterUnknownAggressor {
+            let view = aggressor_view(tick.aggressor_side);
+            let outcome = self
+                .adapter
+                .note_trade("O-1", tick.size.as_f64(), view);
+            self.record_adapter(
+                "trade",
+                json!({
+                    "aggressor": view.as_str(),
+                    "qty": tick.size.as_f64(),
+                    "policy": outcome.policy,
+                    "depleted_qty": outcome.depleted_qty,
+                    "fill_qty": outcome.fill_qty,
+                    "ahead_after": outcome.ahead_after,
+                    "ts_event": tick.ts_event.as_u64(),
+                }),
+            );
+        }
         Ok(())
     }
 
@@ -1084,9 +1636,10 @@ fn probe_f04_cancel_race() -> Result<Value> {
     }))
 }
 
-/// F05: replace increase then decrease. Priority reset count and ahead are not
-/// readable, so only the quantity accounting is certified.
-fn probe_f05_replace() -> Result<Value> {
+/// F05 native control: replace increase then decrease on the pinned engine.
+/// Priority reset count and ahead are not readable, so only the quantity
+/// accounting is certified here; the adapter probe reuses this as a control.
+fn f05_native_impl() -> Result<Value> {
     let instrument = instrument();
     let id = instrument.id();
     let mut engine = new_engine()?;
@@ -1155,6 +1708,13 @@ fn probe_f05_replace() -> Result<Value> {
         },
         "pass": qty_pass,
     }))
+}
+
+/// F05 native probe. Kept unchanged so the existing verdict and evidence
+/// fields are preserved; the adapter probe reuses `f05_native_impl` as a
+/// control.
+fn probe_f05_replace() -> Result<Value> {
+    f05_native_impl()
 }
 
 /// F34: partial maker entry then client-managed protection sized on the filled
@@ -1580,6 +2140,858 @@ fn probe_client_oco_overfill() -> Result<Value> {
     }))
 }
 
+// ---------------------------------------------------------------------------
+// Adapter-over-native probes (profile ADAPTER_OVER_NATIVE)
+//
+// Each probe drives the pinned native engine as the venue and keeps the
+// client-owned facts in `adapter::Adapter`. Every probe names the exact native
+// limitation next to the behavior it compensates for.
+// ---------------------------------------------------------------------------
+
+/// F04 over the adapter: the cancel is dispatched at t=10 and arrives at t=30
+/// through the native delete latency, after the order filled at t=20. The
+/// adapter answers the arrival with an explicit `ALREADY_FILLED`.
+fn probe_f04_adapter() -> Result<Value> {
+    take_adapter_state();
+    let instrument = instrument();
+    let id = instrument.id();
+    let mut engine = new_engine()?;
+    engine.add_venue(venue_config_latency(BookType::L1_MBP, false, true, 20))?;
+    engine.add_instrument(&instrument)?;
+    engine.add_strategy(Passive::new(id, Mode::AdapterCancelRace, "F04A"))?;
+
+    run_chunk(
+        &mut engine,
+        vec![quote(id, "100.00", "100.10", "10.000", "10.000", 1)],
+    )?;
+    let native_after_submit = order_snapshot(&engine, "O-1");
+    run_chunk(
+        &mut engine,
+        vec![quote(id, "100.00", "100.10", "10.000", "10.000", 10)],
+    )?;
+    let native_after_cancel_sent = order_snapshot(&engine, "O-1");
+    run_chunk(
+        &mut engine,
+        vec![trade(id, "100.00", "1.000", AggressorSide::Seller, 20, "F04A-T1")],
+    )?;
+    let native_after_trade = order_snapshot(&engine, "O-1");
+    run_chunk(
+        &mut engine,
+        vec![quote(id, "100.00", "100.10", "10.000", "10.000", 40)],
+    )?;
+    let native_after_arrival = order_snapshot(&engine, "O-1");
+    engine.end();
+
+    let adapter = take_adapter_state();
+    let local = adapter_order(&adapter, "O-1");
+    let local_filled = num(&local, "filled_qty").unwrap_or(-1.0);
+    let local_canceled = num(&local, "canceled_qty").unwrap_or(0.0);
+    let local_quantity = num(&local, "quantity").unwrap_or(0.0);
+    let local_state = local["state"].as_str().unwrap_or("").to_string();
+    let last_response = adapter["last_cancel_response"].as_str().unwrap_or("");
+    let overfill = local_filled + local_canceled > local_quantity + 1e-9;
+    let cancel_requested = adapter_detail("cancel_requested");
+    let cancel_arrived = adapter_detail("cancel_arrived");
+    let delayed_arrival = cancel_requested["decision"] == "DISPATCH_TO_VENUE"
+        && num(&native_after_trade, "filled_qty") == Some(1.0)
+        && native_after_arrival["status"] == "Filled"
+        && cancel_arrived["ts_event"].as_u64() == Some(1_000_000_040);
+    let pass = close(local_filled, 1.0)
+        && local_state == "FILLED"
+        && last_response == "ALREADY_FILLED"
+        && !overfill
+        && delayed_arrival;
+
+    Ok(json!({
+        "fixture": "F04",
+        "scenario": "ADAPTER_OVER_NATIVE",
+        "kind": "cancel_race",
+        "profile": adapter::PROFILE,
+        "setup": {
+            "order_qty": 1.0,
+            "ahead": 0.0,
+            "cancel_sent_ns": 10,
+            "cancel_arrival_ns": 30,
+            "trade_ns": 20,
+            "delete_latency_ns": 20,
+        },
+        "filled_qty": local_filled,
+        "state": local_state.to_uppercase(),
+        "last_cancel_response": last_response,
+        "overfill": overfill,
+        "delayed_cancel_arrival_reproduced": delayed_arrival,
+        "adapter": {
+            "cancel_requested": cancel_requested,
+            "cancel_arrived": cancel_arrived,
+            "cancel_response_count": adapter["cancel_responses"].as_array().map_or(0, Vec::len),
+            "local_order": local,
+            "strategy_fill_events": adapter["strategy_fill_events"],
+            "fills": adapter_actions("fill"),
+        },
+        "native": {
+            "after_submit": native_after_submit,
+            "after_cancel_sent": native_after_cancel_sent,
+            "after_trade": native_after_trade,
+            "after_cancel_arrival": native_after_arrival,
+            "cancel_rejections": logged("cancel_rejected"),
+        },
+        "native_limitation": "OrderMatchingEngine::process_cancel purges a terminal order silently (crates/execution/src/matching_engine/engine.rs); OrderCancelRejected is never emitted for ALREADY_FILLED",
+        "profile_boundary": {
+            "adapter_managed": "terminal-aware cancel response resolved at the client arrival boundary",
+            "native_gap": "no ALREADY_FILLED cancel response and no OrderCancelRejected for a terminal order",
+        },
+        "verdict": if pass { "PASS" } else { "FAIL" },
+        "verdict_reason": if pass {
+            "adapter local state answers the late cancel with ALREADY_FILLED at the arrival boundary; native fill stands at 1 lot and no quantity is overfilled"
+        } else {
+            "adapter cancel response, fill or overfill invariant not satisfied"
+        },
+        "pass": pass,
+    }))
+}
+
+/// F05 over the adapter: the increase is a client-managed cancel+new (priority
+/// reset counted by the adapter), the decrease is an in-place resize. The
+/// native control records that a same-price native replace keeps priority.
+fn probe_f05_adapter() -> Result<Value> {
+    // Native control first; its fill log is drained before the adapter run.
+    let native_control_full = f05_native_impl()?;
+    drain_log();
+    take_adapter_state();
+
+    let native_control = json!({
+        "observed_priority_behavior": native_control_full["observed_priority_behavior"],
+        "priority_probe_fill_after_increase_qty": native_control_full["priority_probe_fill_after_increase_qty"],
+        "native_matches_fixture_priority": native_control_full["native_matches_fixture_priority"],
+        "priority_reset_count_public": false,
+        "ahead_qty_public": false,
+        "missing_api": native_control_full["missing_api"],
+        "engine_path": native_control_full["engine_path"],
+    });
+
+    let instrument = instrument();
+    let id = instrument.id();
+    let mut engine = new_engine()?;
+    engine.add_venue(venue_config(BookType::L1_MBP, true, true))?;
+    engine.add_instrument(&instrument)?;
+    engine.add_strategy(Passive::new(id, Mode::AdapterReplace, "F05A"))?;
+
+    // t=1 submit 10 @ 100 (displayed 100); t=2 a 102-lot trade fills 2.
+    run_chunk(
+        &mut engine,
+        vec![
+            quote(id, "100.00", "101.00", "100.000", "10.000", 1),
+            trade(id, "100.00", "102.000", AggressorSide::Seller, 2, "F05A-T1"),
+        ],
+    )?;
+    let native_after_trade = order_snapshot(&engine, "O-1");
+    // t=3 replace increase 10 -> 20 (client cancel+new, priority reset).
+    run_chunk(
+        &mut engine,
+        vec![quote(id, "100.00", "101.00", "100.000", "10.000", 3)],
+    )?;
+    // t=4 replace decrease 20 -> 15 (in-place resize, no reset).
+    run_chunk(
+        &mut engine,
+        vec![quote(id, "100.00", "101.00", "100.000", "10.000", 4)],
+    )?;
+    engine.end();
+
+    let adapter = take_adapter_state();
+    let replaces = adapter_actions("replace");
+    let first = replaces.first().cloned().unwrap_or(Value::Null);
+    let second = replaces.get(1).cloned().unwrap_or(Value::Null);
+    let successor_id = first["new_order_id"].as_str().unwrap_or("O-1-R1");
+    let successor = adapter_order(&adapter, successor_id);
+    let filled = num(&successor, "filled_qty").unwrap_or(-1.0);
+    let leaves = num(&successor, "leaves_qty").unwrap_or(-1.0);
+    let accepted = num(&successor, "quantity").unwrap_or(-1.0);
+    let ahead = num(&successor, "ahead_qty").unwrap_or(-1.0);
+    let priority_reset_count = adapter["priority_reset_count"].as_u64().unwrap_or(0);
+    let native_successor = order_snapshot(&engine, successor_id);
+    let quantity_pass = close(filled, 2.0)
+        && close(leaves, 13.0)
+        && close(accepted, 15.0)
+        && close(ahead, 100.0)
+        && priority_reset_count == 1;
+    let pass = quantity_pass
+        && first["priority_reset"] == true
+        && second["priority_reset"] == false
+        && native_control["observed_priority_behavior"] == "preserved_on_same_price_increase";
+
+    Ok(json!({
+        "fixture": "F05",
+        "scenario": "ADAPTER_OVER_NATIVE",
+        "kind": "replace_priority",
+        "profile": adapter::PROFILE,
+        "setup": {
+            "order_qty": 10.0,
+            "ahead": 100.0,
+            "replace_increase_resets": true,
+            "replace_decrease_resets": false,
+            "sequence": [10.0, 20.0, 15.0],
+        },
+        "filled_qty": filled,
+        "leaves_qty": leaves,
+        "accepted_qty": accepted,
+        "ahead_qty": ahead,
+        "priority_reset_count": priority_reset_count,
+        "replace_increase_resets": true,
+        "adapter": {
+            "replaces": replaces,
+            "successor": successor,
+            "canceled_original": adapter_order(&adapter, "O-1"),
+            "replace_count": adapter["replace_count"],
+        },
+        "native_control": native_control,
+        "native_mirror": {
+            "after_trade": native_after_trade,
+            "successor_after_modify": native_successor,
+            "note": "the venue successor carries the remaining quantity (13) while the client aggregate carries 2 filled + 13 leaves = 15 accepted",
+        },
+        "profile_boundary": {
+            "adapter_managed": "cancel+new replace when priority must reset; in-place resize otherwise",
+            "native_gap": "no public priority_reset_count and no public queue-ahead readback; OrderMatchingEngine::process_modify only re-snapshots the queue on a price change",
+        },
+        "native_limitation": "no public priority_reset_count and no public queue-ahead readback; OrderMatchingEngine::process_modify only re-snapshots the queue on a price change, so a same-price native replace preserves priority",
+        "verdict": if pass { "PASS" } else { "FAIL" },
+        "verdict_reason": if pass {
+            "adapter priority_reset_count=1 with cancel+new on the increase; quantities match the oracle; native same-price replace preserves priority and remains recorded"
+        } else {
+            "adapter replace quantities, priority reset count or native control mismatch"
+        },
+        "pass": pass,
+    }))
+}
+
+/// F07 over the adapter: the position epoch is stamped on open, and a stop
+/// built for the closed position is rejected before any venue submission.
+fn probe_f07_adapter() -> Result<Value> {
+    take_adapter_state();
+    let instrument = instrument();
+    let id = instrument.id();
+    let mut engine = new_engine()?;
+    engine.add_venue(venue_config(BookType::L1_MBP, false, true))?;
+    engine.add_instrument(&instrument)?;
+    engine.add_strategy(Passive::new(id, Mode::AdapterEpoch, "F07A"))?;
+
+    // Epoch 1: open. Then close. Then reopen under epoch 2.
+    run_chunk(
+        &mut engine,
+        vec![quote(id, "100.00", "100.10", "10.000", "10.000", 1)],
+    )?;
+    let epoch_1_fill = order_snapshot(&engine, "E-1");
+    run_chunk(
+        &mut engine,
+        vec![quote(id, "100.00", "100.10", "10.000", "10.000", 2)],
+    )?;
+    let close_fill = order_snapshot(&engine, "E-2");
+    run_chunk(
+        &mut engine,
+        vec![quote(id, "100.00", "100.10", "10.000", "10.000", 3)],
+    )?;
+    let reopen_fill = order_snapshot(&engine, "E-3");
+    run_chunk(
+        &mut engine,
+        vec![quote(id, "100.00", "100.10", "10.000", "10.000", 4)],
+    )?;
+    let fresh_after_submit = order_snapshot(&engine, "FRESH-STOP");
+    let stale_native_absent = order_of(&engine, "STALE-STOP").is_none();
+    run_chunk(
+        &mut engine,
+        vec![quote(id, "100.00", "100.10", "10.000", "10.000", 5)],
+    )?;
+    let native_control_after_submit = order_snapshot(&engine, "STALE-NATIVE");
+    run_chunk(
+        &mut engine,
+        vec![quote(id, "100.00", "100.10", "10.000", "10.000", 6)],
+    )?;
+    let position = position_qty(&engine, id);
+    engine.end();
+
+    let adapter = take_adapter_state();
+    let stale_stop = adapter_detail("stale_stop");
+    let fresh_stop = adapter_detail("fresh_stop");
+    let fill_events = adapter_actions("fill");
+    let stale_fill_count = fill_events
+        .iter()
+        .filter(|fill| fill["client_order_id"] == "STALE-STOP")
+        .count();
+    let outlier_submissions = adapter["orders"]
+        .as_array()
+        .map(|orders| {
+            orders
+                .iter()
+                .filter(|order| order["client_order_id"] == "STALE-STOP")
+                .count()
+        })
+        .unwrap_or(0);
+    let pass = stale_stop["response"] == "STALE_POSITION_EPOCH"
+        && stale_stop["venue_submission"] == false
+        && stale_native_absent
+        && outlier_submissions == 0
+        && stale_fill_count == 0
+        && fresh_stop["response"] == "ACCEPTED"
+        && adapter["position_epoch"] == 2
+        && close(position, 1.0);
+
+    Ok(json!({
+        "fixture": "F07",
+        "scenario": "ADAPTER_OVER_NATIVE",
+        "kind": "epoch_safety",
+        "profile": adapter::PROFILE,
+        "setup": {"open_epoch": 1, "reopen_epoch": 2, "stale_request_epoch": 1, "qty": 1.0},
+        "new_epoch_qty": position,
+        "stale_stop_response": stale_stop["response"],
+        "stale_fill_count": stale_fill_count,
+        "position_epoch": adapter["position_epoch"],
+        "requested_epoch": stale_stop["requested_epoch"],
+        "adapter": {
+            "stale_stop": stale_stop,
+            "fresh_stop": fresh_stop,
+            "stale_order_registered": outlier_submissions > 0,
+            "venue_submissions": adapter["venue_submissions"],
+            "position_qty": adapter["position_qty"],
+            "fills": fill_events,
+            "epoch_sequence": ["E-1", "E-2", "E-3"],
+        },
+        "native": {
+            "epoch_1_fill": epoch_1_fill,
+            "close_fill": close_fill,
+            "reopen_fill": reopen_fill,
+            "fresh_stop_after_submit": fresh_after_submit,
+            "stale_stop_present": !stale_native_absent,
+            "native_control_after_submit": native_control_after_submit,
+        },
+        "native_limitation": "nautilus_model::position::Position has no epoch/position_epoch field and OrderMatchingEngine has no stale-epoch comparison; STALE-NATIVE is accepted by the venue with epoch-1 semantics",
+        "profile_boundary": {
+            "adapter_managed": "monotonic position epoch, stamped on open/reopen, checked before any stop reaches the venue",
+            "native_gap": "no epoch field on Position and no stale-entity rejection path or error code",
+        },
+        "verdict": if pass { "PASS" } else { "FAIL" },
+        "verdict_reason": if pass {
+            "stale epoch stop rejected with STALE_POSITION_EPOCH before venue submission; fresh epoch stop accepted; the same stop sent natively is accepted, proving the native gap"
+        } else {
+            "epoch accounting, stale rejection or venue isolation not satisfied"
+        },
+        "pass": pass,
+    }))
+}
+
+/// F29 over the adapter: a book-delta sequence guard keeps `last_good_seq`,
+/// invalidates the client book on a gap, blocks new risk and only forwards
+/// validated deltas to the native `OrderBook`.
+fn probe_f29_adapter() -> Result<Value> {
+    let instrument = instrument();
+    let id = instrument.id();
+    let mut book = OrderBook::new(id, BookType::L2_MBP);
+    let mut adapter = Adapter::new();
+
+    // Snapshot at last_update_id 100 is a client fact; the same levels are
+    // loaded into the native book as the record of the market.
+    adapter.book.snapshot(100);
+    let seed_bid = OrderBookDelta::new(
+        id,
+        BookAction::Add,
+        BookOrder::new(OrderSide::Buy, Price::from("100.00"), Quantity::from("100.000"), 1),
+        0,
+        100,
+        ts(1),
+        ts(1),
+    );
+    let seed_ask = OrderBookDelta::new(
+        id,
+        BookAction::Add,
+        BookOrder::new(OrderSide::Sell, Price::from("101.00"), Quantity::from("10.000"), 2),
+        0,
+        100,
+        ts(1),
+        ts(1),
+    );
+    let seed_errors = vec![
+        book.apply_delta(&seed_bid).err().map(|error| error.to_string()),
+        book.apply_delta(&seed_ask).err().map(|error| error.to_string()),
+    ];
+    // Levels are stored at the delta quantity precision (3 decimal places).
+    let bid_level_at_snapshot = book
+        .get_quantity_at_level(Price::from("100.00"), OrderSide::Sell, 3)
+        .as_f64();
+
+    // Deltas: [first, last, previous] mirrors the fixture's BOOK_SEQUENCE steps.
+    let steps: [(u64, u64, u64, &str, &str, &str); 2] = [
+        (99, 101, 98, "60.000", "100.00", "Buy"),
+        (102, 102, 101, "8.000", "101.00", "Sell"),
+    ];
+    let mut applied_stream: Vec<Value> = Vec::new();
+    let mut apply_errors: Vec<Option<String>> = Vec::new();
+    for (first, last, previous, qty, price, side) in steps {
+        let verdict = adapter.book.delta(first, last, previous);
+        let native_error = if verdict == adapter::BookVerdict::Applied {
+            let delta = OrderBookDelta::new(
+                id,
+                BookAction::Update,
+                BookOrder::new(
+                    if side == "Buy" { OrderSide::Buy } else { OrderSide::Sell },
+                    Price::from(price),
+                    Quantity::from(qty),
+                    1,
+                ),
+                0,
+                last,
+                ts(last),
+                ts(last),
+            );
+            Some(book.apply_delta(&delta).err().map(|error| error.to_string()))
+        } else {
+            None
+        };
+        apply_errors.push(native_error.flatten());
+        applied_stream.push(json!({
+            "first": first,
+            "last": last,
+            "previous": previous,
+            "adapter_verdict": if verdict == adapter::BookVerdict::Applied { "APPLIED" } else { "REJECTED" },
+            "forwarded_to_native_book": verdict == adapter::BookVerdict::Applied,
+        }));
+    }
+
+    let sequence_before_bad = book.sequence;
+    let bid_level_before = book
+        .get_quantity_at_level(Price::from("100.00"), OrderSide::Sell, 3)
+        .as_f64();
+    let ask_level_before = book
+        .get_quantity_at_level(Price::from("101.00"), OrderSide::Buy, 3)
+        .as_f64();
+
+    // The bad delta: a 103 range whose previous sequence (999) does not chain.
+    let initial_match = adapter.book.initial_match;
+    let last_good_at_rejection = adapter.book.last_good_seq;
+    let anchor_at_rejection = adapter.book.anchor;
+    let bad_verdict = adapter.book.delta(103, 103, 999);
+    let state_at_rejection = adapter.book.snapshot_state();
+    let rejected_count = adapter.book.rejected;
+    let applied_count = adapter.book.applied;
+    let bad_forwarded = bad_verdict == adapter::BookVerdict::Applied;
+    let blocked = adapter.gate_new_risk("F29-NEW");
+    let rejected_delta = json!({
+        "first": 103,
+        "last": 103,
+        "previous": 999,
+        "adapter_verdict": "REJECTED",
+        "code": adapter.book.last_reject.as_ref().map_or("", |reject| reject.code),
+        "forwarded_to_native_book": bad_forwarded,
+    });
+
+    let sequence_after_bad = book.sequence;
+    let bid_99_level = book
+        .get_quantity_at_level(Price::from("99.00"), OrderSide::Sell, 3)
+        .as_f64();
+    let bid_level_after = book
+        .get_quantity_at_level(Price::from("100.00"), OrderSide::Sell, 3)
+        .as_f64();
+
+    // Resync: a fresh snapshot re-validates the feed and unblocks risk.
+    adapter.book.snapshot(110);
+    let unblocked = adapter.gate_new_risk("F29-NEW");
+    let resync_delta = adapter.book.delta(111, 111, 110);
+    let state_after_resync = adapter.book.snapshot_state();
+
+    let absolute_updates_not_additive =
+        close(bid_level_after, 60.0) && !close(bid_level_after, bid_level_at_snapshot + 60.0);
+    let native_untouched = sequence_after_bad == sequence_before_bad
+        && sequence_after_bad == 102
+        && close(bid_99_level, 0.0)
+        && close(bid_level_after, bid_level_before);
+    let pass = initial_match
+        && last_good_at_rejection == Some(102)
+        && state_at_rejection == "INVALID"
+        && absolute_updates_not_additive
+        && blocked.is_err()
+        && bad_verdict == adapter::BookVerdict::Rejected
+        && !bad_forwarded
+        && native_untouched
+        && unblocked.is_ok()
+        && resync_delta == adapter::BookVerdict::Applied;
+
+    Ok(json!({
+        "fixture": "F29",
+        "scenario": "ADAPTER_OVER_NATIVE",
+        "kind": "book_sequence",
+        "profile": adapter::PROFILE,
+        "sequence_stream": [100, 101, 102, 110, 105],
+        "initial_match": initial_match,
+        "last_good_seq": last_good_at_rejection.map(|seq| seq.to_string()),
+        "book_state": state_at_rejection,
+        "absolute_updates_not_additive": absolute_updates_not_additive,
+        "adapter": {
+            "anchor_at_rejection": anchor_at_rejection,
+            "last_good_seq_at_rejection": last_good_at_rejection,
+            "applied": applied_count,
+            "rejected": rejected_count,
+            "applied_stream": applied_stream,
+            "rejected_delta": rejected_delta,
+            "risk_gate": {
+                "code": blocked.err(),
+                "blocked_risk_requests": adapter.blocked_risk_requests,
+                "risk_events": adapter.risk_events,
+            },
+            "resync": {
+                "snapshot": 110,
+                "state_after": state_after_resync,
+                "risk_allowed": unblocked.is_ok(),
+                "delta_after_resync": if resync_delta == adapter::BookVerdict::Applied { "APPLIED" } else { "REJECTED" },
+            },
+        },
+        "native_book": {
+            "seed_errors": seed_errors,
+            "apply_errors": apply_errors,
+            "bid_level_qty_at_snapshot": bid_level_at_snapshot,
+            "sequence_before_rejected_delta": sequence_before_bad,
+            "sequence_after_rejected_delta": sequence_after_bad,
+            "bid_level_qty_before": bid_level_before,
+            "bid_level_qty_after": bid_level_after,
+            "ask_level_qty_after": ask_level_before,
+            "bid_99_level_qty": bid_99_level,
+            "rejected_delta_applied": false,
+            "note": "the rejected delta is never forwarded to OrderBook::apply_delta, so the native book keeps sequence 102 and no 99.00 level",
+        },
+        "native_limitation": "OrderBook exposes `sequence` as a high-water mark only: there is no snapshot anchor, no last_good_seq, no INVALID state and apply_delta/apply_deltas never validate continuity (crates/model/src/orderbook/book.rs)",
+        "profile_boundary": {
+            "adapter_managed": "book-delta sequence high-water mark, INVALID/RESYNC_REQUIRED gate, last_good_seq retention and snapshot-based resync",
+            "native_gap": "no last_good_seq, book_state or gap validation in the public book API",
+        },
+        "verdict": if pass { "PASS" } else { "FAIL" },
+        "verdict_reason": if pass {
+            "sequence gap invalidates the client book at last_good_seq=102, risk is blocked until a snapshot resync, and the rejected delta never mutates the native book"
+        } else {
+            "sequence guard, risk gate, resync or native-book isolation not satisfied"
+        },
+        "pass": pass,
+    }))
+}
+
+/// F31 over the adapter: the adapter stamps a venue sequence on order/fill
+/// events, suppresses the duplicate fill and the out-of-order ACK, and zeroes
+/// canceled leaves locally while the native order keeps its leaves quantity.
+fn probe_f31_adapter() -> Result<Value> {
+    take_adapter_state();
+    let instrument = instrument();
+    let id = instrument.id();
+    let mut engine = new_engine()?;
+    engine.add_venue(venue_config(BookType::L1_MBP, false, true))?;
+    engine.add_instrument(&instrument)?;
+    engine.add_strategy(Passive::new(id, Mode::AdapterF31, "F31A"))?;
+
+    // t=1 submit buy 2 @ 100; t=2 a 1-lot trade partially fills the order.
+    run_chunk(
+        &mut engine,
+        vec![
+            quote(id, "100.00", "100.10", "10.000", "10.000", 1),
+            trade(id, "100.00", "1.000", AggressorSide::Seller, 2, "F31A-T1"),
+        ],
+    )?;
+    let native_after_partial = order_snapshot(&engine, "O-1");
+    // t=4: delayed ACK (seq 1), duplicate fill (seq 2 / same trade id), cancel.
+    run_chunk(
+        &mut engine,
+        vec![quote(id, "100.00", "100.10", "10.000", "10.000", 4)],
+    )?;
+    let native_after_cancel = order_snapshot(&engine, "O-1");
+    engine.end();
+
+    let adapter = take_adapter_state();
+    let local = adapter_order(&adapter, "O-1");
+    let accepted = num(&local, "quantity").unwrap_or(-1.0);
+    let filled = num(&local, "filled_qty").unwrap_or(-1.0);
+    let leaves = num(&local, "leaves_qty").unwrap_or(-1.0);
+    let canceled = num(&local, "canceled_qty").unwrap_or(-1.0);
+    let state = local["state"].as_str().unwrap_or("").to_string();
+    let fill_events = adapter_actions("fill");
+    let delayed_ack = adapter_detail("delayed_ack");
+    let duplicate = adapter_detail("duplicate_fill");
+    let cancel_arrived = adapter_detail("cancel_arrived");
+    let native_leaves = num(&native_after_cancel, "leaves_qty").unwrap_or(-1.0);
+    let duplicate_fee_debits = adapter["duplicate_fee_debits"].as_u64().unwrap_or(1);
+    let strategy_fill_events = adapter["strategy_fill_events"].as_u64().unwrap_or(0);
+    let pass = close(accepted, 2.0)
+        && close(filled, 1.0)
+        && close(leaves, 0.0)
+        && close(canceled, 1.0)
+        && state == "CANCELED"
+        && duplicate_fee_debits == 0
+        && strategy_fill_events == 1
+        && delayed_ack["verdict"] == "OUT_OF_ORDER_SUPPRESSED"
+        && duplicate["verdict"] == "DUPLICATE_SUPPRESSED"
+        && cancel_arrived["response"] == "CANCELED";
+
+    Ok(json!({
+        "fixture": "F31",
+        "scenario": "ADAPTER_OVER_NATIVE",
+        "kind": "duplicate_fill",
+        "profile": adapter::PROFILE,
+        "accepted_qty": accepted,
+        "filled_qty": filled,
+        "leaves_qty": leaves,
+        "canceled_qty": canceled,
+        "state": state.to_uppercase(),
+        "duplicate_funding_or_fee_debits": duplicate_fee_debits,
+        "strategy_fill_events": strategy_fill_events,
+        "adapter": {
+            "local_order": local,
+            "event_trace": {
+                "fill": fill_events,
+                "delayed_ack": delayed_ack,
+                "duplicate_fill": duplicate,
+                "cancel_arrived": cancel_arrived,
+            },
+            "duplicate_fills_suppressed": adapter["duplicate_fills_suppressed"],
+            "out_of_order_events_suppressed": adapter["out_of_order_events_suppressed"],
+            "last_venue_seq": adapter["last_venue_seq"],
+            "venue_seq_source": "adapter stamp: the pinned engine has no venue sequence on OrderAccepted/OrderFilled",
+        },
+        "native": {
+            "after_partial": native_after_partial,
+            "after_cancel": native_after_cancel,
+            "leaves_qty_after_cancel": native_leaves,
+            "venue_seq_field_present": false,
+            "local_order_event_hook_present": false,
+        },
+        "fixture_expects_leaves_qty": 0.0,
+        "native_leaves_qty_after_cancel": native_leaves,
+        "native_limitation": "OrderFilled/OrderAccepted carry no venue_seq and BacktestEngine/Data exposes no LOCAL_ORDER_EVENT hook; the native order keeps leaves_qty=1 after a cancel",
+        "profile_boundary": {
+            "adapter_managed": "venue sequence stamping, duplicate-fill dedupe by (order id, venue sequence, trade id), out-of-order ACK suppression, canceled leaves zeroed in client state",
+            "native_gap": "no venue_seq on order events, no LOCAL_ORDER_EVENT injection, leaves_qty not zeroed on cancel",
+        },
+        "verdict": if pass { "PASS" } else { "FAIL" },
+        "verdict_reason": if pass {
+            "exactly one strategy-visible fill; duplicate fill and delayed ACK suppressed with no fee debit; client canceled leaves are zero while the native order keeps leaves=1"
+        } else {
+            "dedupe, sequencing, fee or canceled-leaves accounting not satisfied"
+        },
+        "pass": pass,
+    }))
+}
+
+/// F06 client profile: an atomic client OCO group sizes reduce-only exits from
+/// the filled entry, cancels the sibling on the first fill and rejects a
+/// second exit while flat. Native OCO is untouched.
+fn probe_f06_client_adapter() -> Result<Value> {
+    take_adapter_state();
+    let instrument = instrument();
+    let id = instrument.id();
+    let mut engine = new_engine()?;
+    engine.add_venue(venue_config(BookType::L1_MBP, false, true))?;
+    engine.add_instrument(&instrument)?;
+    engine.add_strategy(Passive::new(id, Mode::AdapterClientOco, "F06C"))?;
+
+    // t=1 entry fills 1 @ 100.00.
+    run_chunk(
+        &mut engine,
+        vec![quote(id, "99.90", "100.00", "10.000", "10.000", 1)],
+    )?;
+    let entry = order_snapshot(&engine, "GR-ENTRY");
+    // t=2 bracket installed on the filled quantity only.
+    run_chunk(
+        &mut engine,
+        vec![quote(id, "99.90", "100.00", "10.000", "10.000", 2)],
+    )?;
+    let tp_after_install = order_snapshot(&engine, "GR-TP");
+    let sl_after_install = order_snapshot(&engine, "GR-SL");
+    // t=3 price trades through the take profit; the sibling must be canceled.
+    run_chunk(
+        &mut engine,
+        vec![quote(id, "102.00", "102.50", "10.000", "10.000", 3)],
+    )?;
+    let tp_after_fill = order_snapshot(&engine, "GR-TP");
+    let sl_after_sibling_cancel = order_snapshot(&engine, "GR-SL");
+    let position_after_tp = position_signed_qty(&engine, id);
+    // t=4 second child eligible while flat: adapter guard + native control.
+    run_chunk(
+        &mut engine,
+        vec![quote(id, "102.00", "102.50", "10.000", "10.000", 4)],
+    )?;
+    let second_child_native = order_snapshot(&engine, "GR-SL2");
+    // t=5 retire the native control order.
+    run_chunk(
+        &mut engine,
+        vec![quote(id, "102.00", "102.50", "10.000", "10.000", 5)],
+    )?;
+    let position = position_signed_qty(&engine, id);
+    let open_positions = open_position_count(&engine, id);
+    engine.end();
+
+    let adapter = take_adapter_state();
+    let guard = adapter_detail("reduce_only_guard");
+    let bracket = adapter_detail("bracket_registered");
+    let sibling_cancel = adapter_detail("group_sibling_cancel");
+    let sibling_canceled = adapter_detail("group_sibling_canceled");
+    let entry_filled = num(&bracket, "entry_filled_qty").unwrap_or(-1.0);
+    let exit_qty = num(&bracket, "tp_qty").unwrap_or(-1.0);
+    let tp_filled = adapter_order(&adapter, "GR-TP")
+        .get("filled_qty")
+        .and_then(Value::as_f64)
+        .unwrap_or(-1.0);
+    let oco_fill_count = adapter["orders"]
+        .as_array()
+        .map(|orders| {
+            orders
+                .iter()
+                .filter(|order| order["group"] == "GR-1" && num(order, "filled_qty").unwrap_or(0.0) > 0.0)
+                .count()
+        })
+        .unwrap_or(0);
+    let overfill = tp_filled > entry_filled + 1e-9;
+    let position_reversed = position < 0.0;
+    let pass = close(entry_filled, 1.0)
+        && close(exit_qty, 1.0)
+        && close(tp_filled, 1.0)
+        && oco_fill_count == 1
+        && !overfill
+        && !position_reversed
+        && close(position, 0.0)
+        && guard["response"] == "REDUCE_ONLY_REJECT"
+        && guard["venue_submission"] == false
+        && sibling_cancel["policy"] == "ATOMIC_CLIENT_OCO"
+        && sibling_canceled["response"] == "CANCELED"
+        && sl_after_sibling_cancel["status"] == "Canceled";
+
+    Ok(json!({
+        "fixture": "F06",
+        "scenario": "CLIENT_REDUCE_ONLY",
+        "kind": "client_managed_oco_safe",
+        "profile": adapter::PROFILE,
+        "entry_filled_qty": entry_filled,
+        "exit_total_qty": tp_filled,
+        "exit_qty_sized_from_filled": exit_qty,
+        "oco_fill_count": oco_fill_count,
+        "fill_count": oco_fill_count,
+        "position_qty": position,
+        "position_reversed": position_reversed,
+        "overfill": overfill,
+        "second_child_response": guard["response"],
+        "adapter": {
+            "bracket": bracket,
+            "group_sibling_cancel": sibling_cancel,
+            "group_sibling_canceled": sibling_canceled,
+            "reduce_only_guard": guard,
+            "orders": adapter["orders"],
+            "group_sibling_cancels": adapter["group_sibling_cancels"],
+            "strategy_fill_events": adapter["strategy_fill_events"],
+        },
+        "native": {
+            "entry": entry,
+            "tp_after_install": tp_after_install,
+            "sl_after_install": sl_after_install,
+            "tp_after_fill": tp_after_fill,
+            "sl_after_sibling_cancel": sl_after_sibling_cancel,
+            "second_child_native_control": second_child_native,
+            "position_signed_qty_after_tp": position_after_tp,
+            "open_positions": open_positions,
+            "note": "the sibling cancel is client-initiated after the fill; native OCO (F06 NATIVE_ATOMIC) performs it autonomously and is unchanged",
+        },
+        "native_oco_unchanged": true,
+        "native_limitation": "the OCO contingency group only cancels a sibling for a native bracket submitted as an order list; a client-managed group has no group/epoch advisory and no both-legs-eligible event",
+        "profile_boundary": {
+            "adapter_managed": "atomic client group, sibling cancel on first fill, exits sized from the filled entry, reduce-only exit rejected while flat",
+            "native_gap": "no client group state, no group-level atomic cancel and no reduce-only rejection advisory for a client-managed pair",
+        },
+        "verdict": if pass { "PASS" } else { "FAIL" },
+        "verdict_reason": if pass {
+            "one client OCO fill for a 1-lot entry, sibling canceled atomically, zero overfill and no position reversal; native OCO unchanged"
+        } else {
+            "client OCO sizing, sibling cancellation, overfill or position invariant not satisfied"
+        },
+        "pass": pass,
+    }))
+}
+
+/// F02 over the adapter: an unknown-aggressor trade does not deplete the
+/// client queue. The native engine's own behavior for the same trade is
+/// recorded next to it as the profile difference.
+fn probe_unknown_aggressor() -> Result<Value> {
+    take_adapter_state();
+    let instrument = instrument();
+    let id = instrument.id();
+    let mut engine = new_engine()?;
+    engine.add_venue(venue_config(BookType::L1_MBP, true, true))?;
+    engine.add_instrument(&instrument)?;
+    engine.add_strategy(Passive::new(id, Mode::AdapterUnknownAggressor, "UA"))?;
+
+    run_chunk(
+        &mut engine,
+        vec![quote(id, "100.00", "101.00", "100.000", "10.000", 1)],
+    )?;
+    let after_submit = order_snapshot(&engine, "O-1");
+    run_chunk(
+        &mut engine,
+        vec![trade(id, "100.00", "80.000", AggressorSide::Seller, 2, "UA-T1")],
+    )?;
+    let after_seller_trade = order_snapshot(&engine, "O-1");
+    run_chunk(
+        &mut engine,
+        vec![trade(id, "100.00", "30.000", AggressorSide::NoAggressor, 3, "UA-T2")],
+    )?;
+    let after_unknown_trade = order_snapshot(&engine, "O-1");
+    engine.end();
+
+    let adapter = take_adapter_state();
+    let trades = adapter_actions("trade");
+    let known_trade = trades.first().cloned().unwrap_or(Value::Null);
+    let unknown_trade = trades.last().cloned().unwrap_or(Value::Null);
+    let native_filled = num(&after_unknown_trade, "filled_qty").unwrap_or(-1.0);
+    let native_fill_on_unknown = native_filled
+        - num(&after_seller_trade, "filled_qty").unwrap_or(0.0);
+    let local = adapter_order(&adapter, "O-1");
+    let adapter_fill_on_unknown = num(&unknown_trade, "fill_qty").unwrap_or(-1.0);
+    let ahead_after = num(&unknown_trade, "ahead_after").unwrap_or(-1.0);
+    let policy_applied = unknown_trade["policy"] == "CONSERVATIVE_NO_DEPLETION"
+        && close(adapter_fill_on_unknown, 0.0)
+        && close(ahead_after, 20.0);
+    let profile_difference = native_fill_on_unknown > 1e-9;
+    let pass = policy_applied && close(num(&known_trade, "ahead_after").unwrap_or(-1.0), 20.0);
+
+    Ok(json!({
+        "fixture": "F02+UNKNOWN_AGGRESSOR",
+        "scenario": "ADAPTER_OVER_NATIVE",
+        "kind": "unknown_aggressor_queue",
+        "profile": adapter::PROFILE,
+        "adapter": {
+            "trades": trades,
+            "ahead_after_known_trade": known_trade["ahead_after"],
+            "ahead_after_unknown_trade": ahead_after,
+            "fill_on_unknown_aggressor_qty": adapter_fill_on_unknown,
+            "policy": unknown_trade["policy"],
+            "local_order": local,
+            "queue_depletions_skipped": adapter["queue_depletions_skipped"],
+            "unknown_aggressor_trades": adapter["unknown_aggressor_trades"],
+        },
+        "native": {
+            "after_submit": after_submit,
+            "after_seller_trade": after_seller_trade,
+            "after_unknown_trade": after_unknown_trade,
+            "filled_qty_after_unknown_trade": native_filled,
+            "fill_on_unknown_aggressor_qty": native_fill_on_unknown,
+        },
+        "native_fill_on_unknown_aggressor_qty": native_fill_on_unknown,
+        "profile_difference": profile_difference,
+        "native_limitation": "the native matching engine decrements queue-ahead for AggressorSide::NoAggressor and forces both sides to the trade price (crates/execution/src/matching_engine/engine.rs), so it fills where the conservative client model does not",
+        "profile_boundary": {
+            "adapter_managed": "conservative no-depletion policy on unknown aggressor trades",
+            "native_gap": "the native engine treats NoAggressor as a two-sided trade; the adapter does not reproduce that because the print cannot be attributed to the resting side",
+        },
+        "verdict": if pass && !profile_difference { "PASS" } else if pass { "PARTIAL" } else { "FAIL" },
+        "verdict_reason": if !pass {
+            "conservative queue policy not applied"
+        } else if profile_difference {
+            "adapter queue model is conservative and does not deplete on the unknown aggressor; the native engine filled on the same trade, which is recorded as the profile difference"
+        } else {
+            "adapter conservative policy applied and the native engine also did not fill on the unknown aggressor"
+        },
+        "pass": pass,
+    }))
+}
+
 fn blocked_fixtures() -> Value {
     json!({
         "F07": {
@@ -1645,6 +3057,15 @@ fn main() -> Result<()> {
     let f31 = probe(probe_f31_duplicate_fill);
     let client_oco = probe(probe_client_oco_overfill);
 
+    // Adapter-over-native probes (client order-management layer).
+    let adapter_f04 = probe(probe_f04_adapter);
+    let adapter_f05 = probe(probe_f05_adapter);
+    let adapter_f07 = probe(probe_f07_adapter);
+    let adapter_f29 = probe(probe_f29_adapter);
+    let adapter_f31 = probe(probe_f31_adapter);
+    let adapter_f06 = probe(probe_f06_client_adapter);
+    let adapter_unknown = probe(probe_unknown_aggressor);
+
     let summary = json!({
         "F02": f02["verdict"],
         "F02+CANCEL_REMAINDER": f02_cancel["verdict"],
@@ -1655,14 +3076,23 @@ fn main() -> Result<()> {
         "F05": f05["verdict"],
         "F06": f06["verdict"],
         "F07": "BLOCKED_BACKEND",
-        "F29": "BLOCKED_BACKEND",
-        "F31": "BLOCKED_BACKEND",
         "F33_FOK": f33_fok["verdict"],
         "F33_STOP_LIMIT_GAP": f33_gap["verdict"],
         "F34": f34["verdict"],
         "F29": f29["verdict"],
         "F31": f31["verdict"],
         "F06_CLIENT_UNSAFE_OBSERVABLE": client_oco["verdict"],
+    });
+
+    let adapter_summary = json!({
+        "profile": adapter::PROFILE,
+        "F04": adapter_f04["verdict"],
+        "F05": adapter_f05["verdict"],
+        "F06_CLIENT_REDUCE_ONLY": adapter_f06["verdict"],
+        "F07": adapter_f07["verdict"],
+        "F29": adapter_f29["verdict"],
+        "F31": adapter_f31["verdict"],
+        "F02+UNKNOWN_AGGRESSOR": adapter_unknown["verdict"],
     });
 
     let document = json!({
@@ -1675,6 +3105,7 @@ fn main() -> Result<()> {
         },
         "elapsed_ms": started.elapsed().as_millis() as u64,
         "summary": summary,
+        "adapter_summary": adapter_summary,
         "probes": {
             "f02_queue": f02,
             "f02_cancel_remainder": f02_cancel,
@@ -1689,7 +3120,36 @@ fn main() -> Result<()> {
             "f06_oco": f06,
             "f29_book_sequence": f29,
             "f31_duplicate_fill": f31,
-            "f06_client_unsafe_observable": client_oco
+            "f06_client_unsafe_observable": client_oco,
+            "adapter_f04_cancel_race": adapter_f04,
+            "adapter_f05_replace": adapter_f05,
+            "adapter_f06_client_oco": adapter_f06,
+            "adapter_f07_epoch": adapter_f07,
+            "adapter_f29_book_sequence": adapter_f29,
+            "adapter_f31_duplicate_fill": adapter_f31,
+            "adapter_f02_unknown_aggressor": adapter_unknown
+        },
+        "adapter_profile": {
+            "name": adapter::PROFILE,
+            "definition": "client order-management layer over the pinned native matching engine; native matching remains the exchange",
+            "claimed": [
+                "explicit ALREADY_FILLED cancel response from local terminal state (F04)",
+                "client-managed cancel+new replace with priority_reset_count (F05)",
+                "monotonic position epoch and STALE_POSITION_EPOCH rejection before the venue (F07)",
+                "book-delta sequence high-water mark with INVALID/RESYNC_REQUIRED and last_good_seq (F29)",
+                "venue sequence stamping, duplicate-fill and out-of-order ACK suppression, zeroed canceled leaves (F31)",
+                "atomic client OCO sibling cancel with reduce-only exits sized from the filled entry (F06 client profile)",
+                "conservative no-depletion queue policy on unknown-aggressor trades"
+            ],
+            "not_claimed": [
+                "any of these as a native venue capability",
+                "order-book matching fidelity from the adapter",
+                "client-server persistence or restart durability of adapter state",
+                "native queue-state readback or native priority_reset_count",
+                "native venue sequence on order events",
+                "empty-book resync from a real venue snapshot feed",
+                "unknown-aggressor fill parity with the native engine"
+            ]
         },
         "blocked_fixtures": blocked_fixtures(),
         "acceptance_boundary": {
@@ -1703,8 +3163,10 @@ fn main() -> Result<()> {
                 "mark-based liquidation / LocalView / CAP-ISOLATED",
                 "F07 position epochs",
                 "F29 last_good_seq and INVALID book state",
-                "F31 delayed/out-of-order ACK venue sequencing"
-            ]
+                "F31 delayed/out-of-order ACK venue sequencing",
+                "native F04 ALREADY_FILLED cancel response and native F05 priority_reset_count (adapter-managed in this evidence; the native gaps remain)"
+            ],
+            "adapter_note": "the adapter profile above answers F04, F05, F07, F29, F31 and the F06 client profile as client-owned semantics; it does not change any native capability verdict and CAP-L2-QUEUE remains PARTIAL"
         }
     });
 
