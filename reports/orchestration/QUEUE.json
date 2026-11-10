@@ -1,0 +1,18 @@
+{
+  "base_sha": "f985dc6081c65205f34f623f8f90309673ee1cb5",
+  "updated_utc": "2026-11-10T06:00:00Z",
+  "tickets": [
+    {"ticket_id":"A1","issue":null,"task":"TASK-12/13","priority":"P0","status":"RUNNING","branch":"qel/m2-symbol-feasibility","base_sha":"f985dc6","paths_owned":["evidence/labd/M2_SYMBOL_FEASIBILITY*","scripts/m2_symbol_feasibility.py","tests/test_m2_symbol_feasibility.py"],"acceptance_tests":["reproducible eligibility","BTC 20USDT INFEASIBLE remains","stale/unknown PIT rejected"],"expected_artifacts":["evidence/labd/M2_SYMBOL_FEASIBILITY.json"]},
+    {"ticket_id":"A2","issue":null,"task":"TASK-12","priority":"P0","status":"RUNNING","branch":"qel/m2-exec-coverage","base_sha":"f985dc6","paths_owned":["evidence/labd/M2_EXECUTION_COVERAGE*","scripts/m2_exec_ingest.py","tests/test_m2_exec_ingest.py"],"acceptance_tests":["fold gap map","bounded pilot","resumable manifest"],"expected_artifacts":["evidence/labd/M2_EXECUTION_COVERAGE.json"]},
+    {"ticket_id":"A3","issue":null,"task":"TASK-12/13","priority":"P0","status":"BLOCKED","blocked_by":["A1","A2"],"branch":null,"base_sha":null,"paths_owned":[]},
+    {"ticket_id":"B1","issue":8,"task":"TASK-15","priority":"P1","status":"READY","branch":null,"base_sha":null,"paths_owned":[]},
+    {"ticket_id":"B2","issue":3,"task":"TASK-10","priority":"P1","status":"READY","branch":null,"base_sha":null,"paths_owned":[]},
+    {"ticket_id":"B3","issue":11,"task":"TASK-18","priority":"P1","status":"READY","branch":null,"base_sha":null,"paths_owned":[]},
+    {"ticket_id":"C1","issue":13,"task":"TASK-25","priority":"P1","status":"READY","branch":null,"base_sha":null,"paths_owned":[]},
+    {"ticket_id":"C2","issue":14,"task":"TASK-26","priority":"P1","status":"BLOCKED","blocked_by":["human compute approval ~1187 core-h"]},
+    {"ticket_id":"C3","issue":15,"task":"TASK-27","priority":"P1","status":"RUNNING","blocked_by":["human","2026-11-16T22:26Z soak"]},
+    {"ticket_id":"D1","issue":16,"task":"TASK-28","priority":"P2","status":"BLOCKED","blocked_by":["human","fresh OOS"]},
+    {"ticket_id":"D2","issue":17,"task":"TASK-29","priority":"P2","status":"BLOCKED","blocked_by":["human","capital"]},
+    {"ticket_id":"D3","issue":18,"task":"TASK-30","priority":"P2","status":"BLOCKED","blocked_by":["human","capital"]}
+  ]
+}
