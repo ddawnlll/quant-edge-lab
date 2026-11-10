@@ -26,12 +26,19 @@ method is used.
 | Capability | Exact missing hook |
 | --- | --- |
 | `CAP-LOCAL-VIEW` | Nautilus exposes one shared `Cache` to strategies (`Strategy::cache()`); there is no separate immutable LocalView and no API that prevents native cache access. `run(streaming=true)` also delivers fill callbacks immediately. The two-world split (exchange effect vs delayed local delivery) has no public hook. |
-| `CAP-L2-QUEUE` | `SimulatedExchange` has no per-price queue-ahead model, no own-consumption liquidity budget and no L2 queue API. |
+| `CAP-L2-QUEUE` | **PARTIAL after ADR-0003.** The F02 queue-ahead slice is functional: `queue_position(true)` + `trade_execution(true)` + `liquidity_consumption(true)` gives ahead 100, trades 80 then 30 -> exactly 10 fill, with no depth double-consumption; `get_quantity_at_level` is public. Still unproven: public queue-state readback (private field), shared-level budget across orders, unknown-aggressor handling, resync after gaps, marketable-order budget and full L2 depth. |
 | `CAP-ISOLATED` | The same shared cache and callback path means a process-level research/evaluator split cannot be proven inside one Nautilus engine. |
 
-Consequence: M4 queue/two-world claims remain disabled. M1 may use only the
-taker L1 quote/trade slice with funding; it cannot claim L2, queue, passive
-fill or full liquidation fidelity. `RuntimeLock.status` remains
+Recertified 2026-11-10 by `docs/ADR-0003_l2_queue_recertification.md` and
+`evidence/native/FUNCTIONAL_SPIKE_2026-11-09.json`. The queue-ahead F02 slice is
+now available to TASK-17 within the stated scope. The two-world/LocalView split
+and mark-based liquidation remain blocked. No fork or monkey patch was used.
+
+Consequence: M4 queue claims are limited to the F02 queue-ahead slice; shared
+level budget, unknown-aggressor, resync and full L2 depth remain unproven. M1
+may use the taker L1 quote/trade slice with funding and the F02 passive queue
+slice; it cannot claim full L2, two-world LocalView, passive fill parity beyond
+the tested fixtures, or full liquidation fidelity. `RuntimeLock.status` remains
 `UNRESOLVED` because the full hook set is not available.
 
 ## Reproduction

@@ -20,5 +20,25 @@
   "native_spike_report_hash": "5b85c36cddc00b5c8ee75f76847fe9066371bd36cd860665759662a3ba9262b0",
   "verified_profile_ids": [
     "TAKER_L1_FUNDING_STREAMING"
+  ],
+  "verified_capability_slices": [
+    "CAP-L2-QUEUE-F02"
+  ],
+  "capability_recertifications": [
+    {
+      "adr": "docs/ADR-0003_l2_queue_recertification.md",
+      "date": "2026-11-10",
+      "capability": "CAP-L2-QUEUE",
+      "status": "PARTIAL",
+      "slice": "F02 queue-ahead with queue_position(true), trade_execution(true), liquidity_consumption(true); exact 10 fill on second trade; depth-once; get_quantity_at_level public",
+      "unproven": [
+        "public queue readback",
+        "shared-level budget",
+        "unknown aggressor",
+        "resync after gaps",
+        "full L2 depth"
+      ],
+      "evidence": "evidence/native/FUNCTIONAL_SPIKE_2026-11-09.json"
+    }
   ]
 }
