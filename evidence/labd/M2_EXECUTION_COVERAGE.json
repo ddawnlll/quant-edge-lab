@@ -1,0 +1,101 @@
+{
+  "estimated_full_bytes": 6934200000,
+  "folds": [
+    {
+      "fold_id": "WF-D64AF439CD8D6E7F",
+      "missing_before_first_available": null,
+      "train_days": 365,
+      "train_present": 0,
+      "validation_days": 91,
+      "validation_present": 0
+    },
+    {
+      "fold_id": "WF-2CCA0B04C796FBFC",
+      "missing_before_first_available": null,
+      "train_days": 456,
+      "train_present": 0,
+      "validation_days": 90,
+      "validation_present": 0
+    }
+  ],
+  "missing_days": 546,
+  "missing_first": [
+    "2024-09-01",
+    "2024-09-02",
+    "2024-09-03",
+    "2024-09-04",
+    "2024-09-05"
+  ],
+  "note": "Monthly aggTrades zips (2024-09, 2026-08..10) are not daily-fold coverage; they cannot substitute per-day execution tapes. Full window ~9.7GB at 12.7MB/day.",
+  "pilot": {
+    "days": 2,
+    "fetched": [
+      {
+        "1m": {
+          "bytes": 61768,
+          "sha256": "2004c458cc32e9df49180a74475b836d0211cf0cede0856cba7c125e551a96c0"
+        },
+        "aggTrades": {
+          "bytes": 15089675,
+          "sha256": "14dde6479bff2ca39265515a23b5459d2a510286e6aa637a89c8a738e6b20529"
+        },
+        "day": "2024-09-01"
+      },
+      {
+        "1m": {
+          "bytes": 62094,
+          "sha256": "a77f36f997761a89d62a61ddbc95acf7b9f932decf48e228e60b184ce873a934"
+        },
+        "aggTrades": {
+          "bytes": 14328327,
+          "sha256": "447036a0163181c26a1a352dee8a7b8948ac49074e083828fe556a7e31d55eb2"
+        },
+        "day": "2024-09-02"
+      }
+    ]
+  },
+  "post_audit": {
+    "estimated_full_bytes": 6934200000,
+    "folds": [
+      {
+        "fold_id": "WF-D64AF439CD8D6E7F",
+        "missing_before_first_available": null,
+        "train_days": 365,
+        "train_present": 2,
+        "validation_days": 91,
+        "validation_present": 0
+      },
+      {
+        "fold_id": "WF-2CCA0B04C796FBFC",
+        "missing_before_first_available": null,
+        "train_days": 456,
+        "train_present": 2,
+        "validation_days": 90,
+        "validation_present": 0
+      }
+    ],
+    "missing_days": 544,
+    "missing_first": [
+      "2024-09-03",
+      "2024-09-04",
+      "2024-09-05",
+      "2024-09-06",
+      "2024-09-07"
+    ],
+    "note": "Monthly aggTrades zips (2024-09, 2026-08..10) are not daily-fold coverage; they cannot substitute per-day execution tapes. Full window ~9.7GB at 12.7MB/day.",
+    "present_days": 2,
+    "schema": "qel.m2_execution_coverage/1.0",
+    "sealed_from": "2026-03-08",
+    "sealed_untouched": true,
+    "status": "PARTIAL_COVERAGE",
+    "symbol": "BTCUSDT",
+    "total_needed_days": 546
+  },
+  "present_days": 0,
+  "schema": "qel.m2_execution_coverage/1.0",
+  "sealed_from": "2026-03-08",
+  "sealed_untouched": true,
+  "status": "EXECUTION_COVERAGE_BLOCKED",
+  "symbol": "BTCUSDT",
+  "total_needed_days": 546
+}
