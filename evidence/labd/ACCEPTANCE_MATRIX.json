@@ -1,7 +1,7 @@
 {
   "schema": "qel.acceptance_matrix/1.1",
-  "generated_utc": "2026-11-10T03:41:00Z",
-  "main_sha": "982759356f8cf57d2b14f2b77a993b0bab584f23",
+  "generated_utc": "2026-11-10T09:47:00Z",
+  "main_sha": "8b464258ed3fceb5224eaa2563497724b64b7ea7",
   "purpose": "Map every required check in issues #1-#18 to a concrete observed result or an explicit external blocker. Aggregate test counts are not used as acceptance evidence.",
   "interpretation_assumptions": [
     "The 18 GitHub issues map to TASK-06,08,10,11,12,13,14,15,16,17,18,19,25,26,27,28,29,30 as supplied in the request.",
@@ -80,7 +80,13 @@
     "pytest": {
       "command": "pytest -q tests with QEL_DATA_ROOT",
       "exit_code": 0,
-      "result": "248 passed"
+      "result": "368 passed, 4 skipped (real-principal isolation gated)"
+    },
+    "m2_run": {
+      "command": "python -m qel.cli m2-run --manifest evidence/labd/PROTOCOL_MONTHLY_26M.json --data-root data/native --binary <runner> --strategy policy/examples/taker_1m.json --out-dir <dir> --capital 1000 --risk-fraction 0.1 --controls 1000 --family-size 12 --workers 4",
+      "exit_code": 0,
+      "result": "12 train variants, 12 validation variants retained, 1,000 controls / 174,000 trades, decision INSUFFICIENT_EVIDENCE (STATIONARITY_DIAGNOSTIC_INSUFFICIENT, 3-day validation)",
+      "evidence": "evidence/labd/M2_DEV_RUN.json"
     }
   },
   "issues": [
