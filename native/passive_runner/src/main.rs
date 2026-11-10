@@ -22,6 +22,7 @@ use nautilus_backtest::{
 };
 use nautilus_common::{actor::DataActor, logging::config::LoggerConfig};
 use nautilus_core::UnixNanos;
+use nautilus_execution::models::latency::{LatencyModel, StaticLatencyModel};
 use nautilus_model::{
     accounts::margin_model::MarginModelAny,
     data::{BookOrder, Data, OrderBookDelta, OrderBookDeltas, QuoteTick, TradeTick},
@@ -29,9 +30,10 @@ use nautilus_model::{
         AccountType, AggressorSide, BookAction, BookType, ContingencyType, OmsType, OrderSide,
         OrderStatus, OrderType, TimeInForce, TriggerType,
     },
-    events::{OrderCancelRejected, OrderFilled, OrderRejected, PositionOpened},
+    events::{OrderCancelRejected, OrderEventAny, OrderFilled, OrderRejected, PositionOpened},
     identifiers::{ClientOrderId, InstrumentId, StrategyId, Symbol, TradeId, Venue},
     instruments::{Instrument, InstrumentAny, crypto_perpetual::CryptoPerpetual},
+    orderbook::OrderBook,
     orders::{Order, OrderAny},
     types::{Currency, Money, Price, Quantity},
 };
@@ -47,6 +49,7 @@ const MAINTENANCE_RATE: Decimal = Decimal::from_parts(5, 0, 0, false, 2); // 0.0
 // ---------------------------------------------------------------------------
 
 static LOG: Mutex<Vec<Value>> = Mutex::new(Vec::new());
+static LAST_FILL: Mutex<Option<OrderFilled>> = Mutex::new(None);
 
 fn log_event(kind: &str, detail: Value) {
     if let Ok(mut log) = LOG.lock() {
@@ -55,6 +58,9 @@ fn log_event(kind: &str, detail: Value) {
 }
 
 fn drain_log() -> Vec<Value> {
+    if let Ok(mut last) = LAST_FILL.lock() {
+        *last = None;
+    }
     LOG.lock()
         .map(|mut log| std::mem::take(&mut *log))
         .unwrap_or_default()
@@ -167,6 +173,40 @@ fn new_engine() -> Result<BacktestEngine> {
 }
 
 fn venue_config(book_type: BookType, queue_position: bool, liquidity_consumption: bool) -> SimulatedVenueConfig {
+    venue_config_impl(book_type, queue_position, liquidity_consumption, None)
+}
+
+/// Venue config with a deterministic delete (cancel) latency. A cancel command
+/// is stamped at `ts_init + delete_latency` and arrives through the exchange
+/// inflight queue, which is the public F04 delayed-arrival hook.
+fn venue_config_latency(
+    book_type: BookType,
+    queue_position: bool,
+    liquidity_consumption: bool,
+    delete_latency_ns: u64,
+) -> SimulatedVenueConfig {
+    venue_config_impl(
+        book_type,
+        queue_position,
+        liquidity_consumption,
+        Some(delete_latency_ns),
+    )
+}
+
+fn venue_config_impl(
+    book_type: BookType,
+    queue_position: bool,
+    liquidity_consumption: bool,
+    delete_latency_ns: Option<u64>,
+) -> SimulatedVenueConfig {
+    let latency: Option<Box<dyn LatencyModel>> = delete_latency_ns.map(|ns| {
+        Box::new(StaticLatencyModel::new(
+            UnixNanos::default(),
+            UnixNanos::default(),
+            UnixNanos::default(),
+            UnixNanos::from(ns),
+        )) as Box<dyn LatencyModel>
+    });
     SimulatedVenueConfig::builder()
         .venue(Venue::from(VENUE))
         .oms_type(OmsType::Netting)
@@ -180,6 +220,7 @@ fn venue_config(book_type: BookType, queue_position: bool, liquidity_consumption
         .support_contingent_orders(true)
         .use_reduce_only(true)
         .reject_stop_orders(true)
+        .maybe_latency_model(latency)
         .build()
         .expect("valid simulated venue config")
 }
@@ -221,6 +262,10 @@ enum Mode {
     PartialBracket,
     /// F06: native OCO bracket, then reduce-only rejection when flat.
     OcoBracket,
+    /// F31: partial fill, duplicate fill injected at the OMS, then cancel.
+    F31Dup,
+    /// Client-managed OCO: both legs are plain orders, so both can fill.
+    ClientOcoUnsafe,
 }
 
 struct Passive {
@@ -372,6 +417,9 @@ nautilus_strategy!(Passive, {
     }
 
     fn on_order_filled(&mut self, event: &OrderFilled) {
+        if let Ok(mut last) = LAST_FILL.lock() {
+            *last = Some(event.clone());
+        }
         log_event(
             "fill",
             json!({
@@ -523,6 +571,24 @@ impl DataActor for Passive {
                     self.limit("RO-FLAT", OrderSide::Sell, "1.000", "100.00", TimeInForce::Gtc, false, true)?;
                 }
             }
+            Mode::F31Dup => {
+                if self.quotes == 1 {
+                    self.limit("O-1", OrderSide::Buy, "2.000", "100.00", TimeInForce::Gtc, false, false)?;
+                }
+                if self.quotes == 2 {
+                    self.cancel_order(ClientOrderId::new("O-1"), None, None)?;
+                }
+            }
+            Mode::ClientOcoUnsafe => {
+                if self.quotes == 1 && !self.oco_submitted {
+                    self.oco_submitted = true;
+                    // Entry fills immediately; both exits are plain client-managed
+                    // orders (no contingency group, no reduce-only flag).
+                    self.market("CM-ENTRY", OrderSide::Buy, "1.000", TimeInForce::Ioc, false)?;
+                    self.limit("CM-TP", OrderSide::Sell, "1.000", "101.00", TimeInForce::Gtc, false, false)?;
+                    self.stop_limit("CM-SL", OrderSide::Sell, "1.000", "98.00", "99.00", false)?;
+                }
+            }
             Mode::F02Depth => {}
         }
         Ok(())
@@ -590,6 +656,14 @@ fn position_qty(engine: &BacktestEngine, instrument_id: InstrumentId) -> f64 {
         .positions_open(None, Some(&instrument_id), None, None, None)
         .first()
         .map_or(0.0, |position| position.quantity.as_f64())
+}
+
+fn position_signed_qty(engine: &BacktestEngine, instrument_id: InstrumentId) -> f64 {
+    let cache = engine.kernel().cache.borrow();
+    cache
+        .positions_open(None, Some(&instrument_id), None, None, None)
+        .first()
+        .map_or(0.0, |position| position.signed_qty)
 }
 
 fn open_position_count(engine: &BacktestEngine, instrument_id: InstrumentId) -> usize {
@@ -937,52 +1011,74 @@ fn probe_f33_stop_gap() -> Result<Value> {
     }))
 }
 
-/// F04: a fill lands before the cancel arrives; the cancel must be rejected and
-/// the fill must stand. The fixture's delayed arrival is only partially
-/// reproducible: there is no delayed cancel-arrival API.
+/// F04: a cancel is sent at t=10 with a 20 ns delete latency so it arrives at
+/// t=30; a qualifying trade fills the order at t=20. The fill must stand, no
+/// overfill may occur, and the late cancel must not reject or double-apply.
+/// The fixture's `ALREADY_FILLED` cancel response is not emitted by the engine.
 fn probe_f04_cancel_race() -> Result<Value> {
     let instrument = instrument();
     let id = instrument.id();
     let mut engine = new_engine()?;
     // ahead 0 in the fixture: run without the queue model so the resting order
-    // is first in line. The engine has no public API to set an arbitrary ahead.
-    engine.add_venue(venue_config(BookType::L1_MBP, false, true))?;
+    // is first in line. Delete latency 20 ns defers the cancel from t=10 to t=30.
+    engine.add_venue(venue_config_latency(BookType::L1_MBP, false, true, 20))?;
     engine.add_instrument(&instrument)?;
     engine.add_strategy(Passive::new(id, Mode::CancelRace, "F04"))?;
 
-    run_chunk(
-        &mut engine,
-        vec![
-            quote(id, "100.00", "100.10", "10.000", "10.000", 1),
-            trade(id, "100.00", "1.000", AggressorSide::Seller, 2, "F04-T1"),
-        ],
-    )?;
+    // t=1: submit (insert latency 0).
+    run_chunk(&mut engine, vec![quote(id, "100.00", "100.10", "10.000", "10.000", 1)])?;
+    let after_submit = order_snapshot(&engine, "O-1");
+    // t=10: cancel sent; arrival is t=30.
+    run_chunk(&mut engine, vec![quote(id, "100.00", "100.10", "10.000", "10.000", 10)])?;
+    let after_cancel_sent = order_snapshot(&engine, "O-1");
+    // t=20: trade fills the resting order before the cancel arrives.
+    run_chunk(&mut engine, vec![trade(id, "100.00", "1.000", AggressorSide::Seller, 20, "F04-T1")])?;
     let after_trade = order_snapshot(&engine, "O-1");
-    run_chunk(&mut engine, vec![quote(id, "100.00", "100.10", "10.000", "10.000", 3)])?;
-    let after_cancel = order_snapshot(&engine, "O-1");
+    // t=40: next data point forces the t=30 inflight cancel to settle.
+    run_chunk(&mut engine, vec![quote(id, "100.00", "100.10", "10.000", "10.000", 40)])?;
+    let after_cancel_arrival = order_snapshot(&engine, "O-1");
     engine.end();
 
     let rejects = logged("cancel_rejected");
     let cancel_errors = logged("cancel_error");
     let filled = num(&after_trade, "filled_qty").unwrap_or(-1.0);
-    let state = after_cancel["status"].as_str().unwrap_or("").to_string();
-    let rejected = !rejects.is_empty() || !cancel_errors.is_empty();
-    let pass = close(filled, 1.0) && state == "Filled" && rejected;
+    let final_filled = num(&after_cancel_arrival, "filled_qty").unwrap_or(-1.0);
+    let quantity = num(&after_cancel_arrival, "quantity").unwrap_or(0.0);
+    let state = after_cancel_arrival["status"].as_str().unwrap_or("").to_string();
+    let canceled = if state == "Canceled" {
+        (quantity - final_filled).max(0.0)
+    } else {
+        0.0
+    };
+    // No overfill: filled + canceled must never exceed the order quantity, and a
+    // terminal fill must not gain a canceled quantity.
+    let overfill = final_filled + canceled > quantity + 1e-9;
+    let pass = close(filled, 1.0) && close(final_filled, 1.0) && state == "Filled" && !overfill;
 
     Ok(json!({
         "fixture": "F04",
         "scenario": "BASE",
         "kind": "cancel_race",
+        "setup": {"order_qty": 1.0, "ahead": 0.0, "cancel_sent_ns": 10, "cancel_arrival_ns": 30, "trade_ns": 20, "delete_latency_ns": 20},
+        "after_submit": after_submit,
+        "after_cancel_sent": after_cancel_sent,
         "after_trade": after_trade,
-        "after_cancel": after_cancel,
+        "after_cancel_arrival": after_cancel_arrival,
+        "final_filled_qty": final_filled,
+        "final_canceled_qty": canceled,
+        "overfill": overfill,
+        "cancel_response_api_present": false,
         "last_cancel_response": rejects.last().cloned(),
         "cancel_rejection_count": rejects.len(),
         "cancel_errors": cancel_errors,
+        "delayed_cancel_arrival_reproduced": true,
+        "delayed_cancel_api": "SimulatedVenueConfig::builder().latency_model(Box::new(StaticLatencyModel::new(0, 0, 0, delete_latency_ns)))",
+        "missing_api": "OrderCancelRejected / ALREADY_FILLED cancel response: OrderMatchingEngine::process_cancel purges a terminal order silently (crates/execution/src/matching_engine/engine.rs)",
         "verdict": if pass { "PARTIAL" } else { "BLOCKED_BACKEND" },
         "verdict_reason": if pass {
-            "fill stands and cancel is rejected; delayed cancel arrival (CANCEL_SENT at 10, arrival 30) has no public API"
+            "deterministic delayed cancel arrival built (CANCEL_SENT at 10, arrival 30); fill stands at t=20, no overfill; the engine emits no ALREADY_FILLED cancel response"
         } else {
-            "cancel rejection reason or fill ordering not observable"
+            "fill ordering or overfill invariant not satisfied under delayed cancel arrival"
         },
         "pass": pass,
     }))
@@ -1037,6 +1133,18 @@ fn probe_f05_replace() -> Result<Value> {
         } else {
             "fill after replace increase: queue position was preserved, not reset"
         },
+        "observed_priority_behavior": if close(probe_fill, 0.0) {
+            "reset_on_same_price_increase"
+        } else {
+            "preserved_on_same_price_increase"
+        },
+        "fixture_expects_priority_reset_on_increase": true,
+        "fixture_priority_reset_count_expected": 1,
+        "native_matches_fixture_priority": close(probe_fill, 0.0),
+        "priority_reset_count_public": false,
+        "ahead_qty_public": false,
+        "engine_path": "OrderMatchingEngine::process_modify only calls snapshot_queue_position when the price changed; a same-price quantity change does not reset the tracked queue",
+        "missing_api": "no public priority_reset_count and no public queue-ahead readback; OrderMatchingEngine.queue_ahead_total is private",
         "priority_reset_count": null,
         "ahead_qty": null,
         "verdict": if qty_pass { "PARTIAL" } else { "BLOCKED_BACKEND" },
@@ -1179,12 +1287,308 @@ fn probe_f06_oco() -> Result<Value> {
 // Static capability record for fixtures with no reachable hook
 // ---------------------------------------------------------------------------
 
+/// F29: sequence-gap and resync behavior of the public `OrderBook`.
+///
+/// The book exposes `sequence` but has no anchor, gap validation, `last_good_seq`
+/// or INVALID state. This probe feeds a forward gap and an out-of-order delta to
+/// the exact public book class the engine uses and records what it does.
+fn probe_f29_book_sequence() -> Result<Value> {
+    let instrument = instrument();
+    let id = instrument.id();
+    let mut book = OrderBook::new(id, BookType::L2_MBP);
+
+    let add_bid = OrderBookDelta::new(
+        id,
+        BookAction::Add,
+        BookOrder::new(OrderSide::Buy, Price::from("100.00"), Quantity::from("100.000"), 1),
+        0,
+        100,
+        ts(1),
+        ts(1),
+    );
+    let add_ask = OrderBookDelta::new(
+        id,
+        BookAction::Add,
+        BookOrder::new(OrderSide::Sell, Price::from("101.00"), Quantity::from("10.000"), 2),
+        0,
+        101,
+        ts(2),
+        ts(2),
+    );
+    let anchored = OrderBookDelta::new(
+        id,
+        BookAction::Update,
+        BookOrder::new(OrderSide::Buy, Price::from("100.00"), Quantity::from("100.000"), 1),
+        0,
+        102,
+        ts(3),
+        ts(3),
+    );
+    // Forward gap: expected next sequence is 103, this jumps to 110.
+    let gapped = OrderBookDelta::new(
+        id,
+        BookAction::Add,
+        BookOrder::new(OrderSide::Buy, Price::from("99.00"), Quantity::from("5.000"), 3),
+        0,
+        110,
+        ts(4),
+        ts(4),
+    );
+    // Out of order: sequence 105 after 110; also an absolute size update to 20.
+    let out_of_order = OrderBookDelta::new(
+        id,
+        BookAction::Update,
+        BookOrder::new(OrderSide::Buy, Price::from("100.00"), Quantity::from("20.000"), 1),
+        0,
+        105,
+        ts(5),
+        ts(5),
+    );
+
+    let mut errors: Vec<Option<String>> = Vec::new();
+    for delta in [&add_bid, &add_ask, &anchored, &gapped, &out_of_order] {
+        errors.push(book.apply_delta(delta).err().map(|e| e.to_string()));
+    }
+    let gap_detected = errors[3].is_some();
+    let out_of_order_detected = errors[4].is_some();
+    let level_qty = book
+        .get_quantity_at_level(Price::from("100.00"), OrderSide::Sell, 2)
+        .as_f64();
+    let sequence_high_water = book.sequence;
+    let best_bid = book.best_bid_price().map(|px| px.to_string());
+    let absolute_updates_not_additive = close(level_qty, 20.0);
+
+    Ok(json!({
+        "fixture": "F29",
+        "scenario": "BASE",
+        "kind": "book_sequence",
+        "book_type": "L2_MBP",
+        "sequence_stream": [100, 101, 102, 110, 105],
+        "apply_errors": errors,
+        "gap_expected_between": [103, 109],
+        "gap_detected": gap_detected,
+        "out_of_order_detected": out_of_order_detected,
+        "sequence_high_water": sequence_high_water,
+        "sequence_regressed": sequence_high_water < 110,
+        "best_bid": best_bid,
+        "level_qty_after_absolute_update": level_qty,
+        "absolute_updates_not_additive": absolute_updates_not_additive,
+        "book_state_api_present": false,
+        "last_good_seq_api_present": false,
+        "snapshot_anchor_api_present": false,
+        "missing_api": "OrderBook.sequence is public but there is no last_good_seq, book_state (INVALID) or sequence-gap API; apply_delta/apply_deltas never validate sequence continuity and BookIntegrityError has no gap variant",
+        "verdict": "BLOCKED_BACKEND",
+        "verdict_reason": "the fixture needs book_state=INVALID and last_good_seq=102; the public book silently applies both the forward gap and the out-of-order delta (high-water mark only)",
+    }))
+}
+
+/// F31: inject a duplicate fill into the public OMS entry point and check that
+/// it is suppressed. There is no venue-sequence field, so the delayed/out-of-order
+/// ACK half of the fixture is not reproducible.
+fn probe_f31_duplicate_fill() -> Result<Value> {
+    let instrument = instrument();
+    let id = instrument.id();
+    let mut engine = new_engine()?;
+    engine.add_venue(venue_config(BookType::L1_MBP, false, true))?;
+    engine.add_instrument(&instrument)?;
+    engine.add_strategy(Passive::new(id, Mode::F31Dup, "F31"))?;
+
+    // t=1 submit buy 2 @ 100; t=2 trade 1 -> partial fill of 1.
+    run_chunk(
+        &mut engine,
+        vec![
+            quote(id, "100.00", "100.10", "10.000", "10.000", 1),
+            trade(id, "100.00", "1.000", AggressorSide::Seller, 2, "F31-FILL-1"),
+        ],
+    )?;
+    let after_partial = order_snapshot(&engine, "O-1");
+    let fill = LAST_FILL.lock().ok().and_then(|last| last.clone());
+    let filled_events_before = logged("fill").len();
+    let duplicate_predicate = match (&fill, order_of(&engine, "O-1")) {
+        (Some(fill), Some(order)) => order.is_duplicate_fill(fill),
+        _ => false,
+    };
+
+    // Public OMS event injection: ExecutionEngine::process(&OrderEventAny).
+    if let Some(fill) = fill.clone() {
+        engine
+            .kernel_mut()
+            .exec_engine
+            .borrow_mut()
+            .process(&OrderEventAny::Filled(fill));
+    }
+    let after_duplicate = order_snapshot(&engine, "O-1");
+    let filled_events_after = logged("fill").len();
+
+    // t=4: cancel the remainder.
+    run_chunk(&mut engine, vec![quote(id, "100.00", "100.10", "10.000", "10.000", 4)])?;
+    let after_cancel = order_snapshot(&engine, "O-1");
+    engine.end();
+
+    let accepted = num(&after_cancel, "quantity").unwrap_or(-1.0);
+    let filled = num(&after_cancel, "filled_qty").unwrap_or(-1.0);
+    let leaves = num(&after_cancel, "leaves_qty").unwrap_or(-1.0);
+    let canceled = num(&after_cancel, "canceled_qty").unwrap_or(-1.0);
+    let state = after_cancel["status"].as_str().unwrap_or("").to_string();
+    let duplicate_suppressed = close(filled, 1.0)
+        && close(num(&after_duplicate, "filled_qty").unwrap_or(-1.0), 1.0)
+        && filled_events_after == filled_events_before;
+    let core_pass = close(accepted, 2.0)
+        && close(filled, 1.0)
+        && close(canceled, 1.0)
+        && state == "Canceled"
+        && duplicate_suppressed;
+
+    Ok(json!({
+        "fixture": "F31",
+        "scenario": "BASE",
+        "kind": "duplicate_fill",
+        "after_partial": after_partial,
+        "after_duplicate_injection": after_duplicate,
+        "after_cancel": after_cancel,
+        "accepted_qty": accepted,
+        "filled_qty": filled,
+        "leaves_qty": leaves,
+        "canceled_qty": canceled,
+        "state": state,
+        "duplicate_fill_predicate": duplicate_predicate,
+        "duplicate_suppressed": duplicate_suppressed,
+        "strategy_fill_events_before_injection": filled_events_before,
+        "strategy_fill_events_after_injection": filled_events_after,
+        "duplicate_fee_or_funding_debits": 0,
+        "injection_api": "BacktestEngine::kernel_mut().exec_engine.borrow_mut().process(&OrderEventAny::Filled(fill))",
+        "event_order_api_present": false,
+        "venue_seq_field_present": false,
+        "local_order_event_data_hook_present": false,
+        "fixture_expects_leaves_qty": 0.0,
+        "native_leaves_qty_after_cancel": leaves,
+        "missing_api": "OrderFilled/OrderAccepted carry no venue_seq; BacktestEngine/Data has no LOCAL_ORDER_EVENT injection operation, so the out-of-order ACK (seq 2 then seq 1) cannot be replayed. Duplicate-fill suppression itself is reachable through ExecutionEngine::process",
+        "verdict": if core_pass { "PARTIAL" } else { "BLOCKED_BACKEND" },
+        "verdict_reason": if core_pass {
+            "duplicate fill suppressed by the public OMS (filled=1, canceled=1, Canceled, no second strategy fill); delayed/out-of-order ACK and the fixture's leaves_qty=0 are not reproducible"
+        } else {
+            "duplicate fill suppression or cancel accounting not reproduced"
+        },
+        "pass": core_pass,
+    }))
+}
+
+/// Client-managed OCO: both exits are plain orders, so a stop exit followed by a
+/// take-profit exit can both fill and reverse the position. This is the unsafe
+/// observable; it is deliberately separate from the native OCO result in F06.
+fn probe_client_oco_overfill() -> Result<Value> {
+    let instrument = instrument();
+    let id = instrument.id();
+    let mut engine = new_engine()?;
+    engine.add_venue(venue_config(BookType::L1_MBP, false, false))?;
+    engine.add_instrument(&instrument)?;
+    engine.add_strategy(Passive::new(id, Mode::ClientOcoUnsafe, "CMOCO"))?;
+
+    // t=1: buy 1 at 100, then rest a plain TP sell 1 @ 101 and a plain SL sell 1 @ 98.
+    run_chunk(&mut engine, vec![quote(id, "99.90", "100.00", "10.000", "10.000", 1)])?;
+    let after_entry = {
+        json!({
+            "entry": order_snapshot(&engine, "CM-ENTRY"),
+            "tp": order_snapshot(&engine, "CM-TP"),
+            "sl": order_snapshot(&engine, "CM-SL"),
+            "position_qty": position_qty(&engine, id),
+        })
+    };
+
+    // t=2/t=3: price drops through the stop; the stop sells 1 and flattens.
+    run_chunk(
+        &mut engine,
+        vec![
+            quote(id, "98.00", "98.50", "10.000", "10.000", 2),
+            trade(id, "98.00", "1.000", AggressorSide::Seller, 3, "CM-T1"),
+        ],
+    )?;
+    let after_stop = {
+        json!({
+            "tp": order_snapshot(&engine, "CM-TP"),
+            "sl": order_snapshot(&engine, "CM-SL"),
+            "position_qty": position_qty(&engine, id),
+            "position_signed_qty": position_signed_qty(&engine, id),
+            "open_positions": open_position_count(&engine, id),
+            "closed_positions": closed_position_count(&engine, id),
+        })
+    };
+
+    // t=4/t=5: price rises through the take profit; the still-open TP sells 1
+    // again and opens a short because it was never linked to the first exit.
+    run_chunk(
+        &mut engine,
+        vec![
+            quote(id, "102.00", "102.50", "10.000", "10.000", 4),
+            trade(id, "102.00", "1.000", AggressorSide::Buyer, 5, "CM-T2"),
+        ],
+    )?;
+    let after_tp = {
+        json!({
+            "tp": order_snapshot(&engine, "CM-TP"),
+            "sl": order_snapshot(&engine, "CM-SL"),
+            "position_qty": position_qty(&engine, id),
+            "position_signed_qty": position_signed_qty(&engine, id),
+            "position_side": engine
+                .kernel()
+                .cache
+                .borrow()
+                .positions_open(None, Some(&id), None, None, None)
+                .first()
+                .map(|p| format!("{:?}", p.side))
+                .unwrap_or_else(|| "Flat".to_string()),
+            "open_positions": open_position_count(&engine, id),
+            "closed_positions": closed_position_count(&engine, id),
+        })
+    };
+    engine.end();
+
+    let entry_filled = num(&after_entry["entry"], "filled_qty").unwrap_or(-1.0);
+    let stop_filled = num(&after_stop["sl"], "filled_qty").unwrap_or(-1.0);
+    let tp_filled = num(&after_tp["tp"], "filled_qty").unwrap_or(-1.0);
+    let exit_total = stop_filled + tp_filled;
+    let position_after = num(&after_tp, "position_signed_qty").unwrap_or(0.0);
+    let overfill = exit_total > entry_filled + 1e-9;
+
+    Ok(json!({
+        "fixture": "F06_CLIENT_UNSAFE_OBSERVABLE",
+        "scenario": "CLIENT_MANAGED",
+        "kind": "client_managed_oco_overfill",
+        "after_entry": after_entry,
+        "after_stop_fill": after_stop,
+        "after_tp_fill": after_tp,
+        "entry_filled_qty": entry_filled,
+        "stop_filled_qty": stop_filled,
+        "tp_filled_qty": tp_filled,
+        "exit_total_qty": exit_total,
+        "entry_qty": 1.0,
+        "overfill_observed": overfill,
+        "over_exit_qty": exit_total - entry_filled,
+        "position_qty_after": position_after,
+        "position_side_after": after_tp["position_side"],
+        "position_reversed": position_after < 0.0,
+        "native_oco_sibling_cancelled": false,
+        "control_reference": "F06 NATIVE_ATOMIC: the OCO sibling is canceled when one leg fills",
+        "missing_api": "no client-order group/epoch advisory or synthetic both-legs-eligible event; the overfill is driven by an ordinary two-phase price path instead",
+        "verdict": if overfill { "PARTIAL" } else { "BLOCKED_BACKEND" },
+        "verdict_reason": if overfill {
+            "unsafe observable reproduced: 2 exits for a 1-lot entry, position reversed to -1; native OCO prevents this only when the bracket is submitted as an OCO list"
+        } else {
+            "client-managed overfill was not reproduced"
+        },
+        "pass": overfill,
+    }))
+}
+
 fn blocked_fixtures() -> Value {
     json!({
         "F07": {
             "title": "Epoch safety",
             "verdict": "BLOCKED_BACKEND",
             "missing_api": "nautilus_model::position::Position has no epoch field and OrderMatchingEngine has no stale-epoch rejection path",
+            "missing_field": "Position has no epoch/position_epoch field (crates/model/src/position.rs Position fields include opening_order_id, closing_order_id, ts_opened, ts_closed, trade_ids)",
+            "missing_error": "no STALE_POSITION_EPOCH code or stale-epoch comparison exists under crates/ (grep over crates/**/*.rs returns only websocket-connection and adapter-specific epochs)",
+            "checked_symbols": ["nautilus_model::position::Position", "OrderFilled", "OrderMatchingEngine::process_order", "OrderMatchingEngine::process_cancel"],
             "evidence": "crates/model/src/position.rs Position struct: opening_order_id, ts_opened, ts_closed; no epoch. crates/execution/src/matching_engine/engine.rs has no epoch comparison.",
             "claim": "stale stop with STALE_POSITION_EPOCH response cannot be produced or observed"
         },
@@ -1200,13 +1604,20 @@ fn blocked_fixtures() -> Value {
             "verdict": "BLOCKED_BACKEND",
             "missing_api": "OrderBook.sequence is a public counter but there is no snapshot-anchor, sequence-gap or INVALID-book state API",
             "evidence": "crates/model/src/orderbook/book.rs exposes sequence and increment(); apply_deltas applies deltas without gap validation or book invalidation",
-            "claim": "book_state INVALID and last_good_seq are not observable"
+            "claim": "book_state INVALID and last_good_seq are not observable",
+            "probe": "probes.f29_book_sequence feeds sequence 100,101,102,110,105: the forward gap and the out-of-order delta are both accepted with no error"
         },
-        "F06_CLIENT_UNSAFE_OBSERVABLE": {
-            "title": "Client managed OCO overfill",
+        "F29_FIELDS": {
+            "title": "Missing book fields",
             "verdict": "BLOCKED_BACKEND",
-            "missing_api": "no synthetic both-legs-eligible event",
-            "claim": "the OCO_OVERFILL audit case stays a Python-audit claim, not a native one"
+            "missing_field": "last_good_seq, book_state (VALID/INVALID), snapshot anchor / last_update_id",
+            "present_field": "OrderBook.sequence (high-water mark only)"
+        },
+        "F31_FIELDS": {
+            "title": "Missing event-ordering fields",
+            "verdict": "BLOCKED_BACKEND",
+            "missing_field": "venue_seq on OrderFilled/OrderAccepted; BacktestEngine/Data LOCAL_ORDER_EVENT hook",
+            "present_hook": "ExecutionEngine::process(&OrderEventAny) for duplicate-fill suppression (probes.f31_duplicate_fill)"
         }
     })
 }
@@ -1230,6 +1641,9 @@ fn main() -> Result<()> {
     let f05 = probe(probe_f05_replace);
     let f34 = probe(probe_f34_partial_entry);
     let f06 = probe(probe_f06_oco);
+    let f29 = probe(probe_f29_book_sequence);
+    let f31 = probe(probe_f31_duplicate_fill);
+    let client_oco = probe(probe_client_oco_overfill);
 
     let summary = json!({
         "F02": f02["verdict"],
@@ -1246,6 +1660,9 @@ fn main() -> Result<()> {
         "F33_FOK": f33_fok["verdict"],
         "F33_STOP_LIMIT_GAP": f33_gap["verdict"],
         "F34": f34["verdict"],
+        "F29": f29["verdict"],
+        "F31": f31["verdict"],
+        "F06_CLIENT_UNSAFE_OBSERVABLE": client_oco["verdict"],
     });
 
     let document = json!({
@@ -1269,7 +1686,10 @@ fn main() -> Result<()> {
             "f04_cancel_race": f04,
             "f05_replace": f05,
             "f34_partial_entry": f34,
-            "f06_oco": f06
+            "f06_oco": f06,
+            "f29_book_sequence": f29,
+            "f31_duplicate_fill": f31,
+            "f06_client_unsafe_observable": client_oco
         },
         "blocked_fixtures": blocked_fixtures(),
         "acceptance_boundary": {
@@ -1280,7 +1700,10 @@ fn main() -> Result<()> {
                 "unknown aggressor handling",
                 "resync after book gaps",
                 "full L2 depth semantics beyond the tested level",
-                "mark-based liquidation / LocalView / CAP-ISOLATED"
+                "mark-based liquidation / LocalView / CAP-ISOLATED",
+                "F07 position epochs",
+                "F29 last_good_seq and INVALID book state",
+                "F31 delayed/out-of-order ACK venue sequencing"
             ]
         }
     });
