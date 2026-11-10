@@ -1,112 +1,55 @@
-TASK-17 / issue #10 completion evidence
-=======================================
+TASK-17 / issue #10 completion evidence (regenerated after the adapter slice)
+=========================================================================
 Date: 2026-11-10
-Worktree: /home/quant/quant/qel-w10b
-Branch: qel/issue-10-completion
-Base SHA: 4b53b2f1c0876e94e905c7d24e79cbac6346532d
+Worktree: /home/quant/quant/qel-pq
+Branch: qel/w-passive-completion
+Base SHA: ce91981055125328dae4b59add8e5432892c4f20
+Code commit: 4ce8bcbe7d92127473d04ce81c618e77aebb6a1b
 Pinned Nautilus: v1.231.0 / 27a8e54e7ac3c57d6cbf8891f0283dfbaee97317
 JSON evidence: evidence/labd/PASSIVE_QUEUE_COMPLETION_2026-11-10.json
-JSON sha256: df3653feaf427e12ba3ad87ada7a390241dcc359f9b11f8bc83d5d8e3793e130
+JSON sha256: 17e33ab500fb9bb47c48160c42c2abb977485c02e1ca30bf25bfd8a04eaee827
+Pre-adapter artifact: evidence/labd/PASSIVE_QUEUE_COMPLETION_PRE_ADAPTER_2026-11-10.json
+Pre-adapter sha256: df3653feaf427e12ba3ad87ada7a390241dcc359f9b11f8bc83d5d8e3793e130
 
-Scope
------
-Remaining checks after the proven passive queue slice: F04 cancel race,
-F05 replace priority, F07 epoch safety, F29 book sequence/resync,
-F31 duplicate fill injection, and client-managed OCO overfill.
-No lock, certificate, TASKS.md, STATE.json, RESUME.md, ASSUMPTIONS.md or
-specification file was changed.
+This file was regenerated because the adapter slice changed
+native/passive_runner/src/main.rs and rebuilt the binary. The audited
+pre-adapter evidence is preserved byte-for-byte in the pre-adapter artifact.
+No native probe behavior changed; the embedded payload is identical modulo
+elapsed_ms. See evidence/labd/PASSIVE_QUEUE_ADAPTER_2026-11-10.json for the
+client adapter profile.
 
 Build and run
 -------------
 Build:
   cd native/passive_runner
-  CARGO_TARGET_DIR=/home/quant/quant/.build-cache/qel-native cargo build --release -j 4
+  CARGO_TARGET_DIR=/home/quant/quant/.build-cache/qel-native cargo build --release -j 2
   exit 0, warnings none
 
 Run:
   /home/quant/quant/.build-cache/qel-native/release/qel-passive-runner <out.json>
-  exit 0, wall 178 ms, peak RSS 17,380 KiB (17.0 MiB, well under 2 GiB)
-  probe payload canonical sha256:
-  d45d15f59e242036adfbd30a955cfde9e28991f3e51d2a6519321fc6c21054ac
+  exit 0, wall 137 ms, peak RSS 18432 KiB
+  probe payload canonical sha256: 51666fdac48b9f713d6a785ad9f09d239f2a0ff5c90d62fb0be548c45eaae658
 
 Artifact hashes:
-  main.rs      803cfcac33f79b39f7004ef3b03f098107775351daf7c13a79c1cacdd8b63b53
+  main.rs      22f37e7f5220a98913afc8e0f5c3bea25e3e913eef78905e09b100ef8c1d7bb4
+  adapter.rs   37f272648e46b00b751496dba86f4d281c399ba52c5ddee979d48cc25009e525
   Cargo.toml   3e93e812a75b0d95fe6b071cecb1d13b91af7ecec29b1941976c49f9bbc745f6
   Cargo.lock   3686380d3607a623396a04e569c64d7ae3ebedfc458d432b6bed8b8545810e62
-  binary       a634683f90e820e38c01c0db433de7099884eae83d6105d0461627305dade2fc
+  binary       273b44530a010e2598df7fda298dcd8a8c229cda7b56f930b00dcf35ffd35aee
 
-Per-fixture result
-------------------
-PASS
-  F02, F02+CANCEL_REMAINDER, F02+depth-once, F02+SHARED_LEVEL, F03,
-  F06 native OCO, F33 FOK, F33 STOP_LIMIT_GAP, F34.
-  Unchanged from PASSIVE_QUEUE_2026-11-10.json and rerun in this binary.
+Native per-fixture verdicts (unchanged)
+---------------------------------------
+PASS: F02, F02+CANCEL_REMAINDER, F02+depth-once, F02+SHARED_LEVEL, F03,
+      F06 native OCO, F33 FOK, F33 STOP_LIMIT_GAP, F34.
+PARTIAL: F04 cancel race, F05 replace priority, F31 duplicate fill,
+      F06_CLIENT_UNSAFE_OBSERVABLE client-managed OCO.
+BLOCKED_BACKEND: F07 epoch safety, F29 book sequence/resync.
 
-PARTIAL
-  F04 cancel race
-    Exact API: SimulatedVenueConfig::builder().latency_model(Box::new(
-      StaticLatencyModel::new(0, 0, 0, 20))) + Strategy::cancel_order.
-    Observed: cancel sent t=10, arrives t=30; trade fills at t=20;
-    final filled_qty=1.0, canceled_qty=0.0, status=Filled, overfill=false.
-    Missing: OrderCancelRejected / ALREADY_FILLED response. The engine's
-    process_cancel purges a terminal order silently.
-    Fixture assertion not met: last_cancel_response == ALREADY_FILLED.
-
-  F05 replace priority
-    Exact API: Strategy::modify_order(ClientOrderId, quantity, price, ...).
-    Observed: quantity accounting reproduced (filled 2, leaves 13,
-    accepted 15). A same-price quantity increase PRESERVES queue priority:
-    a 5-lot trade after the increase still fills 5. The fixture expects
-    replace_increase_resets=true and priority_reset_count=1.
-    Missing: no public priority_reset_count and no public queue-ahead
-    readback; queue_ahead_total is private. process_modify only
-    re-snapshots on a price change.
-
-  F31 duplicate fill
-    Exact API: BacktestEngine::kernel_mut().exec_engine.borrow_mut()
-      .process(&OrderEventAny::Filled(fill)).
-    Observed: duplicate suppressed (filled_qty stays 1.0, no second
-    strategy fill), cancel leaves canceled_qty=1.0, status=Canceled.
-    Missing: OrderFilled/OrderAccepted have no venue_seq and
-    BacktestEngine/Data has no LOCAL_ORDER_EVENT hook, so the out-of-order
-    ACK (seq 2 then seq 1) cannot be replayed. Native leaves_qty after
-    cancel is 1 (fixture expects 0).
-
-  F06_CLIENT_UNSAFE_OBSERVABLE client-managed OCO
-    Exact API: Strategy::submit_order for a plain limit TP and a plain
-    stop-limit SL (no contingency group, no reduce_only).
-    Observed: entry 1 @100, stop exits 1 @98, then TP exits 1 @101.
-    exit_total=2 for a 1-lot entry, position=-1 (Short), over_exit_qty=1.
-    Native atomic OCO (F06) cancels the sibling and does not overfill.
-    Missing: no client-order group/epoch advisory and no synthetic
-    both-legs-eligible event; the unsafe path is an ordinary two-phase
-    price move. Kept separate from native OCO.
-
-BLOCKED_BACKEND
-  F07 epoch safety
-    Missing field: Position has no epoch/position_epoch field
-    (crates/model/src/position.rs). OrderFilled/OrderAccepted carry no
-    position epoch.
-    Missing error: no STALE_POSITION_EPOCH code or stale-epoch
-    comparison anywhere under crates/.
-    Checked symbols: Position, OrderFilled,
-    OrderMatchingEngine::process_order, OrderMatchingEngine::process_cancel.
-
-  F29 book sequence / resync
-    Exact API: OrderBook::new(InstrumentId, BookType::L2_MBP) +
-    OrderBook::apply_delta(OrderBookDelta).
-    Observed: sequence stream 100,101,102,110,105. The forward gap
-    (103..109 missing) and the out-of-order delta are both accepted with
-    no error. sequence is a high-water mark (110). An absolute size
-    update is not additive (level qty 20).
-    Missing fields: last_good_seq, book_state (VALID/INVALID), snapshot
-    anchor / last_update_id. BookIntegrityError has no gap variant.
-    Fixture assertion not met: book_state=INVALID, last_good_seq=102.
-
-Scoped acceptance recommendation
---------------------------------
-Accept TASK-17 at the proven passive profile only. Keep CAP-L2-QUEUE at
-PARTIAL. Do not claim full L2, LocalView, mark-based liquidation or
-CAP-ISOLATED. The remaining F04/F31/client-OCO gaps are PARTIAL with the
-exact missing API recorded; F07 and F29 are BLOCKED_BACKEND with exact
-missing fields. No new capability is claimed beyond the tested fixtures.
+Adapter slice
+-------------
+Client-owned semantics for F04/F05/F06-client/F07/F29/F31 and the F02
+unknown-aggressor profile are recorded in
+evidence/labd/PASSIVE_QUEUE_ADAPTER_2026-11-10.json under profile
+ADAPTER_OVER_NATIVE. Those are not native venue capabilities and
+CAP-L2-QUEUE remains PARTIAL. No lock, certificate, TASKS.md, STATE.json,
+RESUME.md, ASSUMPTIONS.md or specification file was changed.
