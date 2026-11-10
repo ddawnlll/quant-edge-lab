@@ -285,7 +285,7 @@
         "evidence/labd/T_RELEASE_BUILD.json",
         "evidence/labd/INTEGRATION_ISSUE13_VERIFY.json"
       ],
-      "progress": "B3 passes under RP-4G/RP-8G with 2 warmups + 12 timed repeats (p90 30.141 s / 30.351 s, target 120); B4 passes at 1M/10M/100M; B2 misses its 30 s warm p90 under both profiles (30.141 s RP-4G, 30.351 s RP-8G; 0.14-0.35 s over) and is filed as FAIL_MARGINAL; the prior 20.545 s B2 result is not reproducible on the current host",
+      "progress": "B3 passes under RP-4G/RP-8G with 2 warmups + 12 timed repeats (p90 30.141 s / 30.351 s, target 120); B4 passes at 1M/10M under RP-4G and RP-8G and at 100M under RP-4G; B2 misses its 30 s warm p90 under both profiles (30.141 s RP-4G, 30.351 s RP-8G; 0.14-0.35 s over) and is filed as FAIL_MARGINAL; the prior 20.545 s B2 result is not reproducible on the current host",
       "blocked": "B2 warm p90 30.141 s (RP-4G) / 30.351 s (RP-8G) exceeds the 30 s target by 0.14-0.35 s; replay throughput on the current host is ~30% slower than the prior 20.545 s evidence"
     },
     "TASK-26": {
