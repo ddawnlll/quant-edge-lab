@@ -86,6 +86,103 @@ liquidation or the ledger/evaluator stack.
    must be compared on shared semantics, with timestamp, cancel and queue
    assumptions recorded.
 
+## Functional result (2026-11-09)
+
+Evidence: `evidence/native/FUNCTIONAL_SPIKE_2026-11-09.json`.
+Spike crate: `native/capability_spike` (pure Rust, same pinned rev
+`27a8e54`). This section records observed behavior only; it does not adopt a
+backend change.
+
+Commands (exit code 0):
+
+```sh
+cd native/capability_spike
+CARGO_TARGET_DIR=/home/quant/quant/.build-cache/qel-native cargo build --release -j 4
+/home/quant/quant/.build-cache/qel-native/release/qel-capability-spike \
+  /tmp/qel_functional_spike.json
+```
+
+Build 20 s, spike run 90 ms, peak RSS 16.4 MiB. Binary 12,373,384 bytes.
+
+### Per-hook result
+
+| Hook | Result | Exact API / observed |
+| --- | --- | --- |
+| `snapshot_queue_position` | PASS (behavior) | `SimulatedVenueConfig::builder().queue_position(true)` |
+| `decrement_queue_on_trade` | PASS (behavior) | same config + `TradeTick`; F02 and depth-once both exact |
+| `apply_liquidity_consumption` | PARTIAL | `liquidity_consumption(true)`; maker queue path exercised, marketable-order budget not separately asserted |
+| `get_quantity_at_level` | PASS (public) | `OrderBook::get_quantity_at_level(Price, OrderSide, u8) -> Quantity` returned 100.0 for a 100.0 bid level |
+| `run_venue_liquidations` | PASS (behavior) | `liquidation_enabled(true)` + engine `run`; symbol is a private method |
+| `process_liquidations` | PASS (behavior) | `SimulatedExchange::process_liquidations` is `pub` but unreachable; `venues` is private |
+| `liquidate_open_positions` | PASS (behavior) | `OrderMatchingEngine::liquidate_open_positions` is `pub` but unreachable; `matching_engines` is private |
+| mark-based maintenance | FAIL | native maintenance is entry-based: 5.0, oracle expects 4.7 |
+| quote/mark split | FAIL | `Cache::calculate_unrealized_pnl` uses `quote.bid_price`; a quote-only move to 94 triggers the close |
+| isolated margin account | FAIL | `AccountType::Margin` is one balance per currency; no isolated sub-account |
+| liquidation fee | FAIL | no field; forced close is a normal market order |
+| native account postings | FAIL (not exposed) | no journal/posting API; `BacktestResult` has aggregate stats only |
+
+Queue state (`queue_ahead_total`, `queue_pending`, `queue_excess`) is private
+and has no public readback. F02 ahead=0 is inferred from the exact fill.
+
+### F02 queue-ahead
+
+Setup from `specification/fixtures/conformance.json`: resting BUY 20 @ 100,
+ahead 100, qualifying seller trades 80 then 30.
+
+- after trade 80: `filled_qty = 0.0`
+- after trade 30: `fill_step_2_qty = 10.0`, `leaves_qty = 10.0`
+- L2 depth-once variant: trade 80 then a depth update 100 -> 20, then trade 30:
+  `fill_step_2_qty = 10.0`; the depth reduction did not double-consume
+- `get_quantity_at_level` direct call: 100.0
+
+### F11/F12 liquidation
+
+F11 (cash 10, qty 1, entry 100, mark 94, quote bid 94):
+
+- native equity 4.0, maintenance 5.0, one `LIQUIDATION-*` market order,
+  position flat, final cash 4.0
+- oracle: equity 4, maintenance 4.7, triggered, cost 0.09, final cash 3.91
+- trigger and equity match; maintenance differs by +0.3 (entry-based) and
+  final cash by +0.09 (no liquidation fee)
+
+F11 `QUOTE_IS_NOT_MARK` (no `MarkPriceUpdate`, only quote 94): native still
+closes the position. This scenario FAILS.
+
+F12 (cash 5.1, qty 1, entry 100, mark 100, funding rate 0.002 at the exact
+boundary):
+
+- native funding adjustment -0.2, equity 4.9, maintenance 5.0, one
+  `LIQUIDATION-*` order, position flat, final cash 4.9
+- oracle: funding -0.2, equity 4.9, maintenance 5.0, triggered, cost 0.1,
+  final cash 4.8
+- all metrics match because mark == entry; final cash differs by +0.10 (no
+  liquidation fee)
+- late response (boundary 2, funding update at 3): `engine.run` returns
+  `Late funding boundary ... 1000000002 < replay timestamp 1000000003` and
+  applies no funding adjustment
+
+### Postings comparison
+
+Nautilus exposes no journal or double-entry postings. Only account balances,
+positions and orders are readable from `Cache`. The independent Python exact
+accounting oracle therefore remains the ledger for comparison; no native
+posting comparison was possible.
+
+### Recommendation
+
+1. Queue: F02 passes functionally. The coordinator may open a narrow
+   recertification ADR for `CAP-L2-QUEUE` limited to queue-ahead, trade
+   decrement and depth-once consumption. The queue state is not publicly
+   readable and the model is per-order and trade-driven.
+2. Liquidation: retain `BLOCKED_BACKEND` for `CAP-ISOLATED` and the TASK-10
+   mark-based liquidation scope. The forced close fires, but the trigger and
+   maintenance semantics do not match the mark-based specification.
+3. `CAP-LOCAL-VIEW` is unchanged and was not tested.
+4. Do not treat native state as a posting ledger; keep the Python oracle.
+
+No lock, certificate, task file or production module was changed by this
+spike. ADR status stays PROPOSED.
+
 ## Consequences
 
 - No immediate capability or certificate change.

@@ -1,0 +1,594 @@
+{
+  "spike": "qel-native-functional-capability-spike",
+  "date": "2026-11-09",
+  "generated_at_utc": "2026-11-10T00:57:33Z",
+  "scope": [
+    "#3",
+    "#4",
+    "#10",
+    "#11"
+  ],
+  "worktree": "/home/quant/quant/qel-wspike",
+  "branch": "qel/functional-spike",
+  "base_sha": "d6fea497229626e26011edc45c2a6bf9c288c85e",
+  "pinned": {
+    "repo": "https://github.com/nautechsystems/nautilus_trader",
+    "tag": "v1.231.0",
+    "commit": "27a8e54e7ac3c57d6cbf8891f0283dfbaee97317",
+    "local_clone": "/home/quant/quant/src-clones/nautilus",
+    "head_matches_expected": true
+  },
+  "build": {
+    "crate": "native/capability_spike",
+    "package": "qel-capability-spike",
+    "profile": "release",
+    "command": "cd native/capability_spike && CARGO_TARGET_DIR=/home/quant/quant/.build-cache/qel-native cargo build --release -j 4",
+    "exit_code": 0,
+    "target_dir": "/home/quant/quant/.build-cache/qel-native",
+    "cargo_lock": {
+      "path": "native/capability_spike/Cargo.lock",
+      "sha256": "d3b41143183f5603960ba8795159ffcd0c03440095559059fb6cf2874edfdc21",
+      "bytes": 44488
+    },
+    "cargo_toml": {
+      "path": "native/capability_spike/Cargo.toml",
+      "sha256": "0fcfc165bc397fb1af4e13a4c1e886585f1ee91a5cce710e449caf23e6e117cd"
+    },
+    "source": {
+      "path": "native/capability_spike/src/main.rs",
+      "sha256": "ce72a9a78598a39722b44228aa808e35756a9787806d42de5f5db0ebc9ff0538"
+    },
+    "binary": {
+      "path": "/home/quant/quant/.build-cache/qel-native/release/qel-capability-spike",
+      "sha256": "44d1ce7d25f7e46322a1df10ef29011e287c36f5d39997ee1494881c9792884a",
+      "bytes": 12373384
+    },
+    "last_clean_rebuild_seconds": 20
+  },
+  "run": {
+    "command": "/home/quant/quant/.build-cache/qel-native/release/qel-capability-spike /tmp/qel_functional_spike.json",
+    "exit_code": 0,
+    "probe_payload_path": "/tmp/qel_functional_spike.json",
+    "probe_payload_sha256": "c8c66d5f2755ec4a6df9cd6253413bde55f25e84e5bfe8b6e6ec6593965dbfc3",
+    "evidence_assembly": "probe payload merged with build hashes, oracle values and recommendation into this file; no probe value was altered",
+    "elapsed_ms": 90,
+    "peak_rss_kb": 16752,
+    "peak_rss_mib": 16.36,
+    "resource_slot": "exclusive heavy Rust build, under 2 GiB peak RSS"
+  },
+  "oracle": {
+    "source": [
+      "python/qel/accounting/core.py",
+      "python/qel/accounting/venue.py"
+    ],
+    "independence": "pure-Python exact Fraction accounting, no native imports",
+    "invocation": "PYTHONPATH=python python3 (direct qel.accounting.venue import; repository pytest deps are not installed in this worktree)",
+    "exit_code": 0,
+    "F02": {
+      "fill_step_2_qty": "10",
+      "leaves_qty": "10",
+      "ahead_qty": "0"
+    },
+    "F11": {
+      "isolated_equity": "4",
+      "maintenance": "4.7",
+      "liquidation_triggered": true,
+      "liquidation_cost": "0.09",
+      "final_isolated_cash": "3.91",
+      "position_qty": "0"
+    },
+    "F12": {
+      "funding_cash": "-0.2",
+      "isolated_equity": "4.9",
+      "maintenance": "5",
+      "liquidation_triggered": true,
+      "liquidation_cost": "0.1",
+      "final_isolated_cash": "4.8",
+      "position_qty": "0"
+    },
+    "native_vs_oracle": {
+      "F11": {
+        "equity_match": true,
+        "maintenance_native": "5.0",
+        "maintenance_oracle": "4.7",
+        "maintenance_delta": "+0.3",
+        "final_cash_native": "4.0",
+        "final_cash_oracle": "3.91",
+        "final_cash_delta": "+0.09",
+        "delta_reason": "native has no liquidation fee"
+      },
+      "F12": {
+        "funding_match": true,
+        "equity_match": true,
+        "maintenance_match": true,
+        "final_cash_native": "4.9",
+        "final_cash_oracle": "4.8",
+        "final_cash_delta": "+0.10",
+        "delta_reason": "native has no liquidation fee"
+      }
+    }
+  },
+  "exact_api": {
+    "queue": {
+      "public_config": "SimulatedVenueConfig::builder().queue_position(true).liquidity_consumption(true).trade_execution(true)",
+      "public_book": "nautilus_model::orderbook::OrderBook::get_quantity_at_level(Price, OrderSide, u8) -> Quantity",
+      "private_symbols": [
+        "fn snapshot_queue_position",
+        "fn decrement_queue_on_trade",
+        "fn apply_liquidity_consumption",
+        "queue_ahead_total",
+        "queue_pending",
+        "queue_ahead_orders",
+        "queue_excess"
+      ]
+    },
+    "liquidation": {
+      "public_config": "SimulatedVenueConfig::builder().account_type(AccountType::Margin).margin_model(MarginModelAny::Standard(StandardMarginModel)).liquidation_enabled(true).liquidation_trigger_ratio(1.0).liquidation_cancel_open_orders(true)",
+      "public_engine": "BacktestEngine::run",
+      "private_symbols": [
+        "fn run_venue_liquidations (BacktestEngine)",
+        "venues: AHashMap<Venue, Rc<RefCell<SimulatedExchange>>> (private field)",
+        "matching_engines (private field)"
+      ],
+      "pub_but_unreachable": [
+        "SimulatedExchange::process_liquidations",
+        "OrderMatchingEngine::liquidate_open_positions"
+      ],
+      "funding": "FundingRateUpdate { next_funding_ns } + BacktestEngine::run settlement step"
+    },
+    "account": {
+      "readback": [
+        "Cache::accounts_all_owned",
+        "MarginAccount::total_maintenance_margin(Currency)",
+        "Cache::positions_open",
+        "Cache::positions_closed",
+        "Cache::orders"
+      ],
+      "postings": "NO double-entry journal API; BacktestResult has aggregate stats only"
+    }
+  },
+  "unreachable_or_missing": [
+    {
+      "symbol": "fn snapshot_queue_position",
+      "reason": "private method on OrderMatchingEngine; there is no public queue-state readback"
+    },
+    {
+      "symbol": "fn decrement_queue_on_trade",
+      "reason": "private; only the behavior through queue_position(true) is public"
+    },
+    {
+      "symbol": "fn apply_liquidity_consumption",
+      "reason": "private; only the behavior through liquidity_consumption(true) is public"
+    },
+    {
+      "symbol": "fn run_venue_liquidations",
+      "reason": "private method on BacktestEngine; triggered only by run()"
+    },
+    {
+      "symbol": "SimulatedExchange::process_liquidations",
+      "reason": "pub, but SimulatedExchange is held in a private BacktestEngine field"
+    },
+    {
+      "symbol": "OrderMatchingEngine::liquidate_open_positions",
+      "reason": "pub, but matching_engines is a private BacktestEngine field"
+    },
+    {
+      "symbol": "immutable LocalView",
+      "reason": "not present; not tested in this spike"
+    },
+    {
+      "symbol": "account journal / postings",
+      "reason": "no API; BacktestResult exposes only summary/stats"
+    },
+    {
+      "symbol": "isolated margin sub-account",
+      "reason": "AccountType::Margin is one balance per currency; no isolated allocation API"
+    },
+    {
+      "symbol": "liquidation fee",
+      "reason": "no field; the forced close is a normal market order with instrument fees only"
+    }
+  ],
+  "failing_call": {
+    "queue_and_trigger_paths": "none (all compiled and ran)",
+    "late_funding": "engine.run returned Err: 'Late funding boundary for ETHUSDT-PERP.BINANCE on BINANCE: 1000000002 < replay timestamp 1000000003'; run aborted, no funding adjustment applied"
+  },
+  "capability_effect": {
+    "CAP-L2-QUEUE": "FUNCTIONAL_PASS_F02_BEHAVIOR (not adopted; no lock/certificate change)",
+    "CAP-ISOLATED": "BLOCKED_BACKEND unchanged (mark-based maintenance, quote/mark split, isolated sub-account, liquidation fee all fail)",
+    "CAP-LOCAL-VIEW": "unchanged; not tested in this spike",
+    "TASK-10 liquidation scope": "BLOCKED_BACKEND unchanged"
+  },
+  "recommendation": "Queue: F02 passes functionally (ahead 100, trades 80 then 30 -> exactly 10 fill; an L2 depth reduction does not double-consume). The coordinator may open a narrow recertification ADR for CAP-L2-QUEUE limited to this slice; queue state itself is not publicly readable and the model is per-order and trade-driven. Liquidation: keep CAP-ISOLATED and the TASK-10 mark-based liquidation scope BLOCKED_BACKEND. The forced-close path fires, but maintenance is entry-based (5.0 vs 4.7), a quote-only move triggers liquidation (F11 QUOTE_IS_NOT_MARK fails), there is no isolated sub-account, and there is no liquidation fee. Native postings are not exposed; the Python exact accounting oracle remains the ledger. No lock, certificate, task file or production module was changed.",
+  "probes": {
+    "exact_level_qty": {
+      "api": "nautilus_model::orderbook::OrderBook::get_quantity_at_level(Price, OrderSide, u8) -> Quantity",
+      "expected_qty": 100.0,
+      "hook": "get_quantity_at_level",
+      "input": {
+        "price": 100.0,
+        "queried_order_side": "Sell",
+        "side_in_book": "Buy",
+        "size": 100.0
+      },
+      "observed_qty": 100.0,
+      "pass": true,
+      "public": true
+    },
+    "f02_depth_once_l2": {
+      "after_trade_1": {
+        "avg_px": null,
+        "client_order_id": "O-19700101-000001-001-001-1",
+        "filled_qty": 0.0,
+        "leaves_qty": 20.0,
+        "order_type": "Limit",
+        "status": "Accepted"
+      },
+      "after_trade_2": {
+        "avg_px": "100.00",
+        "client_order_id": "O-19700101-000001-001-001-1",
+        "filled_qty": 10.0,
+        "leaves_qty": 10.0,
+        "order_type": "Limit",
+        "status": "PartiallyFilled"
+      },
+      "api": {
+        "book_type": "L2_MBP",
+        "consumption_guard": "seed_trade_consumption skips when book.ts_last > trade.ts_event; adjust_queue_for_delta caps ahead instead of subtracting",
+        "deltas": "nautilus_model::data::OrderBookDelta (BookAction::Add/Update, aggregate flags=0)"
+      },
+      "depth_reduction_double_consumed": false,
+      "expected_fill_step_2_qty": 10.0,
+      "fill_step_2_qty": 10.0,
+      "filled_after_trade_1_qty": 0.0,
+      "fixture": "F02+depth-once",
+      "pass": true,
+      "setup": {
+        "ahead": 100.0,
+        "depth_delta_after_trade": 20.0,
+        "order_qty": 20.0,
+        "trades": [
+          80.0,
+          30.0
+        ]
+      }
+    },
+    "f02_queue_l1": {
+      "after_trade_1": {
+        "avg_px": null,
+        "client_order_id": "O-19700101-000001-001-001-1",
+        "filled_qty": 0.0,
+        "leaves_qty": 20.0,
+        "order_type": "Limit",
+        "status": "Accepted"
+      },
+      "after_trade_2": {
+        "avg_px": "100.00",
+        "client_order_id": "O-19700101-000001-001-001-1",
+        "filled_qty": 10.0,
+        "leaves_qty": 10.0,
+        "order_type": "Limit",
+        "status": "PartiallyFilled"
+      },
+      "ahead_qty_after": 0.0,
+      "api": {
+        "book_type": "L1_MBP",
+        "exact_symbol": "fn snapshot_queue_position / fn decrement_queue_on_trade / fn apply_liquidity_consumption",
+        "symbol_visibility": "private methods on OrderMatchingEngine; behavior reachable only through the venue config flags",
+        "venue_config": "SimulatedVenueConfig::builder().queue_position(true).liquidity_consumption(true).trade_execution(true)"
+      },
+      "expected": {
+        "ahead_qty": 0.0,
+        "fill_step_2_qty": 10.0,
+        "filled_after_trade_1_qty": 0.0,
+        "leaves_qty": 10.0
+      },
+      "fill_step_2_qty": 10.0,
+      "filled_after_trade_1_qty": 0.0,
+      "fixture": "F02",
+      "leaves_qty": 10.0,
+      "pass": true,
+      "queue_state_note": "queue_ahead_total is a private OrderMatchingEngine field; ahead=0 is inferred from the exact 10.0 fill on the second trade, not read back",
+      "queue_state_observable": false,
+      "scenario": "BASE",
+      "setup": {
+        "ahead": 100.0,
+        "order_price": 100.0,
+        "order_qty": 20.0,
+        "trades": [
+          80.0,
+          30.0
+        ]
+      }
+    },
+    "f11_mark": {
+      "api": {
+        "engine_step": "BacktestEngine::run -> private fn run_venue_liquidations -> SimulatedExchange::process_liquidations -> OrderMatchingEngine::liquidate_open_positions",
+        "symbol_visibility": "process_liquidations and liquidate_open_positions are pub but unreachable from BacktestEngine (venues and matching engines are private); only the config flags and engine step are public",
+        "venue_config": "SimulatedVenueConfig::builder().account_type(Margin).margin_model(MarginModelAny::Standard(StandardMarginModel)).liquidation_enabled(true).liquidation_trigger_ratio(1.0)"
+      },
+      "fixture": "F11",
+      "forced_close": {
+        "closed_position": {
+          "adjustments": [],
+          "avg_px_close": 94.0,
+          "avg_px_open": 100.0,
+          "quantity": 0.0,
+          "realized_pnl": -6.0
+        },
+        "final_cash": 4.0,
+        "final_cash_delta_vs_oracle": 0.08999999999999986,
+        "final_cash_difference_reason": "oracle charges a 0.09 liquidation fee; Nautilus has no liquidation-fee field and the liquidation is a normal market order",
+        "final_maintenance": 0.0,
+        "liquidation_order_count": 1,
+        "liquidation_orders": [
+          {
+            "avg_px": "94.00",
+            "client_order_id": "LIQUIDATION-BINANCE-85f03804-d6c2-43d5-9b4e-b2d188234d46",
+            "filled_qty": 1.0,
+            "leaves_qty": 0.0,
+            "order_type": "Market",
+            "status": "Filled"
+          }
+        ],
+        "open_positions_after": 0,
+        "oracle_final_isolated_cash": 3.91
+      },
+      "observed_inputs": {
+        "account_cash": 10.0,
+        "isolated_equity": 4.0,
+        "maintenance_from_margin_account": 5.0,
+        "maintenance_source": "PortfolioManager::update_balance_margin uses net_avg_px (entry 100.0), not the mark; StandardMarginModel => 100.0 * 0.05",
+        "open_positions": 1,
+        "position": {
+          "avg_px_open": 100.0,
+          "quantity": 1.0,
+          "signed_qty": 1.0
+        },
+        "quote_bid": 94.0,
+        "unrealized_pnl_from_cache": -6.0
+      },
+      "oracle_expected": {
+        "isolated_equity": 4.0,
+        "liquidation_cost": 0.09,
+        "liquidation_triggered": true,
+        "maintenance": 4.7
+      },
+      "partial_note": "Trigger and equity match the oracle; maintenance does not. Nautilus computes maintenance from entry price and unrealized PnL from the quote bid, so the fixture's mark-based 4.7 is not reproduced. Native 5.0 still breaches at equity 4.0, so the forced close fires for a different reason than the fixture.",
+      "pass": false,
+      "scenario": "MARK",
+      "setup": {
+        "entry": 100.0,
+        "isolated_cash": 10.0,
+        "maintenance_rate": 0.05,
+        "mark": 94.0,
+        "qty": 1.0
+      },
+      "verdicts": {
+        "final_cash_matches_oracle": false,
+        "isolated_equity_matches_oracle": true,
+        "liquidation_cost_modeled": false,
+        "liquidation_triggered": true,
+        "maintenance_matches_oracle_mark_based": false,
+        "mark_is_trigger_source": false
+      }
+    },
+    "f11_quote_is_not_mark": {
+      "finding": "Without any MarkPriceUpdate, a quote bid drop to 94 alone triggers the native forced close. F11 QUOTE_IS_NOT_MARK fails: the native trigger source is the quote, not a certified mark.",
+      "fixture": "F11",
+      "observed": {
+        "final_cash": 4.0,
+        "liquidation_order_count": 1,
+        "open_positions_after": 0,
+        "unrealized_pnl_source": "Cache::calculate_unrealized_pnl uses quote.bid_price for longs"
+      },
+      "oracle_expected": {
+        "liquidation_triggered": false,
+        "mark_path_certificate": "missing",
+        "mark_trigger_inferred_from_quote": false
+      },
+      "pass": false,
+      "scenario": "QUOTE_IS_NOT_MARK",
+      "setup": {
+        "entry": 100.0,
+        "isolated_cash": 10.0,
+        "mark_events": 0,
+        "qty": 1.0,
+        "quote": {
+          "ask": 94.1,
+          "bid": 94.0
+        }
+      },
+      "verdict": "FAIL_QUOTE_TRIGGERS_LIQUIDATION"
+    },
+    "f12_base_exact_boundary": {
+      "fixture": "F12",
+      "forced_close": {
+        "closed_position": {
+          "adjustments": [
+            {
+              "pnl_change": -0.2,
+              "reason": "funding_settlement:5cb5ee65-88bf-4e2a-8282-5bfee88fbc2f",
+              "ts_event": 1000000002,
+              "ts_init": 1000000002,
+              "type": "Funding"
+            }
+          ],
+          "quantity": 0.0,
+          "realized_pnl": -0.2
+        },
+        "final_cash": 4.9,
+        "final_cash_delta_vs_oracle": 0.10000000000000053,
+        "final_cash_difference_reason": "oracle charges a 0.10 liquidation fee; Nautilus has no liquidation-fee field and the liquidation is a normal market order",
+        "liquidation_order_count": 1,
+        "open_positions_after": 0,
+        "oracle_final_isolated_cash": 4.8
+      },
+      "note": "F12 numeric paths match exactly because mark == entry. The native account is a single cross-margin balance per currency, so 'isolated' is not represented as an isolated sub-account; the match is for a single-position, single-currency setup only.",
+      "observed_inputs": {
+        "account_cash_after_funding": 4.9,
+        "funded_pnl": -0.2,
+        "funding_adjustments": [
+          {
+            "pnl_change": -0.2,
+            "reason": "funding_settlement:9078b739-d69f-48ce-a5dc-1a4feba7628a",
+            "ts_event": 1000000002,
+            "ts_init": 1000000002,
+            "type": "Funding"
+          }
+        ],
+        "isolated_equity": 4.9,
+        "maintenance_from_margin_account": 5.0,
+        "open_positions": 1,
+        "unrealized_pnl": 0.0
+      },
+      "oracle_expected": {
+        "funding_cash": -0.2,
+        "isolated_equity": 4.9,
+        "liquidation_cost": 0.1,
+        "liquidation_triggered": true,
+        "maintenance": 5.0
+      },
+      "pass": true,
+      "scenario": "BASE",
+      "setup": {
+        "entry": 100.0,
+        "funding_rate": 0.002,
+        "isolated_cash": 5.1,
+        "maintenance_rate": 0.05,
+        "mark": 100.0,
+        "qty": 1.0
+      },
+      "timing": {
+        "boundary_is_exact": true,
+        "boundary_ns": 1000000002,
+        "funding_event_ns": 1000000002
+      },
+      "verdicts": {
+        "final_cash_matches_oracle": false,
+        "funding_cash_matches_oracle": true,
+        "isolated_equity_matches_oracle": true,
+        "liquidation_cost_modeled": false,
+        "liquidation_triggered": true,
+        "maintenance_matches_oracle": true
+      }
+    },
+    "f12_late_boundary_response": {
+      "account_cash": 5.1,
+      "expected": "deterministic rejection of a late funding boundary; no silent settlement and no look-ahead settlement price",
+      "finding": "A funding update whose settlement boundary is already in the past aborts the run with 'Late funding boundary ... < replay timestamp' and applies no funding adjustment. The exact-boundary case (boundary == replay timestamp) settles once.",
+      "fixture": "F12",
+      "funding_adjustments": [],
+      "funding_applied": false,
+      "liquidation_triggered": false,
+      "maintenance": 5.0,
+      "open_positions": 1,
+      "pass": true,
+      "run_error": "Late funding boundary for ETHUSDT-PERP.BINANCE on BINANCE: 1000000002 < replay timestamp 1000000003",
+      "run_returned_error": true,
+      "scenario": "LATE_RESPONSE",
+      "timing": {
+        "boundary_ns": 1000000002,
+        "funding_event_ns": 1000000003
+      }
+    },
+    "native_postings": {
+      "available_output": {
+        "account_balance_total": 1000.0,
+        "account_maintenance_margin": 5.0,
+        "cache_fills_in_position_events": true,
+        "cache_orders": true,
+        "cache_positions": true
+      },
+      "double_entry_ledger": false,
+      "hook": "native_account_postings",
+      "journal_or_posting_api": false,
+      "note": "BacktestResult has no accounts/orders/fills/postings. Account balance and position state are only readable from Cache; there is no double-entry journal to compare with the Python accounting oracle.",
+      "pass": false,
+      "result_fields": [
+        "trader_id",
+        "machine_id",
+        "instance_id",
+        "iterations",
+        "total_events",
+        "total_orders",
+        "total_positions",
+        "summary",
+        "stats_pnls",
+        "stats_returns",
+        "stats_general",
+        "returns_series"
+      ]
+    }
+  },
+  "hook_verdicts": {
+    "funding_exact_boundary": {
+      "reason": "boundary == replay timestamp settles exactly once",
+      "verdict": "PASS"
+    },
+    "funding_late_boundary": {
+      "reason": "late boundary aborts the run and applies no funding adjustment",
+      "verdict": "PASS"
+    },
+    "isolated_margin_account": {
+      "reason": "AccountType::Margin is one cross-margin balance per currency; no isolated sub-account API",
+      "verdict": "FAIL"
+    },
+    "l2_exact_level_qty": {
+      "api": "OrderBook::get_quantity_at_level(Price, OrderSide, u8) -> Quantity",
+      "symbol_visibility": "public",
+      "verdict": "PASS"
+    },
+    "l2_liquidity_consumption": {
+      "api": "liquidity_consumption(true)",
+      "exact_symbol": "fn apply_liquidity_consumption",
+      "note": "exercised for the maker queue path; marketable-order budget not separately asserted",
+      "symbol_visibility": "private",
+      "verdict": "PARTIAL"
+    },
+    "l2_queue_ahead_snapshot": {
+      "api": "SimulatedVenueConfig::builder().queue_position(true)",
+      "exact_symbol": "fn snapshot_queue_position",
+      "symbol_visibility": "private on OrderMatchingEngine; no public readback",
+      "verdict": "PASS_BEHAVIOR"
+    },
+    "l2_queue_decrement_on_trade": {
+      "api": "queue_position(true) + TradeTick",
+      "exact_symbol": "fn decrement_queue_on_trade",
+      "symbol_visibility": "private",
+      "verdict": "PASS_BEHAVIOR"
+    },
+    "liquidation_fee": {
+      "reason": "no liquidation-fee field; the forced close is a normal market order",
+      "verdict": "FAIL"
+    },
+    "liquidation_maintenance_mark_based": {
+      "observed": 5.0,
+      "oracle_expected": 4.7,
+      "reason": "maintenance is computed from net_avg_px (entry 100), not the mark 94",
+      "verdict": "FAIL"
+    },
+    "liquidation_quote_is_not_mark": {
+      "reason": "unrealized PnL uses quote.bid_price; a quote-only move to 94 triggers the forced close",
+      "verdict": "FAIL"
+    },
+    "liquidation_trigger_path": {
+      "api": "liquidation_enabled(true) + liquidation_trigger_ratio(1.0) + engine step",
+      "exact_symbols": [
+        "fn run_venue_liquidations",
+        "SimulatedExchange::process_liquidations",
+        "OrderMatchingEngine::liquidate_open_positions"
+      ],
+      "symbol_visibility": "run_venue_liquidations private; the other two are pub but unreachable from BacktestEngine",
+      "verdict": "PASS_BEHAVIOR"
+    },
+    "native_account_postings": {
+      "reason": "no journal or double-entry posting API; BacktestResult exposes aggregate stats only",
+      "verdict": "FAIL_NOT_EXPOSED"
+    }
+  },
+  "resources": {
+    "elapsed_ms": 90,
+    "peak_rss_kb": 16752
+  }
+}
