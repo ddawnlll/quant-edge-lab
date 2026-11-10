@@ -1,0 +1,196 @@
+{
+  "failed_attempts_retained": true,
+  "generated_utc": "2026-11-10T09:05:47Z",
+  "kind": "TASK25_B2_RECHECK",
+  "median_wall_s": 24.292,
+  "memory_max_bytes": 4294967296,
+  "memory_swap_max_bytes": 0,
+  "p90_wall_s": 26.452,
+  "profile": "RP-4G",
+  "protocol": {
+    "p90_rule": "nearest-rank p90 of the 12 timed wall-clock runs",
+    "timed_repeats": 12,
+    "warmups": 2
+  },
+  "resource_note": "process RSS from the runner report; cgroup peak includes page cache and is reported separately",
+  "target_s": 30,
+  "timed": [
+    {
+      "batches": 20,
+      "cgroup_peak_bytes": 36691968,
+      "elapsed_s": 24.344,
+      "events": 1241800,
+      "exit_code": 0,
+      "label": "timed00",
+      "peak_rss_kb": 43776,
+      "report": "/home/quant/quant/.build-cache/b2-recheck/timed00.json",
+      "stderr_tail": "",
+      "wall_s": 24.455
+    },
+    {
+      "batches": 20,
+      "cgroup_peak_bytes": 36474880,
+      "elapsed_s": 26.349,
+      "events": 1241800,
+      "exit_code": 0,
+      "label": "timed01",
+      "peak_rss_kb": 43588,
+      "report": "/home/quant/quant/.build-cache/b2-recheck/timed01.json",
+      "stderr_tail": "",
+      "wall_s": 26.452
+    },
+    {
+      "batches": 20,
+      "cgroup_peak_bytes": 36085760,
+      "elapsed_s": 25.595,
+      "events": 1241800,
+      "exit_code": 0,
+      "label": "timed02",
+      "peak_rss_kb": 43456,
+      "report": "/home/quant/quant/.build-cache/b2-recheck/timed02.json",
+      "stderr_tail": "",
+      "wall_s": 25.695
+    },
+    {
+      "batches": 20,
+      "cgroup_peak_bytes": 36458496,
+      "elapsed_s": 21.265,
+      "events": 1241800,
+      "exit_code": 0,
+      "label": "timed03",
+      "peak_rss_kb": 43688,
+      "report": "/home/quant/quant/.build-cache/b2-recheck/timed03.json",
+      "stderr_tail": "",
+      "wall_s": 21.387
+    },
+    {
+      "batches": 20,
+      "cgroup_peak_bytes": 36634624,
+      "elapsed_s": 23.611,
+      "events": 1241800,
+      "exit_code": 0,
+      "label": "timed04",
+      "peak_rss_kb": 43880,
+      "report": "/home/quant/quant/.build-cache/b2-recheck/timed04.json",
+      "stderr_tail": "",
+      "wall_s": 23.733
+    },
+    {
+      "batches": 20,
+      "cgroup_peak_bytes": 36409344,
+      "elapsed_s": 22.961,
+      "events": 1241800,
+      "exit_code": 0,
+      "label": "timed05",
+      "peak_rss_kb": 43676,
+      "report": "/home/quant/quant/.build-cache/b2-recheck/timed05.json",
+      "stderr_tail": "",
+      "wall_s": 23.067
+    },
+    {
+      "batches": 20,
+      "cgroup_peak_bytes": 37765120,
+      "elapsed_s": 24.013,
+      "events": 1241800,
+      "exit_code": 0,
+      "label": "timed06",
+      "peak_rss_kb": 45220,
+      "report": "/home/quant/quant/.build-cache/b2-recheck/timed06.json",
+      "stderr_tail": "",
+      "wall_s": 24.129
+    },
+    {
+      "batches": 20,
+      "cgroup_peak_bytes": 36384768,
+      "elapsed_s": 26.354,
+      "events": 1241800,
+      "exit_code": 0,
+      "label": "timed07",
+      "peak_rss_kb": 43808,
+      "report": "/home/quant/quant/.build-cache/b2-recheck/timed07.json",
+      "stderr_tail": "",
+      "wall_s": 26.495
+    },
+    {
+      "batches": 20,
+      "cgroup_peak_bytes": 36655104,
+      "elapsed_s": 24.608,
+      "events": 1241800,
+      "exit_code": 0,
+      "label": "timed08",
+      "peak_rss_kb": 43736,
+      "report": "/home/quant/quant/.build-cache/b2-recheck/timed08.json",
+      "stderr_tail": "",
+      "wall_s": 24.724
+    },
+    {
+      "batches": 20,
+      "cgroup_peak_bytes": 45191168,
+      "elapsed_s": 24.983,
+      "events": 1241800,
+      "exit_code": 0,
+      "label": "timed09",
+      "peak_rss_kb": 52328,
+      "report": "/home/quant/quant/.build-cache/b2-recheck/timed09.json",
+      "stderr_tail": "",
+      "wall_s": 25.079
+    },
+    {
+      "batches": 20,
+      "cgroup_peak_bytes": 36261888,
+      "elapsed_s": 22.214,
+      "events": 1241800,
+      "exit_code": 0,
+      "label": "timed10",
+      "peak_rss_kb": 43720,
+      "report": "/home/quant/quant/.build-cache/b2-recheck/timed10.json",
+      "stderr_tail": "",
+      "wall_s": 22.313
+    },
+    {
+      "batches": 20,
+      "cgroup_peak_bytes": 36302848,
+      "elapsed_s": 23.098,
+      "events": 1241800,
+      "exit_code": 0,
+      "label": "timed11",
+      "peak_rss_kb": 43624,
+      "report": "/home/quant/quant/.build-cache/b2-recheck/timed11.json",
+      "stderr_tail": "",
+      "wall_s": 23.203
+    }
+  ],
+  "verdict": "PASS",
+  "warmups": [
+    {
+      "batches": 20,
+      "cgroup_peak_bytes": 75354112,
+      "elapsed_s": 27.976,
+      "events": 1241800,
+      "exit_code": 0,
+      "label": "warm0",
+      "peak_rss_kb": 43812,
+      "report": "/home/quant/quant/.build-cache/b2-recheck/warm0.json",
+      "stderr_tail": "",
+      "wall_s": 28.112
+    },
+    {
+      "batches": 20,
+      "cgroup_peak_bytes": 36200448,
+      "elapsed_s": 27.303,
+      "events": 1241800,
+      "exit_code": 0,
+      "label": "warm1",
+      "peak_rss_kb": 43592,
+      "report": "/home/quant/quant/.build-cache/b2-recheck/warm1.json",
+      "stderr_tail": "",
+      "wall_s": 27.405
+    }
+  ],
+  "workload": {
+    "bytes": 164130300,
+    "corpus": "/home/quant/quant/quant-edge-lab/data/native/bench/events_100x.jsonl",
+    "mode": "--chunk-bytes 8388608",
+    "strategy": "/home/quant/quant/quant-edge-lab/policy/examples/taker_1s.json"
+  }
+}

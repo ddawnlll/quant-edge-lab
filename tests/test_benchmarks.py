@@ -216,12 +216,13 @@ def test_release_evidence_covers_builds_locks_and_parity(release):
 
 def test_acceptance_reports_missing_items_and_no_full_claim():
     acceptance = json.loads((EVIDENCE / "T25_ACCEPTANCE.json").read_text())
-    assert acceptance["status"] == "PARTIAL/EVIDENCE_PENDING"
+    assert acceptance["status"].startswith("PARTIAL")
     assert acceptance["full_acceptance_claimed"] is False
     missing = " ".join(acceptance["missing_items"])
-    assert "B4 100M" in missing
-    assert "B2" in missing and "B3" in missing
-    assert (EVIDENCE / "B4_100M_BLOCKED.json").exists()
+    assert "B3" in missing
+    assert "B4" in missing
+    assert "B2" not in missing
+    assert (EVIDENCE / "B4_100M_EVIDENCE.json").exists()
 
 
 def test_failed_attempts_are_retained_not_hidden(b0, b1, b5):

@@ -25,30 +25,35 @@ method is used.
 
 | Capability | Exact missing hook |
 | --- | --- |
-| `CAP-LOCAL-VIEW` | Nautilus exposes one shared `Cache` to strategies (`Strategy::cache()`); there is no separate immutable LocalView and no API that prevents native cache access. `run(streaming=true)` also delivers fill callbacks immediately. The two-world split (exchange effect vs delayed local delivery) has no public hook. |
-| `CAP-L2-QUEUE` | **PARTIAL after ADR-0003 and the passive-runner follow-up.** Functional: `queue_position(true)` + `trade_execution(true)` + `liquidity_consumption(true)` gives F02 ahead 100, trades 80 then 30 -> exactly 10 fill, leaves 10, no depth double-consumption; partial fill + deterministic cancel of the remainder; one shared level budget across two passive orders and two marketable IOC orders; F03 IOC, F06 native OCO, F33 FOK/stop-limit gap and F34 partial-entry protection pass. Still unproven: public queue-state readback (private field), unknown-aggressor handling, resync after gaps, full L2 depth, F04 cancel race, F05 replace priority, F07 epoch safety, F29 book sequence, F31 duplicate-fill injection and client-managed OCO. |
+| `CAP-LOCAL-VIEW` | **PARTIAL_ADAPTER_MANAGED after ADR-0004.** Nautilus still exposes one shared `Cache` to strategies and has no backend-native immutable LocalView type. The public `Strategy`/`DataActor` callbacks are sufficient to enforce a two-world split in an adapter: `native/local_view` queues market data to `ts_event + feed_delay_ns` and order/fill responses to `ts_event + response_delay_ns`; the policy reads only delivered `LocalView` state. F22 PASS: 303/303 fills delivered after the exchange update, 0 policy reads before delivery, feed delay charged once, exact cash/position/equity convergence, zero-delay control equals the native runner. No backend-native hook is claimed. |
+| `CAP-L2-QUEUE` | **PARTIAL after ADR-0003, the passive-runner follow-up and ADR-0005.** Functional at the declared `ADAPTER_OVER_NATIVE` profile: F02 ahead 100, trades 80 then 30 -> exactly 10 fill, leaves 10, depth-once, cancel remainder, shared level; F03 IOC; F04 explicit `ALREADY_FILLED`; F05 client cancel+new replace with priority reset; F06 native OCO and zero-overfill client OCO; F07 position epochs and stale rejection; F29 book sequence `INVALID`/`RESYNC_REQUIRED`; F31 duplicate/out-of-order suppression and zeroed canceled leaves; F33 FOK/stop-limit gap; F34 partial-entry protection. Still unproven natively: public queue-state readback (private field), unknown-aggressor policy parity, full L2 depth, native priority counter, native epoch field, native last-good sequence and native venue event sequence. |
 | `CAP-ISOLATED` | The same shared cache and callback path means a process-level research/evaluator split cannot be proven inside one Nautilus engine. |
 
-Recertified 2026-11-10 by `docs/ADR-0003_l2_queue_recertification.md` and
+Recertified 2026-11-10 by `docs/ADR-0003_l2_queue_recertification.md`,
+`docs/ADR-0004_two_world_local_view.md`,
+`docs/ADR-0005_client_adapter_semantics.md`, and
 `evidence/native/FUNCTIONAL_SPIKE_2026-11-09.json`. The queue-ahead F02 slice is
-now available to TASK-17 within the stated scope. The two-world/LocalView split
-and mark-based liquidation remain blocked. No fork or monkey patch was used.
+available to TASK-17 within the stated scope. The two-world/LocalView split is
+available at the adapter profile (F22 PASS). Mark-based liquidation remains
+blocked. No fork or monkey patch was used.
 
 Follow-up 2026-11-10: `native/passive_runner` reproduces F02 and adds
 partial-fill/cancel-remainder, shared-level budget across two passive orders and
 two marketable IOC orders, F03 IOC, F06 native OCO, F33 FOK/stop-limit gap and
-F34 partial-entry protection. Evidence:
-`evidence/labd/PASSIVE_QUEUE_2026-11-10.json` and
-`evidence/labd/INTEGRATION_ISSUE10_VERIFY.json`. F04/F05/F07/F29/F31 and
-client-managed OCO remain unproven.
+F34 partial-entry protection. `native/passive_runner/src/adapter.rs` adds the
+client-owned F04/F05/F07/F29/F31 and zero-overfill client OCO semantics. The
+two-world F22 slice is in `native/local_view`. Evidence:
+`evidence/labd/PASSIVE_QUEUE_2026-11-10.json`,
+`evidence/labd/PASSIVE_QUEUE_ADAPTER_2026-11-10.json`,
+`evidence/labd/LOCAL_VIEW_F22_2026-11-10.json`.
 
-Consequence: M4 queue claims are limited to the tested F02/F03/F06/F33/F34
-slice; unknown-aggressor, resync, full L2 depth, replace priority, epoch safety,
-cancel races and duplicate-fill injection remain unproven. M1
-may use the taker L1 quote/trade slice with funding and the F02 passive queue
-slice; it cannot claim full L2, two-world LocalView, passive fill parity beyond
-the tested fixtures, or full liquidation fidelity. `RuntimeLock.status` remains
-`UNRESOLVED` because the full hook set is not available.
+Consequence: M1 may use the taker L1 quote/trade slice with funding and the
+adapter-managed F22 two-world path. M4 queue claims are limited to the
+`ADAPTER_OVER_NATIVE` profile; native queue-state readback, unknown-aggressor
+fill parity, full L2 depth and native priority/epoch/sequence fields remain
+unproven. Full liquidation fidelity and `CAP-ISOLATED` remain blocked.
+`RuntimeLock.status` remains `UNRESOLVED` because the full native hook set is
+not available.
 
 ## Reproduction
 

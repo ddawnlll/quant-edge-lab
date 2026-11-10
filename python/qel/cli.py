@@ -232,6 +232,20 @@ def main(argv: list[str] | None = None) -> int:
     )
     p.add_argument("--out")
 
+    p = sub.add_parser("m2-run", help="run the development M2 walk-forward path")
+    p.add_argument("--manifest", required=True)
+    p.add_argument("--data-root", required=True)
+    p.add_argument("--binary", required=True)
+    p.add_argument("--strategy", required=True)
+    p.add_argument("--out-dir", required=True)
+    p.add_argument("--capital", default="1000")
+    p.add_argument("--risk-fraction", default="0.1")
+    p.add_argument("--controls", type=int, default=1000)
+    p.add_argument("--family-size", type=int, default=12)
+    p.add_argument("--workers", type=int, default=4)
+    p.add_argument("--max-holding-ns", type=int, default=3_600_000_000_000)
+    p.add_argument("--bootstrap-resamples", type=int, default=10000)
+
     args = parser.parse_args(argv)
     if args.command == "fixtures":
         harness = Harness()
@@ -337,6 +351,25 @@ def main(argv: list[str] | None = None) -> int:
         payload = run_variants(args.binary, args.events, base, args.out, 12)
         _write(None, payload)
         return 0
+    if args.command == "m2-run":
+        from .research.m2 import run_m2
+
+        payload = run_m2(
+            manifest_path=args.manifest,
+            data_root=args.data_root,
+            binary=args.binary,
+            strategy_base_path=args.strategy,
+            out_dir=args.out_dir,
+            capital=args.capital,
+            risk_fraction=args.risk_fraction,
+            control_replications=args.controls,
+            family_size=args.family_size,
+            workers=args.workers,
+            max_holding_ns=args.max_holding_ns,
+            bootstrap_resamples=args.bootstrap_resamples,
+        )
+        _write(None, payload)
+        return 0 if payload["status"] in {"PASS", "INFEASIBLE_VENUE_MIN_NOTIONAL"} else 1
     if args.command == "protocol":
         calendar_payload = json.loads(Path(args.calendar).read_text())
         payload = protocol_report(

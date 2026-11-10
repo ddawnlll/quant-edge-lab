@@ -139,10 +139,11 @@
         "F15": "PASS",
         "F23": "PASS",
         "T-ACCOUNT": "PASS via real native runner + accounting CLI, residual 0",
-        "F22": "BLOCKED_BACKEND"
+        "F22": "PASS at the adapter-managed two-world profile: 303/303 fills delivered after the exchange update, 0 policy reads before delivery, feed delay charged once, exact LocalView convergence, zero-delay control equals the native runner"
       },
-      "status": "EVIDENCE_PENDING_F22",
-      "blocker": "F22 required for full TASK-11 acceptance"
+      "status": "ACCEPTED_PENDING_MERGE",
+      "blocker": "none at the adapter-managed F22 profile; no backend-native LocalView hook is claimed",
+      "evidence": "evidence/labd/LOCAL_VIEW_F22_2026-11-10.json"
     },
     {
       "issue": 5,
@@ -210,30 +211,32 @@
       "checks": {
         "F02": "PASS: ahead 100, trades 80+30 -> 10 fill, depth-once, cancel remainder, shared level",
         "F03": "PASS: marketable IOC shared level",
-        "F04": "PARTIAL: delayed cancel arrives after fill; no overfill; missing ALREADY_FILLED response",
-        "F05": "PARTIAL: same-price increase preserves priority; no public priority counter/readback",
-        "F06": "PASS native OCO; client-managed OCO PARTIAL and overfills",
-        "F07": "BLOCKED_BACKEND: no position-epoch/stale-stop hook",
-        "F29": "BLOCKED_BACKEND: no book sequence/resync hook",
-        "F31": "PARTIAL: duplicate fill suppressed; no out-of-order ACK hook",
+        "F04": "PASS at ADAPTER_OVER_NATIVE: explicit ALREADY_FILLED, no overfill",
+        "F05": "PASS at ADAPTER_OVER_NATIVE: client cancel+new replace, priority_reset_count=1",
+        "F06": "PASS native OCO and zero-overfill client OCO profile",
+        "F07": "PASS at ADAPTER_OVER_NATIVE: STALE_POSITION_EPOCH before the venue",
+        "F29": "PASS at ADAPTER_OVER_NATIVE: INVALID/RESYNC_REQUIRED and last_good_seq",
+        "F31": "PASS at ADAPTER_OVER_NATIVE: duplicate/out-of-order suppression, zeroed canceled leaves",
         "F33": "PASS: FOK and stop-limit gap",
         "F34": "PASS: partial-entry protection sized on filled qty"
       },
-      "status": "PARTIAL_EVIDENCE_PENDING",
-      "blocker": "CAP-L2-QUEUE PARTIAL: F04/F05/F31 partial with exact missing APIs; F07/F29 blocked; client-managed OCO overfills; LocalView/liquidation blocked"
+      "status": "ACCEPTED_PENDING_MERGE",
+      "blocker": "none at the declared ADAPTER_OVER_NATIVE profile; native API gaps remain recorded and CAP-L2-QUEUE stays PARTIAL",
+      "evidence": "evidence/labd/PASSIVE_QUEUE_ADAPTER_2026-11-10.json"
     },
     {
       "issue": 11,
       "task": "TASK-18",
       "checks": {
         "F01": "PASS in conformance",
-        "F02": "BLOCKED_BACKEND",
+        "F02": "PASS in the native F02 queue profile",
         "F04": "PASS in conformance",
-        "F22": "BLOCKED_BACKEND",
-        "T-QUEUE": "BLOCKED_BACKEND"
+        "F22": "PASS at the adapter-managed two-world profile",
+        "T-QUEUE": "PENDING: independent HftBacktest differential queue adapter over identical command tapes is not implemented"
       },
-      "status": "BLOCKED_BACKEND",
-      "blocker": "CAP-LOCAL-VIEW and CAP-L2-QUEUE"
+      "status": "PARTIAL_F22_PASS_T_QUEUE_PENDING",
+      "blocker": "T-QUEUE only; no queue-parity claim",
+      "evidence": "evidence/labd/LOCAL_VIEW_F22_2026-11-10.json"
     },
     {
       "issue": 12,
@@ -253,14 +256,15 @@
       "checks": {
         "B0": "PASS 2.30 ms, 0 JIT",
         "B1": "PASS 2.66 s",
-        "B2": "FAIL_MARGINAL: warm p90 30.141 s RP-4G / 30.351 s RP-8G vs 30 s target (2 warmups + 12 timed repeats)",
-        "B3": "PASS: p90 30.141 s RP-4G / 30.351 s RP-8G vs 120 s target",
+      "B2": "PASS: warm p90 26.452 s RP-4G, median 24.292 s (2 warmups + 12 timed repeats, target 30)",
+      "B3": "FAIL_TARGET: 10M-row atomic L2 workload, p90 209.741 s vs 120 s (11,247,697 events, 3 timed repeats, RP-4G)",
         "B4": "PASS at 1M/10M/100M under RP-4G; 1M/10M also under RP-8G",
         "B5": "PASS 0 lost/0 torn, read 810 ms, restore 0.47 min",
         "T-RELEASE": "PASS"
       },
-      "status": "PARTIAL_B2_PERF_MISS",
-      "blocker": "B2 misses 30 s warm p90 by 0.14-0.35 s on the current host; prior 20.545 s result is not reproducible; B3/B4 pass"
+    "status": "PARTIAL_B3_10M_TARGET_MISS",
+    "blocker": "B3 10M-row throughput misses the 120 s target by 89.741 s; B4 100M under RP-8G remains unrun",
+    "evidence": "evidence/labd/B2_RECHECK_2026-11-10.json, evidence/labd/B3_10M_ATOMIC_L2_2026-11-10.json"
     },
     {
       "issue": 14,
@@ -319,10 +323,13 @@
     }
   ],
   "summary": {
-    "integrated": 11,
-    "accepted": 2,
-    "closed": 2,
-    "open": 16,
+    "integrated_issue_count": 13,
+    "accepted_pending_merge_count": 2,
+    "accepted_pending_merge_issues": [4, 10],
+    "already_closed_count": 5,
+    "already_closed_issues": [1, 2, 5, 6, 12],
+    "remaining_open_count": 11,
+    "remaining_open_issues": [3, 7, 8, 9, 11, 13, 14, 15, 16, 17, 18],
     "traceability": "every required check is mapped to an observed result or an explicit blocker"
   }
 }
