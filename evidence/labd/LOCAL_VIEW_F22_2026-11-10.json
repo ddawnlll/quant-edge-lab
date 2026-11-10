@@ -1,0 +1,1374 @@
+{
+  "schema": "qel.local_view.f22.evidence.v1",
+  "id": "LOCAL_VIEW_F22_2026-11-10",
+  "date": "2026-11-10",
+  "issue": [
+    4,
+    11
+  ],
+  "task": "TASK-11/TASK-18 F22 two-world delayed delivery (adapter-managed LocalView)",
+  "status": "PASS_SCOPED_F22_PROFILE",
+  "status_basis": {
+    "runs_pass": true,
+    "f22_invariants_pass": true,
+    "exchange_accounting_pass": true,
+    "local_accounting_pass": true,
+    "control_equals_native_runner": true
+  },
+  "claim_boundary": "Adapter-managed LocalView inside a Nautilus strategy wrapper. Exchange world X is the pinned Nautilus BacktestEngine; strategy world Y is the qel-policy strategy, which reads only delivered LocalView fields. No fork, no monkey patch, no private API and no cache access from the policy path. This certifies F22 for the tested BTCUSDT L1 quote/trade archive profile only; it does not certify L2 queue parity, full order-ack/cancel latency, or backend-native LocalView.",
+  "binding": {
+    "binary": {
+      "path": "/home/quant/quant/.build-cache/qel-native/release/qel-local-view",
+      "sha256": "af79abd879da22082230a42fd84cd86c13b9b2e8d7fc3e0409b1df1f86075801"
+    },
+    "cargo_toml": {
+      "path": "/home/quant/quant/qel-lv/native/local_view/Cargo.toml",
+      "sha256": "e5c52908a6ff5d84355f745cebfd32ef8563dcade65468fabea60aa969557788"
+    },
+    "corpus": {
+      "path": "/home/quant/quant/quant-edge-lab/data/native/DS-ARCHIVE-BTCUSDT-2026-11-07/events.jsonl",
+      "sha256": "c7a4c79484a611820c2e314f48397de299294b009d24766ad5c2d03cc5ee22ed"
+    },
+    "git_head": "ce91981055125328dae4b59add8e5432892c4f20",
+    "nautilus": {
+      "commit": "27a8e54e7ac3c57d6cbf8891f0283dfbaee97317",
+      "repository": "https://github.com/nautechsystems/nautilus_trader",
+      "tag": "v1.231.0"
+    },
+    "source": {
+      "path": "/home/quant/quant/qel-lv/native/local_view/src/main.rs",
+      "sha256": "b21c7f19894253a07ce095e014511f61c6adb38511e978fab6343d2acd9e5cc2"
+    },
+    "strategy": {
+      "path": "policy/examples/taker_1m.json",
+      "sha256": "f6724ba6459d2e24308c8c55639e3617febee1791d5ed1d76805ee42867ae5bf"
+    }
+  },
+  "reproduction": {
+    "worktree": "/home/quant/quant/qel-lv",
+    "base_sha": "ce91981055125328dae4b59add8e5432892c4f20",
+    "build": "cd native/local_view && CARGO_TARGET_DIR=/home/quant/quant/.build-cache/qel-native cargo build --release -j 2",
+    "test": "PYTHONPATH=python QEL_ROOT=$PWD /home/quant/quant/quant-edge-lab/.venv/bin/python -m pytest -q tests/test_local_view.py",
+    "main": "qel-local-view --events /home/quant/quant/quant-edge-lab/data/native/DS-ARCHIVE-BTCUSDT-2026-11-07/events.jsonl --strategy policy/examples/taker_1m.json --feed-delay-ns 50000000 --response-delay-ns 25000000 --profile f22_main_feed50ms_response25ms --out evidence/labd/LOCAL_VIEW_F22_RUN.json",
+    "large_response": "qel-local-view ... --feed-delay-ns 50000000 --response-delay-ns 30000000000 --profile f22_large_response_30s --out evidence/labd/LOCAL_VIEW_F22_LARGE_RESPONSE_RUN.json",
+    "decision_in_gap": "qel-local-view ... --feed-delay-ns 50000000 --response-delay-ns 90000000000 --profile f22_decision_in_gap_90s --out evidence/labd/LOCAL_VIEW_F22_DECISION_IN_GAP_RUN.json",
+    "control": "qel-local-view ... --feed-delay-ns 0 --response-delay-ns 0 --profile control_zero_delay --out evidence/labd/LOCAL_VIEW_CONTROL_ZERO.json",
+    "native_control": "qel-native-runner --events ... --strategy policy/examples/taker_1m.json --out evidence/labd/LOCAL_VIEW_NATIVE_CONTROL.json",
+    "independent_accounting": "PYTHONPATH=python QEL_ROOT=$PWD .venv/bin/python -m qel.cli accounting --tape <extracted tape>",
+    "spec_manifest": "(cd specification && sha256sum -c MANIFEST.sha256)"
+  },
+  "runs": {
+    "control": {
+      "profile": "control_zero_delay",
+      "status": "PASS",
+      "binding": {
+        "binary": {
+          "path": "/home/quant/quant/.build-cache/qel-native/release/qel-local-view",
+          "sha256": "af79abd879da22082230a42fd84cd86c13b9b2e8d7fc3e0409b1df1f86075801"
+        },
+        "cargo_toml": {
+          "path": "/home/quant/quant/qel-lv/native/local_view/Cargo.toml",
+          "sha256": "e5c52908a6ff5d84355f745cebfd32ef8563dcade65468fabea60aa969557788"
+        },
+        "corpus": {
+          "path": "/home/quant/quant/quant-edge-lab/data/native/DS-ARCHIVE-BTCUSDT-2026-11-07/events.jsonl",
+          "sha256": "c7a4c79484a611820c2e314f48397de299294b009d24766ad5c2d03cc5ee22ed"
+        },
+        "git_head": "ce91981055125328dae4b59add8e5432892c4f20",
+        "nautilus": {
+          "commit": "27a8e54e7ac3c57d6cbf8891f0283dfbaee97317",
+          "repository": "https://github.com/nautechsystems/nautilus_trader",
+          "tag": "v1.231.0"
+        },
+        "source": {
+          "path": "/home/quant/quant/qel-lv/native/local_view/src/main.rs",
+          "sha256": "b21c7f19894253a07ce095e014511f61c6adb38511e978fab6343d2acd9e5cc2"
+        },
+        "strategy": {
+          "path": "policy/examples/taker_1m.json",
+          "sha256": "f6724ba6459d2e24308c8c55639e3617febee1791d5ed1d76805ee42867ae5bf"
+        }
+      },
+      "command": {
+        "events": "/home/quant/quant/quant-edge-lab/data/native/DS-ARCHIVE-BTCUSDT-2026-11-07/events.jsonl",
+        "feed_delay_ns": "0",
+        "notional": "100",
+        "response_delay_ns": "0",
+        "strategy": "policy/examples/taker_1m.json"
+      },
+      "counts": {
+        "decisions": 1425,
+        "delivered_fills": 307,
+        "delivered_fundings": 2,
+        "engine_orders": 307,
+        "events_parsed": 358200,
+        "fees": "9.31553580",
+        "fill_notional": "23288.83951",
+        "fill_qty": "0.307",
+        "fills": 307,
+        "funding_rates": 4,
+        "marks": 1440,
+        "orders_submitted": 307,
+        "policy_steps": 1439,
+        "positions": 154,
+        "positions_opened_callbacks": 154,
+        "quotes": 72084,
+        "trades": 284672
+      },
+      "feed_delay": {
+        "delivered_before_due": 0,
+        "feed_delay_ns": "0",
+        "first_tick_violations": 0,
+        "items": 358196,
+        "marks": 1440,
+        "max_lateness_ns": "0",
+        "max_total_delay_ns": "0",
+        "mean_lateness_ns": "0",
+        "min_lateness_ns": "0",
+        "min_total_delay_ns": "0",
+        "quotes": 72084,
+        "response_delay_ns": "0",
+        "trades": 284672
+      },
+      "response_delay": {
+        "decisions_with_unseen_fills": 0,
+        "fills": 307,
+        "fills_with_intervening_decisions": 0,
+        "max_in_flight_qty": "0",
+        "policy_reads_before_delivery": 0,
+        "strictly_later_than_exchange": 305,
+        "time_to_delivery_ns": {
+          "count": 307,
+          "max": "959000000",
+          "mean": "292052117",
+          "min": "0",
+          "p50": "238000000",
+          "p90": "696000000",
+          "p99": "886000000"
+        }
+      },
+      "exchange_before_delivery": {
+        "exchange_position_events": 307,
+        "exchange_position_from_fills": "0.001",
+        "violations": 0
+      },
+      "convergence": {
+        "cash_diff": "0.00000000",
+        "equity_diff": "0.00000000",
+        "exchange_cash": "991.11310345",
+        "exchange_equity": "991.10431345",
+        "exchange_position_qty": "0.001",
+        "finalized": true,
+        "local_cash": "991.11310345",
+        "local_equity": "991.10431345",
+        "local_fees": "9.31553580",
+        "local_funding_cash": "-0.00300075",
+        "local_mark": "75836.62",
+        "local_position_qty": "0.001",
+        "position_diff": "0.000"
+      },
+      "cross_world_summary": {
+        "decisions": 1425,
+        "delivered_fill_count": 307,
+        "fill_count": 307,
+        "fill_notional": "23288.83951",
+        "fill_qty": "0.307",
+        "fills_visible_after_delivery": 307,
+        "fills_visible_before_delivery": 0,
+        "funding_cash": "-0.00300075",
+        "funding_count": 2
+      },
+      "local_view": {
+        "cash": "991.11310345",
+        "delivered_fills": 307,
+        "delivered_fundings": 2,
+        "entry_price": "75845.41",
+        "equity": "991.10431345",
+        "fees": "9.31553580",
+        "funding_cash": "-0.00300075",
+        "mark": "75836.62",
+        "position_id": "BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001",
+        "position_qty": "0.001",
+        "realized": "0.43164"
+      },
+      "exchange": {
+        "native_account": {
+          "currency": "USDT",
+          "equity": "991.10431345",
+          "free": "988.45851410",
+          "locked": "2.65458935",
+          "mark": "75836.62",
+          "position_ids": [
+            "BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001"
+          ],
+          "position_qty": "0.001",
+          "total": "991.11310345",
+          "unrealized": "-0.00879000"
+        },
+        "mark_ts_ns": "1794095999999000000",
+        "engine_iterations": 358200,
+        "pnl_total": null
+      },
+      "resource": {
+        "elapsed_ms": 7021,
+        "peak_rss_kb": 90292,
+        "events_path": "/home/quant/quant/quant-edge-lab/data/native/DS-ARCHIVE-BTCUSDT-2026-11-07/events.jsonl",
+        "ts_last_ns": "1794096000000000000"
+      },
+      "funding_deliveries": [
+        {
+          "account_id": "BINANCE-001",
+          "amount": "0.00098598",
+          "currency": "USDT",
+          "deliver_at": "1794067200000000000",
+          "delivered": true,
+          "delivered_at": "1794067200045000000",
+          "epoch": "94",
+          "exchange_ts": "1794067200000000000",
+          "local_cash_after": "994.35306666",
+          "local_cash_before": "994.35208068",
+          "position_id": "BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001",
+          "seq": 250797,
+          "settlement_id": "FUND:1794067200000000000:BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001:94"
+        },
+        {
+          "account_id": "BINANCE-001",
+          "amount": "-0.00398673",
+          "currency": "USDT",
+          "deliver_at": "1794096000000000000",
+          "delivered": true,
+          "delivered_at": "1794096000000000000",
+          "epoch": "154",
+          "exchange_ts": "1794096000000000000",
+          "local_cash_after": "991.11310345",
+          "local_cash_before": "991.11709018",
+          "position_id": "BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001",
+          "seq": 359929,
+          "settlement_id": "FUND:1794096000000000000:BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001:154"
+        }
+      ],
+      "artifact": "evidence/labd/LOCAL_VIEW_CONTROL_ZERO.json",
+      "artifact_sha256": "4c0c17f1716be429995133fd91ae94a5ee59c97fa679c7e1e839a6932fddc481",
+      "artifact_bytes": 943590,
+      "independent_accounting": {
+        "reconstructed_cash": "991.11310345",
+        "reconstructed_equity": "991.10431345",
+        "reconstructed_position": "0.001",
+        "funding_cash": "-0.00300075",
+        "fee_total": "9.3155358",
+        "unrealized": "-0.00879",
+        "unexplained_residual": "0",
+        "cash_diff": "0",
+        "equity_diff": "0",
+        "position_diff": "0",
+        "match": true
+      },
+      "local_independent_accounting": {
+        "reconstructed_cash": "991.11310345",
+        "reconstructed_equity": "991.10431345",
+        "reconstructed_position": "0.001",
+        "funding_cash": "-0.00300075",
+        "fee_total": "9.3155358",
+        "unrealized": "-0.00879",
+        "unexplained_residual": "0",
+        "cash_diff": "0",
+        "equity_diff": "0",
+        "position_diff": "0",
+        "match": true
+      }
+    },
+    "main": {
+      "profile": "f22_main_feed50ms_response25ms",
+      "status": "PASS",
+      "binding": {
+        "binary": {
+          "path": "/home/quant/quant/.build-cache/qel-native/release/qel-local-view",
+          "sha256": "af79abd879da22082230a42fd84cd86c13b9b2e8d7fc3e0409b1df1f86075801"
+        },
+        "cargo_toml": {
+          "path": "/home/quant/quant/qel-lv/native/local_view/Cargo.toml",
+          "sha256": "e5c52908a6ff5d84355f745cebfd32ef8563dcade65468fabea60aa969557788"
+        },
+        "corpus": {
+          "path": "/home/quant/quant/quant-edge-lab/data/native/DS-ARCHIVE-BTCUSDT-2026-11-07/events.jsonl",
+          "sha256": "c7a4c79484a611820c2e314f48397de299294b009d24766ad5c2d03cc5ee22ed"
+        },
+        "git_head": "ce91981055125328dae4b59add8e5432892c4f20",
+        "nautilus": {
+          "commit": "27a8e54e7ac3c57d6cbf8891f0283dfbaee97317",
+          "repository": "https://github.com/nautechsystems/nautilus_trader",
+          "tag": "v1.231.0"
+        },
+        "source": {
+          "path": "/home/quant/quant/qel-lv/native/local_view/src/main.rs",
+          "sha256": "b21c7f19894253a07ce095e014511f61c6adb38511e978fab6343d2acd9e5cc2"
+        },
+        "strategy": {
+          "path": "policy/examples/taker_1m.json",
+          "sha256": "f6724ba6459d2e24308c8c55639e3617febee1791d5ed1d76805ee42867ae5bf"
+        }
+      },
+      "command": {
+        "events": "/home/quant/quant/quant-edge-lab/data/native/DS-ARCHIVE-BTCUSDT-2026-11-07/events.jsonl",
+        "feed_delay_ns": "50000000",
+        "notional": "100",
+        "response_delay_ns": "25000000",
+        "strategy": "policy/examples/taker_1m.json"
+      },
+      "counts": {
+        "decisions": 1425,
+        "delivered_fills": 303,
+        "delivered_fundings": 2,
+        "engine_orders": 303,
+        "events_parsed": 358200,
+        "fees": "9.19389648",
+        "fill_notional": "22984.74129",
+        "fill_qty": "0.303",
+        "fills": 303,
+        "funding_rates": 4,
+        "marks": 1440,
+        "orders_submitted": 303,
+        "policy_steps": 1439,
+        "positions": 152,
+        "positions_opened_callbacks": 152,
+        "quotes": 72084,
+        "trades": 284672
+      },
+      "feed_delay": {
+        "delivered_before_due": 0,
+        "feed_delay_ns": "50000000",
+        "first_tick_violations": 0,
+        "items": 358196,
+        "marks": 1440,
+        "max_lateness_ns": "10598000000",
+        "max_total_delay_ns": "10648000000",
+        "mean_lateness_ns": "302590081",
+        "min_lateness_ns": "0",
+        "min_total_delay_ns": "50000000",
+        "quotes": 72084,
+        "response_delay_ns": "25000000",
+        "trades": 284672
+      },
+      "response_delay": {
+        "decisions_with_unseen_fills": 0,
+        "fills": 303,
+        "fills_with_intervening_decisions": 0,
+        "max_in_flight_qty": "0",
+        "policy_reads_before_delivery": 0,
+        "strictly_later_than_exchange": 303,
+        "time_to_delivery_ns": {
+          "count": 303,
+          "max": "5362000000",
+          "mean": "478165016",
+          "min": "25000000",
+          "p50": "317000000",
+          "p90": "909000000",
+          "p99": "3476000000"
+        }
+      },
+      "exchange_before_delivery": {
+        "exchange_position_events": 303,
+        "exchange_position_from_fills": "0.001",
+        "violations": 0
+      },
+      "convergence": {
+        "cash_diff": "0.00000000",
+        "equity_diff": "0.00000000",
+        "exchange_cash": "991.22981277",
+        "exchange_equity": "991.22103277",
+        "exchange_position_qty": "0.001",
+        "finalized": true,
+        "local_cash": "991.22981277",
+        "local_equity": "991.22103277",
+        "local_fees": "9.19389648",
+        "local_funding_cash": "-0.00300075",
+        "local_mark": "75836.62",
+        "local_position_qty": "0.001",
+        "position_diff": "0.000"
+      },
+      "cross_world_summary": {
+        "decisions": 1425,
+        "delivered_fill_count": 303,
+        "fill_count": 303,
+        "fill_notional": "22984.74129",
+        "fill_qty": "0.303",
+        "fills_visible_after_delivery": 303,
+        "fills_visible_before_delivery": 0,
+        "funding_cash": "-0.00300075",
+        "funding_count": 2
+      },
+      "local_view": {
+        "cash": "991.22981277",
+        "delivered_fills": 303,
+        "delivered_fundings": 2,
+        "entry_price": "75845.40",
+        "equity": "991.22103277",
+        "fees": "9.19389648",
+        "funding_cash": "-0.00300075",
+        "mark": "75836.62",
+        "position_id": "BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001",
+        "position_qty": "0.001",
+        "realized": "0.42671"
+      },
+      "exchange": {
+        "native_account": {
+          "currency": "USDT",
+          "equity": "991.22103277",
+          "free": "988.57522377",
+          "locked": "2.65458900",
+          "mark": "75836.62",
+          "position_ids": [
+            "BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001"
+          ],
+          "position_qty": "0.001",
+          "total": "991.22981277",
+          "unrealized": "-0.00878000"
+        },
+        "mark_ts_ns": "1794095999999000000",
+        "engine_iterations": 358200,
+        "pnl_total": null
+      },
+      "resource": {
+        "elapsed_ms": 9246,
+        "peak_rss_kb": 91736,
+        "events_path": "/home/quant/quant/quant-edge-lab/data/native/DS-ARCHIVE-BTCUSDT-2026-11-07/events.jsonl",
+        "ts_last_ns": "1794096000000000000"
+      },
+      "funding_deliveries": [
+        {
+          "account_id": "BINANCE-001",
+          "amount": "0.00098598",
+          "currency": "USDT",
+          "deliver_at": "1794067200025000000",
+          "delivered": true,
+          "delivered_at": "1794067200045000000",
+          "epoch": "92",
+          "exchange_ts": "1794067200000000000",
+          "local_cash_after": "994.46843606",
+          "local_cash_before": "994.46745008",
+          "position_id": "BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001",
+          "seq": 250792,
+          "settlement_id": "FUND:1794067200000000000:BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001:92"
+        },
+        {
+          "account_id": "BINANCE-001",
+          "amount": "-0.00398673",
+          "currency": "USDT",
+          "deliver_at": "1794096000025000000",
+          "delivered": true,
+          "delivered_at": "1794096000049000000",
+          "epoch": "152",
+          "exchange_ts": "1794096000000000000",
+          "local_cash_after": "991.22981277",
+          "local_cash_before": "991.23379950",
+          "position_id": "BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001",
+          "seq": 359925,
+          "settlement_id": "FUND:1794096000000000000:BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001:152"
+        }
+      ],
+      "artifact": "evidence/labd/LOCAL_VIEW_F22_RUN.json",
+      "artifact_sha256": "599f1a48b7f15ff44e176027b07a26a8ee373d030a8185eaadfd2905331b22e4",
+      "artifact_bytes": 938680,
+      "independent_accounting": {
+        "reconstructed_cash": "991.22981277",
+        "reconstructed_equity": "991.22103277",
+        "reconstructed_position": "0.001",
+        "funding_cash": "-0.00300075",
+        "fee_total": "9.19389648",
+        "unrealized": "-0.00878",
+        "unexplained_residual": "0",
+        "cash_diff": "0",
+        "equity_diff": "0",
+        "position_diff": "0",
+        "match": true
+      },
+      "local_independent_accounting": {
+        "reconstructed_cash": "991.22981277",
+        "reconstructed_equity": "991.22103277",
+        "reconstructed_position": "0.001",
+        "funding_cash": "-0.00300075",
+        "fee_total": "9.19389648",
+        "unrealized": "-0.00878",
+        "unexplained_residual": "0",
+        "cash_diff": "0",
+        "equity_diff": "0",
+        "position_diff": "0",
+        "match": true
+      }
+    },
+    "large_response": {
+      "profile": "f22_large_response_30s",
+      "status": "PASS",
+      "binding": {
+        "binary": {
+          "path": "/home/quant/quant/.build-cache/qel-native/release/qel-local-view",
+          "sha256": "af79abd879da22082230a42fd84cd86c13b9b2e8d7fc3e0409b1df1f86075801"
+        },
+        "cargo_toml": {
+          "path": "/home/quant/quant/qel-lv/native/local_view/Cargo.toml",
+          "sha256": "e5c52908a6ff5d84355f745cebfd32ef8563dcade65468fabea60aa969557788"
+        },
+        "corpus": {
+          "path": "/home/quant/quant/quant-edge-lab/data/native/DS-ARCHIVE-BTCUSDT-2026-11-07/events.jsonl",
+          "sha256": "c7a4c79484a611820c2e314f48397de299294b009d24766ad5c2d03cc5ee22ed"
+        },
+        "git_head": "ce91981055125328dae4b59add8e5432892c4f20",
+        "nautilus": {
+          "commit": "27a8e54e7ac3c57d6cbf8891f0283dfbaee97317",
+          "repository": "https://github.com/nautechsystems/nautilus_trader",
+          "tag": "v1.231.0"
+        },
+        "source": {
+          "path": "/home/quant/quant/qel-lv/native/local_view/src/main.rs",
+          "sha256": "b21c7f19894253a07ce095e014511f61c6adb38511e978fab6343d2acd9e5cc2"
+        },
+        "strategy": {
+          "path": "policy/examples/taker_1m.json",
+          "sha256": "f6724ba6459d2e24308c8c55639e3617febee1791d5ed1d76805ee42867ae5bf"
+        }
+      },
+      "command": {
+        "events": "/home/quant/quant/quant-edge-lab/data/native/DS-ARCHIVE-BTCUSDT-2026-11-07/events.jsonl",
+        "feed_delay_ns": "50000000",
+        "notional": "100",
+        "response_delay_ns": "30000000000",
+        "strategy": "policy/examples/taker_1m.json"
+      },
+      "counts": {
+        "decisions": 1425,
+        "delivered_fills": 303,
+        "delivered_fundings": 2,
+        "engine_orders": 303,
+        "events_parsed": 358200,
+        "fees": "9.19389648",
+        "fill_notional": "22984.74129",
+        "fill_qty": "0.303",
+        "fills": 303,
+        "funding_rates": 4,
+        "marks": 1440,
+        "orders_submitted": 303,
+        "policy_steps": 1439,
+        "positions": 152,
+        "positions_opened_callbacks": 152,
+        "quotes": 72084,
+        "trades": 284672
+      },
+      "feed_delay": {
+        "delivered_before_due": 0,
+        "feed_delay_ns": "50000000",
+        "first_tick_violations": 0,
+        "items": 358196,
+        "marks": 1440,
+        "max_lateness_ns": "29951000000",
+        "max_total_delay_ns": "30001000000",
+        "mean_lateness_ns": "302673698",
+        "min_lateness_ns": "0",
+        "min_total_delay_ns": "50000000",
+        "quotes": 72084,
+        "response_delay_ns": "30000000000",
+        "trades": 284672
+      },
+      "response_delay": {
+        "decisions_with_unseen_fills": 0,
+        "fills": 303,
+        "fills_with_intervening_decisions": 0,
+        "max_in_flight_qty": "0",
+        "policy_reads_before_delivery": 0,
+        "strictly_later_than_exchange": 303,
+        "time_to_delivery_ns": {
+          "count": 303,
+          "max": "33632000000",
+          "mean": "30379953795",
+          "min": "30000000000",
+          "p50": "30243000000",
+          "p90": "30846000000",
+          "p99": "32041000000"
+        }
+      },
+      "exchange_before_delivery": {
+        "exchange_position_events": 303,
+        "exchange_position_from_fills": "0.001",
+        "violations": 0
+      },
+      "convergence": {
+        "cash_diff": "0.00000000",
+        "equity_diff": "0.00000000",
+        "exchange_cash": "991.22981277",
+        "exchange_equity": "991.22103277",
+        "exchange_position_qty": "0.001",
+        "finalized": true,
+        "local_cash": "991.22981277",
+        "local_equity": "991.22103277",
+        "local_fees": "9.19389648",
+        "local_funding_cash": "-0.00300075",
+        "local_mark": "75836.62",
+        "local_position_qty": "0.001",
+        "position_diff": "0.000"
+      },
+      "cross_world_summary": {
+        "decisions": 1425,
+        "delivered_fill_count": 303,
+        "fill_count": 303,
+        "fill_notional": "22984.74129",
+        "fill_qty": "0.303",
+        "fills_visible_after_delivery": 303,
+        "fills_visible_before_delivery": 0,
+        "funding_cash": "-0.00300075",
+        "funding_count": 2
+      },
+      "local_view": {
+        "cash": "991.22981277",
+        "delivered_fills": 303,
+        "delivered_fundings": 2,
+        "entry_price": "75845.40",
+        "equity": "991.22103277",
+        "fees": "9.19389648",
+        "funding_cash": "-0.00300075",
+        "mark": "75836.62",
+        "position_id": "BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001",
+        "position_qty": "0.001",
+        "realized": "0.42671"
+      },
+      "exchange": {
+        "native_account": {
+          "currency": "USDT",
+          "equity": "991.22103277",
+          "free": "988.57522377",
+          "locked": "2.65458900",
+          "mark": "75836.62",
+          "position_ids": [
+            "BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001"
+          ],
+          "position_qty": "0.001",
+          "total": "991.22981277",
+          "unrealized": "-0.00878000"
+        },
+        "mark_ts_ns": "1794095999999000000",
+        "engine_iterations": 358200,
+        "pnl_total": null
+      },
+      "resource": {
+        "elapsed_ms": 8032,
+        "peak_rss_kb": 93200,
+        "events_path": "/home/quant/quant/quant-edge-lab/data/native/DS-ARCHIVE-BTCUSDT-2026-11-07/events.jsonl",
+        "ts_last_ns": "1794096000000000000"
+      },
+      "funding_deliveries": [
+        {
+          "account_id": "BINANCE-001",
+          "amount": "0.00098598",
+          "currency": "USDT",
+          "deliver_at": "1794067230000000000",
+          "delivered": true,
+          "delivered_at": "1794067230000000000",
+          "epoch": "92",
+          "exchange_ts": "1794067200000000000",
+          "local_cash_after": "994.46843606",
+          "local_cash_before": "994.46745008",
+          "position_id": "BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001",
+          "seq": 250792,
+          "settlement_id": "FUND:1794067200000000000:BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001:92"
+        },
+        {
+          "account_id": "BINANCE-001",
+          "amount": "-0.00398673",
+          "currency": "USDT",
+          "deliver_at": "1794096030000000000",
+          "delivered": true,
+          "delivered_at": "1794096030000000000",
+          "epoch": "152",
+          "exchange_ts": "1794096000000000000",
+          "local_cash_after": "991.22981277",
+          "local_cash_before": "991.23379950",
+          "position_id": "BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001",
+          "seq": 359925,
+          "settlement_id": "FUND:1794096000000000000:BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001:152"
+        }
+      ],
+      "artifact": "evidence/labd/LOCAL_VIEW_F22_LARGE_RESPONSE_RUN.json",
+      "artifact_sha256": "2619007e0fb1872153de5fc8c6bd9fe0350c91c1b3ade4dbf80afd17c635af53",
+      "artifact_bytes": 938689,
+      "independent_accounting": {
+        "reconstructed_cash": "991.22981277",
+        "reconstructed_equity": "991.22103277",
+        "reconstructed_position": "0.001",
+        "funding_cash": "-0.00300075",
+        "fee_total": "9.19389648",
+        "unrealized": "-0.00878",
+        "unexplained_residual": "0",
+        "cash_diff": "0",
+        "equity_diff": "0",
+        "position_diff": "0",
+        "match": true
+      },
+      "local_independent_accounting": {
+        "reconstructed_cash": "991.22981277",
+        "reconstructed_equity": "991.22103277",
+        "reconstructed_position": "0.001",
+        "funding_cash": "-0.00300075",
+        "fee_total": "9.19389648",
+        "unrealized": "-0.00878",
+        "unexplained_residual": "0",
+        "cash_diff": "0",
+        "equity_diff": "0",
+        "position_diff": "0",
+        "match": true
+      }
+    },
+    "decision_in_gap": {
+      "profile": "f22_decision_in_gap_90s",
+      "status": "PASS",
+      "binding": {
+        "binary": {
+          "path": "/home/quant/quant/.build-cache/qel-native/release/qel-local-view",
+          "sha256": "af79abd879da22082230a42fd84cd86c13b9b2e8d7fc3e0409b1df1f86075801"
+        },
+        "cargo_toml": {
+          "path": "/home/quant/quant/qel-lv/native/local_view/Cargo.toml",
+          "sha256": "e5c52908a6ff5d84355f745cebfd32ef8563dcade65468fabea60aa969557788"
+        },
+        "corpus": {
+          "path": "/home/quant/quant/quant-edge-lab/data/native/DS-ARCHIVE-BTCUSDT-2026-11-07/events.jsonl",
+          "sha256": "c7a4c79484a611820c2e314f48397de299294b009d24766ad5c2d03cc5ee22ed"
+        },
+        "git_head": "ce91981055125328dae4b59add8e5432892c4f20",
+        "nautilus": {
+          "commit": "27a8e54e7ac3c57d6cbf8891f0283dfbaee97317",
+          "repository": "https://github.com/nautechsystems/nautilus_trader",
+          "tag": "v1.231.0"
+        },
+        "source": {
+          "path": "/home/quant/quant/qel-lv/native/local_view/src/main.rs",
+          "sha256": "b21c7f19894253a07ce095e014511f61c6adb38511e978fab6343d2acd9e5cc2"
+        },
+        "strategy": {
+          "path": "policy/examples/taker_1m.json",
+          "sha256": "f6724ba6459d2e24308c8c55639e3617febee1791d5ed1d76805ee42867ae5bf"
+        }
+      },
+      "command": {
+        "events": "/home/quant/quant/quant-edge-lab/data/native/DS-ARCHIVE-BTCUSDT-2026-11-07/events.jsonl",
+        "feed_delay_ns": "50000000",
+        "notional": "100",
+        "response_delay_ns": "90000000000",
+        "strategy": "policy/examples/taker_1m.json"
+      },
+      "counts": {
+        "decisions": 1425,
+        "delivered_fills": 294,
+        "delivered_fundings": 2,
+        "engine_orders": 412,
+        "events_parsed": 358200,
+        "fees": "9.43738264",
+        "fill_notional": "23593.45668",
+        "fill_qty": "0.311",
+        "fills": 294,
+        "funding_rates": 4,
+        "marks": 1440,
+        "orders_submitted": 412,
+        "policy_steps": 1439,
+        "positions": 128,
+        "positions_opened_callbacks": 128,
+        "quotes": 72084,
+        "trades": 284672
+      },
+      "feed_delay": {
+        "delivered_before_due": 0,
+        "feed_delay_ns": "50000000",
+        "first_tick_violations": 0,
+        "items": 358196,
+        "marks": 1440,
+        "max_lateness_ns": "89951000000",
+        "max_total_delay_ns": "90001000000",
+        "mean_lateness_ns": "302841204",
+        "min_lateness_ns": "0",
+        "min_total_delay_ns": "50000000",
+        "quotes": 72084,
+        "response_delay_ns": "90000000000",
+        "trades": 284672
+      },
+      "response_delay": {
+        "decisions_with_unseen_fills": 294,
+        "fills": 294,
+        "fills_with_intervening_decisions": 294,
+        "max_in_flight_qty": "0.002",
+        "policy_reads_before_delivery": 0,
+        "strictly_later_than_exchange": 294,
+        "time_to_delivery_ns": {
+          "count": 294,
+          "max": "94482000000",
+          "mean": "90441013605",
+          "min": "90000000000",
+          "p50": "90283000000",
+          "p90": "90839000000",
+          "p99": "92585000000"
+        }
+      },
+      "exchange_before_delivery": {
+        "exchange_position_events": 294,
+        "exchange_position_from_fills": "0.001",
+        "violations": 0
+      },
+      "convergence": {
+        "cash_diff": "0.00000000",
+        "equity_diff": "0.00000000",
+        "exchange_cash": "991.16473661",
+        "exchange_equity": "991.15595661",
+        "exchange_position_qty": "0.001",
+        "finalized": true,
+        "local_cash": "991.16473661",
+        "local_equity": "991.15595661",
+        "local_fees": "9.43738264",
+        "local_funding_cash": "-0.00300075",
+        "local_mark": "75836.62",
+        "local_position_qty": "0.001",
+        "position_diff": "0.000"
+      },
+      "cross_world_summary": {
+        "decisions": 1425,
+        "delivered_fill_count": 294,
+        "fill_count": 294,
+        "fill_notional": "23593.45668",
+        "fill_qty": "0.311",
+        "fills_visible_after_delivery": 294,
+        "fills_visible_before_delivery": 0,
+        "funding_cash": "-0.00300075",
+        "funding_count": 2
+      },
+      "local_view": {
+        "cash": "991.16473661",
+        "delivered_fills": 294,
+        "delivered_fundings": 2,
+        "entry_price": "75845.40",
+        "equity": "991.15595661",
+        "fees": "9.43738264",
+        "funding_cash": "-0.00300075",
+        "mark": "75836.62",
+        "position_id": "BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001",
+        "position_qty": "0.001",
+        "realized": "0.6051200"
+      },
+      "exchange": {
+        "native_account": {
+          "currency": "USDT",
+          "equity": "991.15595661",
+          "free": "988.51014761",
+          "locked": "2.65458900",
+          "mark": "75836.62",
+          "position_ids": [
+            "BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001"
+          ],
+          "position_qty": "0.001",
+          "total": "991.16473661",
+          "unrealized": "-0.00878000"
+        },
+        "mark_ts_ns": "1794095999999000000",
+        "engine_iterations": 358200,
+        "pnl_total": null
+      },
+      "resource": {
+        "elapsed_ms": 5931,
+        "peak_rss_kb": 92956,
+        "events_path": "/home/quant/quant/quant-edge-lab/data/native/DS-ARCHIVE-BTCUSDT-2026-11-07/events.jsonl",
+        "ts_last_ns": "1794096000000000000"
+      },
+      "funding_deliveries": [
+        {
+          "account_id": "BINANCE-001",
+          "amount": "0.00098598",
+          "currency": "USDT",
+          "deliver_at": "1794067290000000000",
+          "delivered": true,
+          "delivered_at": "1794067290000000000",
+          "epoch": "81",
+          "exchange_ts": "1794067200000000000",
+          "local_cash_after": "994.10902134",
+          "local_cash_before": "994.10803536",
+          "position_id": "BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001",
+          "seq": 250797,
+          "settlement_id": "FUND:1794067200000000000:BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001:81"
+        },
+        {
+          "account_id": "BINANCE-001",
+          "amount": "-0.00398673",
+          "currency": "USDT",
+          "deliver_at": "1794096090000000000",
+          "delivered": true,
+          "delivered_at": "1794096090000000000",
+          "epoch": "128",
+          "exchange_ts": "1794096000000000000",
+          "local_cash_after": "991.16473661",
+          "local_cash_before": "991.16872334",
+          "position_id": "BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001",
+          "seq": 359916,
+          "settlement_id": "FUND:1794096000000000000:BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001:128"
+        }
+      ],
+      "artifact": "evidence/labd/LOCAL_VIEW_F22_DECISION_IN_GAP_RUN.json",
+      "artifact_sha256": "6d95c7c5e22a5a8658e53507736d8556f5231a67306813a9ce76ab7903eccf97",
+      "artifact_bytes": 929961,
+      "independent_accounting": {
+        "reconstructed_cash": "991.16473661",
+        "reconstructed_equity": "991.15595661",
+        "reconstructed_position": "0.001",
+        "funding_cash": "-0.00300075",
+        "fee_total": "9.43738264",
+        "unrealized": "-0.00878",
+        "unexplained_residual": "0",
+        "cash_diff": "0",
+        "equity_diff": "0",
+        "position_diff": "0",
+        "match": true
+      },
+      "local_independent_accounting": {
+        "reconstructed_cash": "991.16473661",
+        "reconstructed_equity": "991.15595661",
+        "reconstructed_position": "0.001",
+        "funding_cash": "-0.00300075",
+        "fee_total": "9.43738264",
+        "unrealized": "-0.00878",
+        "unexplained_residual": "0",
+        "cash_diff": "0",
+        "equity_diff": "0",
+        "position_diff": "0",
+        "match": true
+      }
+    }
+  },
+  "f22_invariants": {
+    "1_exchange_updates_before_response_delivery": {
+      "main": {
+        "response_delay_ns": 25000000,
+        "fills": 303,
+        "strictly_later": 303,
+        "delivered_before_exchange_update": 0,
+        "pass": true
+      },
+      "large_response": {
+        "response_delay_ns": 30000000000,
+        "fills": 303,
+        "strictly_later": 303,
+        "delivered_before_exchange_update": 0,
+        "pass": true
+      },
+      "decision_in_gap": {
+        "response_delay_ns": 90000000000,
+        "fills": 294,
+        "strictly_later": 294,
+        "delivered_before_exchange_update": 0,
+        "pass": true
+      },
+      "control_zero_delay": {
+        "response_delay_ns": 0,
+        "fills": 307,
+        "strictly_later": 305,
+        "delivered_before_exchange_update": 0,
+        "pass": true
+      }
+    },
+    "2_no_policy_decision_uses_fill_before_delivery": {
+      "main": {
+        "fills": 303,
+        "fills_with_intervening_decisions": 0,
+        "decisions_with_unseen_fills": 0,
+        "policy_reads_before_delivery": 0,
+        "max_in_flight_qty": "0",
+        "sample_decision": null,
+        "pass": true
+      },
+      "large_response": {
+        "fills": 303,
+        "fills_with_intervening_decisions": 0,
+        "decisions_with_unseen_fills": 0,
+        "policy_reads_before_delivery": 0,
+        "max_in_flight_qty": "0",
+        "sample_decision": null,
+        "pass": true
+      },
+      "decision_in_gap": {
+        "fills": 294,
+        "fills_with_intervening_decisions": 294,
+        "decisions_with_unseen_fills": 294,
+        "policy_reads_before_delivery": 0,
+        "max_in_flight_qty": "0.002",
+        "sample_decision": {
+          "delivered_fills": 0,
+          "exchange_fills_at_or_before": 1,
+          "exchange_fills_before": 1,
+          "expected_position_from_delivered_fills": "0",
+          "in_flight_qty": "-0.001",
+          "local_cash": "1000",
+          "local_position_qty": "0",
+          "pre_existing_fills_in_flight": 1,
+          "same_tick_pending_fills": 0,
+          "seq": 5259,
+          "ts": "1794010562504000000"
+        },
+        "pass": true
+      },
+      "control_zero_delay": {
+        "fills": 307,
+        "fills_with_intervening_decisions": 0,
+        "decisions_with_unseen_fills": 0,
+        "policy_reads_before_delivery": 0,
+        "max_in_flight_qty": "0",
+        "sample_decision": null,
+        "pass": true
+      }
+    },
+    "3_feed_delay_charged_once": {
+      "main": {
+        "feed_delay_ns": 50000000,
+        "items": 358196,
+        "first_tick_violations": 0,
+        "delivered_before_due": 0,
+        "min_total_delay_ns": 50000000,
+        "max_total_delay_ns": 10648000000,
+        "max_lateness_ns": 10598000000,
+        "pass": true
+      },
+      "large_response": {
+        "feed_delay_ns": 50000000,
+        "items": 358196,
+        "first_tick_violations": 0,
+        "delivered_before_due": 0,
+        "min_total_delay_ns": 50000000,
+        "max_total_delay_ns": 30001000000,
+        "max_lateness_ns": 29951000000,
+        "pass": true
+      },
+      "decision_in_gap": {
+        "feed_delay_ns": 50000000,
+        "items": 358196,
+        "first_tick_violations": 0,
+        "delivered_before_due": 0,
+        "min_total_delay_ns": 50000000,
+        "max_total_delay_ns": 90001000000,
+        "max_lateness_ns": 89951000000,
+        "pass": true
+      },
+      "control_zero_delay": {
+        "feed_delay_ns": 0,
+        "items": 358196,
+        "first_tick_violations": 0,
+        "delivered_before_due": 0,
+        "min_total_delay_ns": 0,
+        "max_total_delay_ns": 0,
+        "max_lateness_ns": 0,
+        "pass": true
+      }
+    },
+    "4_local_view_converges_to_exchange": {
+      "main": {
+        "local_position_qty": "0.001",
+        "exchange_position_qty": "0.001",
+        "position_diff": "0.000",
+        "position_diff_numeric": "0",
+        "local_cash": "991.22981277",
+        "exchange_cash": "991.22981277",
+        "cash_diff": "0.00000000",
+        "cash_diff_numeric": "0",
+        "local_equity": "991.22103277",
+        "exchange_equity": "991.22103277",
+        "equity_diff": "0.00000000",
+        "equity_diff_numeric": "0",
+        "pass": true
+      },
+      "large_response": {
+        "local_position_qty": "0.001",
+        "exchange_position_qty": "0.001",
+        "position_diff": "0.000",
+        "position_diff_numeric": "0",
+        "local_cash": "991.22981277",
+        "exchange_cash": "991.22981277",
+        "cash_diff": "0.00000000",
+        "cash_diff_numeric": "0",
+        "local_equity": "991.22103277",
+        "exchange_equity": "991.22103277",
+        "equity_diff": "0.00000000",
+        "equity_diff_numeric": "0",
+        "pass": true
+      },
+      "decision_in_gap": {
+        "local_position_qty": "0.001",
+        "exchange_position_qty": "0.001",
+        "position_diff": "0.000",
+        "position_diff_numeric": "0",
+        "local_cash": "991.16473661",
+        "exchange_cash": "991.16473661",
+        "cash_diff": "0.00000000",
+        "cash_diff_numeric": "0",
+        "local_equity": "991.15595661",
+        "exchange_equity": "991.15595661",
+        "equity_diff": "0.00000000",
+        "equity_diff_numeric": "0",
+        "pass": true
+      },
+      "control_zero_delay": {
+        "local_position_qty": "0.001",
+        "exchange_position_qty": "0.001",
+        "position_diff": "0.000",
+        "position_diff_numeric": "0",
+        "local_cash": "991.11310345",
+        "exchange_cash": "991.11310345",
+        "cash_diff": "0.00000000",
+        "cash_diff_numeric": "0",
+        "local_equity": "991.10431345",
+        "exchange_equity": "991.10431345",
+        "equity_diff": "0.00000000",
+        "equity_diff_numeric": "0",
+        "pass": true
+      }
+    },
+    "5_zero_delay_control_equals_native_runner": {
+      "native_run": "evidence/labd/LOCAL_VIEW_NATIVE_CONTROL.json",
+      "native_status": "PASS",
+      "control_status": "PASS",
+      "fill_count": [
+        307,
+        307
+      ],
+      "funding_count": [
+        2,
+        2
+      ],
+      "field_mismatches": [],
+      "account_diff": {},
+      "semantically_equal": true,
+      "expected_difference": "Zero response delay is delivered on the next data callback rather than synchronously inside the exchange settlement callback. With feed_delay_ns=0 the policy cadence and tape are still field-identical; no order-timing difference was observed."
+    },
+    "large_response_gap": {
+      "large_response_30s": {
+        "response_delay_ns": 30000000000,
+        "fills": 303,
+        "fills_with_decisions_in_gap": 0,
+        "fills_without_decisions_in_gap": 303,
+        "sample_fill": null,
+        "no_decision_in_any_gap": true,
+        "pass": true
+      },
+      "decision_in_gap_90s": {
+        "response_delay_ns": 90000000000,
+        "fills": 294,
+        "fills_with_decisions_in_gap": 294,
+        "fills_without_decisions_in_gap": 0,
+        "sample_fill": {
+          "decisions_in_gap": 1,
+          "deliver_at": "1794010590428000000",
+          "delivered": true,
+          "delivered_at": "1794010591000000000",
+          "exchange_position_after": "-0.001",
+          "exchange_position_before": "0",
+          "exchange_ts": "1794010500428000000",
+          "fee": "0.03037112",
+          "local_cash_after": "999.96962888",
+          "local_cash_before": "1000",
+          "local_position_after": "-0.001",
+          "local_position_before": "0",
+          "position_id": "BTCUSDT-PERP.BINANCE-TAKER-NATIVE-001",
+          "price": "75927.80",
+          "qty": "0.001",
+          "seq": 5066,
+          "side": "SELL"
+        },
+        "no_decision_in_any_gap": false,
+        "pass": true
+      }
+    }
+  },
+  "f22_invariant_checks": {
+    "groups": {
+      "1_exchange_updates_before_response_delivery": true,
+      "2_no_policy_decision_uses_fill_before_delivery": true,
+      "3_feed_delay_charged_once": true,
+      "4_local_view_converges_to_exchange": true,
+      "5_zero_delay_control_equals_native_runner": true,
+      "large_response_gap": true
+    },
+    "all_pass": true
+  },
+  "cross_world_summary": {
+    "decisions": 1425,
+    "delivered_fill_count": 303,
+    "fill_count": 303,
+    "fill_notional": "22984.74129",
+    "fill_qty": "0.303",
+    "fills_visible_after_delivery": 303,
+    "fills_visible_before_delivery": 0,
+    "funding_cash": "-0.00300075",
+    "funding_count": 2,
+    "fill_side_breakdown": {
+      "buy": 152,
+      "sell": 151
+    },
+    "time_to_delivery_ns": {
+      "count": 303,
+      "max": "5362000000",
+      "mean": "478165016",
+      "min": "25000000",
+      "p50": "317000000",
+      "p90": "909000000",
+      "p99": "3476000000"
+    },
+    "fills_with_decisions_in_gap": 0,
+    "policy_reads_before_delivery": 0
+  },
+  "independent_accounting": {
+    "control": {
+      "reconstructed_cash": "991.11310345",
+      "reconstructed_equity": "991.10431345",
+      "reconstructed_position": "0.001",
+      "funding_cash": "-0.00300075",
+      "fee_total": "9.3155358",
+      "unrealized": "-0.00879",
+      "unexplained_residual": "0",
+      "cash_diff": "0",
+      "equity_diff": "0",
+      "position_diff": "0",
+      "match": true
+    },
+    "main": {
+      "reconstructed_cash": "991.22981277",
+      "reconstructed_equity": "991.22103277",
+      "reconstructed_position": "0.001",
+      "funding_cash": "-0.00300075",
+      "fee_total": "9.19389648",
+      "unrealized": "-0.00878",
+      "unexplained_residual": "0",
+      "cash_diff": "0",
+      "equity_diff": "0",
+      "position_diff": "0",
+      "match": true
+    },
+    "large_response": {
+      "reconstructed_cash": "991.22981277",
+      "reconstructed_equity": "991.22103277",
+      "reconstructed_position": "0.001",
+      "funding_cash": "-0.00300075",
+      "fee_total": "9.19389648",
+      "unrealized": "-0.00878",
+      "unexplained_residual": "0",
+      "cash_diff": "0",
+      "equity_diff": "0",
+      "position_diff": "0",
+      "match": true
+    },
+    "decision_in_gap": {
+      "reconstructed_cash": "991.16473661",
+      "reconstructed_equity": "991.15595661",
+      "reconstructed_position": "0.001",
+      "funding_cash": "-0.00300075",
+      "fee_total": "9.43738264",
+      "unrealized": "-0.00878",
+      "unexplained_residual": "0",
+      "cash_diff": "0",
+      "equity_diff": "0",
+      "position_diff": "0",
+      "match": true
+    }
+  },
+  "local_independent_accounting": {
+    "control": {
+      "reconstructed_cash": "991.11310345",
+      "reconstructed_equity": "991.10431345",
+      "reconstructed_position": "0.001",
+      "funding_cash": "-0.00300075",
+      "fee_total": "9.3155358",
+      "unrealized": "-0.00879",
+      "unexplained_residual": "0",
+      "cash_diff": "0",
+      "equity_diff": "0",
+      "position_diff": "0",
+      "match": true
+    },
+    "main": {
+      "reconstructed_cash": "991.22981277",
+      "reconstructed_equity": "991.22103277",
+      "reconstructed_position": "0.001",
+      "funding_cash": "-0.00300075",
+      "fee_total": "9.19389648",
+      "unrealized": "-0.00878",
+      "unexplained_residual": "0",
+      "cash_diff": "0",
+      "equity_diff": "0",
+      "position_diff": "0",
+      "match": true
+    },
+    "large_response": {
+      "reconstructed_cash": "991.22981277",
+      "reconstructed_equity": "991.22103277",
+      "reconstructed_position": "0.001",
+      "funding_cash": "-0.00300075",
+      "fee_total": "9.19389648",
+      "unrealized": "-0.00878",
+      "unexplained_residual": "0",
+      "cash_diff": "0",
+      "equity_diff": "0",
+      "position_diff": "0",
+      "match": true
+    },
+    "decision_in_gap": {
+      "reconstructed_cash": "991.16473661",
+      "reconstructed_equity": "991.15595661",
+      "reconstructed_position": "0.001",
+      "funding_cash": "-0.00300075",
+      "fee_total": "9.43738264",
+      "unrealized": "-0.00878",
+      "unexplained_residual": "0",
+      "cash_diff": "0",
+      "equity_diff": "0",
+      "position_diff": "0",
+      "match": true
+    }
+  },
+  "resource": {
+    "peak_rss_kb_max": 93200,
+    "elapsed_ms": {
+      "control": 7021,
+      "main": 9246,
+      "large_response": 8032,
+      "decision_in_gap": 5931
+    },
+    "slot": "exclusive Rust build/run; peak RSS < 2 GiB"
+  },
+  "recertification_impact": {
+    "TASK-08": "The two-world callback surface is reachable through public Strategy/DataActor callbacks; LocalView is adapter-managed, not a backend-native immutable view.",
+    "TASK-11": "F22 is now demonstrated for the taker L1 archive profile; the existing TASK-11 taker/funding certificate is unchanged.",
+    "TASK-18": "native/local_view implements the delayed-delivery slice. Queue cross-check remains outside this evidence.",
+    "CAP-LOCAL-VIEW": "RECERTIFIED only for the proven F22 profile. Not a full LocalView capability claim."
+  },
+  "non_claims": [
+    "No fork or monkey patch was used; LocalView is implemented in the strategy wrapper.",
+    "Order accepted/rejected/canceled responses are not delayed in this slice; fills and funding account changes are delayed.",
+    "The pinned engine has no generic deliver-at timer; delivery occurs on the first later subscribed data callback.",
+    "L2 queue parity, queue cross-check, full latency calibration, multi-venue and mark-based liquidation are not claimed.",
+    "The zero-delay control is semantically equal on the economic tape/account; synchronous delivery inside the exchange callback is not claimed."
+  ],
+  "artifacts": {
+    "control": {
+      "path": "evidence/labd/LOCAL_VIEW_CONTROL_ZERO.json",
+      "sha256": "4c0c17f1716be429995133fd91ae94a5ee59c97fa679c7e1e839a6932fddc481",
+      "bytes": 943590
+    },
+    "main": {
+      "path": "evidence/labd/LOCAL_VIEW_F22_RUN.json",
+      "sha256": "599f1a48b7f15ff44e176027b07a26a8ee373d030a8185eaadfd2905331b22e4",
+      "bytes": 938680
+    },
+    "large_response": {
+      "path": "evidence/labd/LOCAL_VIEW_F22_LARGE_RESPONSE_RUN.json",
+      "sha256": "2619007e0fb1872153de5fc8c6bd9fe0350c91c1b3ade4dbf80afd17c635af53",
+      "bytes": 938689
+    },
+    "decision_in_gap": {
+      "path": "evidence/labd/LOCAL_VIEW_F22_DECISION_IN_GAP_RUN.json",
+      "sha256": "6d95c7c5e22a5a8658e53507736d8556f5231a67306813a9ce76ab7903eccf97",
+      "bytes": 929961
+    },
+    "native_control": {
+      "path": "evidence/labd/LOCAL_VIEW_NATIVE_CONTROL.json",
+      "sha256": "a2a1ed27450816fb0bb53087454c2c4a8a5997a431af23388fdccab90b6865ec",
+      "bytes": 54349
+    }
+  }
+}
