@@ -263,6 +263,8 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--bootstrap-resamples", type=int, default=10000)
     p.add_argument("--train-days", type=int, default=0, help="pilot cap on train days (0 = full fold)")
     p.add_argument("--val-days", type=int, default=0, help="pilot cap on validation days (0 = full fold)")
+    p.add_argument("--day-workers", type=int, default=3)
+    p.add_argument("--seed-workers", type=int, default=4)
 
     args = parser.parse_args(argv)
     if args.command == "fixtures":
@@ -389,6 +391,8 @@ def main(argv: list[str] | None = None) -> int:
             bootstrap_resamples=args.bootstrap_resamples,
             train_days_limit=args.train_days,
             validation_days_limit=args.val_days,
+            day_workers=args.day_workers,
+            seed_workers=args.seed_workers,
         )
         _write(None, payload.get("status", "ERROR"))
         return 0 if payload["status"] in {"PASS", "INFEASIBLE_VENUE_MIN_NOTIONAL"} else 1
