@@ -1362,6 +1362,7 @@ name = "qel-data-engine-nautilus-adapter"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "arrow",
  "nautilus-core",
  "nautilus-model",
  "qel-data-engine-core",
