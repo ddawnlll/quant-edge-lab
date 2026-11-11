@@ -1,0 +1,64 @@
+{
+  "kind": "M2_FULL_FOLD_FORECAST_MEASURED_2026-11-11",
+  "status": "MEASURED_GO_PENDING_OPERATOR_AUTHORIZATION",
+  "fold": "WF-D64AF439CD8D6E7F",
+  "full_fold": {
+    "train_days": 365,
+    "validation_days": 91,
+    "total_days": 456,
+    "variants_per_day": 12,
+    "control_replications": 1000
+  },
+  "measured_pilot": {
+    "window": "2024-09-01..07 (train) + 2025-09-01..07 (validation), 14 days",
+    "wall_s": 2025,
+    "wall_min": 33.75,
+    "wall_s_per_day_workers4": 144.6,
+    "settings": {
+      "day_workers": 4,
+      "seed_workers": 16
+    },
+    "events_per_day_approx": 1250000,
+    "status": "PASS",
+    "decision": "INSUFFICIENT_EVIDENCE",
+    "selected": "STRAT-VAR-10",
+    "plan_hash": "80b804c7c21d625b293d4b6b9af9aec95627f7a8a751be53d2c4ff00707ce73c",
+    "report": "data/native/pilot-m2fold-20261111/out/M2_FOLD_RUN.json"
+  },
+  "measured_unit_costs": {
+    "tape_build_s_per_day_solo_shared_box": 97.1,
+    "tape_build_peak_rss_mb": 23.2,
+    "runner_peak_rss_mb": 233.1,
+    "runner_single_variant_day_s_full_day": 24.1,
+    "runner_breakdown_pct": {
+      "parse": 30,
+      "engine_run_60s_clock": 62,
+      "add_data": 1,
+      "other": 7
+    },
+    "seed_phase_included_in_pilot_wall": true
+  },
+  "projection": {
+    "formula": "456 days * 144.6 s/day wall (workers=4)",
+    "total_wall_s": 65938,
+    "total_wall_h": 18.3,
+    "variance_range_h": [
+      14.0,
+      23.0
+    ],
+    "variance_reason": "month density/event-rate variation vs pilot September window",
+    "peak_rss_gb_estimate": 1.5,
+    "peak_disk_gb_estimate": 1.6,
+    "resumable": "atomic checkpoints, hash-verified resume, sealed-range refusal"
+  },
+  "go_criteria": {
+    "projected_wall_lt_24h": true,
+    "peak_rss_lt_8gib": true,
+    "peak_disk_lt_5gb": true,
+    "plan_hash_matches_canonical_on_pilot": true,
+    "family_agreement_12_of_12_on_pilot_day": true,
+    "tape_byte_identity_vs_canonical_builder": true
+  },
+  "recommendation": "GO pending operator authorization for an ~18h unattended checkpointed run",
+  "blocker": "Operator authorization for full-fold compute (user policy: no full calibration without authorization)"
+}

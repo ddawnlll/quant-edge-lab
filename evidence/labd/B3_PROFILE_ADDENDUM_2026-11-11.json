@@ -1,0 +1,30 @@
+{
+  "kind": "B3_PROFILE_ADDENDUM_2026-11-11",
+  "date": "2026-11-11",
+  "method": "instrumented scratch build of HEAD runner (phase timers on parse_event_line, add_data, engine.run, clear_data); binary reverted and rebuilt clean afterwards; clean binary verified to reproduce canonical report except timing fields",
+  "day": "2024-09-01",
+  "events": 1252096,
+  "strats": {
+    "STRAT-VAR-00_60s_clock": {
+      "total_wall_s": 24.1,
+      "parse_s": 7.2,
+      "add_data_s": 0.35,
+      "engine_run_s": 14.9,
+      "parse_pct": 30,
+      "run_pct": 62
+    },
+    "taker_1s_1s_clock": {
+      "total_wall_s": 94.6,
+      "parse_s": 9.4,
+      "add_data_s": 0.43,
+      "engine_run_s": 82.2
+    }
+  },
+  "findings": [
+    "For the frozen 60s decision-clock M2 variants, engine.run dominates (62%); parse is 30%; add_data ~1%.",
+    "Engine cost scales strongly with decision-clock evaluations: 1s-clock policy costs 5.5x the 60s-clock variant on the same day (82.2s vs 14.9s run).",
+    "Parse optimization can at most recover ~30% of runner wall; it cannot reach the B3 120s/day target alone.",
+    "Prepared parse path showed zero speedup earlier (dispatch/nautilus-bound) and was reverted; next B3 lever is per-evaluation policy cost on the 60s clock, measured the same way."
+  ],
+  "b3_target_status": "FAIL_TARGET remains; parse work closed, nautilus/policy-level profiling is the next step"
+}
