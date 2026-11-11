@@ -1,0 +1,34 @@
+{
+  "kind": "PERF_V12_P1_ARCHIVE_PARQUET_2026-11-11",
+  "date": "2026-11-11",
+  "status": "IMPLEMENTED_UNVERIFIED",
+  "what_changed": [
+    "python/qel/prepare/archive_parquet.py: bounded ZIP->Parquet (schema v2, int64 coeff scale 1e8, ts_ns/recv_ns/source_ordinal/fidelity), monthly funding only, sealed refusal, fail-closed negatives, canonical NDJSON decoder+sha",
+    "tests/test_archive_parquet.py: 11 tests (byte parity vs canonical builder, tie order, missing zip/funding, hash mismatch, overflow, precision, out-of-order, sealed, malformed CSV)",
+    "tests/test_arrow_real_pit.py: fresh PIT via current normalizer readable by PR47 Arrow reader (1 test)"
+  ],
+  "test_results": "26 passed (11 archive_parquet + 1 real_pit + 14 arrow_batches) in 1.21s",
+  "day_parity_2024_09_01": {
+    "source_hashes": {
+      "agg_trades": "14dde6479bff2ca39265515a23b5459d2a510286e6aa637a89c8a738e6b20529",
+      "mark_1m": "2004c458cc32e9df49180a74475b836d0211cf0cede0856cba7c125e551a96c0",
+      "funding_monthly": "6ef23b02392b481ef9c3855434bf3644289fb6e228b4f7d9a0dfc6d3cdff1116"
+    },
+    "canonical_ndjson_sha256": "92bee987b25c0db2c69cbc9db4324b7a67c66c8352807a2e4adceee691d457f2",
+    "expected": "92bee987b25c0db2c69cbc9db4324b7a67c66c8352807a2e4adceee691d457f2",
+    "match": true,
+    "counts": {"Quote": 84476, "Trade": 1163029, "Mark": 1440, "Funding": 3},
+    "rows": 1248948,
+    "parquet_sha256": "4e3ac999fd90102c87d046474f2e684def090e4395043add2ab25fabeda95f93",
+    "parquet_bytes": 24117248,
+    "ndjson_bytes": 164587466,
+    "wall_s_under_load": 114,
+    "note": "Parquet 6.8x smaller; wall under load avg 7.5/6 vCPU, NOT a speedup claim (Python converter ~ streaming builder 85s). Rust ingestion is Phase B next."
+  },
+  "not_yet_verified": [
+    "Rust native ingestion (this is PyArrow reference implementation reusing normalize contracts)",
+    "Nautilus replay differential (P2), vectorized features (P3), 1/2/4/6 benchmarks (P4 BLOCKED_VALIDATION)",
+    "Real observed-market-data partition (fresh PIT test uses synthesized capture, labelled as such)"
+  ],
+  "invariants": "synthetic L1 labelled assumed_synthetic_l1_around_trade; monthly funding only; sealed >=2026-03-08 refused; exact int64 coeff, no float; tie Quote/Trade>Mark>Funding"
+}
