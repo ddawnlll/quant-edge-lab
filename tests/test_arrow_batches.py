@@ -26,7 +26,7 @@ SCHEMA = pa.schema(
 )
 
 
-def partition(tmp_path, *, events=None, times=None, offsets=None, schema=SCHEMA):
+def partition(tmp_path, *, events=None, times=None, offsets=None, verified=None, schema=SCHEMA):
     events = events if events is not None else ["Quote", "Trade", "Mark", "Funding"]
     times = times if times is not None else [100, 100, 100, 100]
     offsets = offsets if offsets is not None else list(range(len(events)))
@@ -38,7 +38,7 @@ def partition(tmp_path, *, events=None, times=None, offsets=None, schema=SCHEMA)
         "raw_offset": offsets,
         "line_sha256": ["0" * 64] * n,
         "raw_hash_scope": ["RECORD_CANONICAL"] * n,
-        "raw_hash_verified": [True] * n,
+        "raw_hash_verified": verified if verified is not None else [True] * n,
         "source_id": ["BINANCE_USDM_PUBLIC"] * n,
         "symbol": ["BTCUSDT"] * n,
     }
@@ -90,6 +90,18 @@ def test_unknown_kind_fails_closed(tmp_path):
 
 def test_null_timestamp_fails_closed(tmp_path):
     path, digest = partition(tmp_path, times=[1, 2, None, 4])
+    with pytest.raises(ArrowPartitionError, match="PIT_REQUIRED_NULL"):
+        read(path, digest)
+
+
+def test_unverifiable_upstream_record_fails_closed(tmp_path):
+    path, digest = partition(tmp_path, verified=[True, True, False, True])
+    with pytest.raises(ArrowPartitionError, match="PIT_UNVERIFIED_RAW_RECORD"):
+        read(path, digest)
+
+
+def test_null_provenance_flag_fails_closed(tmp_path):
+    path, digest = partition(tmp_path, verified=[True, True, None, True])
     with pytest.raises(ArrowPartitionError, match="PIT_REQUIRED_NULL"):
         read(path, digest)
 
