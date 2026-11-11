@@ -83,3 +83,27 @@ def test_signal_labels():
     ema = ema_streaming(mids)
     assert signal_above_below(mids, ema)[0] == "EQUAL"  # first bar seeds state
     assert signal_above_below(mids, ema)[1] == "ABOVE"
+
+
+def test_mids_extraction_filters_non_quotes_and_odd_sums():
+    from qel.research.arrow_features import mids_from_batch, mids_units_1e9_from_batch
+
+    batch = _batch(
+        ["Quote", "Trade", "Quote", "Mark"],
+        [100, 999, 101, 888],
+        [201, 999, 200, 888],
+    )
+    # Quote rows only: (100+201)//2=150 (floor), (101+200)//2=150.
+    assert mids_from_batch(batch) == [150, 150]
+    # Exact 1e-9 units: (100+201)*5=1505, (101+200)*5=1505.
+    assert mids_units_1e9_from_batch(batch) == [1505, 1505]
+
+
+def test_rolling_matches_naive_loop():
+    rng_data = np.array([3.0, 1.0, 4.0, 1.0, 5.0, 9.0, 2.0, 6.0])
+    mean, var = rolling_mean_var(rng_data, 4)
+    for i in range(len(rng_data)):
+        lo = max(0, i - 4 + 1)
+        seg = rng_data[lo : i + 1]
+        assert mean[i] == seg.mean()
+        assert np.isclose(var[i], seg.var(), rtol=1e-12, atol=1e-12)

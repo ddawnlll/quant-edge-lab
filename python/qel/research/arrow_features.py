@@ -1,4 +1,4 @@
-"""Shared causal vectorized features over Arrow batches (PERF v1.2 P3).
+"""Shared causal features over Arrow batches (PERF v1.2 P3).
 
 Screening-only: these features are deterministic, PIT-safe and computed
 once over immutable inputs. They never replace Nautilus certified
@@ -6,9 +6,17 @@ execution; each strategy still keeps independent account/order/position
 state downstream.
 
 Semantics mirror ``qel.research.control._ema`` (alpha=2/(20+1), state
-rounded to a 1e-9 grid each step, causal: value i uses inputs <= i) but
-are computed with exact integer arithmetic carried across RecordBatch
-boundaries, and with numpy rolling aggregates where equivalent.
+rounded to a 1e-9 grid each step, causal: value i uses inputs <= i).
+
+Production hot path: quote-mid extraction uses typed Arrow compute
+(`pyarrow.compute` filter/add/multiply over chunked arrays) and numpy
+buffers -- no ``to_pylist()`` row materialization and no Python scalar
+loops over rows. Rolling aggregates use vectorized cumulative sums.
+The EMA recurrence itself is inherently sequential; the production
+kernel is the Rust integer kernel in `qel-data-engine-core`
+(`EmaState`/`ema_stream`, verified against the exact Fraction
+reference). The Python `EmaState` below is retained as the reference
+implementation for differential tests.
 """
 
 from __future__ import annotations
@@ -18,6 +26,7 @@ from fractions import Fraction
 
 import numpy as np
 import pyarrow as pa
+import pyarrow.compute as pc
 
 GRID = 1_000_000_000  # 1e-9 state grid
 
@@ -75,17 +84,43 @@ def rolling_mean_var(values: np.ndarray, window: int) -> tuple[np.ndarray, np.nd
     """Causal rolling mean/variance (population, partial windows at start).
 
     Value i uses values[max(0,i-window+1)..i] only (no future leakage).
+    Vectorized with cumulative sums: mean/var from prefix sums of x and
+    x^2, no per-row Python loop.
     """
-    values = np.asarray(values, dtype=np.float64)
-    n = len(values)
-    mean = np.empty(n, dtype=np.float64)
-    var = np.empty(n, dtype=np.float64)
-    for i in range(n):
-        lo = max(0, i - window + 1)
-        seg = values[lo : i + 1]
-        mean[i] = seg.mean()
-        var[i] = seg.var()
+    x = np.asarray(values, dtype=np.float64)
+    n = len(x)
+    if n == 0:
+        return np.empty(0, dtype=np.float64), np.empty(0, dtype=np.float64)
+    csum = np.concatenate(([0.0], np.cumsum(x)))
+    csq = np.concatenate(([0.0], np.cumsum(x * x)))
+    idx = np.arange(1, n + 1)
+    lo = np.maximum(0, idx - window)
+    counts = (idx - lo).astype(np.float64)
+    mean = (csum[idx] - csum[lo]) / counts
+    var = (csq[idx] - csq[lo]) / counts - mean * mean
+    # Guard against tiny negative values from floating-point cancellation.
+    var = np.maximum(var, 0.0)
     return mean, var
+
+
+def _quote_mid_units_1e9_np(batch: pa.RecordBatch) -> np.ndarray:
+    """Exact Quote mid prices in 1e-9 units as a typed numpy int64 array.
+
+    Computed with Arrow compute over chunked typed arrays
+    (filter/add/multiply), then read from the int64 buffer -- no
+    ``to_pylist()`` and no Python row loop.
+    """
+    kinds = batch.column(batch.schema.get_field_index("event_type"))
+    bids = batch.column(batch.schema.get_field_index("bid_i"))
+    asks = batch.column(batch.schema.get_field_index("ask_i"))
+    mask = pc.equal(kinds, "Quote")
+    units = pc.multiply(pc.add(bids, asks), 5)
+    filtered = pc.filter(units, mask)
+    # pc.filter returns a ChunkedArray for chunked input in some
+    # versions and a plain Array in others; normalize to one array.
+    arr = filtered.combine_chunks() if hasattr(filtered, "combine_chunks") else filtered
+    # Typed buffer view (copy if the chunked array is not contiguous).
+    return arr.to_numpy(zero_copy_only=False)
 
 
 def mids_from_batch(batch: pa.RecordBatch) -> list[int]:
@@ -94,18 +129,14 @@ def mids_from_batch(batch: pa.RecordBatch) -> list[int]:
     Exact for even sums; odd sums floor (control Fractions stay exact).
     Use mids_units_1e9_from_batch for exact half-step parity.
     """
-    kinds = batch.column(batch.schema.get_field_index("event_type")).to_pylist()
-    bids = batch.column(batch.schema.get_field_index("bid_i")).to_pylist()
-    asks = batch.column(batch.schema.get_field_index("ask_i")).to_pylist()
-    return [(b + a) // 2 for k, b, a in zip(kinds, bids, asks) if k == "Quote"]
+    units = _quote_mid_units_1e9_np(batch)
+    # (bid+ask)//2 == ((bid+ask)*5)//10 for non-negative prices.
+    return (units // 10).tolist()
 
 
 def mids_units_1e9_from_batch(batch: pa.RecordBatch) -> list[int]:
     """Exact mid in 1e-9 units: (bid+ask)*5, no truncation."""
-    kinds = batch.column(batch.schema.get_field_index("event_type")).to_pylist()
-    bids = batch.column(batch.schema.get_field_index("bid_i")).to_pylist()
-    asks = batch.column(batch.schema.get_field_index("ask_i")).to_pylist()
-    return [(b + a) * 5 for k, b, a in zip(kinds, bids, asks) if k == "Quote"]
+    return _quote_mid_units_1e9_np(batch).tolist()
 
 
 def ema_over_batches(batches: list[pa.RecordBatch], window: int = 20) -> list[int]:

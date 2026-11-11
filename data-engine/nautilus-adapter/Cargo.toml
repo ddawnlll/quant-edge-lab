@@ -3,10 +3,11 @@ name = "qel-data-engine-nautilus-adapter"
 version = "0.1.0"
 edition = "2021"
 publish = false
-description = "Typed Arrow RecordBatch -> Nautilus Vec<Data> adapter (pinned 27a8e54). IMPLEMENTED_UNVERIFIED until cargo check on idle host."
+description = "Typed Arrow RecordBatch -> Nautilus Vec<Data> adapter (pinned 27a8e54)"
 
 [dependencies]
 anyhow = "1.0"
+arrow = { version = "58", default-features = false }
 qel-data-engine-core = { path = "../core" }
 nautilus-model = { git = "https://github.com/nautechsystems/nautilus_trader", rev = "27a8e54e7ac3c57d6cbf8891f0283dfbaee97317" }
 nautilus-core = { git = "https://github.com/nautechsystems/nautilus_trader", rev = "27a8e54e7ac3c57d6cbf8891f0283dfbaee97317" }
