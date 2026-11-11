@@ -95,10 +95,18 @@ def iter_verified_pit_batches(
         kinds = batch.column(batch.schema.get_field_index("event_type"))
         timestamps = batch.column(batch.schema.get_field_index("ts_ns"))
         offsets = batch.column(batch.schema.get_field_index("raw_offset"))
-        if kinds.null_count or timestamps.null_count or offsets.null_count:
+        if any(
+            batch.column(batch.schema.get_field_index(name)).null_count
+            for name in PIT_COLUMNS
+        ):
             raise ArrowPartitionError("PIT_REQUIRED_NULL")
         if not pc.all(pc.is_in(kinds, value_set=valid_kinds)).as_py():
             raise ArrowPartitionError("PIT_UNKNOWN_EVENT")
+        raw_verified = batch.column(batch.schema.get_field_index("raw_hash_verified"))
+        if not pc.all(raw_verified).as_py():
+            # A partition hash alone cannot certify unverifiable upstream
+            # response hashes (normalizer labels such records RESTRICTED).
+            raise ArrowPartitionError("PIT_UNVERIFIED_RAW_RECORD")
         if require_timestamp_order:
             first = timestamps[0].as_py()
             if last_ts is not None and first < last_ts:
