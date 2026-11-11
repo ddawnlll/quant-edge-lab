@@ -1,0 +1,3 @@
+[workspace]
+members = ["core", "ingest", "nautilus-adapter"]
+resolver = "2"
