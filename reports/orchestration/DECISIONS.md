@@ -7,3 +7,5 @@
 - 2026-11-10 night: stream tape builder must be byte-identical to canonical archive.build (tie order quotes/trades > marks > funding); proven on 2024-09-01 and in pytest.
 - 2026-11-10 night: native/runner parse fast path REVERTED. Equivalent on 4.5M events but 0% speedup; B3 is nautilus-dispatch bound. No dead weight in the certified path.
 - 2026-11-10 night: A3 full-fold cannot persist 546 tapes on this VM (~90GB > 68GB free). Design is per-day streaming; raw zips + deterministic builder keep tapes reproducible. ControlPlan fold-scale memory is the second blocker.
+
+- 2026-11-11: A3 streamed forecast measured GO-pending-authorization (18.3h); full run blocked on operator go-ahead, not on engineering.
