@@ -26,6 +26,7 @@ the canonical fit on dev-week and synthetic multi-day fixtures.
 
 from __future__ import annotations
 
+import array
 import hashlib
 import json
 from fractions import Fraction
@@ -163,23 +164,49 @@ class LazySortedSamples:
         return f"<LazySortedSamples n={self._total}>"
 
 
-class LazyQuotes:
-    """Random-access quotes over compact arrays (canonical Quote values)."""
+class _LQuote:
+    """Quote-like object with lazy exact bid/ask (same values as Quote)."""
 
-    def __init__(self, ts: np.ndarray, bid_c: np.ndarray, ask_c: np.ndarray):
+    __slots__ = ("ts", "_bid_cents", "_ask_cents", "_bid", "_ask")
+
+    def __init__(self, ts: int, bid_cents: int, ask_cents: int):
         self.ts = ts
-        self.bid_c = bid_c
-        self.ask_c = ask_c
+        self._bid_cents = bid_cents
+        self._ask_cents = ask_cents
+        self._bid: Fraction | None = None
+        self._ask: Fraction | None = None
+
+    @property
+    def bid(self) -> Fraction:
+        if self._bid is None:
+            self._bid = Fraction(self._bid_cents, PRICE_SCALE)
+        return self._bid
+
+    @property
+    def ask(self) -> Fraction:
+        if self._ask is None:
+            self._ask = Fraction(self._ask_cents, PRICE_SCALE)
+        return self._ask
+
+
+class LazyQuotes:
+    """Random-access quotes over compact ``array('q')`` columns.
+
+    ``array('q')`` stores int64 at 8 bytes/element (39M quotes = 940MB)
+    while keeping element access at C speed; bid/ask Fractions are only
+    built for quotes the seed runner actually prices.
+    """
+
+    def __init__(self, ts, bid_c, ask_c):
+        self.ts = array.array("q", ts) if not isinstance(ts, array.array) else ts
+        self.bid_c = array.array("q", bid_c) if not isinstance(bid_c, array.array) else bid_c
+        self.ask_c = array.array("q", ask_c) if not isinstance(ask_c, array.array) else ask_c
 
     def __len__(self) -> int:
-        return int(len(self.ts))
+        return len(self.ts)
 
-    def __getitem__(self, index: int) -> C.Quote:
-        return C.Quote(
-            ts=int(self.ts[index]),
-            bid=Fraction(int(self.bid_c[index]), PRICE_SCALE),
-            ask=Fraction(int(self.ask_c[index]), PRICE_SCALE),
-        )
+    def __getitem__(self, index: int) -> _LQuote:
+        return _LQuote(self.ts[index], self.bid_c[index], self.ask_c[index])
 
 
 class Seq:
