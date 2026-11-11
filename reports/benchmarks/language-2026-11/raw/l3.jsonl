@@ -1,0 +1,10 @@
+{"tag": "policy-cold-build", "wall_s": 15.859, "exit": 0, "out_tail": "ng syn v3.0.9\n   Compiling serde_derive v1.0.229\n   Compiling qel-policy v0.1.0 (/home/quant/quant/quant-edge-lab/policy/rust)\n    Finished `dev` profile [unoptimized + debuginfo] target(s) in 15.80s\n", "target_bytes": 154549538}
+{"tag": "policy-warm-noop", "wall_s": 0.08, "exit": 0, "out_tail": "    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.04s\n"}
+{"tag": "policy-warm-check", "wall_s": 8.397, "exit": 0, "out_tail": "g serde v1.0.229\n    Checking serde_json v1.0.154\n    Checking qel-policy v0.1.0 (/home/quant/quant/quant-edge-lab/policy/rust)\n    Finished `dev` profile [unoptimized + debuginfo] target(s) in 8.36s\n"}
+{"tag": "runner-warm-noop", "wall_s": 0.793, "exit": 0, "tail": "    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.70s\n"}
+{"tag": "runner-rebuild-after-policy-touch", "wall_s": 0.622, "exit": 0, "tail": "    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.53s\n"}
+{"tag": "runner-target-bytes", "allocated_bytes": 2401320960}
+{"tag": "runner-binary", "path": "/home/quant/quant/bench-lang-2026-11/work/l3/runner-target/debug/qel-native-runner", "bytes": 163246704}
+{"tag": "l1-release-lto", "wall_s": 12.707, "exit": 0, "target_bytes": 782336, "bin_bytes": 372080, "out_sha16": "6a5e85530a9ec848"}
+{"tag": "l1-release-strip", "wall_s": 0.745, "exit": 0, "target_bytes": 733184, "bin_bytes": 344520, "out_sha16": "6a5e85530a9ec848"}
+{"tag": "l1-release-size", "wall_s": 0.586, "exit": 0, "target_bytes": 946176, "bin_bytes": 452568, "out_sha16": "6a5e85530a9ec848"}

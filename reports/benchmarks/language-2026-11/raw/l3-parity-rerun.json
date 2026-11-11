@@ -1,0 +1,58 @@
+[
+ {
+  "lang": "rust",
+  "n": "1000000",
+  "exit": 0,
+  "out_sha": "6a5e85530a9ec848b72fe6cdb552d18ec9450219cfcf016238f02d63a2af433d",
+  "valid": true
+ },
+ {
+  "lang": "rust",
+  "n": "10000000",
+  "exit": 0,
+  "out_sha": "c63f414bf38582325d67f243729edb021c2b12116276a8b9f064224924948fcb",
+  "valid": true
+ },
+ {
+  "lang": "zig",
+  "n": "1000000",
+  "exit": 0,
+  "out_sha": "6a5e85530a9ec848b72fe6cdb552d18ec9450219cfcf016238f02d63a2af433d",
+  "valid": true
+ },
+ {
+  "lang": "zig",
+  "n": "10000000",
+  "exit": 0,
+  "out_sha": "c63f414bf38582325d67f243729edb021c2b12116276a8b9f064224924948fcb",
+  "valid": true
+ },
+ {
+  "lang": "zigsafe",
+  "n": "1000000",
+  "exit": 0,
+  "out_sha": "6a5e85530a9ec848b72fe6cdb552d18ec9450219cfcf016238f02d63a2af433d",
+  "valid": true
+ },
+ {
+  "lang": "zigsafe",
+  "n": "10000000",
+  "exit": 0,
+  "out_sha": "c63f414bf38582325d67f243729edb021c2b12116276a8b9f064224924948fcb",
+  "valid": true
+ },
+ {
+  "lang": "goose",
+  "n": "1000000",
+  "exit": 0,
+  "out_sha": "6a5e85530a9ec848b72fe6cdb552d18ec9450219cfcf016238f02d63a2af433d",
+  "valid": true
+ },
+ {
+  "lang": "goose",
+  "n": "10000000",
+  "exit": 0,
+  "out_sha": "c63f414bf38582325d67f243729edb021c2b12116276a8b9f064224924948fcb",
+  "valid": true
+ }
+]

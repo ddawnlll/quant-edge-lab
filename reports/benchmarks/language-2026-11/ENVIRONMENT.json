@@ -1,0 +1,28 @@
+{
+  "date": "2026-11-11",
+  "host": "QEL VPS (Debian 13)",
+  "kernel": "6.12.115+deb13.1-amd64",
+  "machine": "oVirt RHEL, Xeon E5-2680 v2 @ 2.80GHz, hypervisor",
+  "vcpus": 6,
+  "ram_total_bytes": 12227160,
+  "ram_total_kib": 12227160,
+  "swap": "4GiB total, use at inventory time",
+  "disk_root_total_bytes": 161620316160,
+  "disk_root_avail_bytes": 86034341888,
+  "disk_root": "/dev/mapper/vg12735-root",
+  "cgroup_cpu_max": null,
+  "cgroup_memory_max": null,
+  "governor": "performance (bogomips probe, /sys governor files not readable in container)",
+  "load_at_inventory": "5.64 4.12 2.46 (2026-11-11 16:05 UTC+1)",
+  "memory_pressure": "MemAvailable ~10GiB, swap used (see /proc/meminfo)",
+  "contended_external_workload_at_inventory": "cargo build --release --bin jcode (PID 3021538, started 16:00 UTC+1, upstream-jcode target) + QEL soak.sh (PID 702661, since Nov08) + qel-worker. Timed trials must record SOAK-CONTENDED when competing compilation is active.",
+  "qel_soak": "/home/quant/quant/quant-edge-lab/scripts/soak.sh PID 702661 since 2026-11-08, never stopped per protocol",
+  "compiler_defaults": {
+    "rust_target": "x86_64-unknown-linux-gnu",
+    "rustflags_env_config": "-C link-arg=-fuse-ld=lld (from /home/quant/.cargo/config.toml)",
+    "goose_default_cc": "/usr/bin/cc (gcc 14.2.0)",
+    "zig_target": "x86_64-linux-gnu"
+  },
+  "scratch_dir": "/home/quant/quant/bench-lang-2026-11 (outside tracked QEL source, untracked)",
+  "scratch_quota_policy": "benchmark-created dirs only; no cargo clean of existing user targets; no deletion of historical caches"
+}

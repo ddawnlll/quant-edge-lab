@@ -1,0 +1,45 @@
+{
+  "qel_commit": "3678c6a",
+  "rust": {
+    "rustc": "1.99.1 (58cf8f9c3 2026-10-13)",
+    "cargo": "1.99.1 (5f94df478 2026-08-27)",
+    "toolchain_dir": "/home/quant/.rustup/toolchains/stable-x86_64-unknown-linux-gnu",
+    "rustup_dir_bytes_alloc": 1262900000,
+    "cargo_home_bytes_alloc": 1260000000,
+    "rustup_installed_size": "1.2G",
+    "cargo_home_size": "1.2G",
+    "rustflags": "-C link-arg=-fuse-ld=lld (/home/quant/.cargo/config.toml)",
+    "policy_rust_target_bytes": 5400000,
+    "policy_rust_target_size": "5.4M (preexisting, never cleaned)",
+    "native_runner": "qel-native-runner, Cargo.toml at native/runner, depends on nautilus_* git rev 27a8e54e7ac3c57d6cbf8891f0283dfbaee97317, NO target/ dir at inventory (UNMEASURED build until L3)",
+    "l1_profile": "edition 2021, opt-level=3 release, no deps, no lto change"
+  },
+  "zig": {
+    "version": "0.17.1",
+    "binary": "/home/quant/.local/bin/zig -> /home/quant/local/opt/zig-0.17.1/zig",
+    "lib_dir": "/home/quant/local/opt/zig-0.17.1/lib",
+    "global_cache_default": "/home/quant/.cache/zig",
+    "global_cache_existing_bytes": 91000000,
+    "global_cache_existing_size": "91M (preexisting, never cleaned)",
+    "pin": "exact stable binary 0.17.1, no upgrade in place"
+  },
+  "goose": {
+    "source_repo": "/home/quant/src/goose",
+    "source_commit": "a12523f23e545a6af350562804a0c8b201864946",
+    "binary": "/home/quant/local/bin/goose",
+    "binary_version": "goose a12523f (runtime d521138194f1)",
+    "binary_bytes": 5574224,
+    "binary_notes": "ELF pie, dynamically linked, not stripped",
+    "toolchain": "C compiler /usr/bin/cc gcc 14.2.0, C++ /usr/bin/g++, cmake 3.31.6, git 2.47.3, GOOSE_HOME default /home/quant/.goose",
+    "goose_home_existing": "~/.goose 976K at 16:19, created by goose --help/toolchain probes (initial inventory had none); all timed trials use benchmark-owned GOOSE_HOME dirs",
+    "modes": "JIT embedded TinyCC in-process (goose run), AOT (goose build --cc clang)",
+    "bootstrap": "goose binary prebuilt on host; bootstrap compiler build cost NOT counted (UNMEASURED, binary provided)",
+    "zig_install_size": "412M /home/quant/local/opt/zig-0.17.1"
+  },
+  "clang": "Debian clang version 19.1.7 (goose AOT --cc clang)",
+  "cmake": "3.31.6",
+  "gcc": "14.2.0",
+  "gxx": "14.2.0",
+  "python_oracle": "python3 (version TBD at oracle run)",
+  "cgroup_memory_peak": "not available in this container (no /sys/fs/cgroup/memory.max files); RSS measured via /usr/bin/time -v + process tree"
+}

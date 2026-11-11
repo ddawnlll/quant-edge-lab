@@ -1,0 +1,43 @@
+{
+  "expected_sha16": {
+    "1000000": "6a5e85530a9ec848",
+    "10000000": "c63f414bf3858232"
+  },
+  "trial_output_shas": {
+    "goose-jit-first/goose": [
+      "6a5e85530a9ec848"
+    ],
+    "goose-jit-warm-init/goose": [
+      "6a5e85530a9ec848"
+    ],
+    "goose-jit-warm/goose": [
+      "6a5e85530a9ec848"
+    ],
+    "runtime/rust": [
+      "6a5e85530a9ec848",
+      "c63f414bf3858232"
+    ],
+    "runtime/zig": [
+      ""
+    ],
+    "runtime/goose": [
+      "6a5e85530a9ec848",
+      "c63f414bf3858232"
+    ],
+    "runtime/zigsafe": [
+      ""
+    ]
+  },
+  "all_match_expected": {
+    "goose-jit-first/goose": true,
+    "goose-jit-warm-init/goose": true,
+    "goose-jit-warm/goose": true,
+    "runtime/rust": false,
+    "runtime/zig": true,
+    "runtime/goose": false,
+    "runtime/zigsafe": true
+  },
+  "boundary_and_1000_verified_manually": "Rust/Zig/Goose-AOT diff vs oracle 1000 + boundary: byte-identical (see METHODOLOGY run log 2026-11-11 16:06-16:09)",
+  "zig_runtime_harness_note": "bench.py read stdout only; Zig stdlib writes report to stderr (std.debug.print), so runtime 'valid' was False in trials. Re-run capturing stderr merged (2026-11-11 16:39Z): zig/zigsafe VALID at 1M+10M (see raw/l3-parity-rerun.json). Kernel outputs are byte-identical.",
+  "zig_valid": true
+}

@@ -1,0 +1,7 @@
+count=24
+ema=9800242855635353
+checksum=0x79eba1a401fd3414
+funding=5
+state=4
+qty=79566
+tdigest=1488

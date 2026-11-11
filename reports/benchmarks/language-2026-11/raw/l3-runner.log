@@ -1,0 +1,130 @@
+   Compiling proc-macro2 v1.0.107
+   Compiling unicode-ident v1.0.27
+   Compiling quote v1.0.47
+   Compiling serde_core v1.0.229
+   Compiling serde v1.0.229
+   Compiling cfg-if v1.0.5
+   Compiling libc v0.2.191
+   Compiling strsim v0.11.1
+   Compiling ident_case v1.0.1
+   Compiling memchr v2.8.3
+   Compiling winnow v1.0.5
+   Compiling autocfg v1.5.1
+   Compiling syn v3.0.9
+   Compiling syn v2.0.119
+   Compiling toml_parser v1.1.5+spec-1.1.0
+   Compiling num-traits v0.2.19
+   Compiling fnv v1.0.7
+   Compiling equivalent v1.0.3
+   Compiling toml_datetime v1.1.3+spec-1.1.0
+   Compiling hashbrown v0.17.1
+   Compiling parking_lot_core v0.9.12
+   Compiling getrandom v0.3.4
+   Compiling rand_core v0.10.1
+   Compiling futures-core v0.3.34
+   Compiling once_cell v1.21.4
+   Compiling scopeguard v1.2.0
+   Compiling zerocopy v0.8.63
+   Compiling semver v1.0.28
+   Compiling getrandom v0.4.3
+   Compiling version_check v0.9.5
+   Compiling zmij v1.0.23
+   Compiling rustc_version v0.4.1
+   Compiling aho-corasick v1.1.5
+   Compiling ahash v0.8.12
+   Compiling lock_api v0.4.14
+   Compiling indexmap v2.14.2
+   Compiling serde_spanned v1.1.3
+   Compiling pin-project-lite v0.2.17
+   Compiling regex-syntax v0.8.11
+   Compiling futures-sink v0.3.34
+   Compiling serde_json v1.0.154
+   Compiling prettyplease v0.3.0
+   Compiling anyhow v1.0.104
+   Compiling rustversion v1.0.23
+   Compiling toml_edit v0.25.19+spec-1.1.0
+   Compiling darling_core v0.24.1
+   Compiling darling_core v0.20.11
+   Compiling regex-automata v0.4.18
+   Compiling futures-channel v0.3.34
+   Compiling serde_derive v1.0.229
+   Compiling futures-macro v0.3.34
+   Compiling toml v1.2.1+spec-1.1.0
+   Compiling rstest_macros v0.26.1
+   Compiling slab v0.4.12
+   Compiling darling_macro v0.24.1
+   Compiling cpufeatures v0.3.1
+   Compiling futures-io v0.3.34
+   Compiling iana-time-zone v0.1.65
+   Compiling futures-task v0.3.34
+   Compiling rust_decimal v1.43.0
+   Compiling thiserror v2.0.21
+   Compiling itoa v1.0.18
+   Compiling crossbeam-utils v0.8.23
+   Compiling darling_macro v0.20.11
+   Compiling futures-util v0.3.34
+   Compiling darling v0.20.11
+   Compiling derive_builder_core v0.20.2
+   Compiling darling v0.24.1
+   Compiling regex v1.13.1
+   Compiling chacha20 v0.10.2
+   Compiling smallvec v1.16.5
+   Compiling chrono v0.4.45
+   Compiling nautilus-core v0.61.0 (https://github.com/nautechsystems/nautilus_trader?rev=27a8e54e7ac3c57d6cbf8891f0283dfbaee97317#27a8e54e)
+   Compiling thiserror-impl v2.0.21
+   Compiling parking_lot v0.12.5
+   Compiling proc-macro-crate v3.5.0
+   Compiling rmp v0.8.15
+   Compiling arrayvec v0.7.8
+   Compiling implied-vol v2.1.0
+   Compiling unicode-width v0.2.3
+   Compiling lazy_static v1.5.1
+   Compiling value-bag v1.14.1
+   Compiling byteorder v1.5.0
+   Compiling relative-path v1.9.3
+   Compiling bytecount v0.6.9
+   Compiling heck v0.5.0
+   Compiling glob v0.3.4
+   Compiling papergrid v0.18.0
+   Compiling ustr v1.1.0
+   Compiling strum_macros v0.28.0
+   Compiling log v0.4.35
+   Compiling rmp-serde v1.3.1
+   Compiling arc-swap v1.9.4
+   Compiling bon-macros v3.10.3
+   Compiling rand v0.10.3
+   Compiling derive_builder_macro v0.20.2
+   Compiling bytes v1.12.1
+   Compiling uuid v1.29.1
+   Compiling nautilus-model v0.61.0 (https://github.com/nautechsystems/nautilus_trader?rev=27a8e54e7ac3c57d6cbf8891f0283dfbaee97317#27a8e54e)
+   Compiling hashbrown v0.14.5
+   Compiling futures-timer v3.0.4
+   Compiling strum v0.28.0
+   Compiling derive_builder v0.20.2
+   Compiling tabled v0.21.0
+   Compiling dashmap v6.2.1
+   Compiling enum_dispatch v0.3.13
+   Compiling rust_decimal_macros v1.40.0
+   Compiling rstest v0.26.1
+   Compiling async-stream-impl v0.3.6
+   Compiling nautilus-common v0.61.0 (https://github.com/nautechsystems/nautilus_trader?rev=27a8e54e7ac3c57d6cbf8891f0283dfbaee97317#27a8e54e)
+   Compiling futures v0.3.34
+   Compiling async-trait v0.1.92
+   Compiling async-stream v0.3.6
+   Compiling sysinfo v0.39.6
+   Compiling bon v3.10.3
+   Compiling siphasher v1.0.4
+   Compiling chrono-tz v0.10.4
+   Compiling phf_shared v0.12.1
+   Compiling nautilus-backtest v0.61.0 (https://github.com/nautechsystems/nautilus_trader?rev=27a8e54e7ac3c57d6cbf8891f0283dfbaee97317#27a8e54e)
+   Compiling phf v0.12.1
+   Compiling qel-policy v0.1.0 (/home/quant/quant/quant-edge-lab/policy/rust)
+   Compiling nautilus-analysis v0.61.0 (https://github.com/nautechsystems/nautilus_trader?rev=27a8e54e7ac3c57d6cbf8891f0283dfbaee97317#27a8e54e)
+   Compiling nautilus-portfolio v0.61.0 (https://github.com/nautechsystems/nautilus_trader?rev=27a8e54e7ac3c57d6cbf8891f0283dfbaee97317#27a8e54e)
+   Compiling nautilus-execution v0.61.0 (https://github.com/nautechsystems/nautilus_trader?rev=27a8e54e7ac3c57d6cbf8891f0283dfbaee97317#27a8e54e)
+   Compiling nautilus-data v0.61.0 (https://github.com/nautechsystems/nautilus_trader?rev=27a8e54e7ac3c57d6cbf8891f0283dfbaee97317#27a8e54e)
+   Compiling nautilus-trading v0.61.0 (https://github.com/nautechsystems/nautilus_trader?rev=27a8e54e7ac3c57d6cbf8891f0283dfbaee97317#27a8e54e)
+   Compiling nautilus-risk v0.61.0 (https://github.com/nautechsystems/nautilus_trader?rev=27a8e54e7ac3c57d6cbf8891f0283dfbaee97317#27a8e54e)
+   Compiling nautilus-system v0.61.0 (https://github.com/nautechsystems/nautilus_trader?rev=27a8e54e7ac3c57d6cbf8891f0283dfbaee97317#27a8e54e)
+   Compiling qel-native-runner v0.1.0 (/home/quant/quant/quant-edge-lab/native/runner)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 2m 48s

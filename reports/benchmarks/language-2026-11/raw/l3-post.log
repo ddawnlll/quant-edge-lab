@@ -1,0 +1,4 @@
+{'tag': 'runner-warm-noop', 'wall_s': 0.793, 'exit': 0, 'tail': '    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.70s\n'}
+{'tag': 'runner-rebuild-after-policy-touch', 'wall_s': 0.622, 'exit': 0, 'tail': '    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.53s\n'}
+[{'tag': 'runner-target-bytes', 'allocated_bytes': 2401320960}, {'tag': 'runner-binary', 'path': '/home/quant/quant/bench-lang-2026-11/work/l3/runner-target/debug/qel-native-runner', 'bytes': 163246704}]
+DONE
