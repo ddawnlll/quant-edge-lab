@@ -107,3 +107,29 @@ def test_run_id_is_deterministic(tmp_path: Path):
     first = MS.run_m2_fold_stream(**kwargs)
     second = MS.run_m2_fold_stream(**kwargs)
     assert first["run_id"] == second["run_id"]
+
+
+def test_parallel_seed_aggregation_matches_sequential(tmp_path: Path):
+    """Ordered aggregation must reproduce the sequential chain hash."""
+    import numpy as _np
+
+    from qel.research import control as C
+    from qel.research import control_stream as S
+
+    rng = _np.random.default_rng(3)
+    days = []
+    start = 1725148800 * 10**9
+    for d in range(4):
+        ts = (start + d * (86400 * 10**9) + _np.cumsum(rng.integers(1, 4, size=300)) * 10**9).astype(_np.int64)
+        levels = 1000 + _np.cumsum(rng.integers(-3, 4, size=300))
+        days.append((f"2024-09-0{d + 1}", ts, (levels * 100).astype(_np.int64), ((levels + 1) * 100).astype(_np.int64)))
+    train_end = int(days[1][1][-1])
+    plan = S.fit_control_plan_stream(days, trades=20, notional="100", seed=0, max_holding_ns=3_600_000_000_000, train_end_ns=train_end)
+    sequential = C.StreamingControlAggregator(plan, keep_summaries=True)
+    for i in range(12):
+        sequential.add(C.run_control_seed(plan, i))
+    parallel = C.StreamingControlAggregator(plan, keep_summaries=True)
+    MS._aggregate_seeds(plan, parallel, 12, 4)
+    assert sequential.summary() == parallel.summary()
+    assert sequential.daily_series() == parallel.daily_series()
+    assert sequential._chain == parallel._chain

@@ -22,6 +22,7 @@ from __future__ import annotations
 import hashlib
 import importlib.util
 import json
+import threading
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone
@@ -95,6 +96,7 @@ class Checkpoints:
     def __init__(self, path: Path, run_id: str):
         self.path = path
         self.run_id = run_id
+        self._lock = threading.RLock()
         self.data: dict[str, Any] = {"run_id": run_id, "days": {}, "funding": {}, "phases": {}}
         if path.is_file():
             existing = _read_json(path)
@@ -107,6 +109,15 @@ class Checkpoints:
         tmp.write_text(json.dumps(self.data, indent=2, sort_keys=True) + "\n")
         tmp.rename(self.path)
 
+    def merge(self, other: "Checkpoints", prefixes: tuple[str, ...]) -> None:
+        """Merge funding rows recorded by sibling workers under the lock."""
+        with self._lock:
+            for key in prefixes:
+                left, right = self.data.get(key, {}), other.data.get(key, {})
+                if isinstance(left, dict) and isinstance(right, dict):
+                    left.update({k: v for k, v in right.items() if k not in left})
+            self.save()
+
     def day_done(self, day: str, report_dir: Path) -> bool:
         record = self.data["days"].get(day)
         if not record or record.get("complete") is not True:
@@ -118,8 +129,9 @@ class Checkpoints:
         return True
 
     def set_day(self, day: str, record: dict) -> None:
-        self.data["days"][day] = record
-        self.save()
+        with self._lock:
+            self.data["days"][day] = record
+            self.save()
 
     def set_phase(self, name: str, record: dict) -> None:
         self.data["phases"][name] = record
@@ -144,6 +156,8 @@ def run_m2_fold_stream(
     bootstrap_resamples: int = 10000,
     train_days_limit: int = 0,
     validation_days_limit: int = 0,
+    day_workers: int = 3,
+    seed_workers: int = 4,
 ) -> dict:
     started = time.monotonic()
     work = Path(work_dir)
@@ -243,7 +257,8 @@ def run_m2_fold_stream(
         replay_s = time.monotonic() - replay_started
         tape_path.unlink(missing_ok=True)
         if int(manhattan.get("funding", 0)) > 0:
-            checkpoints.data["funding"][day] = _day_funding(funding_rows_all, day)
+            with checkpoints._lock:
+                checkpoints.data["funding"][day] = _day_funding(funding_rows_all, day)
         checkpoints.set_day(
             day,
             {
@@ -259,10 +274,11 @@ def run_m2_fold_stream(
         timings[day] = {"build_s": round(build_s, 3), "replay_s": round(replay_s, 3)}
         return {"day": day, "phase": kind, "status": "done", "tape_sha256": tape_sha}
 
-    for day in train_dates:
-        process_day(day, "train")
-    for day in validation_dates:
-        process_day(day, "validation")
+    todo = [(day, "train") for day in train_dates] + [(day, "validation") for day in validation_dates]
+    with ThreadPoolExecutor(max_workers=max(1, day_workers)) as pool:
+        futures = {pool.submit(process_day, day, kind): day for day, kind in todo}
+        for fut in as_completed(futures):
+            fut.result()
 
     def day_variant(day: str, sid: str) -> dict:
         return checkpoints.data["days"][day]["variants"][sid]
@@ -330,8 +346,7 @@ def run_m2_fold_stream(
     )
     fit_started = time.monotonic()
     agg = C.StreamingControlAggregator(plan, keep_summaries=True)
-    for i in range(control_replications):
-        agg.add(C.run_control_seed(plan, i))
+    _aggregate_seeds(plan, agg, control_replications, seed_workers)
     seeds_s = time.monotonic() - fit_started
     checkpoints.set_phase("controls", {"replications": control_replications, "plan_hash": plan.plan_hash, "selection_plan_hash": plan.selection_plan_hash, "elapsed_s": round(seeds_s, 3)})
     daily = agg.daily_series()
@@ -443,3 +458,39 @@ def _load_day_arrays(quotes_dir: Path, days: Sequence[str], need_first: bool = F
         if need_first:
             break
     return arrays
+
+
+
+_SEED_PLAN: Any = None
+
+
+def _seed_index(seed_index: int):
+    """Top-level worker: fork children inherit _SEED_PLAN (no pickling)."""
+    return seed_index, C.run_control_seed(_SEED_PLAN, seed_index)
+
+
+def _aggregate_seeds(plan: Any, aggregator: Any, replications: int, workers: int) -> None:
+    """Aggregation in strict seed order (the rolling hash is ordered)."""
+    from concurrent.futures import ProcessPoolExecutor
+    import multiprocessing as mp
+
+    if max(1, workers) == 1 or replications <= 1:
+        for i in range(replications):
+            aggregator.add(C.run_control_seed(plan, i))
+        return
+    global _SEED_PLAN
+    _SEED_PLAN = plan
+    ctx = mp.get_context("fork")
+    pending: dict[int, Any] = {}
+    next_add = 0
+    with ProcessPoolExecutor(max_workers=max(1, workers), mp_context=ctx) as pool:
+        futures = {pool.submit(_seed_index, i): i for i in range(replications)}
+        for fut in as_completed(futures):
+            index, result = fut.result()
+            pending[index] = result
+            while next_add in pending:
+                aggregator.add(pending.pop(next_add))
+                next_add += 1
+    while next_add in pending:
+        aggregator.add(pending.pop(next_add))
+        next_add += 1
