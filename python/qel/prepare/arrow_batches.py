@@ -34,6 +34,10 @@ PIT_COLUMNS = {
     "symbol": pa.string(),
 }
 
+# Exact-value columns must be integral coefficients or strings. A float here
+# would silently reintroduce binary rounding, which the ADR forbids outright.
+FORBIDDEN_FLOAT_TYPES = (pa.float16(), pa.float32(), pa.float64())
+
 
 class ArrowPartitionError(ValueError):
     """Untrusted, malformed or wrongly scoped PIT Parquet input."""
@@ -83,10 +87,14 @@ def iter_verified_pit_batches(
     for name, dtype in PIT_COLUMNS.items():
         if name not in schema.names or not schema.field(name).type.equals(dtype):
             raise ArrowPartitionError(f"PIT_SCHEMA_MISMATCH:{name}")
+    for field in schema:
+        if field.type in FORBIDDEN_FLOAT_TYPES:
+            raise ArrowPartitionError(f"PIT_FLOAT_COLUMN:{field.name}")
     if parquet.metadata.num_rows <= 0:
         raise ArrowPartitionError("PIT_EMPTY")
 
     last_ts: int | None = None
+    last_offset: int | None = None
     count = 0
     valid_kinds = pa.array(EVENT_KINDS, type=pa.string())
     for batch in parquet.iter_batches(batch_size=batch_rows):
@@ -95,6 +103,7 @@ def iter_verified_pit_batches(
         kinds = batch.column(batch.schema.get_field_index("event_type"))
         timestamps = batch.column(batch.schema.get_field_index("ts_ns"))
         offsets = batch.column(batch.schema.get_field_index("raw_offset"))
+        receipts = batch.column(batch.schema.get_field_index("recv_ns"))
         if any(
             batch.column(batch.schema.get_field_index(name)).null_count
             for name in PIT_COLUMNS
@@ -102,6 +111,20 @@ def iter_verified_pit_batches(
             raise ArrowPartitionError("PIT_REQUIRED_NULL")
         if not pc.all(pc.is_in(kinds, value_set=valid_kinds)).as_py():
             raise ArrowPartitionError("PIT_UNKNOWN_EVENT")
+        # A record cannot be received before the exchange timestamp that
+        # describes it; catching this here keeps a swapped column pair out of
+        # every downstream replay.
+        if not pc.all(pc.greater_equal(receipts, timestamps)).as_py():
+            raise ArrowPartitionError("PIT_RECEIPT_BEFORE_EVENT")
+        # Source ordinals order the canonical tape; a regression means the
+        # partition is not the tape it claims to be.
+        if last_offset is not None and offsets[0].as_py() < last_offset:
+            raise ArrowPartitionError("PIT_OFFSET_REGRESSION")
+        if batch.num_rows > 1 and not pc.all(
+            pc.greater_equal(offsets.slice(1), offsets.slice(0, batch.num_rows - 1))
+        ).as_py():
+            raise ArrowPartitionError("PIT_OFFSET_REGRESSION")
+        last_offset = offsets[batch.num_rows - 1].as_py()
         raw_verified = batch.column(batch.schema.get_field_index("raw_hash_verified"))
         if not pc.all(raw_verified).as_py():
             # A partition hash alone cannot certify unverifiable upstream

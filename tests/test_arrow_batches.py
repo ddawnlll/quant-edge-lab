@@ -136,3 +136,40 @@ def test_invalid_expected_hash_fails_closed(tmp_path):
 def test_missing_partition_fails_closed(tmp_path):
     with pytest.raises(ArrowPartitionError, match="PARTITION_MISSING"):
         read(tmp_path / "missing.parquet", "0" * 64)
+
+
+def _rewrite(tmp_path, column, values, dtype):
+    """Rewrite one column of a valid partition and return its new digest."""
+    path, _ = partition(tmp_path)
+    current = pq.read_table(path)
+    table = current.set_column(
+        current.schema.get_field_index(column), column, pa.array(values, type=dtype)
+    )
+    pq.write_table(table, path, row_group_size=2)
+    return path, hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def test_float_columns_fail_closed(tmp_path):
+    """The ADR forbids a float path; a float column must be rejected."""
+    path, digest = partition(tmp_path)
+    table = pq.read_table(path).append_column(
+        "price_f", pa.array([1.5, 2.5, 3.5, 4.5], type=pa.float64())
+    )
+    pq.write_table(table, path, row_group_size=2)
+    digest = hashlib.sha256(path.read_bytes()).hexdigest()
+    with pytest.raises(ArrowPartitionError, match="PIT_FLOAT_COLUMN:price_f"):
+        read(path, digest)
+
+
+def test_receipt_before_event_time_fails_closed(tmp_path):
+    """recv_ns must not precede the exchange timestamp it describes."""
+    path, digest = _rewrite(tmp_path, "recv_ns", [1, 2, 3, 4], pa.uint64())
+    with pytest.raises(ArrowPartitionError, match="PIT_RECEIPT_BEFORE_EVENT"):
+        read(path, digest)
+
+
+def test_offset_regression_fails_closed(tmp_path):
+    """Source ordinals order the canonical tape and must not regress."""
+    path, digest = _rewrite(tmp_path, "raw_offset", [0, 1, 1, 0], pa.int64())
+    with pytest.raises(ArrowPartitionError, match="PIT_OFFSET_REGRESSION"):
+        read(path, digest, rows=2)
