@@ -1177,6 +1177,9 @@ pub fn run_parquet() -> Result<()> {
     if batch_rows == 0 || batch_rows > 1_000_000 {
         bail!("INVALID_BATCH_ROWS");
     }
+    if chunk_bytes > 0 {
+        bail!("CHUNK_BYTES_UNSUPPORTED_FOR_PARQUET: use --chunk <events>");
+    }
     let events_path = events.context("--parquet required")?;
     let strategy_text = fs::read_to_string(strategy_path.context("--strategy required")?)?;
     let strategy_json: Value = serde_json::from_str(&strategy_text)?;
@@ -1291,20 +1294,13 @@ pub fn run_parquet() -> Result<()> {
                 &mut batch_bytes,
             );
             batch.push(data);
-            // Parquet has no NDJSON line length; count one unit per event
-            // for --chunk-bytes accounting. Differential runs use --chunk
-            // (event count) so flush boundaries match the legacy runner.
-            batch_bytes += 1;
+            // Parquet has no NDJSON line length, so --chunk-bytes is rejected
+            // for this reader (see the argument check) instead of being
+            // silently reinterpreted as an event count. Flush boundaries are
+            // driven by --chunk so they match the legacy runner exactly.
             batch_max_ts = batch_max_ts.max(event_ts);
-            if streaming && pending_flush_ts.is_none() {
-                let reached = if chunk_bytes > 0 {
-                    batch_bytes >= chunk_bytes
-                } else {
-                    batch.len() >= chunk.max(1)
-                };
-                if reached {
-                    pending_flush_ts = Some(event_ts);
-                }
+            if streaming && pending_flush_ts.is_none() && batch.len() >= chunk.max(1) {
+                pending_flush_ts = Some(event_ts);
             }
         }
     }

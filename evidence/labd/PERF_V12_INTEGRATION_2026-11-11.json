@@ -84,5 +84,64 @@
     "Parquet --chunk-bytes counts one unit per event (Parquet has no NDJSON line length); differential runs use --chunk (event count) so flush boundaries match legacy exactly.",
     "Zero-copy Arrow ingestion is not claimed (absent in pinned Nautilus); typed Vec<Data> conversion is the boundary.",
     "Not CERTIFIED: single-day differential only. Full 14-day / A3 / B6 validation, seven-day soak and independent review remain outstanding. Sealed reserve (>=2026-03-08) untouched and refused by ingest; no live orders; no data deletion."
-  ]
+  ],
+  "independent_reproduction_2026_11_12": {
+    "note": "Third-party re-run of the ingest and both replay paths by the sprint coordinator. The recorded numbers above were produced earlier under host load; these were produced on the same VM with the soak running and no other benchmark job.",
+    "binary_sha256_reverified": {
+      "qel-native-runner": "d0750f8d060098b9d3bcf2061c6593b07fdbff9a975ab557ea9f10a14d5a0499",
+      "qel-parquet-runner": "PRE-FIX da43de10fd70007e05e6bd297f3a05bc64cfa582cb2017938b4aeded3d9abc34; post-chunk-bytes-fix 9238e0a4e83ae66669216bb9fb8362e079420de2233236780aebaefec7cb4140",
+      "qel-ingest": "3382579ab445266bc8e9e519cc15cbc7c06ff18fc6e7e1780116ce667c26ad0d",
+      "verdict": "native and ingest hashes match this file; the parquet runner was rebuilt for the issue-76 chunk-bytes fix"
+    },
+    "ingest_rerun": {
+      "day": "2024-09-01",
+      "parquet_sha256": "8fea0122f20ccca7fc093a1ab89c7fde5891cd356873534e950378d7ec9e5c26",
+      "matches_recorded_rust_parquet_sha256": true,
+      "counts": {"Quote": 84476, "Trade": 1163029, "Mark": 1440, "Funding": 3},
+      "rows": 1248948
+    },
+    "ingest_parity_rerun": {
+      "tool": "scripts/verify_parquet_parity.py",
+      "legacy_tape_sha256": "92bee987b25c0db2c69cbc9db4324b7a67c66c8352807a2e4adceee691d457f2",
+      "decoded_sha256_matches": true,
+      "rows_decoded": 1248948,
+      "rows_legacy": 1248948,
+      "first_divergence": null,
+      "verdict": "PASS"
+    },
+    "replay_differential_rerun": {
+      "legacy": {"elapsed_ms": 16432, "peak_rss_kb": 52648, "tape_entries": 61, "orders": 58, "positions": 29},
+      "parquet": {"elapsed_ms": 13436, "peak_rss_kb": 80268, "tape_entries": 61, "orders": 58, "positions": 29},
+      "tape_equal": true,
+      "native_account_equal": true,
+      "equity_both": "998.26815944",
+      "funding_both": {"count": 0, "total": "0"},
+      "resource_counts_equal": true,
+      "first_divergence": null,
+      "verdict": "PASS"
+    },
+    "funding_positive_differential_issue_76": {
+      "day": "2024-09-02",
+      "strategy": "STRAT-VAR-00",
+      "why_this_case": "73 of 180 archived pilot variant-days already carry a non-zero funding count; this one was selected from them, so no new data was needed.",
+      "per_day_tape_sha256": "7f4523f8272823375c7fc98e81155c87be5493d929f608e820921e5676857b8b",
+      "parquet_sha256": "e51026c9feda2c8571f8a94b35c9e962cb75d5be8bcc229b6abea5dc242435cf",
+      "events": {"Quote": 84710, "Trade": 1106859, "Mark": 1440, "Funding": 3, "total": 1193012},
+      "decode_to_ndjson_byte_identical": true,
+      "differential": {"verdict": "PASS", "tape_length_both": 664, "first_divergence": null, "funding_count_both": 1, "funding_total_both": "0.00021238", "equity_both": "986.08372330", "orders_both": 660, "positions_both": 330},
+      "significance": "Previously only a zero-funding day had been compared, so funding tape parity was unproven. This closes that gap with a real settlement applied to an open position."
+    },
+    "chunk_bytes_semantics_fix_issue_76": {
+      "finding": "qel-parquet-runner counted one unit per event and compared it against --chunk-bytes, silently reinterpreting a byte budget as an event count.",
+      "change": "The Parquet reader now rejects the flag: exit 1, 'CHUNK_BYTES_UNSUPPORTED_FOR_PARQUET: use --chunk <events>'. Flush boundaries are driven only by the event count.",
+      "verified": "exit 1 with the documented message; replay differential on the funding-positive day still PASS after the change."
+    },
+    "sealed_refusal_rerun": {
+      "command": "qel-ingest --day 2026-03-08 ...",
+      "exit_code": 1,
+      "stderr": "Error: SEALED_RESERVE_REFUSED:2026-03-08",
+      "output_file_created": false
+    },
+    "timing_caveat": "Bounded single-day numbers on a shared 6-vCPU host with the seven-day soak running. They are NOT a controlled A/B and must not be quoted as a speedup claim. The correctness checks (tape, account, counts, hashes) are load-independent."
+  }
 }
