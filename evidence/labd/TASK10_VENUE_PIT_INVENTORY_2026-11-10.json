@@ -1,34 +1,132 @@
 {
-  "kind": "TASK10_VENUE_PIT_INVENTORY_2026-11-10",
-  "generated_utc": "2026-11-10T23:48:00Z",
   "base_sha": "8b59f795663f9e8ba332341a676d389d4e470bf8",
-  "task": "TASK-10",
-  "issue": 3,
-  "scope": "Inventory of point-in-time venue-rule sources for Binance USD-M futures: what is publicly available with provenance, what the codebase already consumes, and what still blocks venue-certified historical rules.",
-  "public_sources": [
-    {"source": "daily aggTrades (BTCUSDT)", "url_prefix": "data/futures/um/daily/aggTrades/", "status": "AVAILABLE", "evidence": "546/546 fold days on disk, see M2_EXECUTION_COVERAGE.json; per-day sha256 recorded", "consumed_by": "qel.prepare.archive.build (trades), M2 fold tapes"},
-    {"source": "daily 1m klines (mark proxy via close)", "url_prefix": "data/futures/um/daily/klines/BTCUSDT/1m/", "status": "AVAILABLE", "evidence": "546/546 fold days on disk", "consumed_by": "qel.prepare.archive.build (Mark rows); canonical tape marks"},
-    {"source": "monthly fundingRate", "url_prefix": "data/futures/um/monthly/fundingRate/BTCUSDT/", "status": "AVAILABLE", "evidence": "18 monthly zips on disk (2024-09..2026-02), 1,638 rows = 546 days x 3; calc_time, funding_interval_hours=8, last_funding_rate. Daily fundingRate zips do not exist (404 verified 2026-11-10).", "consumed_by": "fold tapes (Funding rows), qel.research.control funding settlements"},
-    {"source": "daily bookDepth (5-min L2 snapshots)", "url_prefix": "data/futures/um/daily/bookDepth/BTCUSDT/", "status": "AVAILABLE_PROBE", "evidence": "HEAD probe 200 for 2024-09-01 on 2026-11-10; historical completeness not verified this cycle", "consumed_by": "nothing (synthetic L1 remains the declared tape assumption)"},
-    {"source": "premiumIndexKlines (mark price history)", "url_prefix": "data/futures/um/{daily,monthly}/premiumIndexKlines/", "status": "NOT_FOUND_AT_PROBED_PATHS", "evidence": "404 for both monthly/1m and daily/1m BTCUSDT 2024-09 probes on 2026-11-10; mark tape rows therefore use 1m kline close as the declared MARK source", "consumed_by": "no (fidelity note in archive manifests)"},
-    {"source": "fee schedule history (VIP maker/taker by date)", "url_prefix": "n/a (exchangeInfo is current-snapshot only)", "status": "NOT_IN_PUBLIC_ARCHIVE", "consumed_by": "taker fee is a declared assumption (0.0004); fee tests are TEST_FIXTURE"},
-    {"source": "margin tier / leverage / bracket history", "url_prefix": "n/a", "status": "NOT_IN_PUBLIC_ARCHIVE", "consumed_by": "qel.accounting.venue isolated tiers; all rules source=TEST_FIXTURE (see VENUE_LIMITATIONS.json)"},
-    {"source": "ADL / socialized loss / insurance fund reports", "url_prefix": "n/a", "status": "NOT_IN_PUBLIC_ARCHIVE", "consumed_by": "not claimed (recorded as unsupported in TASK-10 scope boundary)"}
-  ],
   "code_consumption": {
-    "qel/accounting/venue.py": "Bitemporal rule book (valid_from/to + known_at, fail-closed unknown/future/conflict), funding settlement with epoch attribution and duplicate rejection, isolated margin tiers, mark-triggered forced close with exact liquidation cost, settlement ordering, exact postings-vs-account reconciliation. Scenarios F08-F13/F16 pass (tests/test_venue.py, 52 tests pass 2026-11-10).",
     "native runner": "Consumes FundingRateUpdate rows from tapes (native funding path) but the pinned nautilus engine has no liquidation path; native liquidation is not claimed (VENUE_LIMITATIONS.json).",
-    "provenance": "Every venue rule used in tests/evidence carries source=TEST_FIXTURE; no venue-published schedule files exist in the repository."
+    "provenance": "Every venue rule used in tests/evidence carries source=TEST_FIXTURE; no venue-published schedule files exist in the repository.",
+    "qel/accounting/venue.py": "Bitemporal rule book (valid_from/to + known_at, fail-closed unknown/future/conflict), funding settlement with epoch attribution and duplicate rejection, isolated margin tiers, mark-triggered forced close with exact liquidation cost, settlement ordering, exact postings-vs-account reconciliation. Scenarios F08-F13/F16 pass (tests/test_venue.py, 52 tests pass 2026-11-10)."
   },
+  "corrections_2026_11_12": {
+    "findings": [
+      {
+        "corrected": "Both premiumIndexKlines and markPriceKlines are AVAILABLE at daily and monthly 1m paths",
+        "evidence": [
+          "HTTP 200: /data/futures/um/monthly/premiumIndexKlines/BTCUSDT/1m/BTCUSDT-1m-2024-09.zip",
+          "HTTP 200: /data/futures/um/monthly/markPriceKlines/BTCUSDT/1m/BTCUSDT-1m-2024-09.zip",
+          "HTTP 200: /data/futures/um/daily/premiumIndexKlines/BTCUSDT/1m/BTCUSDT-1m-2024-09-01.zip",
+          "HTTP 200: /data/futures/um/daily/markPriceKlines/BTCUSDT/1m/BTCUSDT-1m-2024-09-01.zip",
+          "downloaded markPriceKlines/BTCUSDT/1m/BTCUSDT-1m-2024-09.zip: 1440 rows/day, header open_time,open,high,low,close,volume,close_time,...",
+          "downloaded premiumIndexKlines/BTCUSDT/1m/BTCUSDT-1m-2024-09.zip: 43201 rows for the month (1440/day), values are a premium index ratio, not a price"
+        ],
+        "id": "MARK_PRICE_SOURCES_AVAILABLE",
+        "impact": "A venue-published mark price series IS obtainable from the public archive. The inventory must not claim it is unavailable.",
+        "previous": "premiumIndexKlines recorded as NOT_FOUND_AT_PROBED_PATHS, and no markPriceKlines row existed"
+      },
+      {
+        "actual_input": "the same 1m kline zip used for quote/trade context, i.e. the 1-minute TRADE kline close, not a mark price",
+        "claim_in_code": "python/qel/prepare/archive.py fidelity block states MARK = 'observed_mark_price_kline_close'",
+        "id": "MARK_TAPE_IS_NOT_A_MARK_PRICE",
+        "impact": "Any result that depends on the Mark tape (unrealized PnL, mark-triggered liquidation distance, terminal MARK) is running on trade-kline closes labelled as mark prices. The label is wrong; the series is a proxy. This is recorded as a new issue rather than fixed here, because changing the mark source changes every existing replay result.",
+        "measured_divergence": {
+          "closes_differing": 1440,
+          "day": "2024-09-01",
+          "example": {
+            "mark_close": "58937.55538298",
+            "open_time": 1725148800000,
+            "trade_kline_close": "58933.80"
+          },
+          "max_abs_difference_usdt": 52.7873971599983,
+          "minutes": 1440
+        },
+        "severity": "SCIENTIFIC_PROVENANCE_DEFECT"
+      },
+      {
+        "corrected": "unchanged: HTTP 404",
+        "evidence": "/data/futures/um/daily/fundingRate/BTCUSDT/BTCUSDT-fundingRate-2024-09-01.zip -> 404",
+        "id": "DAILY_FUNDING_RATE_CONFIRMED_404",
+        "impact": "Monthly fundingRate zips remain the only public funding source; the 3x/day settlement cadence is confirmed by 1,638 rows over 546 days.",
+        "previous": "recorded as 404"
+      },
+      {
+        "corrected": "daily bookDepth still 200 for the probed day; monthly bookDepth is 404",
+        "id": "BOOKDEPTH_MONTHLY_ABSENT",
+        "impact": "L2 depth remains an unverified, per-day-only source. No L2 or real-quote claim may be made from it until completeness is measured.",
+        "previous": "daily bookDepth recorded as AVAILABLE_PROBE (single HEAD probe)"
+      }
+    ],
+    "generated_utc": "2026-11-12T13:37:00Z",
+    "reproduced_on": "2026-11-12, HTTP HEAD/GET probes from the sprint host",
+    "status_after_correction": "INVENTORY_CORRECTED_TASK10_STILL_PARTIAL"
+  },
+  "generated_utc": "2026-11-10T23:48:00Z",
+  "issue": 3,
+  "kind": "TASK10_VENUE_PIT_INVENTORY_2026-11-10",
+  "negative_controls_verified_this_cycle": [
+    "tests/test_venue.py + tests/test_controls_funding.py: 52 passed (39.9s).",
+    "No new venue data is downloaded or consumed beyond the public archive; sealed OOS range untouched."
+  ],
+  "public_sources": [
+    {
+      "consumed_by": "qel.prepare.archive.build (trades), M2 fold tapes",
+      "evidence": "546/546 fold days on disk, see M2_EXECUTION_COVERAGE.json; per-day sha256 recorded",
+      "source": "daily aggTrades (BTCUSDT)",
+      "status": "AVAILABLE",
+      "url_prefix": "data/futures/um/daily/aggTrades/"
+    },
+    {
+      "consumed_by": "qel.prepare.archive.build (Mark rows); canonical tape marks",
+      "evidence": "546/546 fold days on disk",
+      "source": "daily 1m klines (mark proxy via close)",
+      "status": "AVAILABLE",
+      "url_prefix": "data/futures/um/daily/klines/BTCUSDT/1m/"
+    },
+    {
+      "consumed_by": "fold tapes (Funding rows), qel.research.control funding settlements",
+      "evidence": "18 monthly zips on disk (2024-09..2026-02), 1,638 rows = 546 days x 3; calc_time, funding_interval_hours=8, last_funding_rate. Daily fundingRate zips do not exist (404 verified 2026-11-10).",
+      "source": "monthly fundingRate",
+      "status": "AVAILABLE",
+      "url_prefix": "data/futures/um/monthly/fundingRate/BTCUSDT/"
+    },
+    {
+      "consumed_by": "nothing (synthetic L1 remains the declared tape assumption)",
+      "evidence": "HEAD probe 200 for 2024-09-01 on 2026-11-10; historical completeness not verified this cycle",
+      "source": "daily bookDepth (5-min L2 snapshots)",
+      "status": "AVAILABLE_PROBE",
+      "url_prefix": "data/futures/um/daily/bookDepth/BTCUSDT/"
+    },
+    {
+      "consumed_by": "no (fidelity note in archive manifests)",
+      "evidence": "404 for both monthly/1m and daily/1m BTCUSDT 2024-09 probes on 2026-11-10; mark tape rows therefore use 1m kline close as the declared MARK source",
+      "source": "premiumIndexKlines (mark price history)",
+      "status": "NOT_FOUND_AT_PROBED_PATHS",
+      "url_prefix": "data/futures/um/{daily,monthly}/premiumIndexKlines/"
+    },
+    {
+      "consumed_by": "taker fee is a declared assumption (0.0004); fee tests are TEST_FIXTURE",
+      "source": "fee schedule history (VIP maker/taker by date)",
+      "status": "NOT_IN_PUBLIC_ARCHIVE",
+      "url_prefix": "n/a (exchangeInfo is current-snapshot only)"
+    },
+    {
+      "consumed_by": "qel.accounting.venue isolated tiers; all rules source=TEST_FIXTURE (see VENUE_LIMITATIONS.json)",
+      "source": "margin tier / leverage / bracket history",
+      "status": "NOT_IN_PUBLIC_ARCHIVE",
+      "url_prefix": "n/a"
+    },
+    {
+      "consumed_by": "not claimed (recorded as unsupported in TASK-10 scope boundary)",
+      "source": "ADL / socialized loss / insurance fund reports",
+      "status": "NOT_IN_PUBLIC_ARCHIVE",
+      "url_prefix": "n/a"
+    }
+  ],
+  "scope": "Inventory of point-in-time venue-rule sources for Binance USD-M futures: what is publicly available with provenance, what the codebase already consumes, and what still blocks venue-certified historical rules.",
+  "status": "INVENTORY_CORRECTED_2026-11-12",
   "still_required_for_task10_closure": [
     "Venue-certified historical rule schedules (fees, tiers, leverage, max notional per bracket) with as-of dates, sourced from the venue or a licensed vendor; no public-archive substitute exists.",
     "A native liquidation path (or a formally recorded deviation with engine support), since the pinned nautilus engine offers none.",
     "Re-running F08-F16 scenario checks against the real schedules once sourced, then re-publishing reconciliation evidence."
   ],
-  "negative_controls_verified_this_cycle": [
-    "tests/test_venue.py + tests/test_controls_funding.py: 52 passed (39.9s).",
-    "No new venue data is downloaded or consumed beyond the public archive; sealed OOS range untouched."
-  ],
-  "status": "INVENTORY_COMPLETE",
-  "verdict": "TASK-10 remains PARTIAL for documented external-data reasons only; the implementation surface (bitemporal rules, funding, tiers, liquidation, reconciliation) is complete and tested."
+  "supersedes_note": "Statuses for mark-price sources corrected 2026-11-12 after a re-probe; the appending correction block records what changed and why.",
+  "task": "TASK-10",
+  "verdict": "TASK-10 remains PARTIAL. The implementation surface (bitemporal rules, funding, tiers, liquidation, reconciliation) is implemented and tested; venue-certified historical schedules and a native liquidation path are still missing. This record was corrected on 2026-11-12: mark-price history IS publicly available, and the Mark tape currently used is a trade-kline close mislabelled as a mark price (see corrections_2026_11_12)."
 }
