@@ -1,0 +1,62 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  python:
+    name: python (pytest)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+      - name: Install dependencies (same set as `make setup`)
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install jsonschema==4.25.1 numpy scipy pyarrow duckdb pytest
+      - name: Fast test suite
+        env:
+          PYTHONPATH: python
+          QEL_ROOT: ${{ github.workspace }}
+        run: python -m pytest -q tests
+
+  go:
+    name: go (vet + test)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+      - run: go vet ./...
+      - run: go test ./...
+
+  rust:
+    name: rust (contracts + policy)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: |
+            contracts/rust -> target
+            policy/rust -> target
+      - name: contracts/rust
+        run: cargo test --locked --manifest-path contracts/rust/Cargo.toml
+      - name: policy/rust
+        run: cargo test --locked --manifest-path policy/rust/Cargo.toml
