@@ -99,6 +99,18 @@ def load_funding_rows(days: set[str]) -> list[tuple[int, str]]:
     return rows
 
 
+def funding_for_day(rows: list[tuple[int, str]], day: str) -> list[tuple[int, str]]:
+    """Return only the funding rows whose calc_time falls in the UTC day.
+
+    This is the single place where day-filtering happens. Callers (main)
+    must pass the result to build_day; build_day itself never filters,
+    it only validates the precondition that its input is already exact.
+    """
+    start_ms = int(datetime.combine(date.fromisoformat(day), datetime.min.time(), timezone.utc).timestamp() * 1000)
+    end_ms = start_ms + 86400_000
+    return [(ts_ms, rate) for ts_ms, rate in rows if start_ms <= ts_ms < end_ms]
+
+
 def build_day(day: str, funding_rows: list[tuple[int, str]]) -> dict:
     agg = ARCH / day / f"BTCUSDT-aggTrades-{day}.zip"
     mark = ARCH / day / f"BTCUSDT-1m-{day}.zip"
@@ -111,11 +123,21 @@ def build_day(day: str, funding_rows: list[tuple[int, str]]) -> dict:
     z = zipfile.ZipFile(mark)
     with z.open(z.namelist()[0]) as fh:
         mark_rows = [(int(r["close_time"]), str(Decimal(r["close"]).normalize())) for r in csv.DictReader(io.TextIOWrapper(fh, encoding="utf-8"))]
-    # Funding for this day only, by UTC day of calc_time.
-
+    # Caller precondition (enforced, never silently filtered): funding_rows
+    # must already be exactly this UTC day, via funding_for_day in main.
+    # Canonical build writes every funding row it is given, so silently
+    # dropping out-of-day rows here would diverge from canonical bytes.
     start_ms = int(datetime.combine(date.fromisoformat(day), datetime.min.time(), timezone.utc).timestamp() * 1000)
     end_ms = start_ms + 86400_000
-    fund_rows = [(ts_ms, rate) for ts_ms, rate in funding_rows if start_ms <= ts_ms < end_ms]
+    for ts_ms, _rate in funding_rows:
+        if not (start_ms <= ts_ms < end_ms):
+            raise ValueError(f"FUNDING_OUT_OF_DAY day={day} ts_ms={ts_ms} window=[{start_ms},{end_ms}) caller must pass funding_for_day(rows, day)")
+    fund_rows = list(funding_rows)
+    if not fund_rows:
+        # Binance USD-M funds 3x/day, so a fold day with no settlement row
+        # is a source defect, not a complete day. Fail closed (FUNDING_GAP)
+        # rather than returning ok with funding=0 and claiming a full tape.
+        raise ValueError(f"FUNDING_GAP day={day} no funding rows in [{start_ms},{end_ms})")
 
     # Merged (ts_ms, order, payload) for marks and funding; order 0 = mark,
     # 1 = funding so exact ties match canonical (marks appended before funding).
@@ -136,57 +158,71 @@ def build_day(day: str, funding_rows: list[tuple[int, str]]) -> dict:
     za = zipfile.ZipFile(agg)
     sha = hashlib.sha256()
     n_q = n_t = n_m = n_f = 0
-    with za.open(za.namelist()[0]) as f, open(tmp, "w") as raw:
-        fh = _HashWriter(raw, sha)
-        reader = csv.DictReader(io.TextIOWrapper(f, encoding="utf-8"))
-        last_second = None
-        for row in reader:
-            ts_ms = int(row["transact_time"])
-            price = Decimal(row["price"])
-            bucket = ts_ms // 1000
-            if last_second is None or bucket != last_second:
-                last_second = bucket
-                quote_ts_ms = bucket * 1000
-                flush_before(quote_ts_ms, fh)
+    prev_ts_ms: int | None = None
+    try:
+        with za.open(za.namelist()[0]) as f, open(tmp, "w") as raw:
+            fh = _HashWriter(raw, sha)
+            reader = csv.DictReader(io.TextIOWrapper(f, encoding="utf-8"))
+            last_second = None
+            for row in reader:
+                ts_ms = int(row["transact_time"])
+                # Canonical build sorts by ts_ns, so a non-monotonic aggTrades
+                # CSV would diverge in bytes. Fail closed instead of emitting
+                # a differently-ordered tape and claiming byte identity.
+                if prev_ts_ms is not None and ts_ms < prev_ts_ms:
+                    raise ValueError(f"NON_MONOTONIC_AGGTRADES day={day} ts_ms={ts_ms} prev_ts_ms={prev_ts_ms}")
+                prev_ts_ms = ts_ms
+                price = Decimal(row["price"])
+                bucket = ts_ms // 1000
+                if last_second is None or bucket != last_second:
+                    last_second = bucket
+                    quote_ts_ms = bucket * 1000
+                    flush_before(quote_ts_ms, fh)
+                    fh.write(
+                        json.dumps(
+                            {
+                                "kind": "Quote",
+                                "ts_ns": str(quote_ts_ms * 1_000_000),
+                                "bid": str((price - TICK).normalize()),
+                                "ask": str((price + TICK).normalize()),
+                                "bid_qty": "1.000",
+                                "ask_qty": "1.000",
+                            },
+                            sort_keys=True,
+                        )
+                        + "\n"
+                    )
+                    n_q += 1
+                flush_before(ts_ms, fh)
+                qty = Decimal(row["quantity"]).quantize(Decimal("0.001"))
                 fh.write(
                     json.dumps(
                         {
-                            "kind": "Quote",
-                            "ts_ns": str(quote_ts_ms * 1_000_000),
-                            "bid": str((price - TICK).normalize()),
-                            "ask": str((price + TICK).normalize()),
-                            "bid_qty": "1.000",
-                            "ask_qty": "1.000",
+                            "kind": "Trade",
+                            "ts_ns": str(ts_ms * 1_000_000),
+                            "price": str(price.normalize()),
+                            "qty": str(qty),
+                            "aggressor": "SELL" if row["is_buyer_maker"] == "true" else "BUY",
+                            "trade_id": row["agg_trade_id"],
                         },
                         sort_keys=True,
                     )
                     + "\n"
                 )
-                n_q += 1
-            flush_before(ts_ms, fh)
-            qty = Decimal(row["quantity"]).quantize(Decimal("0.001"))
-            fh.write(
-                json.dumps(
-                    {
-                        "kind": "Trade",
-                        "ts_ns": str(ts_ms * 1_000_000),
-                        "price": str(price.normalize()),
-                        "qty": str(qty),
-                        "aggressor": "SELL" if row["is_buyer_maker"] == "true" else "BUY",
-                        "trade_id": row["agg_trade_id"],
-                    },
-                    sort_keys=True,
-                )
-                + "\n"
-            )
-            n_t += 1
-        while pending_idx < len(pending):
-            fh.write(json.dumps(pending[pending_idx][2], sort_keys=True) + "\n")
-            pending_idx += 1
+                n_t += 1
+            while pending_idx < len(pending):
+                fh.write(json.dumps(pending[pending_idx][2], sort_keys=True) + "\n")
+                pending_idx += 1
+    except Exception:
+        try:
+            tmp.unlink()
+        except FileNotFoundError:
+            pass
+        raise
     n_m = sum(1 for _, order, _ in pending if order == 0)
     n_f = sum(1 for _, order, _ in pending if order == 1)
     tmp.rename(out)
-    return {"day": day, "status": "ok", "quotes": n_q, "trades": n_t, "marks": n_m, "funding": n_f, "bytes": out.stat().st_size, "sha256": sha.hexdigest()}
+    return {"day": day, "status": "ok", "quotes": n_q, "trades": n_t, "marks": n_m, "funding": n_f, "funding_day": day, "funding_window_ms": [start_ms, end_ms], "bytes": out.stat().st_size, "sha256": sha.hexdigest()}
 
 
 class _HashWriter:
@@ -216,11 +252,10 @@ def main() -> int:
     funding_rows = load_funding_rows(set(NEEDED))
     print(f"funding_rows={len(funding_rows)}", flush=True)
     results: dict[str, dict] = {}
-    if MANIFEST_PATH.is_file():
-        results = json.loads(MANIFEST_PATH.read_text()).get("days", {})
+    failures: list[str] = []
     done = 0
     with ThreadPoolExecutor(max_workers=max(1, args.workers)) as pool:
-        futures = {pool.submit(build_day, d, funding_rows): d for d in missing}
+        futures = {pool.submit(build_day, d, funding_for_day(funding_rows, d)): d for d in missing}
         for fut in as_completed(futures):
             day = futures[fut]
             try:
@@ -229,16 +264,18 @@ def main() -> int:
                 done += 1
                 print(f"[{done}/{len(missing)}] {entry['status']} {day} q={entry.get('quotes')} t={entry.get('trades')} f={entry.get('funding')}", flush=True)
             except Exception as exc:
+                failures.append(day)
                 print(f"FAIL {day}: {exc!r}", flush=True)
     manifest = {
         "schema": "qel.m2_fold_tapes/1.0",
         "generated_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         "days": {d: results[d] for d in sorted(results)},
         "built_days": sum(1 for r in results.values() if r.get("status") in ("ok", "skip")),
+        "failed_days": sorted(failures),
     }
     MANIFEST_PATH.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n")
     print("DONE", flush=True)
-    return 0
+    return 1 if failures else 0
 
 
 if __name__ == "__main__":

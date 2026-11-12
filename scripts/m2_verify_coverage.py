@@ -58,7 +58,11 @@ def _sha(path: Path) -> tuple[str, int]:
 
 def _check_zip(path: Path) -> dict:
     """Return integrity record for one daily zip (fail fast on bad zip)."""
-    info = {"path": str(path.relative_to(ROOT)), "bytes": path.stat().st_size}
+    try:
+        rel = str(path.relative_to(ROOT))
+    except ValueError:
+        rel = str(path)
+    info = {"path": rel, "bytes": path.stat().st_size}
     with zipfile.ZipFile(path) as z:
         names = z.namelist()
         if len(names) != 1:
@@ -80,7 +84,7 @@ def main() -> int:
     total_bytes = 0
     errors: list[str] = []
     for day in NEEDED:
-        entry: dict[str, object] = {"day": day}
+        entry: dict[str, object] = {"day": day, "complete": False}
         complete = True
         for kind in ("aggTrades", "1m"):
             path = ARCH / day / f"{SYMBOL}-{kind}-{day}.zip"
@@ -105,6 +109,8 @@ def main() -> int:
     for fold in FOLDS:
         train = day_range(*fold["train"])
         val = day_range(*fold["validation"])
+        for d in train + val:
+            assert isinstance(days[d].get("complete"), bool), f"day {d} missing boolean complete"
         fold_rows.append(
             {
                 "fold_id": fold["fold_id"],

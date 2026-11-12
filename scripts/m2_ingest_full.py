@@ -45,6 +45,8 @@ def present_full(day: str) -> bool:
 
 
 def fetch_one(day: str, kind: str) -> tuple[str, int]:
+    if day >= SEALED_FROM:
+        raise ValueError(f"SEALED_DAY_REFUSED day={day} sealed_from={SEALED_FROM}")
     dest = ARCHIVE_ROOT / day
     dest.mkdir(parents=True, exist_ok=True)
     name = f"{SYMBOL}-{kind}-{day}.zip"
@@ -83,6 +85,7 @@ def main() -> int:
     missing = [d for d in NEEDED if d < SEALED_FROM and not present_full(d)]
     print(f"needed={len(NEEDED)} missing={len(missing)}", flush=True)
     fetched: list[dict] = []
+    failed: list[str] = []
     # Conservative: 4 workers, official public archive. Two jobs per day sequentially.
     with ThreadPoolExecutor(max_workers=4) as pool:
         futures = {pool.submit(_fetch_day, d): d for d in missing}
@@ -93,12 +96,21 @@ def main() -> int:
                 fetched.append(entry)
                 print(f"OK {day} agg={entry['aggTrades']['bytes']} 1m={entry['1m']['bytes']}", flush=True)
             except Exception as exc:
+                failed.append(day)
                 print(f"FAIL {day}: {exc}", flush=True)
     # Manifest update
     report = json.loads(MANIFEST_PATH.read_text()) if MANIFEST_PATH.exists() else {}
     report["ingest_complete_utc"] = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
     report["fetched_days"] = sorted(f["day"] for f in fetched)
     report["fetched_count"] = len(fetched)
+    # Content-hash manifest: record the per-day sha256/bytes already computed
+    # by _fetch_day under ingest_hashes (never overwriting the verifier's
+    # per-day "days" structure in the same file).
+    ingest_hashes = dict(report.get("ingest_hashes") or {})
+    for f in fetched:
+        ingest_hashes[f["day"]] = {"aggTrades": f["aggTrades"], "1m": f["1m"]}
+    report["ingest_hashes"] = ingest_hashes
+    report["failed_days"] = sorted(failed)
     # recompute coverage
     present_days = sum(1 for d in NEEDED if d < SEALED_FROM and present_full(d))
     report["present_days"] = present_days
@@ -106,7 +118,7 @@ def main() -> int:
     report["status"] = "COMPLETE" if report["missing_days"] == 0 else "PARTIAL_COVERAGE"
     MANIFEST_PATH.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n")
     print(f"DONE present={present_days} missing={report['missing_days']} status={report['status']}", flush=True)
-    return 0
+    return 1 if failed else 0
 
 
 def _fetch_day(day: str) -> dict:
