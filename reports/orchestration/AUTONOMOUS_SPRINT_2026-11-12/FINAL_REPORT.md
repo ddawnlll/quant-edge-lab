@@ -4,13 +4,13 @@
 **Repository:** `ddawnlll/quant-edge-lab`
 **Window:** 12:37Z → 14:50Z (≈2 h 13 m of the 180-minute budget; substantial change stopped at the freeze, final verification and reporting followed)
 **`origin/main` moved:** `8b59f79` → **`6e81f88`**
-**Still open by design:** PR #41 (A3 driver), PR #53 (TA21 draft), PR #93 (issue #90 fix, awaiting independent review)
+**Still open by design:** PR #41 (A3 driver, awaits a non-author reviewer), PR #53 (TA21 draft), PR #93 (issue #90 fix, awaits independent review), PR #95 (these sprint records)
 
 ---
 
 ## 1. Executive summary
 
-The repository went from **10 open PRs / 56 open issues** to **3 open PRs / 54 open issues**, and — more importantly — the merged code is now *tested from a clean tree* rather than merely present. Seven PRs merged, two issues closed, one new issue filed (#94).
+The repository went from **10 open PRs / 55 open issues** to **4 open PRs / 54 open issues**, and — more importantly — the merged code is now *tested from a clean tree* rather than merely present. Seven PRs merged, two issues closed, one new issue filed (#94); four PRs remain open (#41, #53, #93, #95) and every one of them is open for a stated reason, not by omission.
 
 What actually improved:
 
