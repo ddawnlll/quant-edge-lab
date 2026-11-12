@@ -1,0 +1,50 @@
+{
+  "kind": "TASK25_B3_ROOTCAUSE_2026-11-10",
+  "generated_utc": "2026-11-10T23:45:00Z",
+  "base_sha": "8b59f795663f9e8ba332341a676d389d4e470bf8",
+  "question": "Why is B3 (10M-row atomic L2 corpus, RP-4G) at ~210s vs the 120s target, and can a parse/rounding fast path in native/runner close it?",
+  "findings": {
+    "b3_baseline": {
+      "evidence": "evidence/labd/B3_10M_ATOMIC_L2_2026-11-10.json",
+      "p90_wall_s": 209.741,
+      "target_s": 120,
+      "verdict": "FAIL_TARGET",
+      "events": 11247697
+    },
+    "fast_path_experiment": {
+      "change": "Allocation-free decimal rounding + field-scanning JSON parse (fallback to serde Value path) replacing serde_json::from_str + Decimal::parse in parse_event_line. Uncommitted working-tree state at session start; evaluated then REVERTED (git clean for native/runner/src/main.rs).",
+      "binary_sha256_fastpath": "c8bc4046038aff45157708bd217b3714ed62074e628c53fa02d7fffc74d3406a",
+      "binary_sha256_head": "e7df18d9118af7187a42a21a65b771945dbf2bf937b6d780f6a8aad6e44eee44",
+      "binary_sha256_clean_rebuild": "87337833f4e4cbde350a2ddbf25e12095e7f980c72dc83057373a3661ff00d70",
+      "differential_equal": {
+        "note": "Reports identical modulo elapsed_ms and RSS sampling fields.",
+        "tapes": [
+          "data/native/_fold/2024-09-01.jsonl (1,247,948 events, includes Funding rows)",
+          "data/native/_dev_w1/2024-09-01.jsonl (archive-day tape, funding present)",
+          "2M-event slice of data/native/DS-MULTIDAY-10M/events.jsonl (1,968,154 events)"
+        ]
+      },
+      "timing_elapsed_ms": {
+        "fold_day_1_25M": {"head": 28131, "fastpath": 25416},
+        "dev_day_1_25M": {"head": 25336, "fastpath": 27221},
+        "b3_slice_1_97M": {"head": 38462, "fastpath": 38946}
+      },
+      "peak_rss_kb_b3_slice": {"head": 41524, "fastpath": 41284},
+      "conclusion": "No measurable speedup and no memory benefit. Parse+rounding is a negligible share of B3 runtime."
+    },
+    "chunk_sweep_b3_slice_1_97M_head_binary": {
+      "chunk_bytes_8388608": {"batches": 31, "elapsed_ms": 36891},
+      "chunk_bytes_134217728": {"batches": 2, "elapsed_ms": 38436},
+      "chunk_bytes_1073741824": {"batches": 1, "elapsed_ms": 40865},
+      "conclusion": "Per-batch flush (engine.add_data + engine.run + clear_data) overhead is not the bottleneck; larger chunks are slightly worse. The 8MB chunk of the B3 harness is already near-optimal."
+    },
+    "root_cause": "B3 is bound by nautilus BacktestEngine per-event dispatch (add_data/run through cache, clock, actors and portfolio) at ~57k events/s on this VM, not by NDJSON parsing, decimal conversion, report emission (B3 reports are 637KB), or batching. Speeding up parse/rounding cannot yield the required >=1.74x.",
+    "options_not_pursued_this_cycle": [
+      "Profile nautilus internals (cargo flamegraph / perf) and reduce per-event engine cost; changes the certified replay path and needs full differential re-validation (F-fixtures, accounting, conformance).",
+      "Feed the engine only strategy-consumed data per event (semantic change to the native path; needs new conformance proof).",
+      "Run B3 corpus replay out-of-process in parallel shards (violates the single-tape causal order of the corpus; not a valid B3 measurement)."
+    ],
+    "b3_verdict_unchanged": "FAIL_TARGET (p90 ~210s vs 120s). TASK-25 remains PARTIAL.",
+    "resource_note": "All measurements on this VM with the soak test running; only one bench-class job at a time."
+  }
+}
