@@ -4,11 +4,19 @@ version = "0.1.0"
 edition = "2024"
 publish = false
 
+[lib]
+name = "qel_native_runner"
+path = "src/lib.rs"
+
 [dependencies]
 anyhow = "1.0"
+arrow = { version = "58", default-features = false }
+parquet = { version = "58", default-features = false, features = ["arrow", "zstd"] }
 serde_json = "1.0"
 rust_decimal = "1"
 qel-policy = { path = "../../policy/rust" }
+qel-data-engine-core = { path = "../../data-engine/core" }
+qel-data-engine-nautilus-adapter = { path = "../../data-engine/nautilus-adapter" }
 nautilus-backtest = { git = "https://github.com/nautechsystems/nautilus_trader", rev = "27a8e54e7ac3c57d6cbf8891f0283dfbaee97317" }
 nautilus-common = { git = "https://github.com/nautechsystems/nautilus_trader", rev = "27a8e54e7ac3c57d6cbf8891f0283dfbaee97317" }
 nautilus-core = { git = "https://github.com/nautechsystems/nautilus_trader", rev = "27a8e54e7ac3c57d6cbf8891f0283dfbaee97317" }

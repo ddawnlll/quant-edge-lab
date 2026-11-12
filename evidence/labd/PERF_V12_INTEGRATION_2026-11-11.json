@@ -1,0 +1,147 @@
+{
+  "kind": "PERF_V12_INTEGRATION_2026-11-11",
+  "date": "2026-11-11",
+  "epic": 42,
+  "status": "PASS_SINGLE_DAY_DIFFERENTIAL_NOT_CERTIFIED",
+  "branch": "perf/v12-integration-rust-20261111",
+  "stack": "PR #47 foundation -> #48 P0 -> #49 P1 (python reference) + #50 P2 (rust core/adapter) + #51 P3 (features) -> this integration branch (merged P2 onto P3 tip, then rust ingest + RecordBatch adapter + parquet runner)",
+  "nautilus_pin": "27a8e54e7ac3c57d6cbf8891f0283dfbaee97317 (unchanged)",
+  "arrow_parquet_pin": "58.4.1 (aligned with Nautilus workspace)",
+  "binaries_release_sha256": {
+    "qel-ingest": "3382579ab445266bc8e9e519cc15cbc7c06ff18fc6e7e1780116ce667c26ad0d",
+    "qel-native-runner": "d0750f8d060098b9d3bcf2061c6593b07fdbff9a975ab557ea9f10a14d5a0499",
+    "qel-parquet-runner": "da43de10fd70007e05e6bd297f3a05bc64cfa582cb2017938b4aeded3d9abc34"
+  },
+  "day": "2024-09-01",
+  "strategy": "STRAT-VAR-10 (data/native/pilot-m2fold-20261111/out/reports/STRAT-VAR-10.strategy.json)",
+  "ingest_parity": {
+    "verdict": "PASS",
+    "legacy_sha256": "92bee987b25c0db2c69cbc9db4324b7a67c66c8352807a2e4adceee691d457f2",
+    "decoded_from_rust_parquet_sha256": "92bee987b25c0db2c69cbc9db4324b7a67c66c8352807a2e4adceee691d457f2",
+    "rows": 1248948,
+    "counts": {"Quote": 84476, "Trade": 1163029, "Mark": 1440, "Funding": 3},
+    "source_hashes": {
+      "agg_trades": "14dde6479bff2ca39265515a23b5459d2a510286e6aa637a89c8a738e6b20529",
+      "mark_1m": "2004c458cc32e9df49180a74475b836d0211cf0cede0856cba7c125e551a96c0",
+      "funding": "6ef23b02392b481ef9c3855434bf3644289fb6e228b4f7d9a0dfc6d3cdff1116"
+    },
+    "rust_parquet_sha256": "8fea0122f20ccca7fc093a1ab89c7fde5891cd356873534e950378d7ec9e5c26",
+    "rust_parquet_bytes": 17037896,
+    "python_parquet_bytes": 23094357,
+    "legacy_ndjson_bytes": 164587466,
+    "note": "Parquet file bytes differ between Rust and Python writers (row groups/compression framing); logical canonical NDJSON parity is byte-identical. Rust parquet sha is identical across debug/release and across batch_rows 16384/65536/262144."
+  },
+  "differential_replay_release": {
+    "verdict": "PASS",
+    "chunk": 65536,
+    "tape_len": 61,
+    "tape_equal": true,
+    "first_divergence": null,
+    "native_account": {"currency": "USDT", "total": "998.26815944", "free": "998.26815944", "locked": "0.00000000", "unrealized": "0", "equity": "998.26815944", "position_qty": "0", "mark": "57268.10"},
+    "funding": {"count": 0, "total": "0"},
+    "total_orders": 58,
+    "total_positions": 29,
+    "iterations": 1248948,
+    "resource": {"batches": 20, "events_replayed": 1248948, "purged_closed_orders": 58, "purged_closed_positions": 13, "epochs_retained": 30},
+    "legacy_release": {"elapsed_ms": 19233, "wall_s": 19.248, "peak_rss_kb": 49836},
+    "parquet_release": {"elapsed_ms": 16292, "wall_s": 16.317, "peak_rss_kb": 79680},
+    "legacy_tape_equals_pilot_tape": true,
+    "pilot_reference": "data/native/pilot-m2fold-20261111/out/reports/STRAT-VAR-10-2024-09-01.json (58 orders, 29 positions, equity 998.26815944)"
+  },
+  "differential_replay_debug": {
+    "verdict": "PASS",
+    "note": "Same comparison in debug builds (correctness only, not a timing claim): tape 61 identical, equity 998.26815944, elapsed legacy 403327ms vs parquet 386666ms, peak RSS legacy 61684kB vs parquet 94776kB (bounded streaming in both)."
+  },
+  "benchmarks_single_day": {
+    "host": "6 vCPU Xeon E5-2680 v2, 11.7 GiB RAM; unrelated Android/Gradle builds were present at times (load 4-9 during some runs). Absolute times are upper bounds; relative Rust-vs-Python gaps dwarf contention. No 14-day or full A3/B6 run launched.",
+    "ingest_rust_release_wall_s": 7.68,
+    "ingest_python_p1_wall_s": 86.9,
+    "ingest_speedup_vs_python": 11.3,
+    "ingest_batch_rows_sweep_wall_s": {"16384": 7.989, "65536": 7.925, "262144": 7.812, "note": "at load ~9.2 (Android build); batch size insensitive, parquet sha identical"},
+    "ingest_debug_wall_s": 83.2,
+    "replay_release_wall_s": {"legacy_ndjson": 19.248, "parquet_arrow": 16.317, "note": "engine-dominated (P0 profile: engine ~62%); parquet input decoding saves the JSON parse share only. Load rose 4.17 -> 6.72 during the pair (Android build started), so treat as bounded, not a controlled A/B."},
+    "disk": {"ndjson_bytes": 164587466, "rust_parquet_bytes": 17037896, "python_parquet_bytes": 23094357},
+    "worker_sweep_1_2_4_6": "NOT_LAUNCHED: single-day Rust ingest is single-process streaming (no day/seed workers to sweep); full-pipeline worker sweep remains aspirational per dispatch (do not launch full A3/B6). Batch-size sweep above is the applicable single-day scaling check."
+  },
+  "tests": {
+    "cargo_workspace": "cargo test -j4 --workspace in data-engine: core 10 + ingest 3 + adapter 5 = 18 passed",
+    "cargo_check_runner": "cargo check -j2 --bins in native/runner: PASS (lib + qel-native-runner + qel-parquet-runner against pinned Nautilus)",
+    "pytest": "PYTHONPATH=python .venv/bin/python -m pytest -q tests/test_arrow_features.py tests/test_arrow_batches.py tests/test_archive_parquet.py tests/test_arrow_real_pit.py: 33 passed",
+    "negative_cli": "qel-ingest --day 2026-03-08 -> SEALED_RESERVE_REFUSED exit 1; qel-parquet-runner on NDJSON file -> PARQUET_OPEN corrupt footer exit 1"
+  },
+  "commands": [
+    "nice -n 10 cargo build -j2 --release --manifest-path data-engine/Cargo.toml -p qel-data-engine-ingest",
+    "nice -n 10 cargo build -j4 --release --manifest-path native/runner/Cargo.toml --bins",
+    "data-engine/target/release/qel-ingest --agg data/raw/ARCHIVE_BINANCE_USDM/BTCUSDT/2024-09-01/BTCUSDT-aggTrades-2024-09-01.zip --mark data/raw/ARCHIVE_BINANCE_USDM/BTCUSDT/2024-09-01/BTCUSDT-1m-2024-09-01.zip --funding data/raw/ARCHIVE_BINANCE_USDM/BTCUSDT/funding/BTCUSDT-fundingRate-2024-09.zip --day 2024-09-01 --out data/native/_integration/2024-09-01/2024-09-01-release.parquet",
+    "PYTHONPATH=python .venv/bin/python scripts/verify_parquet_parity.py --parquet <parquet> --ndjson data/native/_fold/2024-09-01.jsonl",
+    "native/runner/target/release/qel-native-runner --events data/native/_fold/2024-09-01.jsonl --strategy data/native/pilot-m2fold-20261111/out/reports/STRAT-VAR-10.strategy.json --out legacy.json --chunk 65536",
+    "native/runner/target/release/qel-parquet-runner --parquet <parquet> --strategy data/native/pilot-m2fold-20261111/out/reports/STRAT-VAR-10.strategy.json --out parquet.json --chunk 65536 --batch-rows 65536",
+    "PYTHONPATH=python .venv/bin/python scripts/compare_replay_outputs.py --legacy legacy.json --parquet parquet.json",
+    "bash scripts/run_parquet_replay.sh (debug pipeline, end-to-end)"
+  ],
+  "limitations": [
+    "Funding count is 0 for STRAT-VAR-10 on 2024-09-01 in both paths (matches pilot; no position open at funding settlement for this variant/day). Funding injection code is exercised and parity-checked at the event level (3 funding events in the tape input, drained identically), but no FUNDING tape entry is produced for this variant.",
+    "Parquet --chunk-bytes counts one unit per event (Parquet has no NDJSON line length); differential runs use --chunk (event count) so flush boundaries match legacy exactly.",
+    "Zero-copy Arrow ingestion is not claimed (absent in pinned Nautilus); typed Vec<Data> conversion is the boundary.",
+    "Not CERTIFIED: single-day differential only. Full 14-day / A3 / B6 validation, seven-day soak and independent review remain outstanding. Sealed reserve (>=2026-03-08) untouched and refused by ingest; no live orders; no data deletion."
+  ],
+  "independent_reproduction_2026_11_12": {
+    "note": "Third-party re-run of the ingest and both replay paths by the sprint coordinator. The recorded numbers above were produced earlier under host load; these were produced on the same VM with the soak running and no other benchmark job.",
+    "binary_sha256_reverified": {
+      "qel-native-runner": "d0750f8d060098b9d3bcf2061c6593b07fdbff9a975ab557ea9f10a14d5a0499",
+      "qel-parquet-runner": "PRE-FIX da43de10fd70007e05e6bd297f3a05bc64cfa582cb2017938b4aeded3d9abc34; post-chunk-bytes-fix 9238e0a4e83ae66669216bb9fb8362e079420de2233236780aebaefec7cb4140",
+      "qel-ingest": "3382579ab445266bc8e9e519cc15cbc7c06ff18fc6e7e1780116ce667c26ad0d",
+      "verdict": "native and ingest hashes match this file; the parquet runner was rebuilt for the issue-76 chunk-bytes fix"
+    },
+    "ingest_rerun": {
+      "day": "2024-09-01",
+      "parquet_sha256": "8fea0122f20ccca7fc093a1ab89c7fde5891cd356873534e950378d7ec9e5c26",
+      "matches_recorded_rust_parquet_sha256": true,
+      "counts": {"Quote": 84476, "Trade": 1163029, "Mark": 1440, "Funding": 3},
+      "rows": 1248948
+    },
+    "ingest_parity_rerun": {
+      "tool": "scripts/verify_parquet_parity.py",
+      "legacy_tape_sha256": "92bee987b25c0db2c69cbc9db4324b7a67c66c8352807a2e4adceee691d457f2",
+      "decoded_sha256_matches": true,
+      "rows_decoded": 1248948,
+      "rows_legacy": 1248948,
+      "first_divergence": null,
+      "verdict": "PASS"
+    },
+    "replay_differential_rerun": {
+      "legacy": {"elapsed_ms": 16432, "peak_rss_kb": 52648, "tape_entries": 61, "orders": 58, "positions": 29},
+      "parquet": {"elapsed_ms": 13436, "peak_rss_kb": 80268, "tape_entries": 61, "orders": 58, "positions": 29},
+      "tape_equal": true,
+      "native_account_equal": true,
+      "equity_both": "998.26815944",
+      "funding_both": {"count": 0, "total": "0"},
+      "resource_counts_equal": true,
+      "first_divergence": null,
+      "verdict": "PASS"
+    },
+    "funding_positive_differential_issue_76": {
+      "day": "2024-09-02",
+      "strategy": "STRAT-VAR-00",
+      "why_this_case": "73 of 180 archived pilot variant-days already carry a non-zero funding count; this one was selected from them, so no new data was needed.",
+      "per_day_tape_sha256": "7f4523f8272823375c7fc98e81155c87be5493d929f608e820921e5676857b8b",
+      "parquet_sha256": "e51026c9feda2c8571f8a94b35c9e962cb75d5be8bcc229b6abea5dc242435cf",
+      "events": {"Quote": 84710, "Trade": 1106859, "Mark": 1440, "Funding": 3, "total": 1193012},
+      "decode_to_ndjson_byte_identical": true,
+      "differential": {"verdict": "PASS", "tape_length_both": 664, "first_divergence": null, "funding_count_both": 1, "funding_total_both": "0.00021238", "equity_both": "986.08372330", "orders_both": 660, "positions_both": 330},
+      "significance": "Previously only a zero-funding day had been compared, so funding tape parity was unproven. This closes that gap with a real settlement applied to an open position."
+    },
+    "chunk_bytes_semantics_fix_issue_76": {
+      "finding": "qel-parquet-runner counted one unit per event and compared it against --chunk-bytes, silently reinterpreting a byte budget as an event count.",
+      "change": "The Parquet reader now rejects the flag: exit 1, 'CHUNK_BYTES_UNSUPPORTED_FOR_PARQUET: use --chunk <events>'. Flush boundaries are driven only by the event count.",
+      "verified": "exit 1 with the documented message; replay differential on the funding-positive day still PASS after the change."
+    },
+    "sealed_refusal_rerun": {
+      "command": "qel-ingest --day 2026-03-08 ...",
+      "exit_code": 1,
+      "stderr": "Error: SEALED_RESERVE_REFUSED:2026-03-08",
+      "output_file_created": false
+    },
+    "timing_caveat": "Bounded single-day numbers on a shared 6-vCPU host with the seven-day soak running. They are NOT a controlled A/B and must not be quoted as a speedup claim. The correctness checks (tape, account, counts, hashes) are load-independent."
+  }
+}

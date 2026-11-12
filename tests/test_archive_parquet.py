@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import io
+import os
 import json
 import zipfile
 from decimal import Decimal
@@ -161,3 +162,37 @@ def test_output_hash_recorded_and_recomputable(tmp_path):
     out, manifest = _convert(tmp_path, agg, mark, fund)
     assert hashlib.sha256(out.read_bytes()).hexdigest() == manifest["parquet_sha256"]
     assert hashlib.sha256(out.read_bytes()).hexdigest() != manifest["canonical_ndjson_sha256"]
+
+
+def test_parquet_runner_rejects_chunk_bytes(tmp_path):
+    """--chunk-bytes has no meaning for a Parquet tape; it must fail closed.
+
+    Regression for issue #76: the reader used to count one unit per event and
+    compare it against a byte budget, silently reinterpreting the flag so a
+    differential could flush at different boundaries than the legacy runner.
+    """
+    import subprocess
+
+    binary = Path(
+        os.environ.get(
+            "QEL_PARQUET_RUNNER",
+            Path(__file__).resolve().parents[1] / "native/runner/target/release/qel-parquet-runner",
+        )
+    )
+    if not binary.is_file():
+        pytest.skip(f"parquet runner not built: {binary}")
+    agg, mark, fund = _fixture(tmp_path)
+    out, _manifest = _convert(tmp_path, agg, mark, fund)
+    proc = subprocess.run(
+        [
+            str(binary),
+            "--parquet", str(out),
+            "--strategy", str(Path(__file__).resolve().parents[1] / "policy/examples/taker_1m.json"),
+            "--out", str(tmp_path / "r.json"),
+            "--chunk-bytes", "8388608",
+        ],
+        capture_output=True,
+        text=True,
+    )
+    assert proc.returncode != 0
+    assert "CHUNK_BYTES_UNSUPPORTED_FOR_PARQUET" in (proc.stderr + proc.stdout)

@@ -1,0 +1,10 @@
+[package]
+name = "qel-data-engine-core"
+version = "0.1.0"
+edition = "2021"
+publish = false
+description = "QEL Data Engine v2: exact fixed-point rescale core (no heavy deps)"
+
+[lib]
+name = "qel_data_engine_core"
+path = "src/lib.rs"
