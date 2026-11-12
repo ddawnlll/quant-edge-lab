@@ -35,3 +35,10 @@
 ## Stop conditions (section 6)
 No sudo, no sealed-OOS read, no live orders, no threshold relaxation,
 no 1187 core-h B6 launch, max 2 workers / 1 heavy job.
+
+## Night cycle 2026-11-10 (base 8b59f79; branches qel/m2-full-coverage-a3-prep, qel/b3-rootcause)
+- A2 full: 546/546 verified (scripts/m2_verify_coverage.py), funding zips x18.
+- A3 prep: streaming fold tapes, byte-identical to canonical, with observed funding.
+- A3 run: BLOCKED (disk ~90GB>68GB, ControlPlan ~39M quotes, replay compute unmeasured at scale). Streaming design filed in M2_FOLD_TAPES_PILOT evidence.
+- B3 root cause: engine-bound, fast path reverted; B3 stays FAIL_TARGET. Next B3 work is nautilus-level profiling, revalidation-gated.
+- Next READY unchanged: B2 #3, B3 #11, B6 human gate, soak observation.

@@ -6,11 +6,10 @@ Fold windows come from the frozen TASK-12 split manifest
   Fold 2 WF-2CCA0B04: train 2024-09-01..2025-11-30, val 2025-12-01..2026-02-28
 Reserved (sealed) starts 2026-03-08 — ingestion never touches it.
 
-On disk today: 29 daily aggTrades zips (BTCUSDT 2026-10 only) + 4 monthly
-aggTrades zips (2024-09, 2026-08..10). Fold 1/2 windows (2024-09..2026-02)
-are almost entirely missing. This script never downloads a multi-GB window
-unplanned: it audits coverage, emits a gap map, and only fetches an explicit
-bounded ``--days N`` pilot. ``--full`` requires an explicit ``--confirm``.
+Coverage (2026-11-10 night run): all 546 fold days present on disk after the
+full ingest (see ``evidence/labd/M2_EXECUTION_COVERAGE.json`` status
+COMPLETE). This script audits coverage, emits a gap map, and fetches an
+explicit bounded ``--days N`` pilot. ``--full`` requires ``--confirm``.
 """
 
 from __future__ import annotations
