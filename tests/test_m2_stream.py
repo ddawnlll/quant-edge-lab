@@ -15,7 +15,7 @@ from qel.research import m2_stream as MS  # noqa: E402
 from qel.research.protocol import ProtocolError  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
-BUILDER = ROOT / "scripts/m2_build_fold_tapes_stream.py"
+BUILDER = ROOT / "tests/stub_fold_builder.py"
 MANIFEST = ROOT / "evidence/labd/PROTOCOL_MONTHLY_26M.json"
 STRATEGY = ROOT / "policy/examples/taker_1m.json"
 
@@ -176,10 +176,14 @@ def test_resume_skips_runner_and_verifies_sidecar(tmp_path: Path):
     MS.run_m2_fold_stream(**kwargs)
     assert len(counter.read_text().splitlines()) == invocations, "resume replayed a verified day"
 
-    # Removing the quote sidecar invalidates the checkpoint: the day is rebuilt.
+    # Removing one day's quote sidecar invalidates only that day: it is
+    # rebuilt and replayed, and the other day stays skipped.
+    per_day = invocations // 2
+    assert per_day * 2 == invocations
     (tmp_path / "work" / "quotes" / "2024-09-01.npz").unlink()
     MS.run_m2_fold_stream(**kwargs)
-    assert len(counter.read_text().splitlines()) == 2 * invocations
+    after = len(counter.read_text().splitlines())
+    assert after - invocations == per_day, (after, invocations, per_day)
 
 
 def test_run_id_pins_research_code(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
@@ -258,7 +262,7 @@ def test_pending_seed_window_is_bounded(tmp_path: Path):
         aggregator = C.StreamingControlAggregator(plan, keep_summaries=True)
         MS._aggregate_seeds(plan, aggregator, 40, 3, window=4)
     finally:
-        cf.ProcessPoolExecutor = original
+        cf.ProcessPoolExecutor = real_pool
 
     assert observed_max <= 4, observed_max
     sequential = C.StreamingControlAggregator(plan, keep_summaries=True)
