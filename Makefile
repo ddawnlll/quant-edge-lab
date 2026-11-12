@@ -15,7 +15,7 @@ GO ?= go
 setup:
 	python3 -m venv .venv
 	.venv/bin/pip install -q --upgrade pip
-	.venv/bin/pip install -q jsonschema numpy scipy pyarrow duckdb pytest
+	.venv/bin/pip install -q jsonschema numpy scipy pyarrow duckdb cryptography pytest
 
 contracts:
 	mkdir -p bin

@@ -54,6 +54,15 @@ def test_audit_reflects_disk_without_inventing_coverage() -> None:
         klines = archive_root / d / f"BTCUSDT-1m-{d}.zip"
         if agg.is_file() and klines.is_file():
             recount_present += 1
+    if recount_present == 0:
+        # `data/` is gitignored, so a fresh clone/CI checkout has no corpus.
+        # The committed report describes the operator machine that ran the
+        # ingest; there is nothing to recount here. A partial corpus still
+        # fails: only a completely absent one skips.
+        pytest.skip(
+            "development archive corpus is not present in this checkout "
+            f"(looked in {archive_root}); data/ is gitignored"
+        )
     assert report["total_needed_days"] == len(needed)
     assert report["present_days"] == recount_present
     assert report["missing_days"] == report["total_needed_days"] - report["present_days"]
