@@ -13,26 +13,18 @@ from __future__ import annotations
 import hashlib
 import json
 import os
-import shutil
 import subprocess
 from pathlib import Path
 
 import pytest
 
+import qel_paths
+
 ROOT = Path(__file__).resolve().parents[1]
 
 
 def _runner() -> Path | None:
-    candidates = [
-        os.environ.get("QEL_NATIVE_RUNNER"),
-        str(ROOT / "native" / "target" / "release" / "qel-native-runner"),
-        "/home/quant/quant/.build-cache/qel-native/release/qel-native-runner",
-    ]
-    for candidate in candidates:
-        if candidate and Path(candidate).is_file():
-            return Path(candidate)
-    found = shutil.which("qel-native-runner")
-    return Path(found) if found else None
+    return qel_paths.find("qel-native-runner")
 
 
 def _data_root() -> Path:
@@ -46,7 +38,7 @@ ARCHIVE = DATA / "native" / "DS-ARCHIVE-BTCUSDT-2026-11-07" / "events.jsonl"
 
 pytestmark = pytest.mark.skipif(
     RUNNER is None,
-    reason="native runner release binary not built (set QEL_NATIVE_RUNNER)",
+    reason=qel_paths.describe("qel-native-runner"),
 )
 
 

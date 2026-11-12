@@ -20,5 +20,6 @@ var/
 *.zst
 
 # local vendor clones and build caches live outside the repo
+.build-cache/
 native/target/
 target/

@@ -4,11 +4,12 @@
 set -euo pipefail
 
 ROOT=${QEL_ROOT:-$(cd "$(dirname "$0")/.." && pwd)}
-BIN=${QEL_BENCH_BIN:-/home/quant/quant/.build-cache/qel-bench}
-B0_BIN=${QEL_B0_BIN:-/home/quant/quant/.build-cache/qel-policy-target/release/bench_b0}
+CACHE=${QEL_BUILD_CACHE:-$ROOT/.build-cache}
+BIN=${QEL_BENCH_BIN:-$CACHE/qel-bench}
+B0_BIN=${QEL_B0_BIN:-$CACHE/qel-policy-target/release/bench_b0}
 RUNNER=$ROOT/benchmarks/run_profile.sh
 RAW=$ROOT/evidence/labd/raw
-SCRATCH=${QEL_BENCH_SCRATCH:-/home/quant/quant/.build-cache}
+SCRATCH=${QEL_BENCH_SCRATCH:-$CACHE}
 mkdir -p "$RAW" "$SCRATCH"
 
 run_profile() {

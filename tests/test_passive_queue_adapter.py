@@ -18,13 +18,14 @@ from pathlib import Path
 
 import pytest
 
+import qel_paths
 from qel.conformance import Harness
 
 ROOT = Path(__file__).resolve().parents[1]
 EVIDENCE = ROOT / "evidence" / "labd" / "PASSIVE_QUEUE_ADAPTER_2026-11-10.json"
 NATIVE_EVIDENCE = ROOT / "evidence" / "labd" / "PASSIVE_QUEUE_COMPLETION_PRE_ADAPTER_2026-11-10.json"
 COMPLETION_EVIDENCE = ROOT / "evidence" / "labd" / "PASSIVE_QUEUE_COMPLETION_2026-11-10.json"
-BINARY = Path("/home/quant/quant/.build-cache/qel-native/release/qel-passive-runner")
+BINARY = qel_paths.find("qel-passive-runner")
 PROFILE = "ADAPTER_OVER_NATIVE"
 NAUTILUS_COMMIT = "27a8e54e7ac3c57d6cbf8891f0283dfbaee97317"
 
@@ -97,7 +98,7 @@ def test_evidence_records_source_and_binary_hashes(evidence: dict) -> None:
 
 
 def test_binary_hash_matches_the_built_artifact(evidence: dict) -> None:
-    if not BINARY.exists():
+    if BINARY is None:
         pytest.skip("release binary not present in this environment")
     assert sha256(BINARY) == evidence["build"]["binary"]["sha256"]
 
