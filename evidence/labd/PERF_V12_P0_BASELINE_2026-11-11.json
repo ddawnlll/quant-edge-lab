@@ -1,0 +1,72 @@
+{
+  "kind": "PERF_V12_P0_BASELINE_2026-11-11",
+  "date": "2026-11-11",
+  "epic": 42,
+  "issue": 43,
+  "status": "P0_ANCHORED_NOT_CERTIFIED",
+  "baseline": {
+    "main_sha": "8b59f795663f9e8ba332341a676d389d4e470bf8",
+    "experiment_stack": "#38 (0c8af60..8a761b7 A2-full base) -> #41 (3678c6a A3 streamed)",
+    "perf_foundation": "PR #47 e53fd7dfffe0567dda9b7967f93094ff2c9805a9 (perf/v12-columnar-foundation-20261111)",
+    "bench_branch": "bench/language-2026-11 d4e81d2 (Rust vs Zig vs Goose: GOC YOK)",
+    "host": "6 vCPU Xeon E5-2680 v2 (avx present, avx2 ABSENT), 11.7 GiB RAM, pyarrow 26.0.1, Python 3.13.5",
+    "soak": "ACTIVE untouched (soak.sh since 2026-11-08, PID 702661)"
+  },
+  "pr47_verification": {
+    "test_command": "PYTHONPATH=python .venv/bin/python -m pytest -q tests/test_arrow_batches.py",
+    "result": "14 passed in 1.64s",
+    "verdict": "PASS (synthetic fixtures only; no production/fix change made)",
+    "gaps_found": [
+      "Reader validates only 9 provenance columns; price/qty coefficient columns (price_i etc.) are NOT validated, so decimal scale/overflow is still unchecked on this path.",
+      "raw_offset monotonicity / canonical tie order is NOT enforced by the reader; caller must prove it. require_timestamp_order defaults to False (easy to miss).",
+      "recv_ns (receipt) vs ts_ns (economic) distinction is not checked (no recv>=ts rule); P1 must add receipt/economic + tie ordinal explicitly.",
+      "All checked-in normalized partitions (data/normalized/*/events.parquet, e.g. DS-VALID-PREP 12418 rows) PREDATE provenance columns (no line_sha256/raw_hash_scope/raw_hash_verified/raw_len) and would be REJECTED with PIT_SCHEMA_MISMATCH. No real-partition test exists yet; a fresh capture via current normalize.py is needed before P1.",
+      "File SHA is the only integrity check; no row-group checksum validation. Acceptable for P0, must be documented for P1 partition contract."
+    ]
+  },
+  "hot_path_confirmed": {
+    "chain": "Binance ZIP/CSV -> Python csv.DictReader+Decimal+json.dumps -> NDJSON tape (archive.py / m2_build_fold_tapes_stream.py) -> Rust serde_json::from_str per line (native/runner/src/main.rs parse_event_line) -> Nautilus add_data/engine.run",
+    "normalize_already_parquet": "python/qel/prepare/normalize.py writes zstd Parquet via PyArrow, but native_input.py converts back via to_pylist -> JSONL. No second PIT pipeline created in this report.",
+    "nautilus_pin": "rev 27a8e54e7ac3c57d6cbf8891f0283dfbaee97317; add_data(Vec<Data>,...) exists; QuoteTick::new_checked(Price/Quantity with equal precision) exists; NO Arrow/RecordBatch ingestion hook found in pinned crates. P2 therefore means: Arrow decode in Rust -> per-event Data construction (avoids JSON parse only). Full BLOCKED_BACKEND assessment still requires a narrow cargo-check prototype, NOT done under load.",
+    "funding_source": "Monthly Binance fundingRate ZIPs (BTCUSDT-fundingRate-YYYY-MM.zip); daily fundingRate ZIPs verified 404. Synthetic L1 (1 quote/sec around last trade, tick 0.01, qty 1.000) preserved as assumed_synthetic_l1_around_trade, never venue depth."
+  },
+  "pinned_14day_reference": {
+    "window": "2024-09-01..07 (train) + 2025-09-01..07 (validation), 12 variants, 1000 controls",
+    "run_id": "b26b06586b47b161f9a98d003c207bbfd5843c8279ceceabd378e9c0899160a7",
+    "status": "PASS / INSUFFICIENT_EVIDENCE, selected STRAT-VAR-10",
+    "plan_hash": "80b804c7c21d625b293d4b6b9af9aec95627f7a8a751be53d2c4ff00707ce73c",
+    "measured_wall_s": 2025,
+    "settings": {"day_workers": 4, "seed_workers": 16, "note": "seed_workers=16 exceeds 6 vCPU; P4 MUST re-measure at 1/2/4/6 workers. This reference is pinned but not a valid 6-vCPU A/B baseline."},
+    "forecast_456d": "18.3h wall (14-23h), peak RSS ~1.5GB, peak disk ~1.6GB. Full run NOT launched."
+  },
+  "per_phase_numbers": {
+    "tape_build_2024_09_01": {"wall_s": 85, "tape_bytes": 164587466, "events": {"Quote": 84476, "Trade": 1163029, "Mark": 1440, "Funding": 3}, "sha256": "92bee987b25c0db2c69cbc9db4324b7a67c66c8352807a2e4adceee691d457f2"},
+    "source_hashes_2024_09_01": {
+      "aggTrades": "14dde6479bff2ca39265515a23b5459d2a510286e6aa637a89c8a738e6b20529",
+      "mark_1m": "2004c458cc32e9df49180a74475b836d0211cf0cede0856cba7c125e551a96c0",
+      "fundingRate_2024_09_monthly": "6ef23b02392b481ef9c3855434bf3644289fb6e228b4f7d9a0dfc6d3cdff1116"
+    },
+    "runner_single_variant_day": {
+      "pilot_elapsed_ms": 19636,
+      "pilot_peak_rss_kb": 231536,
+      "p0_rerun_elapsed_ms": 57841,
+      "p0_rerun_peak_rss_kb": 375956,
+      "p0_rerun_events": 1248948,
+      "p0_rerun_total_orders": 652,
+      "contamination": "load average 18.55 on 6 vCPU (unrelated Android/Gradle build running concurrently). P0 rerun wall is NOT comparable to pilot; do not use for speedup claims. Re-measure when load < 6.",
+      "profile_pct": {"parse": 30, "engine_run_60s_clock": 62, "add_data": 1, "other": 7}
+    }
+  },
+  "blockers": [
+    "BLOCKED_MEASUREMENT: host load 18.55/6 vCPU from unrelated Android build. No A/B wall claim is valid until load is clean and only ONE benchmark-class process group runs.",
+    "BLOCKED_BINARY_PIN: bin/qel-native-runner is gitignored and STALE (f639b873... vs pilot 87337833...). Its output schema differs (missing native_account/funding/resource; MARK tape entry at index 653 differs). Baseline MUST be rebuilt from pinned source (narrow cargo build, shared cache) before any A/B; NOT attempted in P0.",
+    "BLOCKED_REAL_PIT: no current-normalizer output exists on disk to exercise PR47 reader end-to-end (see gaps).",
+    "P1/P2/P3/P4: NOT STARTED. Next executable tasks are listed in reports/orchestration/PERF_V12_P0_2026-11-11.md. No 456-day run launched, no sealed reserve touched."
+  ],
+  "next_executable": [
+    "1) Rebuild runner from source with shared cargo cache; pin binary SHA; reproduce pilot tape entry-for-entry on 2024-09-01 (expect 655 tape entries, 652 orders).",
+    "2) Generate one fresh PIT partition via current normalize.py from a small raw capture; run PR47 reader + real-partition parity test (new test, separate PR).",
+    "3) When load < 6: re-time single variant-day + tape build with /usr/bin/time -v; then 1/2/4/6 worker sweep on ONE day before any 14-day run.",
+    "4) P1 prototype: Rust ZIP->Parquet (or PyArrow streaming equivalent reusing normalize contracts) with byte-compare vs canonical tape on fixtures + 2024-09-01."
+  ]
+}
