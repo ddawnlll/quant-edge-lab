@@ -1,0 +1,30 @@
+{
+  "kind": "A3_STREAMED_PILOT_AND_PARITY_2026-11-11",
+  "pilot": {
+    "run_id": "b26b06586b47b161f9a98d003c207bbfd5843c8279ceceabd378e9c0899160a7",
+    "report": "data/native/pilot-m2fold-20261111/out/M2_FOLD_RUN.json",
+    "status": "PASS",
+    "decision": "INSUFFICIENT_EVIDENCE",
+    "venue": "PASS",
+    "selected": "STRAT-VAR-10",
+    "plan_hash": "80b804c7c21d625b293d4b6b9af9aec95627f7a8a751be53d2c4ff00707ce73c"
+  },
+  "parity_proof": {
+    "tape_2024_09_01_sha256": "92bee987b25c0db2c69cbc9db4324b7a67c66c8352807a2e4adceee691d457f2",
+    "tape_byte_identical_to_canonical_builder": true,
+    "family_agreement_streamed_vs_canonical_run_family_12_of_12": true,
+    "streamed_plan_hash_eq_canonical_on_pilot_sidecars": true,
+    "seed0_selection_hash_pnl_days_eq_canonical": true,
+    "clean_rebuilt_binary_reproduces_canonical_report_except_timing_fields": true
+  },
+  "b3_profile_addendum": {
+    "file": "evidence/labd/B3_PROFILE_ADDENDUM_2026-11-11.json",
+    "finding": "60s-clock variants: parse 30%, engine.run 62%; engine cost scales with decision-clock evaluations (1s-clock taker_1s: engine.run 82s vs 14.9s for 60s-clock VAR-00 on the same day)"
+  },
+  "full_run": {
+    "status": "NOT_LAUNCHED",
+    "forecast_file": "reports/orchestration/A3_FORECAST_MEASURED_2026-11-11.json",
+    "projected_wall_h": 18.3,
+    "needs": "operator authorization"
+  }
+}
