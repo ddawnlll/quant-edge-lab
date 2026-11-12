@@ -172,3 +172,54 @@ def test_day_range_is_contiguous() -> None:
 
 def test_day_present_fail_closed_on_missing_dir(tmp_path) -> None:
     assert day_present("2099-01-01") is False
+
+
+def test_mark_fetch_refuses_sealed_day(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(ingest_full, "ARCHIVE_ROOT", tmp_path / "arch")
+    with pytest.raises(ValueError, match="SEALED_DAY_REFUSED"):
+        ingest_full.fetch_mark_one("2026-03-08")
+    assert not (tmp_path / "arch" / "2026-03-08").exists()
+
+
+def test_mark_fetch_verifies_checksum_and_uses_distinct_name(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    arch = tmp_path / "arch"
+    monkeypatch.setattr(ingest_full, "ARCHIVE_ROOT", arch)
+    payload = b"real-mark-zip"
+    sha = hashlib.sha256(payload).hexdigest()
+    urls: list[str] = []
+
+    def _fake(url: str, filename: str) -> tuple[str, None]:
+        urls.append(url)
+        if url.endswith(".CHECKSUM"):
+            Path(filename).write_text(f"{sha}  BTCUSDT-1m-2024-09-01.zip\n")
+        else:
+            Path(filename).write_bytes(payload)
+        return (filename, None)
+
+    monkeypatch.setattr(urllib.request, "urlretrieve", _fake)
+    status, size = ingest_full.fetch_mark_one("2024-09-01")
+    assert status == "ok"
+    assert size == len(payload)
+    assert any("markPriceKlines/BTCUSDT/1m" in u for u in urls)
+    out = arch / "2024-09-01" / "BTCUSDT-markPriceKlines-1m-2024-09-01.zip"
+    assert out.read_bytes() == payload
+    # The trade-kline name is never used for mark data.
+    assert not (arch / "2024-09-01" / "BTCUSDT-1m-2024-09-01.zip").exists()
+
+
+def test_mark_fetch_rejects_bad_checksum(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(ingest_full, "ARCHIVE_ROOT", tmp_path / "arch")
+
+    def _fake(url: str, filename: str) -> tuple[str, None]:
+        if url.endswith(".CHECKSUM"):
+            Path(filename).write_text("00" * 32 + "  x.zip\n")
+        else:
+            Path(filename).write_bytes(b"payload")
+        return (filename, None)
+
+    monkeypatch.setattr(urllib.request, "urlretrieve", _fake)
+    with pytest.raises(ValueError, match="MARK_CHECKSUM_MISMATCH"):
+        ingest_full.fetch_mark_one("2024-09-01")
+    assert not (tmp_path / "arch" / "2024-09-01" / "BTCUSDT-markPriceKlines-1m-2024-09-01.zip").exists()

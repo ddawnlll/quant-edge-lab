@@ -18,7 +18,7 @@ cd "$(dirname "$0")/.."
 
 DAY="${DAY:-2024-09-01}"
 AGG="data/raw/ARCHIVE_BINANCE_USDM/BTCUSDT/${DAY}/BTCUSDT-aggTrades-${DAY}.zip"
-MARK="data/raw/ARCHIVE_BINANCE_USDM/BTCUSDT/${DAY}/BTCUSDT-1m-${DAY}.zip"
+MARK="data/raw/ARCHIVE_BINANCE_USDM/BTCUSDT/${DAY}/BTCUSDT-markPriceKlines-1m-${DAY}.zip"
 FUNDING="data/raw/ARCHIVE_BINANCE_USDM/BTCUSDT/funding/BTCUSDT-fundingRate-2024-09.zip"
 LEGACY="data/native/_fold/${DAY}.jsonl"
 STRATEGY="data/native/pilot-m2fold-20261111/out/reports/STRAT-VAR-10.strategy.json"

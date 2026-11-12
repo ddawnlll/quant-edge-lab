@@ -79,6 +79,43 @@ def sha256_file(path: Path) -> str:
     return h.hexdigest()
 
 
+def fetch_mark_one(day: str) -> tuple[str, int]:
+    """Fetch real ``markPriceKlines`` for one day, verifying the official CHECKSUM.
+
+    The mark file is stored under a distinct name. Binance names both the trade
+    klines and the mark klines ``<SYM>-1m-<date>.zip``; using the same local name
+    for both is exactly how #94 happened.
+    """
+    if day >= SEALED_FROM:
+        raise ValueError(f"SEALED_DAY_REFUSED day={day} sealed_from={SEALED_FROM}")
+    dest = ARCHIVE_ROOT / day
+    dest.mkdir(parents=True, exist_ok=True)
+    name = f"{SYMBOL}-markPriceKlines-1m-{day}.zip"
+    out = dest / name
+    if out.is_file() and out.stat().st_size > 0:
+        return ("skip", out.stat().st_size)
+    url = f"{BASE}/markPriceKlines/{SYMBOL}/1m/{SYMBOL}-1m-{day}.zip"
+    tmp = out.parent / (out.name + ".part")
+    sum_tmp = out.parent / (out.name + ".part.CHECKSUM")
+    for attempt in range(3):
+        try:
+            urllib.request.urlretrieve(url, tmp)
+            urllib.request.urlretrieve(url + ".CHECKSUM", sum_tmp)
+            break
+        except Exception:
+            if attempt == 2:
+                raise
+            time.sleep(2 * (attempt + 1))
+    want = sum_tmp.read_text().split()[0]
+    got = sha256_file(tmp)
+    sum_tmp.unlink()
+    if got != want:
+        tmp.unlink()
+        raise ValueError(f"MARK_CHECKSUM_MISMATCH day={day} want={want} got={got}")
+    tmp.rename(out)
+    return ("ok", out.stat().st_size)
+
+
 def main() -> int:
     from concurrent.futures import ThreadPoolExecutor, as_completed
 
@@ -139,4 +176,10 @@ def _fetch_day(day: str) -> dict:
 
 
 if __name__ == "__main__":
+    import sys
+
+    if len(sys.argv) >= 4 and sys.argv[1] == "--mark-only":
+        for day in day_range(sys.argv[2], sys.argv[3]):
+            print(day, fetch_mark_one(day), flush=True)
+        raise SystemExit(0)
     raise SystemExit(main())

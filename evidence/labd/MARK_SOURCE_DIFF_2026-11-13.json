@@ -1,0 +1,265 @@
+{
+  "days": [
+    {
+      "day": "2024-09-01",
+      "delta": {
+        "equity_change": "0E-8",
+        "max_abs_mark_change": "52.78739716",
+        "tape_entries_changed": 1215
+      },
+      "inputs": {
+        "mark_price_klines_sha256": "19644673a409dd665f7b781322269606eb385af2137c45f3beea8e69895e24cf",
+        "trade_klines_sha256": "2004c458cc32e9df49180a74475b836d0211cf0cede0856cba7c125e551a96c0"
+      },
+      "new_mark_price_klines": {
+        "final_equity": "986.26990116",
+        "free_cash": "986.26990116",
+        "funding_count": 0,
+        "funding_total": "0",
+        "mark_label": "observed_mark_price_kline_close",
+        "mark_rows": 1440,
+        "orders": 652,
+        "positions": 326,
+        "tape_entries": 655,
+        "unrealized": "0"
+      },
+      "old_trade_close_proxy": {
+        "final_equity": "986.26990116",
+        "free_cash": "986.26990116",
+        "funding_count": 0,
+        "funding_total": "0",
+        "mark_label": "trade_kline_close_proxy_NOT_MARK",
+        "mark_rows": 1440,
+        "orders": 652,
+        "positions": 326,
+        "tape_entries": 655,
+        "unrealized": "0"
+      }
+    },
+    {
+      "day": "2024-09-02",
+      "delta": {
+        "equity_change": "0E-8",
+        "max_abs_mark_change": "112.48683236",
+        "tape_entries_changed": 1236
+      },
+      "inputs": {
+        "mark_price_klines_sha256": "4131cd24a74facda31979cdcee02ff225c021e76714acbff389ef46676fa5055",
+        "trade_klines_sha256": "a77f36f997761a89d62a61ddbc95acf7b9f932decf48e228e60b184ce873a934"
+      },
+      "new_mark_price_klines": {
+        "final_equity": "986.08372330",
+        "free_cash": "986.08372330",
+        "funding_count": 1,
+        "funding_total": "0.00021238",
+        "mark_label": "observed_mark_price_kline_close",
+        "mark_rows": 1440,
+        "orders": 660,
+        "positions": 330,
+        "tape_entries": 664,
+        "unrealized": "0"
+      },
+      "old_trade_close_proxy": {
+        "final_equity": "986.08372330",
+        "free_cash": "986.08372330",
+        "funding_count": 1,
+        "funding_total": "0.00021238",
+        "mark_label": "trade_kline_close_proxy_NOT_MARK",
+        "mark_rows": 1440,
+        "orders": 660,
+        "positions": 330,
+        "tape_entries": 664,
+        "unrealized": "0"
+      }
+    },
+    {
+      "day": "2024-09-03",
+      "delta": {
+        "equity_change": "0.00736000",
+        "max_abs_mark_change": "56.28819858",
+        "tape_entries_changed": 1230
+      },
+      "inputs": {
+        "mark_price_klines_sha256": "57f1fb82f98891f298e70c4d7191d041787b797487d33513636d807489618243",
+        "trade_klines_sha256": "70ad9cd2b728bee06fba9ea023fd658df03c3cbe8d4866282c20291c421dde63"
+      },
+      "new_mark_price_klines": {
+        "final_equity": "986.45453752",
+        "free_cash": "984.65967167",
+        "funding_count": 0,
+        "funding_total": "0",
+        "mark_label": "observed_mark_price_kline_close",
+        "mark_rows": 1440,
+        "orders": 641,
+        "positions": 321,
+        "tape_entries": 644,
+        "unrealized": "-0.22405000"
+      },
+      "old_trade_close_proxy": {
+        "final_equity": "986.44717752",
+        "free_cash": "984.65967167",
+        "funding_count": 0,
+        "funding_total": "0",
+        "mark_label": "trade_kline_close_proxy_NOT_MARK",
+        "mark_rows": 1440,
+        "orders": 641,
+        "positions": 321,
+        "tape_entries": 644,
+        "unrealized": "-0.23141000"
+      }
+    },
+    {
+      "day": "2024-09-04",
+      "delta": {
+        "equity_change": "0E-8",
+        "max_abs_mark_change": "90.74774848",
+        "tape_entries_changed": 1251
+      },
+      "inputs": {
+        "mark_price_klines_sha256": "4b2936dc48b54dbc00fd5f40ae5deb86bf68b4d4cd8756daff4e233c4322fdd1",
+        "trade_klines_sha256": "42ed81f890b1c4f1b29cfca52f934ca3dea59f7a7ead1c74a12131aa0397172e"
+      },
+      "new_mark_price_klines": {
+        "final_equity": "984.67655088",
+        "free_cash": "984.67655088",
+        "funding_count": 0,
+        "funding_total": "0",
+        "mark_label": "observed_mark_price_kline_close",
+        "mark_rows": 1440,
+        "orders": 664,
+        "positions": 332,
+        "tape_entries": 667,
+        "unrealized": "0"
+      },
+      "old_trade_close_proxy": {
+        "final_equity": "984.67655088",
+        "free_cash": "984.67655088",
+        "funding_count": 0,
+        "funding_total": "0",
+        "mark_label": "trade_kline_close_proxy_NOT_MARK",
+        "mark_rows": 1440,
+        "orders": 664,
+        "positions": 332,
+        "tape_entries": 667,
+        "unrealized": "0"
+      }
+    },
+    {
+      "day": "2024-09-05",
+      "delta": {
+        "equity_change": "-1.3E-7",
+        "max_abs_mark_change": "63.94247518",
+        "tape_entries_changed": 1216
+      },
+      "inputs": {
+        "mark_price_klines_sha256": "55d5a310f2894f2a0714687adacc7f1836457dae288601cc0a858d75aa0a8801",
+        "trade_klines_sha256": "409d22fbd654c5c9757ce172bf65a0b6899dd58c0f4a36eb3475912e294415d4"
+      },
+      "new_mark_price_klines": {
+        "final_equity": "986.03690269",
+        "free_cash": "986.03690269",
+        "funding_count": 1,
+        "funding_total": "-0.00115695",
+        "mark_label": "observed_mark_price_kline_close",
+        "mark_rows": 1440,
+        "orders": 702,
+        "positions": 351,
+        "tape_entries": 706,
+        "unrealized": "0"
+      },
+      "old_trade_close_proxy": {
+        "final_equity": "986.03690282",
+        "free_cash": "986.03690282",
+        "funding_count": 1,
+        "funding_total": "-0.00115682",
+        "mark_label": "trade_kline_close_proxy_NOT_MARK",
+        "mark_rows": 1440,
+        "orders": 702,
+        "positions": 351,
+        "tape_entries": 706,
+        "unrealized": "0"
+      }
+    },
+    {
+      "day": "2024-09-06",
+      "delta": {
+        "equity_change": "-0.00302000",
+        "max_abs_mark_change": "74.26315624",
+        "tape_entries_changed": 1280
+      },
+      "inputs": {
+        "mark_price_klines_sha256": "1eda72d4efbcb77860a5c3933b023b48ebfbd757fdf2ad91901e1460d2c661ed",
+        "trade_klines_sha256": "6609720e9fb21ebc65f0456949fa83e4af90bb39620381003f0614821ec0d510"
+      },
+      "new_mark_price_klines": {
+        "final_equity": "986.91994940",
+        "free_cash": "985.04285875",
+        "funding_count": 0,
+        "funding_total": "0",
+        "mark_label": "observed_mark_price_kline_close",
+        "mark_rows": 1440,
+        "orders": 705,
+        "positions": 353,
+        "tape_entries": 708,
+        "unrealized": "-0.01013000"
+      },
+      "old_trade_close_proxy": {
+        "final_equity": "986.92296940",
+        "free_cash": "985.04285875",
+        "funding_count": 0,
+        "funding_total": "0",
+        "mark_label": "trade_kline_close_proxy_NOT_MARK",
+        "mark_rows": 1440,
+        "orders": 705,
+        "positions": 353,
+        "tape_entries": 708,
+        "unrealized": "-0.00711000"
+      }
+    },
+    {
+      "day": "2024-09-07",
+      "delta": {
+        "equity_change": "-4.9E-7",
+        "max_abs_mark_change": "47.76378014",
+        "tape_entries_changed": 1150
+      },
+      "inputs": {
+        "mark_price_klines_sha256": "4a77d81c138180af31a81b75bc110102c5ffe3ca1e863fd8189e97b3421eecec",
+        "trade_klines_sha256": "449f120fd7345d558d536024db3de8adf89cd15eb4fd76f1bf0b526d94d3488d"
+      },
+      "new_mark_price_klines": {
+        "final_equity": "987.85899749",
+        "free_cash": "987.85899749",
+        "funding_count": 1,
+        "funding_total": "-0.00414255",
+        "mark_label": "observed_mark_price_kline_close",
+        "mark_rows": 1440,
+        "orders": 646,
+        "positions": 323,
+        "tape_entries": 650,
+        "unrealized": "0"
+      },
+      "old_trade_close_proxy": {
+        "final_equity": "987.85899798",
+        "free_cash": "987.85899798",
+        "funding_count": 1,
+        "funding_total": "-0.00414206",
+        "mark_label": "trade_kline_close_proxy_NOT_MARK",
+        "mark_rows": 1440,
+        "orders": 646,
+        "positions": 323,
+        "tape_entries": 650,
+        "unrealized": "0"
+      }
+    }
+  ],
+  "generated_by": "scripts/mark_source_diff.py",
+  "issue": 94,
+  "limits": [
+    "Only the development week was re-run.",
+    "Same strategy (STRAT-VAR-00) and runner for both tapes.",
+    "Equity differences are mark-source effects on this strategy, not an edge."
+  ],
+  "schema": "qel.mark_source_diff/1.0",
+  "scope": "development week only; no sealed/OOS data; no profitability claim"
+}

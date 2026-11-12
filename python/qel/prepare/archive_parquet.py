@@ -36,6 +36,14 @@ from typing import Iterator
 import pyarrow as pa
 import pyarrow.parquet as pq
 
+from .archive import (
+    MARK_LABEL,
+    MARK_PROXY_LABEL,
+    MARK_SOURCE,
+    MarkSourceError,
+    load_mark_rows,
+)
+
 SEALED_START = "2026-03-08"
 SCALE = 8
 SCALE_FACTOR = 10**SCALE
@@ -123,17 +131,11 @@ def _zip_csv_rows(zip_path: Path, required: tuple[str, ...]) -> Iterator[dict]:
         yield from reader
 
 
-def _load_marks(mark_zip: Path) -> list[tuple[int, str]]:
-    rows: list[tuple[int, str]] = []
-    for r in _zip_csv_rows(mark_zip, ("close_time", "close")):
-        try:
-            ts_ms = int(r["close_time"])
-        except (ValueError, TypeError) as exc:
-            raise ArchiveParquetError("MARK_TS_INVALID") from exc
-        price = _parse_decimal(str(r["close"]), "mark.close")
-        rows.append((ts_ms, str(price.normalize())))
-    rows.sort(key=lambda item: item[0])
-    return rows
+def _load_marks(mark_zip: Path, *, mark_source: str = MARK_SOURCE, require_full_day: bool = False) -> list[tuple[int, str]]:
+    try:
+        return load_mark_rows(str(mark_zip), source=mark_source, require_full_day=require_full_day)
+    except MarkSourceError as exc:
+        raise ArchiveParquetError(str(exc)) from exc
 
 
 def _load_funding(funding_zip: Path) -> list[tuple[int, str]]:
@@ -165,6 +167,8 @@ def convert_archive_day(
     symbol: str = "BTCUSDT",
     batch_rows: int = DEFAULT_BATCH_ROWS,
     expected_source_sha256: dict | None = None,
+    mark_source: str = MARK_SOURCE,
+    require_full_day: bool = False,
 ) -> dict:
     """Convert one UTC archive day to typed Parquet with bounded batches.
 
@@ -185,7 +189,9 @@ def convert_archive_day(
             if source_hashes.get(key) != want:
                 raise ArchiveParquetError(f"SOURCE_HASH_MISMATCH:{key}")
 
-    mark_rows = _load_marks(mark_zip)
+    mark_rows = _load_marks(mark_zip, mark_source=mark_source, require_full_day=require_full_day)
+    mark_label = MARK_LABEL if mark_source == MARK_SOURCE else MARK_PROXY_LABEL
+    fidelity = {**FIDELITY, "Mark": mark_label}
     funding_rows_all = _load_funding(funding_zip)
     from datetime import date, datetime, timezone
 
@@ -236,7 +242,7 @@ def convert_archive_day(
         batch["trade_id"].append(trade_id)
         batch["source_id"].append("BINANCE_USDM_PUBLIC_ARCHIVE")
         batch["symbol"].append(symbol)
-        batch["fidelity"].append(FIDELITY[kind])
+        batch["fidelity"].append(fidelity[kind])
         counts[kind] = counts.get(kind, 0) + 1
         if first_ts is None:
             first_ts = ts_ns
@@ -324,7 +330,9 @@ def convert_archive_day(
             "PRICE_PATH": "observed_trade",
             "FEED_LATENCY": "assumed_zero (recv_ns == ts_ns)",
             "FUNDING": "observed_venue_funding (monthly fundingRate)",
+            "MARK": mark_label,
         },
+        "mark_source": {"source": mark_source, "rows": len(mark_rows), "label": mark_label},
         "ordering": "source_ordinal is canonical emission order; equal ts_ns preserves Quote/Trade then Mark then Funding",
         "scale": 8,
         "sealed_start": SEALED_START,

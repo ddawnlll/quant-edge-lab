@@ -341,6 +341,12 @@ func (c *Collector) DownloadArchive(ctx context.Context, date string) (map[strin
 			return nil, fmt.Errorf("%s: SHA256 mismatch", rel)
 		}
 		name := filepath.Base(rel)
+		// Trade klines and mark klines share the same Binance filename
+		// (<SYM>-1m-<date>.zip). Store mark data under a distinct name so it
+		// can never overwrite or be mistaken for the trade kline (#94).
+		if strings.Contains(rel, "markPriceKlines/") {
+			name = fmt.Sprintf("%s-markPriceKlines-1m-%s.zip", c.Symbol, date)
+		}
 		path := filepath.Join(dir, name)
 		if err := os.WriteFile(path, body, 0o640); err != nil {
 			return nil, err

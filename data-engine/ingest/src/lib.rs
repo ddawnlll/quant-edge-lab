@@ -239,15 +239,40 @@ fn parse_ts_ms(text: &str, what: &str) -> Result<i64> {
         .map_err(|_| anyhow!("{what}_TS_INVALID:{text}"))
 }
 
+fn require_zero(text: &str, column: &str, path: &Path) -> Result<()> {
+    let value: f64 = text
+        .trim()
+        .parse()
+        .map_err(|_| anyhow!("MARK_SOURCE_MISSING:{} non-numeric {column}={text}", path.display()))?;
+    if value != 0.0 {
+        bail!(
+            "MARK_SOURCE_MISSING:{} looks like trade klines ({column}={text}); fetch markPriceKlines, not klines",
+            path.display()
+        );
+    }
+    Ok(())
+}
+
 fn load_marks(mark_zip: &Path) -> Result<Vec<(i64, i64)>> {
     let mut archive = open_zip_archive(mark_zip)?;
-    let (mut reader, index) = zip_csv_reader(&mut archive, mark_zip, &["close_time", "close"])?;
+    let (mut reader, index) = zip_csv_reader(
+        &mut archive,
+        mark_zip,
+        &["close_time", "close", "volume", "quote_volume"],
+    )?;
     let mut rows = Vec::new();
     for result in reader.records() {
         let record = result.map_err(|e| anyhow!("CSV_RECORD_INVALID:{e}"))?;
+        // markPriceKlines always has zero volume/quote_volume; the 1m trade
+        // klines do not. Fail closed instead of labelling trade close as mark.
+        require_zero(field(&record, &index, "volume")?, "volume", mark_zip)?;
+        require_zero(field(&record, &index, "quote_volume")?, "quote_volume", mark_zip)?;
         let ts_ms = parse_ts_ms(field(&record, &index, "close_time")?, "MARK")?;
         let price_i = coeff(field(&record, &index, "close")?, "mark.close")?;
         rows.push((ts_ms, price_i));
+    }
+    if rows.is_empty() {
+        bail!("MARK_SOURCE_MISSING:{} has no rows", mark_zip.display());
     }
     rows.sort_by_key(|r| r.0);
     Ok(rows)
@@ -717,15 +742,19 @@ mod tests {
     }
 
     const AGG: &str = "agg_trade_id,price,quantity,first_trade_id,last_trade_id,transact_time,is_buyer_maker\n1,100.00,0.100,1,1,1725148800000,false\n2,100.10,0.200,2,2,1725148800500,true\n3,100.20,0.300,3,3,1725148801500,false\n";
-    const MARK: &str = "open_time,open,high,low,close,volume,close_time,quote_volume,count,taker_buy_volume,taker_buy_quote_volume,ignore\n1725148800000,100.00,100.20,99.90,100.20,1.0,1725148859999,100.0,3,0.6,60.0,0\n";
+    const MARK: &str = "open_time,open,high,low,close,volume,close_time,quote_volume,count,taker_buy_volume,taker_buy_quote_volume,ignore\n1725148800000,100.00,100.20,99.90,100.20,0,1725148859999,0,60,0,0,0\n";
     const FUNDING: &str = "calc_time,funding_interval_hours,last_funding_rate\n1725148800000,8,0.00010000\n1725177600000,8,-1E-8\n";
 
     fn convert_fixture(dir: &Path, agg: &str, day: &str) -> Result<(ConvertConfig, Value)> {
+        convert_fixture_mark(dir, agg, MARK, day)
+    }
+
+    fn convert_fixture_mark(dir: &Path, agg: &str, mark: &str, day: &str) -> Result<(ConvertConfig, Value)> {
         let agg_zip = dir.join("agg.zip");
         let mark_zip = dir.join("mark.zip");
         let funding_zip = dir.join("funding.zip");
         write_zip(&agg_zip, agg)?;
-        write_zip(&mark_zip, MARK)?;
+        write_zip(&mark_zip, mark)?;
         write_zip(&funding_zip, FUNDING)?;
         let out = dir.join("out.parquet");
         let cfg = ConvertConfig {
@@ -777,6 +806,17 @@ mod tests {
             .map(|s| s.to_string())
             .collect();
         assert_eq!(kinds, expected);
+        let _ = dir;
+    }
+
+    #[test]
+    fn rejects_trade_kline_mislabelled_as_mark() {
+        let dir = fixture_dir("mark-source");
+        let trade_mark = "open_time,open,high,low,close,volume,close_time,quote_volume,count,taker_buy_volume,taker_buy_quote_volume,ignore\n1725148800000,100.00,100.20,99.90,100.20,1.0,1725148859999,100.0,3,0.6,60.0,0\n";
+        let result = convert_fixture_mark(&dir, AGG, trade_mark, "2024-09-01");
+        assert!(result.is_err(), "trade kline must be rejected as mark");
+        let err = result.err().unwrap();
+        assert!(err.to_string().contains("MARK_SOURCE_MISSING"), "{err}");
         let _ = dir;
     }
 
