@@ -49,12 +49,12 @@ def _make_inputs(tmp_path: Path) -> None:
     )
     # One mark exactly at a trade timestamp (tie) and one after the last trade.
     _zip_csv(
-        arch / "BTCUSDT-1m-2024-09-01.zip",
-        "BTCUSDT-1m-2024-09-01.csv",
-        ["open_time", "open", "high", "low", "close", "volume", "close_time"],
+        arch / "BTCUSDT-markPriceKlines-1m-2024-09-01.zip",
+        "BTCUSDT-markPriceKlines-1m-2024-09-01.csv",
+        ["open_time", "open", "high", "low", "close", "volume", "close_time", "quote_volume"],
         [
-            ["1725148800000", "100.00", "101.00", "99.00", "100.75", "1.0", "1725148800000"],
-            ["1725148801000", "100.75", "101.00", "100.00", "101.00", "0.5", "1725148859999"],
+            ["1725148800000", "100.00", "101.00", "99.00", "100.75", "0", "1725148800000", "0"],
+            ["1725148801000", "100.75", "101.00", "100.00", "101.00", "0", "1725148859999", "0"],
         ],
     )
 
@@ -69,7 +69,7 @@ def test_stream_output_is_byte_identical_to_canonical(tmp_path: Path) -> None:
     canon_out = tmp_path / "canon.jsonl"
     canonical_build(
         str(day_dir / "BTCUSDT-aggTrades-2024-09-01.zip"),
-        str(day_dir / "BTCUSDT-1m-2024-09-01.zip"),
+        str(day_dir / "BTCUSDT-markPriceKlines-1m-2024-09-01.zip"),
         str(funding_json),
         str(canon_out),
         "BTCUSDT",

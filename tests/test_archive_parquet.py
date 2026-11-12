@@ -41,10 +41,10 @@ def _fixture(tmp_path: Path, *, agg_rows=None, mark_rows=None, fund_rows=None):
         "transact_time,price,quantity,is_buyer_maker,agg_trade_id", agg_rows,
     )
     mark_rows = mark_rows or [
-        f"{DAY_MS + 1000},100.05",
-        f"{DAY_MS + 2000},101.00",
+        f"{DAY_MS + 1000},100.05,0,0",
+        f"{DAY_MS + 2000},101.00,0,0",
     ]
-    mark = _make_zip(tmp_path / "mark.zip", "mark.csv", "close_time,close", mark_rows)
+    mark = _make_zip(tmp_path / "mark.zip", "mark.csv", "close_time,close,volume,quote_volume", mark_rows)
     fund_rows = fund_rows if fund_rows is not None else [f"{DAY_MS + 3600000},0.0001"]
     fund = _make_zip(tmp_path / "fund.zip", "fund.csv", "calc_time,last_funding_rate", fund_rows)
     return agg, mark, fund
@@ -89,7 +89,7 @@ def test_tie_order_quote_trade_before_mark_before_funding(tmp_path):
     agg, mark, fund = _fixture(
         tmp_path,
         agg_rows=[f"{ts},100.00,0.250,true,1"],
-        mark_rows=[f"{ts},100.05"],
+        mark_rows=[f"{ts},100.05,0,0"],
         fund_rows=[f"{ts},0.0001"],
     )
     out, _ = _convert(tmp_path, agg, mark, fund)

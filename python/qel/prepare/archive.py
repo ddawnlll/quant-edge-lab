@@ -3,6 +3,9 @@
 The archive has observed trades and mark prices, but no historical best bid/ask.
 The L1 quote is therefore an explicit synthetic assumption around each last
 trade; it must never be described as observed depth.
+
+Mark rows come from ``markPriceKlines`` only. The 1m *trade* kline close is a
+different series and must never be labelled as an observed mark price (#94).
 """
 
 from __future__ import annotations
@@ -12,11 +15,20 @@ import hashlib
 import io
 import json
 import zipfile
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 from pathlib import Path
 
 TICK = Decimal("0.01")
 QTY_EXPONENT = 3
+
+MARK_LABEL = "observed_mark_price_kline_close"
+MARK_PROXY_LABEL = "trade_kline_close_proxy_NOT_MARK"
+MARK_SOURCE = "markPriceKlines"
+MARK_SOURCE_PROXY = "trade_kline_close"
+
+
+class MarkSourceError(RuntimeError):
+    """Real mark data is absent or the input is not markPriceKlines data."""
 
 
 def _sha(path: str) -> str:
@@ -34,11 +46,82 @@ def _rows(zip_path: str):
         yield from csv.DictReader(io.TextIOWrapper(f, encoding="utf-8"))
 
 
-def build(agg_zip: str, mark_zip: str, funding_json: str, out_path: str, symbol: str = "BTCUSDT") -> dict:
+def _zero_or_fail(value: str | None, column: str, path: str) -> None:
+    if value is None:
+        raise MarkSourceError(f"MARK_SOURCE_MISSING: {path} has no {column} column")
+    try:
+        nonzero = Decimal(value) != 0
+    except InvalidOperation as exc:
+        raise MarkSourceError(f"MARK_SOURCE_MISSING: {path} non-numeric {column}={value!r}") from exc
+    if nonzero:
+        raise MarkSourceError(
+            f"MARK_SOURCE_MISSING: {path} looks like trade klines ({column}={value}); "
+            "fetch markPriceKlines, not klines"
+        )
+
+
+def load_mark_rows(
+    mark_zip: str,
+    *,
+    source: str = MARK_SOURCE,
+    require_full_day: bool = False,
+) -> list[tuple[int, str]]:
+    """Load (close_time_ms, close) rows, failing closed on a wrong source.
+
+    ``markPriceKlines`` has zero ``volume``/``quote_volume`` in every row, while
+    the 1m trade klines have non-zero volume. That is the discriminator used
+    here; a trade-kline file can therefore never carry the observed-mark label.
+    """
+    path = Path(mark_zip)
+    if not path.is_file():
+        raise MarkSourceError(f"MARK_SOURCE_MISSING: {path} does not exist")
+    try:
+        rows = list(_rows(str(path)))
+    except (zipfile.BadZipFile, OSError) as exc:
+        raise MarkSourceError(f"MARK_SOURCE_MISSING: {path} unreadable: {exc}") from exc
+    if not rows:
+        raise MarkSourceError(f"MARK_SOURCE_MISSING: {path} has no rows")
+
+    if source == MARK_SOURCE:
+        for row in rows:
+            _zero_or_fail(row.get("volume"), "volume", str(path))
+            _zero_or_fail(row.get("quote_volume"), "quote_volume", str(path))
+        if require_full_day and len(rows) != 1440:
+            raise MarkSourceError(
+                f"MARK_SOURCE_MISSING: {path} has {len(rows)} minutes, expected 1440"
+            )
+    elif source != MARK_SOURCE_PROXY:
+        raise MarkSourceError(f"MARK_SOURCE_MISSING: unknown mark source {source!r}")
+
+    marks: list[tuple[int, str]] = []
+    for row in rows:
+        try:
+            ts_ms = int(row["close_time"])
+        except (KeyError, TypeError, ValueError) as exc:
+            raise MarkSourceError(f"MARK_SOURCE_MISSING: {path} bad close_time") from exc
+        try:
+            price = Decimal(row["close"]).normalize()
+        except (KeyError, InvalidOperation, TypeError) as exc:
+            raise MarkSourceError(f"MARK_SOURCE_MISSING: {path} bad close") from exc
+        marks.append((ts_ms, str(price)))
+    marks.sort(key=lambda item: item[0])
+    return marks
+
+
+def build(
+    agg_zip: str,
+    mark_zip: str,
+    funding_json: str,
+    out_path: str,
+    symbol: str = "BTCUSDT",
+    *,
+    mark_source: str = MARK_SOURCE,
+    require_full_day: bool = False,
+) -> dict:
     out = Path(out_path)
     out.parent.mkdir(parents=True, exist_ok=True)
     trades = list(_rows(agg_zip))
-    marks = list(_rows(mark_zip))
+    marks = load_mark_rows(mark_zip, source=mark_source, require_full_day=require_full_day)
     funding = json.loads(Path(funding_json).read_text())
 
     events = []
@@ -71,12 +154,12 @@ def build(agg_zip: str, mark_zip: str, funding_json: str, out_path: str, symbol:
                 "trade_id": row["agg_trade_id"],
             }
         )
-    for row in marks:
+    for ts_ms, price in marks:
         events.append(
             {
                 "kind": "Mark",
-                "ts_ns": str(int(row["close_time"]) * 1_000_000),
-                "price": str(Decimal(row["close"]).normalize()),
+                "ts_ns": str(ts_ms * 1_000_000),
+                "price": price,
             }
         )
     for row in funding:
@@ -94,12 +177,14 @@ def build(agg_zip: str, mark_zip: str, funding_json: str, out_path: str, symbol:
     counts = {}
     for event in events:
         counts[event["kind"]] = counts.get(event["kind"], 0) + 1
+    mark_label = MARK_LABEL if mark_source == MARK_SOURCE else MARK_PROXY_LABEL
     manifest = {
         "schema_version": "1.1.0",
         "dataset_id": "DS-ARCHIVE-BTCUSDT-2026-11-07",
         "symbol": symbol,
         "source": "BINANCE_USDM_PUBLIC_ARCHIVE",
         "input_hashes": {"agg_trades": _sha(agg_zip), "mark_klines": _sha(mark_zip), "funding": _sha(funding_json)},
+        "mark_source": {"source": mark_source, "rows": len(marks), "label": mark_label},
         "native_input": str(out),
         "native_sha256": _sha(str(out)),
         "counts": counts,
@@ -110,7 +195,7 @@ def build(agg_zip: str, mark_zip: str, funding_json: str, out_path: str, symbol:
             "FEED_LATENCY": "assumed_zero",
             "FEES": "assumed_taker_0.0004",
             "FUNDING": "observed_venue_funding",
-            "MARK": "observed_mark_price_kline_close",
+            "MARK": mark_label,
             "IMPACT": "not_certified",
         },
         "claim_boundary": "synthetic L1 quote assumption; no observed depth or queue claim",

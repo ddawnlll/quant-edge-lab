@@ -111,18 +111,20 @@ def funding_for_day(rows: list[tuple[int, str]], day: str) -> list[tuple[int, st
     return [(ts_ms, rate) for ts_ms, rate in rows if start_ms <= ts_ms < end_ms]
 
 
-def build_day(day: str, funding_rows: list[tuple[int, str]]) -> dict:
+def build_day(day: str, funding_rows: list[tuple[int, str]], *, mark_source: str = "markPriceKlines", mark_path: Path | None = None) -> dict:
     agg = ARCH / day / f"BTCUSDT-aggTrades-{day}.zip"
-    mark = ARCH / day / f"BTCUSDT-1m-{day}.zip"
+    mark = mark_path or ARCH / day / f"BTCUSDT-markPriceKlines-1m-{day}.zip"
     out = OUT / f"{day}.jsonl"
     if out.is_file() and out.stat().st_size > 0:
         return {"day": day, "status": "skip"}
     tmp = OUT / f".{day}.jsonl.tmp"
     # Marks are small (1440/day); funding is 3/day. Keep both sorted so the
-    # merged flush below matches canonical stable-sort order.
-    z = zipfile.ZipFile(mark)
-    with z.open(z.namelist()[0]) as fh:
-        mark_rows = [(int(r["close_time"]), str(Decimal(r["close"]).normalize())) for r in csv.DictReader(io.TextIOWrapper(fh, encoding="utf-8"))]
+    # merged flush below matches canonical stable-sort order. This fails
+    # closed (MARK_SOURCE_MISSING) if the file is trade klines, not mark data.
+    from qel.prepare.archive import MARK_LABEL, MARK_PROXY_LABEL, load_mark_rows
+
+    mark_rows = load_mark_rows(str(mark), source=mark_source)
+    mark_label = MARK_LABEL if mark_source == "markPriceKlines" else MARK_PROXY_LABEL
     # Caller precondition (enforced, never silently filtered): funding_rows
     # must already be exactly this UTC day, via funding_for_day in main.
     # Canonical build writes every funding row it is given, so silently
@@ -222,7 +224,7 @@ def build_day(day: str, funding_rows: list[tuple[int, str]]) -> dict:
     n_m = sum(1 for _, order, _ in pending if order == 0)
     n_f = sum(1 for _, order, _ in pending if order == 1)
     tmp.rename(out)
-    return {"day": day, "status": "ok", "quotes": n_q, "trades": n_t, "marks": n_m, "funding": n_f, "funding_day": day, "funding_window_ms": [start_ms, end_ms], "bytes": out.stat().st_size, "sha256": sha.hexdigest()}
+    return {"day": day, "status": "ok", "quotes": n_q, "trades": n_t, "marks": n_m, "funding": n_f, "funding_day": day, "funding_window_ms": [start_ms, end_ms], "mark_source": mark_source, "mark_label": mark_label, "bytes": out.stat().st_size, "sha256": sha.hexdigest()}
 
 
 class _HashWriter:
