@@ -52,6 +52,24 @@ def _sha256_file(path: str | Path) -> str:
     return h.hexdigest()
 
 
+def _funding_source_hashes(funding_dir: Path, days: Sequence[str]) -> dict[str, str]:
+    """sha256 of each monthly funding zip covering the given fold days.
+
+    The funding archive is an input to the control fit, so it belongs in the
+    run identity. A missing zip is recorded as MISSING rather than omitted:
+    that keeps the run_id stable while making the gap explicit.
+    """
+    months = sorted({day[:7] for day in days})
+    return {
+        month: (
+            _sha256_file(funding_dir / f"BTCUSDT-fundingRate-{month}.zip")
+            if (funding_dir / f"BTCUSDT-fundingRate-{month}.zip").is_file()
+            else "MISSING"
+        )
+        for month in months
+    }
+
+
 def _git_sha() -> str | None:
     try:
         import subprocess
@@ -121,6 +139,19 @@ class Checkpoints:
     def day_done(self, day: str, report_dir: Path) -> bool:
         record = self.data["days"].get(day)
         if not record or record.get("complete") is not True:
+            return False
+        # A day is only reusable when every artifact it claims to have produced
+        # is still present with the recorded content. Variant reports alone are
+        # not enough: the quote sidecar and the recorded tape hash are inputs to
+        # the later control fit, so a missing sidecar must force a rebuild.
+        sidecar = Path(record.get("quotes_path") or "")
+        if not record.get("quotes_path") or not sidecar.is_file():
+            return False
+        if _sha256_file(sidecar) != record.get("quotes_sha"):
+            return False
+        if not record.get("tape_sha256"):
+            return False
+        if not (record.get("funding") or []):
             return False
         for sid, entry in (record.get("variants") or {}).items():
             report = report_dir / f"{sid}-{day}.json"
@@ -195,6 +226,24 @@ def run_m2_fold_stream(
         "manifest_sha256": _sha256_file(manifest_path),
         "builder_sha256": _sha256_file(builder_script),
         "builder_script": Path(builder_script).name,
+        # Pin the research code that determines every reported number. Without
+        # these, editing the control/fit/statistics modules keeps the same
+        # run_id and silently reuses sidecars produced by older logic.
+        "research_code_sha256": {
+            module: _sha256_file(Path(__import__(name, fromlist=["__file__"]).__file__).resolve())
+            for name, module in (
+                ("qel.research.control", "control.py"),
+                ("qel.research.control_stream", "control_stream.py"),
+                ("qel.research.m2", "m2.py"),
+                ("qel.research.screen", "screen.py"),
+                ("qel.research.seed", "seed.py"),
+                ("qel.stats.core", "stats.py"),
+            )
+        },
+        # Pin the funding archive bytes actually consumed by the fit.
+        "funding_source_sha256": _funding_source_hashes(
+            Path.cwd() / "data/raw/ARCHIVE_BINANCE_USDM/BTCUSDT/funding", train_dates + validation_dates
+        ),
     }
     run_id = hash_jcs(run_params)
     run_record = Path(work_dir) / "run.json"
@@ -217,7 +266,12 @@ def run_m2_fold_stream(
     builder.ARCH = Path.cwd() / "data/raw/ARCHIVE_BINANCE_USDM/BTCUSDT"
     if not builder.ARCH.is_dir():
         raise ProtocolError("ARCHIVE_ROOT_MISSING", {"arch": str(builder.ARCH)})
-    funding_rows_all = builder.load_funding_rows(set(train_dates + validation_dates))
+    all_dates = list(train_dates) + list(validation_dates)
+    # Only the days that still need work require funding rows. A restart after
+    # every day has been checkpointed must not need the funding archive (or the
+    # network) at all.
+    pending_dates = [d for d in all_dates if not checkpoints.day_done(d, reports_dir)]
+    funding_rows_all = builder.load_funding_rows(set(pending_dates)) if pending_dates else []
 
     timings: dict[str, dict[str, float]] = {}
 
@@ -225,11 +279,15 @@ def run_m2_fold_stream(
         if checkpoints.day_done(day, reports_dir):
             return {"day": day, "phase": kind, "status": "skipped"}
         build_started = time.monotonic()
-        manhattan = builder.build_day(day, funding_rows_all)
-        build_s = time.monotonic() - build_started
-        if manhattan["status"] not in ("ok", "skip"):
-            raise ProtocolError("TAPE_BUILD_FAILED", manhattan)
         tape_path = tapes_dir / f"{day}.jsonl"
+        # A tape left behind by an interrupted run is discarded, never trusted:
+        # build_day would otherwise return "skip" and hand us an unverified
+        # tape with no counts (and no funding evidence) to replay.
+        tape_path.unlink(missing_ok=True)
+        manhattan = builder.build_day(day, builder.funding_for_day(funding_rows_all, day))
+        build_s = time.monotonic() - build_started
+        if manhattan["status"] != "ok":
+            raise ProtocolError("TAPE_BUILD_FAILED", manhattan)
         if not tape_path.is_file() or tape_path.stat().st_size == 0:
             raise ProtocolError("TAPE_EMPTY", {"day": day})
         tape_sha = _sha256_file(tape_path)
@@ -238,7 +296,8 @@ def run_m2_fold_stream(
         if manhattan.get("funding", 0) == 0:
             raise ProtocolError("TAPE_FUNDING_MISSING", {"day": day})
         ts, bid, ask = S.extract_day_quotes(str(tape_path))
-        np.savez(quotes_dir / f"{day}.npz", ts=ts, bid=bid, ask=ask)
+        quotes_path = quotes_dir / f"{day}.npz"
+        np.savez(quotes_path, ts=ts, bid=bid, ask=ask)
 
         replay_started = time.monotonic()
         variant_entries: dict[str, dict] = {}
@@ -256,15 +315,18 @@ def run_m2_fold_stream(
                 variant_entries[sid] = entry
         replay_s = time.monotonic() - replay_started
         tape_path.unlink(missing_ok=True)
-        if int(manhattan.get("funding", 0)) > 0:
-            with checkpoints._lock:
-                checkpoints.data["funding"][day] = _day_funding(funding_rows_all, day)
+        day_funding = _day_funding(funding_rows_all, day)
+        with checkpoints._lock:
+            checkpoints.data["funding"][day] = day_funding
         checkpoints.set_day(
             day,
             {
                 "complete": True,
                 "phase": kind,
                 "tape_sha256": tape_sha,
+                "quotes_path": str(quotes_path),
+                "quotes_sha": _sha256_file(quotes_path),
+                "funding": day_funding,
                 "build_s": round(build_s, 3),
                 "replay_s": round(replay_s, 3),
                 "counts": {k: manhattan.get(k) for k in ("quotes", "trades", "marks", "funding", "bytes", "sha256")},
@@ -321,7 +383,25 @@ def run_m2_fold_stream(
         "status": "PASS" if notional >= min_notional else "INFEASIBLE_VENUE_MIN_NOTIONAL",
     }
     if not venue_test["feasible"]:
-        return {"schema": FOLD_SCHEMA, "run_id": run_id, "status": "INFEASIBLE_VENUE_MIN_NOTIONAL", "venue": venue_test, "fold_id": fold_id}
+        # A refused run still has to leave an artifact: an absent report is
+        # indistinguishable from a crash, and the venue gate result is evidence.
+        infeasible = {
+            "schema": FOLD_SCHEMA,
+            "run_id": run_id,
+            "status": "INFEASIBLE_VENUE_MIN_NOTIONAL",
+            "generated_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "scope": "FULL_FOLD_SCOPE",
+            "base_sha": _git_sha(),
+            "fold_id": fold_id,
+            "fold": {"fold_id": fold_id, "train_dates": train_dates, "validation_dates": validation_dates},
+            "capital": fmt(capital_d),
+            "risk_fraction": fmt(dec(risk_fraction)),
+            "notional": fmt(notional),
+            "venue": venue_test,
+            "resource": {"wall_s": round(time.monotonic() - started, 3), "workers": workers, "day_timings": timings},
+        }
+        (out / "M2_FOLD_RUN.json").write_text(json.dumps(infeasible, indent=2, sort_keys=True, default=str) + "\n")
+        return infeasible
 
     control_arrays = _load_day_arrays(quotes_dir, train_dates + validation_dates)
     train_end_ns = M2._day_bounds(train_dates[-1])[1] - 1
@@ -398,10 +478,17 @@ def run_m2_fold_stream(
         decision = {"status": "NO_CANDIDATE", "verdict": "INSUFFICIENT_EVIDENCE"}
 
     summary = agg.summary()
+    decision_failed = bool(decision and decision.get("status") == "ERROR")
+    if decision_failed:
+        status = "INCOMPLETE_DECISION_ERROR"
+    elif candidate_panel and control_replications:
+        status = "PASS"
+    else:
+        status = "INSUFFICIENT_EVIDENCE"
     report = {
         "schema": FOLD_SCHEMA,
         "run_id": run_id,
-        "status": "PASS" if candidate_panel and control_replications else "INSUFFICIENT_EVIDENCE",
+        "status": status,
         "generated_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "scope": "FULL_FOLD_SCOPE",
         "scope_note": (
@@ -469,9 +556,9 @@ def _seed_index(seed_index: int):
     return seed_index, C.run_control_seed(_SEED_PLAN, seed_index)
 
 
-def _aggregate_seeds(plan: Any, aggregator: Any, replications: int, workers: int) -> None:
+def _aggregate_seeds(plan: Any, aggregator: Any, replications: int, workers: int, window: int | None = None) -> None:
     """Aggregation in strict seed order (the rolling hash is ordered)."""
-    from concurrent.futures import ProcessPoolExecutor
+    from concurrent.futures import FIRST_COMPLETED, ProcessPoolExecutor, wait
     import multiprocessing as mp
 
     if max(1, workers) == 1 or replications <= 1:
@@ -483,14 +570,34 @@ def _aggregate_seeds(plan: Any, aggregator: Any, replications: int, workers: int
     ctx = mp.get_context("fork")
     pending: dict[int, Any] = {}
     next_add = 0
+    # Bound in-flight work: submit at most a small window ahead of the lowest
+    # unaggregated seed. Submitting all replications up front would let
+    # `pending` hold a full per-seed result for every out-of-order completion,
+    # which is exactly the unbounded memory this driver claims not to use.
+    in_flight = max(2, 2 * max(1, workers))
+    if window is not None:
+        in_flight = max(1, int(window))
     with ProcessPoolExecutor(max_workers=max(1, workers), mp_context=ctx) as pool:
-        futures = {pool.submit(_seed_index, i): i for i in range(replications)}
-        for fut in as_completed(futures):
-            index, result = fut.result()
-            pending[index] = result
-            while next_add in pending:
-                aggregator.add(pending.pop(next_add))
-                next_add += 1
+        futures: dict[Any, int] = {}
+        submitted = 0
+
+        def submit_until_full() -> None:
+            nonlocal submitted
+            while submitted < replications and len(futures) < in_flight:
+                futures[pool.submit(_seed_index, submitted)] = submitted
+                submitted += 1
+
+        submit_until_full()
+        while futures:
+            done, _ = wait(list(futures), return_when=FIRST_COMPLETED)
+            for fut in done:
+                index, result = fut.result()
+                futures.pop(fut, None)
+                pending[index] = result
+                while next_add in pending:
+                    aggregator.add(pending.pop(next_add))
+                    next_add += 1
+            submit_until_full()
     while next_add in pending:
         aggregator.add(pending.pop(next_add))
         next_add += 1

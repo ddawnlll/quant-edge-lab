@@ -41,6 +41,45 @@ NS_PER_SEC = 1_000_000_000
 DAY_NS = 86_400 * NS_PER_SEC
 
 
+def _utc_day_label(ts_ns: int) -> str:
+    """UTC calendar day of a nanosecond timestamp (no host timezone)."""
+    import datetime
+
+    return datetime.datetime.fromtimestamp(
+        int(ts_ns) // NS_PER_SEC, tz=datetime.timezone.utc
+    ).date().isoformat()
+
+
+def _validate_day_arrays(
+    day_arrays: Sequence[tuple[str, np.ndarray, np.ndarray, np.ndarray]]
+) -> None:
+    """Enforce the input contract the streamed fit relies on.
+
+    The canonical fit sorts every quote by timestamp and derives the calendar
+    from timestamps. The streamed fit concatenates arrays in input order, so a
+    mis-ordered or mislabelled input would silently produce a *different* plan
+    with a plausible-looking hash. Fail closed instead.
+    """
+    def fail(code: str, **detail: object) -> None:
+        raise C.ControlError(code + " " + json.dumps(detail, sort_keys=True))
+
+    previous_day: str | None = None
+    for day, ts, bid, ask in day_arrays:
+        if len(ts) != len(bid) or len(ts) != len(ask):
+            fail("DAY_ARRAY_LENGTH_MISMATCH", day=day)
+        if len(ts) == 0:
+            fail("EMPTY_DAY_ARRAY", day=day)
+        if previous_day is not None and not day > previous_day:
+            fail("DAY_ORDER_NOT_ASCENDING", previous=previous_day, day=day)
+        previous_day = day
+        if len(ts) > 1 and not bool(np.all(np.diff(ts) >= 0)):
+            fail("DAY_TIMESTAMPS_NOT_SORTED", day=day)
+        first_label = _utc_day_label(int(ts[0]))
+        last_label = _utc_day_label(int(ts[-1]))
+        if first_label != day or last_label != day:
+            fail("DAY_LABEL_MISMATCH", day=day, first_ts_day=first_label, last_ts_day=last_label)
+
+
 # ---------------------------------------------------------------------------
 # Streaming canonical-JSON hash
 # ---------------------------------------------------------------------------
@@ -347,6 +386,7 @@ def fit_control_plan_stream(
     timestamp order across days. The result matches
     ``prepare_control_plan`` product-for-product (see module docstring).
     """
+    _validate_day_arrays(day_arrays)
     notional_f = Fraction(str(notional))
     if starting_cash is None:
         starting_cash_f = max(notional_f * 10, Fraction(1000))
@@ -407,7 +447,8 @@ def fit_control_plan_stream(
     g_values, g_counts = np.unique(holding, return_counts=True)
     global_target = _counts_median(g_values, g_counts)
     global_mean = _counts_mean(g_values, g_counts)
-    intervals = np.diff(train_ts)
+    # Canonical clamps every training interval at zero; keep the same rule.
+    intervals = np.maximum(np.diff(train_ts), 0)
     if len(intervals):
         i_values, i_counts = np.unique(intervals, return_counts=True)
         median_interval = _counts_median(i_values, i_counts)

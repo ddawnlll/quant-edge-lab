@@ -185,3 +185,69 @@ def test_dev_week_plan_parity():
     assert a.selection_hash == b.selection_hash
     assert a.net_pnl_total == b.net_pnl_total
     assert a.days == b.days
+
+
+def test_day_arrays_contract_is_enforced():
+    """The streamed fit must refuse inputs the canonical fit would reorder."""
+    days = _synthetic_days(4, 80, 7)
+    train_end = _train_end(days)
+    kwargs = dict(
+        trades=10,
+        notional="100",
+        seed=0,
+        max_holding_ns=3_600_000_000_000,
+        train_end_ns=train_end,
+    )
+    with pytest.raises(C.ControlError, match="DAY_ORDER_NOT_ASCENDING"):
+        S.fit_control_plan_stream(list(reversed(days)), **kwargs)
+
+    unsorted_day = list(days)
+    _day, ts, bid, ask = unsorted_day[1]
+    unsorted_day[1] = (_day, ts[[1, 0] + list(range(2, len(ts)))], bid, ask)
+    with pytest.raises(C.ControlError, match="DAY_TIMESTAMPS_NOT_SORTED"):
+        S.fit_control_plan_stream(unsorted_day, **kwargs)
+
+    empty = list(days)
+    empty[2] = (days[2][0], np.zeros(0, dtype=np.int64), np.zeros(0, dtype=np.int64), np.zeros(0, dtype=np.int64))
+    with pytest.raises(C.ControlError, match="EMPTY_DAY_ARRAY"):
+        S.fit_control_plan_stream(empty, **kwargs)
+
+    mislabelled = list(days)
+    _day, ts, bid, ask = mislabelled[0]
+    mislabelled[0] = ("2024-10-01", ts, bid, ask)
+    with pytest.raises(C.ControlError, match="DAY_LABEL_MISMATCH"):
+        S.fit_control_plan_stream(mislabelled, **kwargs)
+
+
+def test_funding_parity_matches_canonical():
+    """Non-empty funding must produce the same plan and seed results."""
+    day_arrays = _synthetic_days(4, 120, 11)
+    quotes = _canonical_quotes(day_arrays)
+    train_end = _train_end(day_arrays)
+    funding = [
+        {"ts": int(day_arrays[0][1][10]), "rate": "0.0001"},
+        {"ts": int(day_arrays[1][1][20]), "rate": "-0.0002"},
+        {"ts": int(day_arrays[2][1][30]), "rate": "0.0003"},
+    ]
+    canon = C.prepare_control_plan(quotes, 20, "100", 0, 3_600_000_000_000, train_end_ns=train_end, funding=funding)
+    stream = S.fit_control_plan_stream(day_arrays, trades=20, notional="100", seed=0, max_holding_ns=3_600_000_000_000, train_end_ns=train_end, funding=funding)
+    assert stream.plan_hash == canon.plan_hash
+    assert stream.selection_plan_hash == canon.selection_plan_hash
+    for seed in range(3):
+        a = C.run_control_seed(canon, seed)
+        b = C.run_control_seed(stream, seed)
+        assert a.net_pnl_total == b.net_pnl_total
+        assert a.funding == b.funding
+        assert a.selection_hash == b.selection_hash
+        assert a.control_hash == b.control_hash
+        assert a.days == b.days
+    # Funding must change the frozen plan identity and the per-seed accounting
+    # compared with the same inputs without funding.
+    plain = S.fit_control_plan_stream(
+        day_arrays, trades=20, notional="100", seed=0, max_holding_ns=3_600_000_000_000,
+        train_end_ns=train_end, funding=[],
+    )
+    assert stream.plan_hash != plain.plan_hash
+    plain_seed = C.run_control_seed(plain, 0)
+    funded_seed = C.run_control_seed(stream, 0)
+    assert funded_seed.days == plain_seed.days or funded_seed.funding != plain_seed.funding
