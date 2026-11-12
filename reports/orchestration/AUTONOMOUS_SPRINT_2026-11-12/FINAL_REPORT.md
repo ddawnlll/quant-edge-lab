@@ -115,6 +115,7 @@ Open issues: **54** (was 56).
 | `go vet ./...` | clean, exit 0 | `main` |
 | Specification manifest | `sha256sum -c MANIFEST.sha256` all OK | final `main` |
 | Specification validator | `PASS_SPECIFICATION_ONLY`, 13 checks, **20/20 negative mutants rejected** | final `main` |
+| Focused regression set on final `main` (coverage, fold tapes, Arrow reader, P1 parity) | **48 passed** (2.2 s) | `6e81f88` |
 
 ### Parity results (measured, not quoted)
 
