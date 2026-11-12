@@ -64,7 +64,7 @@ the limit being applied.
 ```bash
 python3 benchmarks/gen_corpus.py --check
 cd policy/rust && cargo build --release --bin bench_b0
-go build -o /home/quant/quant/.build-cache/qel-bench ./cmd/qel-bench
+go build -o "${QEL_BUILD_CACHE:-$PWD/.build-cache}/qel-bench" ./cmd/qel-bench
 benchmarks/run_all_bench.sh
 python3 benchmarks/assemble_evidence.py
 python3 benchmarks/build_evidence.py

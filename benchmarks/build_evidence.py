@@ -20,8 +20,8 @@ import time
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 EVIDENCE = ROOT / "evidence/labd"
 RAW = EVIDENCE / "raw"
-SCRATCH = pathlib.Path("/home/quant/quant/.build-cache/t-release")
-PYTHON = "/home/quant/quant/quant-edge-lab/.venv/bin/python"
+SCRATCH = pathlib.Path(os.environ.get("QEL_BUILD_CACHE", ROOT / ".build-cache")) / "t-release"
+PYTHON = os.environ.get("QEL_PYTHON", str(ROOT / ".venv" / "bin" / "python"))
 
 
 def sha256(path: pathlib.Path) -> str:
@@ -53,7 +53,7 @@ def p90(values: list[float]) -> float:
 def main() -> int:
     SCRATCH.mkdir(parents=True, exist_ok=True)
     env = dict(os.environ)
-    env["CARGO_TARGET_DIR"] = "/home/quant/quant/.build-cache/qel-policy-target"
+    env["CARGO_TARGET_DIR"] = str(pathlib.Path(os.environ.get("QEL_BUILD_CACHE", ROOT / ".build-cache")) / "qel-policy-target")
     env["GOFLAGS"] = "-mod=mod"
 
     locks = {

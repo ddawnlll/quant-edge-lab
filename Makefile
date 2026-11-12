@@ -2,7 +2,13 @@
 PY := .venv/bin/python
 export PYTHONPATH := python
 export QEL_ROOT := $(CURDIR)
-CARGO_TARGET_DIR ?= /home/quant/quant/.build-cache/qel-native
+
+# Build caches default to a repo-local directory so a fresh checkout builds on
+# any host. Set QEL_BUILD_CACHE (or CARGO_TARGET_DIR) to reuse an external cache.
+QEL_BUILD_CACHE ?= $(CURDIR)/.build-cache
+CARGO_TARGET_DIR ?= $(QEL_BUILD_CACHE)/qel-native
+CONTRACT_TARGET_DIR ?= $(QEL_BUILD_CACHE)/qel-contract-rs
+GO ?= go
 
 .PHONY: setup contracts test fixtures mutations crosslang evidence native-spike clean
 
@@ -13,9 +19,9 @@ setup:
 
 contracts:
 	mkdir -p bin
-	go build -o bin/qel-contract ./contracts/go/cmd/qel-contract
-	cd contracts/rust && CARGO_TARGET_DIR=/home/quant/quant/.build-cache/qel-contract-rs cargo build --release
-	cp /home/quant/quant/.build-cache/qel-contract-rs/release/qel-contract bin/qel-contract-rs
+	$(GO) build -o bin/qel-contract ./contracts/go/cmd/qel-contract
+	cd contracts/rust && CARGO_TARGET_DIR=$(CONTRACT_TARGET_DIR) cargo build --release
+	cp $(CONTRACT_TARGET_DIR)/release/qel-contract bin/qel-contract-rs
 
 test:
 	$(PY) -m pytest -q tests

@@ -12,6 +12,7 @@ from pathlib import Path
 
 import pytest
 
+import qel_paths
 from qel.research.m2 import (
     DEV_WEEK_END,
     DEV_WEEK_START,
@@ -24,7 +25,7 @@ from qel.research.m2 import (
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "data" / "native"
-BINARY = Path("/home/quant/quant/.build-cache/qel-native/release/qel-native-runner")
+BINARY = qel_paths.find("qel-native-runner")
 MANIFEST = ROOT / "evidence" / "labd" / "PROTOCOL_MONTHLY_26M.json"
 STRATEGY = ROOT / "policy" / "examples" / "taker_1m.json"
 
@@ -70,7 +71,7 @@ def test_frozen_manifest_marks_missing_execution_days() -> None:
 
 
 def test_notional_is_capital_relative_and_20_usdt_is_infeasible() -> None:
-    if not (DATA.is_dir() and BINARY.exists() and MANIFEST.exists()):
+    if not (DATA.is_dir() and BINARY is not None and MANIFEST.exists()):
         pytest.skip("development data or native runner not present")
     report = run_m2(
         manifest_path=str(MANIFEST),

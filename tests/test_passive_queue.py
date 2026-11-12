@@ -14,11 +14,12 @@ from pathlib import Path
 
 import pytest
 
+import qel_paths
 from qel.conformance import Harness
 
 ROOT = Path(__file__).resolve().parents[1]
 EVIDENCE = ROOT / "evidence" / "labd" / "PASSIVE_QUEUE_COMPLETION_2026-11-10.json"
-BINARY = Path("/home/quant/quant/.build-cache/qel-native/release/qel-passive-runner")
+BINARY = qel_paths.find("qel-passive-runner")
 
 
 def sha256(path: Path) -> str:
@@ -72,7 +73,7 @@ def test_evidence_records_binary_and_source_hashes(evidence: dict) -> None:
 
 
 def test_binary_hash_matches_built_artifact_if_present(evidence: dict) -> None:
-    if not BINARY.exists():
+    if BINARY is None:
         pytest.skip("release binary not present in this environment")
     assert sha256(BINARY) == evidence["build"]["binary"]["sha256"]
 
